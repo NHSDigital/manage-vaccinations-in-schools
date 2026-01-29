@@ -164,12 +164,12 @@ describe "Immunisation imports" do
 
   def and_the_newly_created_patients_should_be_archived
     new_patient = Patient.find_by(nhs_number: "7420180008")
-    expect(new_patient.archived?(team: @team)).to be true
+    expect(new_patient.archived?(team_id: @team.id)).to be true
     expect(new_patient.archive_reasons.first.type).to eq "immunisation_import"
   end
 
   def and_the_existing_patients_should_not_be_archived
-    expect(@existing_patient.archived?(team: @team)).to be false
+    expect(@existing_patient.archived?(team_id: @team.id)).to be false
   end
 
   def when_i_go_back

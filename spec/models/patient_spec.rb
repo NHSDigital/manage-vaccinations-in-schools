@@ -730,7 +730,7 @@ describe Patient do
     end
 
     context "without preloading" do
-      subject(:archived?) { patient.archived?(team:) }
+      subject(:archived?) { patient.archived?(team_id: team.id) }
 
       include_examples "archived? behavior"
     end
@@ -740,7 +740,7 @@ describe Patient do
         described_class
           .includes(:archive_reasons)
           .find(patient.id)
-          .archived?(team:)
+          .archived?(team_id: team.id)
       end
 
       include_examples "archived? behavior"
