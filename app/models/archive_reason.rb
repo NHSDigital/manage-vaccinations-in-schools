@@ -67,4 +67,11 @@ class ArchiveReason < ApplicationRecord
        validate: {
          allow_nil: true
        }
+
+  scope :unarchived, -> { where.not(unarchived_at: nil) }
+  scope :not_unarchived, -> { where(unarchived_at: nil) }
+
+  def unarchived? = unarchived_at.present?
+
+  def not_unarchived? = unarchived_at.nil?
 end

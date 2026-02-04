@@ -722,6 +722,20 @@ describe Patient do
         it { should be(true) }
       end
 
+      context "with an unarchived archive reason for the team" do
+        before do
+          create(
+            :archive_reason,
+            :moved_out_of_area,
+            team:,
+            patient:,
+            unarchived_at: Time.current
+          )
+        end
+
+        it { should be(false) }
+      end
+
       context "with an archive reason for a different team" do
         before { create(:archive_reason, :imported_in_error, patient:) }
 
@@ -761,6 +775,20 @@ describe Patient do
       before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
 
       it { should be(false) }
+    end
+
+    context "with an unarchived archive reason for the team" do
+      before do
+        create(
+          :archive_reason,
+          :moved_out_of_area,
+          team:,
+          patient:,
+          unarchived_at: Time.current
+        )
+      end
+
+      it { should be(true) }
     end
 
     context "with an archive reason for a different team" do
