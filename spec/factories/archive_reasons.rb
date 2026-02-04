@@ -18,12 +18,10 @@
 #
 # Indexes
 #
-#  index_archive_reasons_on_created_by_user_id      (created_by_user_id)
-#  index_archive_reasons_on_patient_id              (patient_id)
-#  index_archive_reasons_on_patient_id_and_team_id  (patient_id,team_id) UNIQUE
-#  index_archive_reasons_on_team_id                 (team_id)
-#  index_archive_reasons_on_team_id_and_patient_id  (team_id,patient_id) UNIQUE
-#  index_archive_reasons_on_unarchived_by_user_id   (unarchived_by_user_id)
+#  index_archive_reasons_on_created_by_user_id     (created_by_user_id)
+#  index_archive_reasons_on_patient_id             (patient_id)
+#  index_archive_reasons_on_team_id                (team_id)
+#  index_archive_reasons_on_unarchived_by_user_id  (unarchived_by_user_id)
 #
 # Foreign Keys
 #
