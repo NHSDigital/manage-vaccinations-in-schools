@@ -80,6 +80,10 @@ class Patient::ProgrammeStatus < ApplicationRecord
            -> { request.includes(session: :team_location) },
            through: :patient
 
+  has_many :notify_log_entries,
+           -> { consent_request.includes(:notify_log_entry_programmes) },
+           through: :patient
+
   GROUPS = %w[
     not_eligible
     needs_consent
@@ -208,7 +212,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
         attendance_record:,
         vaccination_records:,
         parents:,
-        consent_notifications:
+        consent_notifications:,
+        notify_log_entries:
       )
   end
 end

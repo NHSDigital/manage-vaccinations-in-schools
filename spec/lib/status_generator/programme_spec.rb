@@ -19,7 +19,9 @@ describe StatusGenerator::Programme do
       vaccination_records: patient.vaccination_records.order_by_performed_at,
       parents: patient.parents.contactable,
       consent_notifications:
-        patient.consent_notifications.includes(session: :team_location)
+        patient.consent_notifications.includes(session: :team_location),
+      notify_log_entries:
+        patient.notify_log_entries.includes(:notify_log_entry_programmes)
     )
   end
 
@@ -387,6 +389,21 @@ describe StatusGenerator::Programme do
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
+
+    context "when the latest consent request delivery has failed" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :permanent_failure,
+          :consent_request,
+          patient:,
+          programme_types: [programme.type]
+        )
+      end
+
+      its(:status) { should be(:needs_consent_request_failed) }
+    end
 
     context "when a consent request is scheduled for a future session" do
       let(:send_consent_requests_at) { Date.tomorrow }
