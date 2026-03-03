@@ -13,13 +13,15 @@ describe StatusGenerator::Programme do
       consents: patient.consents,
       triages: patient.triages,
       attendance_record: patient.attendance_records.first,
-      vaccination_records: patient.vaccination_records.order_by_performed_at
+      vaccination_records: patient.vaccination_records.order_by_performed_at,
+      parents: patient.parents.contactable
     )
   end
 
   let(:programme) { Programme.sample }
   let(:session) { create(:session, programmes: [programme]) }
-  let(:patient) { create(:patient, session:) }
+  let(:patient) { create(:patient, session:, parents:) }
+  let(:parents) { [create(:parent)] }
   let(:location) { create(:school) }
 
   context "when already vaccinated" do
@@ -367,6 +369,18 @@ describe StatusGenerator::Programme do
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
+
+    context "when there are no contact details for parents and no consent request has been sent" do
+      let(:parents) { [create(:parent, :non_contactable)] }
+
+      its(:status) { should be(:needs_consent_no_contact_details) }
+    end
+
+    context "when there are no parent relationships and no consent request has been sent" do
+      let(:parents) { [] }
+
+      its(:status) { should be(:needs_consent_no_contact_details) }
+    end
 
     context "with a multi-dose programme" do
       let(:programme) { Programme.mmr }
