@@ -758,6 +758,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_165220) do
     t.bigint "school_id"
     t.datetime "updated_at", null: false
     t.datetime "updated_from_pds_at"
+    t.index ["address_postcode"], name: "index_patients_on_address_postcode"
+    t.index ["date_of_birth"], name: "index_patients_on_date_of_birth"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["given_name", "family_name"], name: "index_patients_on_names_given_first"

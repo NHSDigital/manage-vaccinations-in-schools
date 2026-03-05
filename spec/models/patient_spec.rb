@@ -37,6 +37,8 @@
 #
 # Indexes
 #
+#  index_patients_on_address_postcode            (address_postcode)
+#  index_patients_on_date_of_birth               (date_of_birth)
 #  index_patients_on_family_name_trigram         (family_name) USING gin
 #  index_patients_on_given_name_trigram          (given_name) USING gin
 #  index_patients_on_gp_practice_id              (gp_practice_id)
