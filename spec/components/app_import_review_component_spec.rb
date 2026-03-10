@@ -7,11 +7,12 @@ describe AppImportReviewComponent do
     described_class.new(
       import:,
       inter_team:,
-      new_records:,
+      new_records: [new_records_pagy, new_records],
       auto_matched_records:,
       import_issues:,
       school_moves:,
-      skipped_school_moves:
+      skipped_school_moves:,
+      open_sections:
     )
   end
 
@@ -34,11 +35,13 @@ describe AppImportReviewComponent do
   let(:second_school_move_patient) { create(:patient, school: second_location) }
 
   let(:new_records) { [] }
+  let(:new_records_pagy) { instance_double(Pagy, count: 0) }
   let(:auto_matched_records) { [] }
   let(:import_issues) { [] }
   let(:inter_team) { [] }
   let(:school_moves) { [] }
   let(:skipped_school_moves) { [] }
+  let(:open_sections) { [] }
 
   shared_examples "section with details" do |title:, summary:, count:|
     it "renders section '#{title}'" do
@@ -61,11 +64,16 @@ describe AppImportReviewComponent do
   end
 
   describe "with new records" do
+    let(:new_records_pagy) { instance_double(Pagy, count: 2) }
     let(:new_records) do
       [
         create(:patient_changeset, :new_patient, import:, patient: new_patient),
         create(:patient_changeset, :new_patient, import:)
       ]
+    end
+
+    before do
+      allow(AppPaginationComponent).to receive(:new) { double.as_null_object }
     end
 
     include_examples "section with details",
@@ -304,6 +312,7 @@ describe AppImportReviewComponent do
 
   describe "buttons" do
     context "with records to import" do
+      let(:new_records_pagy) { instance_double(Pagy, count: 1) }
       let(:new_records) do
         [
           create(
@@ -313,6 +322,10 @@ describe AppImportReviewComponent do
             patient: new_patient
           )
         ]
+      end
+
+      before do
+        allow(AppPaginationComponent).to receive(:new) { double.as_null_object }
       end
 
       it "shows approve button" do
@@ -344,8 +357,12 @@ describe AppImportReviewComponent do
     end
 
     context "with re-review import" do
-      before { import.update!(status: :in_re_review) }
+      before do
+        import.update!(status: :in_re_review)
+        allow(AppPaginationComponent).to receive(:new) { double.as_null_object }
+      end
 
+      let(:new_records_pagy) { instance_double(Pagy, count: 1) }
       let(:new_records) do
         [
           create(
@@ -373,6 +390,8 @@ describe AppImportReviewComponent do
   end
 
   describe "empty sections" do
+    let(:new_records_pagy) { instance_double(Pagy, count: 0) }
+
     it "does not render sections with no records" do
       expect(rendered).not_to have_css("h2", text: "New records")
       expect(rendered).not_to have_css("h2", text: "Records already in Mavis")
@@ -380,12 +399,42 @@ describe AppImportReviewComponent do
   end
 
   describe "sticky summary" do
+    let(:new_records_pagy) { instance_double(Pagy, count: 1) }
     let(:new_records) do
       [create(:patient_changeset, :new_patient, import:, patient: new_patient)]
     end
 
+    before do
+      allow(AppPaginationComponent).to receive(:new) { double.as_null_object }
+    end
+
     it "adds sticky module to summary" do
       expect(rendered).to have_css('summary[data-module="app-sticky"]')
+    end
+  end
+
+  describe "open_sections" do
+    let(:new_records_pagy) { instance_double(Pagy, count: 1) }
+    let(:new_records) do
+      [create(:patient_changeset, :new_patient, import:, patient: new_patient)]
+    end
+
+    before do
+      allow(AppPaginationComponent).to receive(:new) { double.as_null_object }
+    end
+
+    context "without any open sections specified" do
+      it "renders all sections closed" do
+        expect(rendered).not_to have_css("details[open]")
+      end
+    end
+
+    context "with specified open sections" do
+      let(:open_sections) { [:new_records] }
+
+      it "renders specified sections open" do
+        expect(rendered).to have_css("details[open]")
+      end
     end
   end
 end
