@@ -70,7 +70,7 @@ class VaccinationReport
 
   def exporter_class
     {
-      careplus: Reports::CareplusExporter,
+      careplus: Reports::ManualCareplusExporter,
       mavis: Reports::ProgrammeVaccinationsExporter,
       systm_one: Reports::SystmOneExporter
     }.fetch(file_format.to_sym)

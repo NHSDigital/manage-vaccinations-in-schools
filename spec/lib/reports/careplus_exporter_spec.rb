@@ -4,16 +4,30 @@ describe Reports::CareplusExporter do
   subject(:csv) do
     described_class.call(
       team:,
-      programme:,
+      programmes: [programme],
       academic_year:,
       start_date: 1.month.ago.to_date,
-      end_date: Date.current
+      end_date: Date.current,
+      include_gender:,
+      vaccine_columns:
     )
   end
 
   around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
 
   let(:academic_year) { AcademicYear.current }
+  let(:include_gender) { true }
+  let(:vaccine_columns) do
+    %i[
+      vaccine
+      vaccine_code
+      dose
+      reason_not_given
+      site
+      manufacturer
+      batch_number
+    ]
+  end
 
   let(:parsed_csv) { CSV.parse(csv) }
   let(:headers) { parsed_csv.first }
@@ -337,6 +351,194 @@ describe Reports::CareplusExporter do
         expect(data_rows.first[headers.index("Dose 1")]).to be_blank
       end
     end
+
+    context "gender mapping" do
+      {
+        female: "F",
+        male: "M",
+        not_known: "U",
+        not_specified: "I"
+      }.each do |gender, expected_code|
+        context "when the patient gender is #{gender}" do
+          it "maps gender to #{expected_code}" do
+            patient =
+              create(
+                :patient,
+                :consent_given_triage_not_needed,
+                programmes:,
+                session:,
+                gender_code: gender
+              )
+            create(
+              :vaccination_record,
+              programme:,
+              patient:,
+              session:,
+              performed_at: 2.weeks.ago
+            )
+
+            gender_index = headers.index("Gender")
+            expect(data_rows.first[gender_index]).to eq(expected_code)
+          end
+        end
+      end
+    end
+  end
+
+  context "include_gender parameter" do
+    let(:programme) { Programme.hpv }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:location) { create(:school) }
+    let(:session) do
+      create(:session, team:, programmes: [programme], location:)
+    end
+
+    context "when true" do
+      let(:include_gender) { true }
+
+      it "includes the Gender header" do
+        expect(headers).to include("Gender")
+      end
+    end
+
+    context "when false" do
+      let(:include_gender) { false }
+
+      it "does not include the Gender header" do
+        expect(headers).not_to include("Gender")
+      end
+
+      it "does not include the gender value in the row" do
+        patient =
+          create(
+            :patient,
+            :consent_given_triage_not_needed,
+            programmes: [programme],
+            session:,
+            gender_code: :female
+          )
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          session:,
+          performed_at: 2.weeks.ago
+        )
+
+        expect(data_rows.first.length).to eq(headers.length)
+      end
+    end
+  end
+
+  context "vaccine_columns parameter" do
+    let(:programme) { Programme.hpv }
+    let(:vaccine) { programme.vaccines.first }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:location) { create(:school) }
+    let(:session) do
+      create(:session, team:, programmes: [programme], location:)
+    end
+
+    context "with a subset of columns" do
+      let(:vaccine_columns) { %i[vaccine dose] }
+
+      it "only includes headers for the specified columns" do
+        (1..5).each do |i|
+          expect(headers).to include("Vaccine #{i}", "Dose #{i}")
+          expect(headers).not_to include(
+            "Vaccine Code #{i}",
+            "Reason Not Given #{i}",
+            "Site #{i}",
+            "Manufacturer #{i}",
+            "Batch No #{i}"
+          )
+        end
+      end
+
+      it "includes the correct values for those columns" do
+        patient =
+          create(
+            :patient,
+            :consent_given_triage_not_needed,
+            programmes: [programme],
+            session:
+          )
+        create(
+          :vaccination_record,
+          programme:,
+          vaccine:,
+          patient:,
+          session:,
+          performed_at: 2.weeks.ago,
+          dose_sequence: 1
+        )
+
+        row = data_rows.first
+        expect(row[headers.index("Vaccine 1")]).to eq(
+          vaccine.snomed_product_code
+        )
+        expect(row[headers.index("Dose 1")]).to eq("1P")
+      end
+    end
+
+    context "with all columns" do
+      let(:vaccine_columns) do
+        %i[
+          vaccine
+          vaccine_code
+          dose
+          reason_not_given
+          site
+          manufacturer
+          batch_number
+        ]
+      end
+
+      it "includes headers for all columns" do
+        (1..5).each do |i|
+          expect(headers).to include(
+            "Vaccine #{i}",
+            "Vaccine Code #{i}",
+            "Dose #{i}",
+            "Reason Not Given #{i}",
+            "Site #{i}",
+            "Manufacturer #{i}",
+            "Batch No #{i}"
+          )
+        end
+      end
+
+      it "includes the correct values for all columns" do
+        patient =
+          create(
+            :patient,
+            :consent_given_triage_not_needed,
+            programmes: [programme],
+            session:
+          )
+        create(
+          :vaccination_record,
+          programme:,
+          vaccine:,
+          delivery_method: :intramuscular,
+          patient:,
+          session:,
+          performed_at: 2.weeks.ago,
+          dose_sequence: 1
+        )
+
+        row = data_rows.first
+        expect(row[headers.index("Vaccine 1")]).to eq(
+          vaccine.snomed_product_code
+        )
+        expect(row[headers.index("Vaccine Code 1")]).to eq("HPV")
+        expect(row[headers.index("Dose 1")]).to eq("1P")
+        expect(row[headers.index("Reason Not Given 1")]).to eq("")
+        expect(row[headers.index("Site 1")]).to eq("ULA")
+        expect(row[headers.index("Manufacturer 1")]).to eq(vaccine.manufacturer)
+        expect(row[headers.index("Batch No 1")]).not_to be_nil
+      end
+    end
   end
 
   context "Flu programme" do
@@ -433,47 +635,6 @@ describe Reports::CareplusExporter do
         )
 
         expect(data_rows.first[headers.index("Dose 1")]).to eq("2B")
-      end
-    end
-  end
-
-  context "gender mapping" do
-    let(:programme) { Programme.hpv }
-    let(:programmes) { [programme] }
-    let(:team) { create(:team, programmes:) }
-    let(:location) { create(:school) }
-    let(:session) { create(:session, team:, programmes:, location:) }
-    let(:parsed_csv) { CSV.parse(csv) }
-    let(:headers) { parsed_csv.first }
-    let(:data_rows) { parsed_csv[1..] }
-
-    {
-      female: "F",
-      male: "M",
-      not_known: "U",
-      not_specified: "I"
-    }.each do |gender, expected_code|
-      context "when the patient gender is #{gender}" do
-        it "maps gender to #{expected_code}" do
-          patient =
-            create(
-              :patient,
-              :consent_given_triage_not_needed,
-              programmes:,
-              session:,
-              gender_code: gender
-            )
-          create(
-            :vaccination_record,
-            programme:,
-            patient:,
-            session:,
-            performed_at: 2.weeks.ago
-          )
-
-          gender_index = headers.index("Gender")
-          expect(data_rows.first[gender_index]).to eq(expected_code)
-        end
       end
     end
   end
