@@ -2,7 +2,7 @@
 
 class AppDetailsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <details class="nhsuk-details<%= expander_class %>"<%= open_attr %>>
+    <details id="<%= @id %>" class="nhsuk-details<%= expander_class %>"<%= open_attr %>>
       <summary class="nhsuk-details__summary" <%= sticky_class %>>
         <span class="nhsuk-details__summary-text">
           <%= summary %>
@@ -17,11 +17,18 @@ class AppDetailsComponent < ViewComponent::Base
 
   renders_one :summary
 
-  def initialize(summary: nil, open: false, expander: false, sticky: false)
+  def initialize(
+    summary: nil,
+    open: false,
+    expander: false,
+    sticky: false,
+    id: nil
+  )
     with_summary { summary } if summary
     @open = open
     @expander = expander
     @sticky = sticky
+    @id = id
   end
 
   def open_attr

@@ -37,4 +37,12 @@ describe AppDetailsComponent do
       expect(rendered).to have_css('summary[data-module="app-sticky"]')
     end
   end
+
+  context "id option is set" do
+    let(:component) { described_class.new(summary:, id: :foo) }
+
+    it "displays the content section" do
+      expect(rendered).to have_css(".nhsuk-details#foo")
+    end
+  end
 end
