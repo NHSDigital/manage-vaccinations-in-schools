@@ -424,7 +424,7 @@ class ConsentForm < ApplicationRecord
       if original_session_is_accurate?
         original_session
       else
-        find_approriate_session || original_session
+        find_appropriate_session || original_session
       end
   end
 
@@ -677,7 +677,7 @@ class ConsentForm < ApplicationRecord
     school_confirmed || school_id == location_id
   end
 
-  def find_approriate_session
+  def find_appropriate_session
     # This tries to find the most appropriate session for this consent form.
     # It's used when generating links to patients in a session, or when
     # deciding which dates to show in an email. Under the hood, patients
@@ -689,43 +689,42 @@ class ConsentForm < ApplicationRecord
     # session.
 
     if location_is_clinic? || education_setting_home? || education_setting_none?
-      GenericClinicSessionFinder.call(team:, academic_year:, programmes:)
-    else
-      session_location = school || location
-
-      sessions_to_search =
-        Session.joins(:team_location).where(
-          team_location: {
-            academic_year:,
-            location: session_location,
-            team:
-          }
-        )
-
-      year_group =
-        matched_patient&.year_group(academic_year:) ||
-          date_of_birth&.academic_year&.to_year_group(academic_year:)
-
-      sessions_to_search =
-        if year_group
-          sessions_to_search.where(
-            "(?) >= ?",
-            Session::ProgrammeYearGroup
-              .select(
-                "COUNT(DISTINCT session_programme_year_groups.programme_type)"
-              )
-              .where("sessions.id = session_programme_year_groups.session_id")
-              .where(programme_type: programme_types, year_group:),
-            programme_types.count
-          )
-        else
-          sessions_to_search.has_all_programme_types_of(programme_types)
-        end
-
-      sessions_to_search.find(&:scheduled?) ||
-        sessions_to_search.find(&:unscheduled?) || sessions_to_search.first ||
-        GenericClinicSessionFinder.call(team:, academic_year:, programmes:)
+      return
     end
+
+    session_location = school || location
+
+    sessions_to_search =
+      Session.joins(:team_location).where(
+        team_location: {
+          academic_year:,
+          location: session_location,
+          team:
+        }
+      )
+
+    year_group =
+      matched_patient&.year_group(academic_year:) ||
+        date_of_birth&.academic_year&.to_year_group(academic_year:)
+
+    sessions_to_search =
+      if year_group
+        sessions_to_search.where(
+          "(?) >= ?",
+          Session::ProgrammeYearGroup
+            .select(
+              "COUNT(DISTINCT session_programme_year_groups.programme_type)"
+            )
+            .where("sessions.id = session_programme_year_groups.session_id")
+            .where(programme_type: programme_types, year_group:),
+          programme_types.count
+        )
+      else
+        sessions_to_search.has_all_programme_types_of(programme_types)
+      end
+
+    sessions_to_search.find(&:scheduled?) ||
+      sessions_to_search.find(&:unscheduled?) || sessions_to_search.first
   end
 
   def via_self_consent? = false
