@@ -4,14 +4,16 @@ describe InvalidateSelfConsentsJob do
   subject(:perform_now) { described_class.perform_now }
 
   let(:academic_year) { AcademicYear.current }
+  let(:programme) { Programme.hpv }
   let(:patient) { consent.patient }
-  let(:programme) { consent.programme }
   let(:team) { consent.team }
 
   context "with parental consent from yesterday" do
-    let(:consent) { create(:consent, academic_year:, created_at: 1.day.ago) }
+    let(:consent) do
+      create(:consent, programme:, academic_year:, created_at: 1.day.ago)
+    end
 
-    before { create(:patient_programme_status, patient:, programme:) }
+    before { create(:patient_programme_status, :due, patient:, programme:) }
 
     it "does not invalidate the consent" do
       expect { perform_now }.not_to(change { consent.reload.invalidated? })
@@ -37,9 +39,9 @@ describe InvalidateSelfConsentsJob do
   end
 
   context "with parental consent from today" do
-    let(:consent) { create(:consent, academic_year:) }
+    let(:consent) { create(:consent, programme:, academic_year:) }
 
-    before { create(:patient_programme_status, patient:, programme:) }
+    before { create(:patient_programme_status, :due, patient:, programme:) }
 
     it "does not invalidate the consent" do
       expect { perform_now }.not_to(change { consent.reload.invalidated? })
@@ -65,7 +67,13 @@ describe InvalidateSelfConsentsJob do
 
   context "with self-consent from yesterday" do
     let(:consent) do
-      create(:consent, :self_consent, academic_year:, created_at: 1.day.ago)
+      create(
+        :consent,
+        :self_consent,
+        programme:,
+        academic_year:,
+        created_at: 1.day.ago
+      )
     end
 
     before { create(:patient_programme_status, :due, patient:, programme:) }

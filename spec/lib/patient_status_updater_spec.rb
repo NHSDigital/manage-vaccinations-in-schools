@@ -15,7 +15,6 @@ describe PatientStatusUpdater do
 
     it "creates a programme status for all programmes" do
       expect { call }.to change(patient.programme_statuses, :count).by(5)
-      expect(patient.programme_statuses).to all(be_not_eligible)
     end
 
     it "doesn't create any registration statuses" do

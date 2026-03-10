@@ -235,17 +235,22 @@ class StatusGenerator::Programme
   def year_group = patient.year_group(academic_year:)
 
   def is_eligible?
+    # Eligibility is normally determined by the default year groups of the
+    # programme; however, there are some cases where the location has an
+    # override set. This is often the case for flu in SEN schools.
+
     return @is_eligible if defined?(@is_eligible)
 
     @is_eligible =
-      patient_locations
-        .select { it.academic_year == academic_year }
-        .any? do |patient_location|
-          patient_location.location.location_programme_year_groups.any? do
-            it.programme_type == programme_type &&
-              it.academic_year == academic_year && it.year_group == year_group
+      default_programme_year_groups.include?(year_group) ||
+        patient_locations
+          .select { it.academic_year == academic_year }
+          .any? do |patient_location|
+            patient_location.location.location_programme_year_groups.any? do
+              it.programme_type == programme_type &&
+                it.academic_year == academic_year && it.year_group == year_group
+            end
           end
-        end
   end
 
   def not_eligible?
@@ -260,6 +265,12 @@ class StatusGenerator::Programme
   end
 
   def is_absent? = attendance_record&.attending == false
+
+  def default_programme_year_groups
+    # We can't use `programme` here because it introduces a circular
+    # dependency on `disease_types`.
+    Programme.find(programme_type).default_year_groups
+  end
 
   def consent_generator
     @consent_generator ||=

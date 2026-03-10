@@ -21,7 +21,7 @@ class Schools::InviteToClinicController < Schools::BaseController
       )
 
     if @form.valid?
-      clinic_notifcations =
+      clinic_notifications =
         @patients_to_invite.filter_map do |patient|
           patient.notifier.send_clinic_invitation(
             Programme.find_all(@form.programme_types),
@@ -34,7 +34,7 @@ class Schools::InviteToClinicController < Schools::BaseController
 
       flash[
         :success
-      ] = "#{I18n.t("children", count: clinic_notifcations.count)} invited to the clinic"
+      ] = "#{I18n.t("children", count: clinic_notifications.count)} invited to the clinic"
 
       redirect_to @back_link_path
     else
