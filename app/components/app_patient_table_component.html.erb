@@ -1,8 +1,8 @@
-
 <%= render AppDetailsComponent.new(expander: true, sticky: true, open: @pagy.page > 1) do |c| %>
   <% c.with_summary do %>
     <%= pluralize(@pagy.count, "imported record") %>
   <% end %>
+  <a href="#<%= anchor %>"></a>
   <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
     <% table.with_head do |head| %>
       <% head.with_row do |row| %>
@@ -58,5 +58,5 @@
       <% end %>
     <% end %>
   <% end %>
-  <%= render AppPaginationComponent.new(pagy: @pagy) %>
+  <%= render AppPaginationComponent.new(pagy:, anchor:) %>
 <% end %>

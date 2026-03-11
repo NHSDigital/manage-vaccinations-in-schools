@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 class AppPatientTableComponent < ViewComponent::Base
-  def initialize(patients, current_user:, pagy:)
+  def initialize(patients, current_user:, pagy:, anchor: nil)
     @patients = patients
     @current_user = current_user
     @pagy = pagy
+    @anchor = anchor
   end
 
   private
 
-  attr_reader :patients, :current_user, :current_team, :pagy
+  attr_reader :patients, :current_user, :current_team, :pagy, :anchor
 
   delegate :govuk_table, to: :helpers
 
