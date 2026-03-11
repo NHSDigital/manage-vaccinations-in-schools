@@ -26,7 +26,11 @@
 
   <% if @can_invite_to_clinic %>
     <%= govuk_button_to "Invite to community clinic",
-                        invite_to_clinic_patient_programme_path(@patient, @programme),
+                        invite_to_clinic_patient_programme_path(@patient, @programme.type),
+                        secondary: true %>
+  <% elsif @can_send_clinic_invitation_reminder %>
+    <%= govuk_button_to "Send clinic invitation reminder",
+                        invite_to_clinic_patient_programme_path(@patient, @programme.type),
                         secondary: true %>
   <% end %>
 <% end %>

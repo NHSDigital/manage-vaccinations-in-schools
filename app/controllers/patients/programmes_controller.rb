@@ -3,7 +3,8 @@
 class Patients::ProgrammesController < Patients::BaseController
   before_action :set_programme
   before_action :set_academic_year
-  before_action :set_can_invite_to_clinic
+  before_action :set_can_invite_to_clinic, only: :show
+  before_action :set_can_send_clinic_invitation_reminder, only: :show
   before_action :record_access_log_entry, only: :show
 
   skip_after_action :verify_policy_scoped
@@ -17,16 +18,6 @@ class Patients::ProgrammesController < Patients::BaseController
   def invite_to_clinic
     authorize @patient
 
-    ActiveRecord::Base.transaction do
-      PatientLocation.find_or_create_by!(
-        patient: @patient,
-        location: current_team.generic_clinic,
-        academic_year: @academic_year
-      )
-
-      PatientTeamUpdater.call(patient: @patient.id, team: current_team)
-    end
-
     @patient.notifier.send_clinic_invitation(
       [@programme],
       team: current_team,
@@ -34,7 +25,7 @@ class Patients::ProgrammesController < Patients::BaseController
       sent_by: current_user
     )
 
-    redirect_to patient_programme_path(@patient, @programme),
+    redirect_to patient_programme_path(@patient, @programme.type),
                 flash: {
                   success: "#{@patient.full_name} invited to the clinic"
                 }
@@ -73,7 +64,11 @@ class Patients::ProgrammesController < Patients::BaseController
         session
       end
 
-    redirect_to session_patient_programme_path(@session, @patient, @programme)
+    redirect_to session_patient_programme_path(
+                  @session,
+                  @patient,
+                  @programme.type
+                )
   end
 
   private
@@ -98,6 +93,15 @@ class Patients::ProgrammesController < Patients::BaseController
         team: current_team,
         academic_year: @academic_year,
         include_already_invited_programmes: false
+      )
+  end
+
+  def set_can_send_clinic_invitation_reminder
+    @can_send_clinic_invitation_reminder =
+      @patient.notifier.can_send_clinic_invitation?(
+        [@programme],
+        team: current_team,
+        academic_year: @academic_year
       )
   end
 
