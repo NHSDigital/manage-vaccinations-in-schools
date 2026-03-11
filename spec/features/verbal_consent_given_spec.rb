@@ -201,13 +201,18 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    choose "#{@parent.full_name} (#{@patient.parent_relationships.first.label})"
+    parent_label =
+      @patient
+        .parent_relationships
+        .includes(:parent)
+        .find_by(patient: @patient)
+        .label_with_parent
+
+    choose parent_label
     click_button "Continue"
 
     # Details for parent or guardian
-    expect(page).to have_content(
-      "Details for #{@parent.full_name} (#{@patient.parent_relationships.first.label})"
-    )
+    expect(page).to have_content("Details for #{parent_label}")
     # don't change any details
     click_button "Continue"
 

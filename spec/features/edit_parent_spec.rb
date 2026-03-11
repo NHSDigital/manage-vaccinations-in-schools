@@ -85,7 +85,7 @@ describe "Edit parent" do
   end
 
   def then_i_see_the_new_relationship_of_the_parent_of_mother
-    expect(page).to have_content("Mum")
+    expect(page).to have_content("mum")
   end
 
   def and_i_change_the_relationship_of_the_parent_to_other
@@ -95,7 +95,7 @@ describe "Edit parent" do
   end
 
   def then_i_see_the_new_relationship_of_the_parent_of_other
-    expect(page).to have_content("Someone")
+    expect(page).to have_content("other – Someone")
   end
 
   def when_i_change_the_contact_details_of_the_parent

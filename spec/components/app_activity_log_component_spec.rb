@@ -283,12 +283,12 @@ describe AppActivityLogComponent do
                      programme: "Flu"
 
     include_examples "card",
-                     title: "Consent refused by John Doe (Dad)",
+                     title: "Consent refused by John Doe (dad)",
                      date: "30 May 2025 at 1:00pm",
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Consent given by Jane Doe (Mum)",
+                     title: "Consent given by Jane Doe (mum)",
                      date: "30 May 2025 at 12:00pm",
                      by: "JOY, Nurse",
                      programme: "HPV"
@@ -436,7 +436,7 @@ describe AppActivityLogComponent do
 
     include_examples "card",
                      title:
-                       "Consent given by DOE, Sarah (Child (Gillick competent))",
+                       "Consent given by DOE, Sarah (child (Gillick competent))",
                      date: "30 May 2025 at 12:00pm",
                      programme: "HPV"
   end
@@ -468,7 +468,7 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Consent given",
                      date: "30 May 2025 at 12:00pm",
-                     by: "Jane Doe (Mum)",
+                     by: "Jane Doe (mum)",
                      programme: "HPV"
 
     include_examples "card",
@@ -498,7 +498,7 @@ describe AppActivityLogComponent do
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Consent given by Jane Doe (Mum)",
+                     title: "Consent given by Jane Doe (mum)",
                      date: "30 May 2025 at 12:00pm",
                      programme: "HPV"
   end
@@ -523,7 +523,7 @@ describe AppActivityLogComponent do
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Consent given by Jane Doe (Mum)",
+                     title: "Consent given by Jane Doe (mum)",
                      date: "30 May 2025 at 12:00pm",
                      programme: "HPV"
   end

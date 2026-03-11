@@ -75,7 +75,7 @@ describe ParentRelationship do
         build(:parent_relationship, :other, other_name: "Grandparent")
       end
 
-      it { should eq("Grandparent") }
+      it { should eq("Other – Grandparent") }
     end
 
     context "with an unknown" do

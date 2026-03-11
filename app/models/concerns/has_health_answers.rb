@@ -20,7 +20,7 @@ module HasHealthAnswers
       "Child (Gillick competent)"
     elsif parent_relationship_type == "other" &&
           parent_relationship_other_name.present?
-      parent_relationship_other_name.capitalize
+      "Other – #{parent_relationship_other_name}"
     elsif parent_relationship_type.present?
       ParentRelationship.human_enum_name(
         :type,

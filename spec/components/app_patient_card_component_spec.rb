@@ -71,8 +71,7 @@ describe AppPatientCardComponent do
 
     before { create(:parent_relationship, :mother, patient:, parent:) }
 
-    it { should have_content("Jenny Smith") }
-    it { should have_content("Mum") }
+    it { should have_content("Jenny Smith (mum)") }
 
     context "with show_parents: false" do
       let(:component) do

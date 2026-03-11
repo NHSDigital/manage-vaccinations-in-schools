@@ -498,7 +498,7 @@ describe "Manage children" do
 
   def then_i_see_the_new_parent_is_created
     expect(page).to have_content("Edit child record")
-    expect(page).to have_content("Lucille Bluth (Mum)")
+    expect(page).to have_content("Lucille Bluth (mum)")
     expect(@patient.parents.count).to eq(2)
   end
 

@@ -53,11 +53,11 @@ class ParentRelationship < ApplicationRecord
   validates_associated :parent
 
   def label
-    (other? ? other_name : human_enum_name(:type)).capitalize
+    other? ? "Other – #{other_name}" : human_enum_name(:type).capitalize
   end
 
   def label_with_parent
-    unknown? ? parent.label : "#{parent.label} (#{label})"
+    unknown? ? parent.label : "#{parent.label} (#{label.downcase_first})"
   end
 
   def ordinal_label

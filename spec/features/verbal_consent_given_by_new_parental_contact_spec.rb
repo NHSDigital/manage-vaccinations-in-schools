@@ -21,7 +21,7 @@ describe "Verbal consent" do
     and_i_record_that_verbal_consent_was_given
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_i_can_see_the_parents_details_on_the_consent_response(
-      relationship: "Carer"
+      relationship: "Other – Carer"
     )
   end
 

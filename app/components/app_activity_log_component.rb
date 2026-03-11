@@ -228,7 +228,7 @@ class AppActivityLogComponent < ViewComponent::Base
       else
         {
           title:
-            "Consent #{original_response} by #{consent.name} (#{consent.who_responded})",
+            "Consent #{original_response} by #{consent.name} (#{consent.who_responded.downcase_first})",
           at: consent.submitted_at,
           by: consent.recorded_by,
           programmes: [consent.programme]

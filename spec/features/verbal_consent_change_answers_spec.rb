@@ -54,12 +54,14 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    choose "#{@parent.full_name} (Mum)"
+    choose "#{@parent.full_name} (mum)"
     click_button "Continue"
   end
 
   def and_i_fill_out_the_consent_details(parent_name:, relationship:)
-    expect(page).to have_content("Details for #{parent_name} (#{relationship})")
+    expect(page).to have_content(
+      "Details for #{parent_name} (#{relationship.downcase_first})"
+    )
 
     fill_in "Full name", with: "New parent name"
     choose "Dad"

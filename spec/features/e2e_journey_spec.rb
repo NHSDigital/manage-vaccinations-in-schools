@@ -310,6 +310,6 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_the_populated_activity_log
-    expect(page).to have_content "Consent given by Big Daddy Tests (Dad)"
+    expect(page).to have_content "Consent given by Big Daddy Tests (dad)"
   end
 end

@@ -49,7 +49,9 @@ class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
 
   def record_already_vaccinated!(patient, consents:)
     names =
-      consents.map { |consent| "#{consent.name} (#{consent.who_responded})" }
+      consents.map do |consent|
+        "#{consent.name} (#{consent.who_responded.downcase_first})"
+      end
 
     notes = "Self-reported by #{names.to_sentence}"
     performed_at = consents.map(&:submitted_at).min

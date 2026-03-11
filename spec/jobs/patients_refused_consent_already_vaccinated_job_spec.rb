@@ -70,7 +70,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
           expect(vaccination_record).to be_already_had
           expect(vaccination_record.location_name).to eq("Unknown")
           expect(vaccination_record.notes).to eq(
-            "Self-reported by #{consent.name} (Mum)"
+            "Self-reported by #{consent.name} (mum)"
           )
           expect(vaccination_record.patient).to eq(patient)
           expect(vaccination_record.performed_at).to eq(consent.submitted_at)
