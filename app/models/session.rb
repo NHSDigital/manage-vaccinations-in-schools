@@ -167,6 +167,10 @@ class Session < ApplicationRecord
 
   def programmes = Programme.find_all(programme_types)
 
+  def has_programme_type?(programme_type)
+    session_programme_year_groups.exists?(programme_type:)
+  end
+
   def vaccines
     @vaccines ||= Vaccine.where(programme_type: programme_types)
   end
