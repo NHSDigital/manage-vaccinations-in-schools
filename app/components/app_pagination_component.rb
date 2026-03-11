@@ -1,6 +1,28 @@
 # frozen_string_literal: true
 
 class AppPaginationComponent < GovukComponent::PaginationComponent
+  def initialize(
+    pagy: nil,
+    next_text: nil,
+    previous_text: nil,
+    block_mode: false,
+    landmark_label: config.default_pagination_landmark_label,
+    classes: [],
+    html_attributes: {},
+    anchor: nil
+  )
+    @anchor = anchor
+    super(
+      pagy:,
+      next_text:,
+      previous_text:,
+      block_mode:,
+      landmark_label:,
+      classes:,
+      html_attributes:
+    )
+  end
+
   def before_render
     @page_items =
       if pagy.present?
@@ -30,7 +52,7 @@ class AppPaginationComponent < GovukComponent::PaginationComponent
     return unless pagy&.prev
 
     AppPaginationComponent::PreviousPage.new(
-      href: pagy_url_for(pagy, pagy.prev),
+      href: pagy_url_for(pagy, pagy.prev) + "##{@anchor}",
       text: @previous_text || default_adjacent_text(:prev),
       block_mode: block_mode?
     )
@@ -40,9 +62,19 @@ class AppPaginationComponent < GovukComponent::PaginationComponent
     return unless pagy&.next
 
     AppPaginationComponent::NextPage.new(
-      href: pagy_url_for(pagy, pagy.next),
+      href: pagy_url_for(pagy, pagy.next) + "##{@anchor}",
       text: @next_text || default_adjacent_text(:next),
       block_mode: block_mode?
     )
+  end
+
+  def build_items
+    pagy.series.map do |i|
+      with_item(
+        number: i,
+        href: pagy_url_for(pagy, i) + "##{@anchor}",
+        from_pagy: true
+      )
+    end
   end
 end
