@@ -57,7 +57,7 @@ FactoryBot.define do
 
     after(:create) do |session, evaulator|
       session.sync_location_programme_year_groups!(
-        programmes: evaulator.programmes
+        programme_types: evaulator.programmes.map(&:type)
       )
     end
 

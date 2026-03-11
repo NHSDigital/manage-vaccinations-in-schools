@@ -560,7 +560,9 @@ describe Session do
 
   describe "#sync_location_programme_year_groups!" do
     subject(:sync_location_programme_year_groups!) do
-      session.sync_location_programme_year_groups!(programmes:)
+      session.sync_location_programme_year_groups!(
+        programme_types: programmes.map(&:type)
+      )
     end
 
     let(:location) { create(:school, programmes:) }
