@@ -10,7 +10,7 @@
             (showing <b><%= @new_records_pagy.from %></b> to <b><%= @new_records_pagy.to %></b>)
           <% end %>
         <% end %>
-        <%= render AppImportReviewPaginatedRecordsSummaryComponent.new(pagy: @new_records_pagy, records: @new_records, anchor: :new_records) %>
+        <%= render AppImportReviewRecordsSummaryComponent.new(changesets: @new_records, pagy: @new_records_pagy, anchor: :new_records) %>
     <% end %>
 <% end %>
 

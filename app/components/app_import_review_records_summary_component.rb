@@ -51,10 +51,16 @@ class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
         <% end %>
       <% end %>
     <% end %>
+    <% if @pagy %>
+      <%= render AppPaginationComponent.new(pagy: @pagy, anchor: @anchor) if has_results? %>
+    <% end %>
   ERB
 
-  def initialize(changesets:)
-    @changesets = changesets.sort_by(&:row_number) || []
+  def initialize(changesets: [], pagy: nil, anchor: nil)
+    @changesets = (pagy ? changesets : changesets.sort_by(&:row_number))
+
+    @pagy = pagy
+    @anchor = anchor
   end
 
   private
@@ -78,4 +84,6 @@ class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
       changeset.birth_academic_year.to_year_group(academic_year: 2025)
     helpers.format_year_group(year_group)
   end
+
+  def has_results? = @pagy&.count&.positive?
 end
