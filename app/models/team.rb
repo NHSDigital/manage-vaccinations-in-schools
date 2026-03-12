@@ -108,6 +108,8 @@ class Team < ApplicationRecord
 
   def to_param = workgroup
 
+  def generic_clinic = generic_clinics.first
+
   def year_groups(academic_year: nil)
     return NATIONAL_REPORTING_YEAR_GROUPS if has_national_reporting_access?
 
@@ -118,10 +120,12 @@ class Team < ApplicationRecord
       .pluck_year_groups
   end
 
-  def careplus_enabled? =
+  def is_sais_team?
+    has_point_of_care_access? || has_national_reporting_access?
+  end
+
+  def careplus_enabled?
     careplus_staff_code.present? && careplus_staff_type.present? &&
       careplus_venue_code.present?
-
-  def is_sais_team? =
-    has_point_of_care_access? || has_national_reporting_access?
+  end
 end

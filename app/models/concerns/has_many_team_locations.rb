@@ -23,6 +23,4 @@ module HasManyTeamLocations
              through: :team_locations,
              source: :location
   end
-
-  def generic_clinic = generic_clinics.first
 end
