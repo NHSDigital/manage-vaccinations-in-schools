@@ -9,18 +9,18 @@ describe "/api/testing/locations" do
   let!(:community_clinic) do
     create(:community_clinic, :open, name: "Location A", team:)
   end
-  let!(:generic_clinic) do
-    Team.includes(:generic_clinics).find(team.id).generic_clinic
-  end
+  let!(:generic_clinic) { team.generic_clinic }
   let!(:gp_practice) do
     create(:gp_practice, :closed, name: "Location C", team:)
   end
+  let!(:home_educated_school) { team.home_educated_school }
   let!(:primary_school) do
     create(:school, :primary, :closed, name: "Location D")
   end
   let!(:secondary_school) do
     create(:school, :secondary, :closed, name: "Location E")
   end
+  let!(:unknown_school) { team.unknown_school }
 
   describe "GET" do
     it "includes all locations" do
@@ -35,8 +35,10 @@ describe "/api/testing/locations" do
           community_clinic,
           generic_clinic,
           gp_practice,
+          home_educated_school,
           primary_school,
-          secondary_school
+          secondary_school,
+          unknown_school
         ].map(&:as_json)
       )
     end

@@ -126,7 +126,7 @@ describe "Important notices" do
   def and_another_team_exists
     @other_team = create(:team, :with_one_nurse, programmes: [@programme])
     @other_school =
-      create(:school, :secondary, team: @other_team, urn: "888888")
+      create(:school, :secondary, team: @other_team, urn: "111333")
     @other_session =
       create(
         :session,

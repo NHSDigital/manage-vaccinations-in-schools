@@ -8,13 +8,18 @@ module HasManyTeamLocations
 
     has_many :locations, through: :team_locations
 
+    has_many :community_clinics,
+             -> { distinct.community_clinic },
+             through: :team_locations,
+             source: :location
+
     has_many :generic_clinics,
              -> { distinct.generic_clinic },
              through: :team_locations,
              source: :location
 
-    has_many :community_clinics,
-             -> { distinct.community_clinic },
+    has_many :generic_schools,
+             -> { distinct.generic_school },
              through: :team_locations,
              source: :location
 

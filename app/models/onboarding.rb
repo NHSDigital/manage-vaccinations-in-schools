@@ -241,7 +241,7 @@ class Onboarding
       @users.each { |user| user.teams << team }
 
       academic_years.each do |academic_year|
-        GenericClinicFactory.call(team:, academic_year:)
+        GenericLocationFactory.call(team:, academic_year:)
       end
 
       PatientTeamUpdater.call(team_scope: Team.where(id: team.id))

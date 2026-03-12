@@ -109,7 +109,23 @@ class Team < ApplicationRecord
   def to_param = workgroup
 
   def generic_clinic
-    @generic_clinic ||= generic_clinics.sole
+    @generic_clinic ||= generic_clinics.includes(:team_locations).sole
+  end
+
+  def home_educated_school
+    @home_educated_school ||=
+      generic_schools
+        .includes(:team_locations)
+        .where(urn: Location::URN_HOME_EDUCATED)
+        .sole
+  end
+
+  def unknown_school
+    @unknown_school ||=
+      generic_schools
+        .includes(:team_locations)
+        .where(urn: Location::URN_UNKNOWN)
+        .sole
   end
 
   def year_groups(academic_year: nil)

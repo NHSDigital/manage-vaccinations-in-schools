@@ -256,7 +256,7 @@ describe DraftSchool do
       end
 
       context "when parent_urn_and_site does not match any school" do
-        let(:attributes) { { parent_urn_and_site: "999999" } }
+        let(:attributes) { { parent_urn_and_site: "000000" } }
 
         it { expect(draft_school.source_location).to be_nil }
       end
