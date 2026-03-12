@@ -7,24 +7,29 @@ RAILS_PORT="4100"
 HEALTH_CHECK_URL="http://localhost:${RAILS_PORT}/up"
 MAVIS_TEST_REPO="${MAVIS_TEST_REPO:-"../manage-vaccinations-in-schools-testing"}"
 E2E_REDIS_URL="redis://localhost:6380/0"
+PYTEST_ARGS=("-m" "not accessibility and not reporting and not imms_api")
 
 # Argument handling
 
 function print_help() {
-  echo "Usage: bin/e2e [--main] [pytest args...] <pytest-target>"
+  echo "Usage: bin/e2e [--main] [<pytest-args> ...] <pytest-target>"
+  echo ""
+  echo "Runs end-to-end tests against a local Rails stack. Only the tests run in CI are"
+  echo "run by default."
+  echo ""
+  echo "The pytest CLI command defaults to:"
+  echo "  uv run pytest ${PYTEST_ARGS[*]} <pytest-target>"
   echo ""
   echo "Options:"
-  echo "  --main    Force sync testing repo to latest main branch. WARNING: this will discard any local changes in the testing repo."
-  echo "  -h, --help  Show this help message and exit."
+  echo "  --main         Force sync testing repo to latest main branch. WARNING: this"
+  echo "                 will discard any local changes in the testing repo."
+  echo "  -h, --help     Show this help message and exit."
+  echo "  <pytest-args>  Additional arguments to pass to pytest."
   echo ""
-  echo "Example:"
+  echo "Examples:"
   echo "  bin/e2e --main --headed tests/test_start.py::test_start_page_elements_visible"
+  echo "  bin/e2e --screenshot=only-on-failure tests/test_import_child_lists.py::test_child_list_file_upload_empty_file"
 }
-
-if [ $# -lt 1 ]; then
-  print_help
-  exit 1
-fi
 
 if ! command -v uv >/dev/null 2>&1; then
   echo "[e2e] ERROR: 'uv' is not installed or not on PATH." >&2
@@ -41,7 +46,6 @@ fi
 
 # Consume --main flag if present
 USE_MAVIS_BRANCH=false
-PYTEST_ARGS=()
 
 for arg in "$@"; do
   case "$arg" in
@@ -201,7 +205,7 @@ done
 pushd "$MAVIS_TEST_REPO" > /dev/null
 
 echo "[e2e] Running end-to-end tests:"
-echo "[e2e]   uv run pytest -m "not accessibility and not reporting and not imms_api" ${PYTEST_ARGS[*]}"
+echo "[e2e]   BASE_URL=\"http://localhost:${RAILS_PORT}\" uv run pytest ${PYTEST_ARGS[*]}"
 BASE_URL="http://localhost:${RAILS_PORT}" uv run pytest -m "not accessibility and not reporting and not imms_api" "${PYTEST_ARGS[@]}"
 PYTEST_EXIT_CODE=$?
 
