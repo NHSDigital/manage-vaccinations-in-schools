@@ -180,6 +180,7 @@ class CohortImportsController < ApplicationController
         .from_file
         .ready_for_review
         .select(&:inter_team_move?)
+    @inter_team_ids = @inter_team.map(&:id) || []
     @new_records =
       pagy(
         @cohort_import.changesets.ready_for_review.new_patient.order(
@@ -188,19 +189,23 @@ class CohortImportsController < ApplicationController
         page_param: :new_records_page
       )
     @auto_matched_records =
-      @cohort_import.changesets.ready_for_review.auto_match - @inter_team
+      @cohort_import.changesets.ready_for_review.auto_match.where.not(
+        id: @inter_team_ids
+      )
     @import_issues =
       @cohort_import
         .changesets
         .includes(:patient)
         .ready_for_review
-        .import_issue - @inter_team
+        .import_issue
+        .where.not(id: @inter_team_ids)
     @school_moves =
       @cohort_import
         .changesets
         .includes(:school, patient: :school)
         .ready_for_review
-        .with_school_moves - @inter_team
+        .with_school_moves
+        .where.not(id: @inter_team_ids)
     @skipped_school_moves =
       @cohort_import
         .changesets
