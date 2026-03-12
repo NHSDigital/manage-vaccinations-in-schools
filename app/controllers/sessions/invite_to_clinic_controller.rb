@@ -3,26 +3,24 @@
 class Sessions::InviteToClinicController < Sessions::BaseController
   before_action :authorize_session
   before_action :set_patients_to_invite
-  before_action :set_invitations_to_send
 
   def edit
   end
 
   def update
-    factory.create_patient_locations!
-
-    @patients_to_invite.each do |patient|
-      patient.notifier.send_clinic_invitation(
-        @session.programmes_for(patient:),
-        team: @session.team,
-        academic_year: @session.academic_year,
-        sent_by: current_user
-      )
-    end
+    clinic_notifcations =
+      @patients_to_invite.filter_map do |patient|
+        patient.notifier.send_clinic_invitation(
+          @session.programmes_for(patient:),
+          team: @session.team,
+          academic_year: @session.academic_year,
+          sent_by: current_user
+        )
+      end
 
     flash[
       :success
-    ] = "#{I18n.t("children", count: @invitations_to_send)} invited to the clinic"
+    ] = "#{I18n.t("children", count: clinic_notifcations.count)} invited to the clinic"
 
     redirect_to session_path(@session)
   end
@@ -34,14 +32,37 @@ class Sessions::InviteToClinicController < Sessions::BaseController
   end
 
   def set_patients_to_invite
-    @patients_to_invite = factory.patient_locations_to_create.map(&:patient)
-  end
+    programme_statuses =
+      Patient::ProgrammeStatus.statuses.keys -
+        Patient::ProgrammeStatus::NOT_ELIGIBLE_STATUSES.keys -
+        Patient::ProgrammeStatus::HAS_REFUSAL_STATUSES.keys -
+        Patient::ProgrammeStatus::VACCINATED_STATUSES.keys
 
-  def set_invitations_to_send
-    @invitations_to_send = @patients_to_invite.length
-  end
+    academic_year = @session.academic_year
 
-  def factory
-    @factory ||= ClinicPatientLocationsFactory.new(school_session: @session)
+    @patients_to_invite =
+      @session
+        .patients
+        .includes_statuses
+        .has_programme_status(
+          programme_statuses,
+          programme: current_team.programmes,
+          academic_year:
+        )
+        .select do |patient|
+          programmes = @session.programmes_for(patient:)
+
+          !patient.invited_to_clinic?(
+            programmes,
+            team: current_team,
+            academic_year:
+          ) &&
+            patient.notifier.can_send_clinic_invitation?(
+              programmes,
+              team: current_team,
+              academic_year:,
+              include_already_invited_programmes: false
+            )
+        end
   end
 end

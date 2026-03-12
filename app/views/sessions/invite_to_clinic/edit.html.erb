@@ -9,17 +9,17 @@
   <%= title %>
 <% end %>
 
-<% if @invitations_to_send == 0 %>
+<% if @patients_to_invite.empty? %>
   <p>You do not need to send any clinic invitations. The parents of any children who were not vaccinated have already received clinic invitations.</p>
-<% elsif @invitations_to_send == 1 %>
-  <p><%= @invitations_to_send %> child was not vaccinated at this school and have not already been invited to a clinic.</p>
+<% elsif @patients_to_invite.length == 1 %>
+  <p>1 child was not vaccinated at this school and has not already been invited to a clinic.</p>
   <p>You can send invitations to their parents to book an appointment to have their children vaccinated at a clinic.</p>
 <% else %>
-  <p><%= @invitations_to_send %> children were not vaccinated at this school and have not already been invited to a clinic.</p>
+  <p><%= @patients_to_invite.length %> children were not vaccinated at this school and have not already been invited to a clinic.</p>
   <p>You can send invitations to their parents to book an appointment to have their children vaccinated at a clinic.</p>
 <% end %>
 
-<% if @invitations_to_send == 0 %>
+<% if @patients_to_invite.empty? %>
   <p><%= link_to "Return to session", session_path(@session) %></p>
 <% else %>
   <%= form_with url: session_invite_to_clinic_path(@session), method: :put do |f| %>
