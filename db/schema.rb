@@ -540,7 +540,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_112719) do
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
     t.index ["systm_one_code"], name: "index_locations_on_systm_one_code", unique: true
     t.index ["urn", "site"], name: "index_locations_on_urn_and_site", unique: true
-    t.index ["urn"], name: "index_locations_on_urn", unique: true, where: "(site IS NULL)"
+    t.index ["urn"], name: "index_locations_on_urn", unique: true, where: "((type = 0) AND (site IS NULL))"
   end
 
   create_table "notes", force: :cascade do |t|

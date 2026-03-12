@@ -29,7 +29,7 @@
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
-#  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
+#  index_locations_on_urn             (urn) UNIQUE WHERE ((type = 0) AND (site IS NULL))
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
 class Location < ApplicationRecord
@@ -88,7 +88,13 @@ class Location < ApplicationRecord
        default: :unknown
 
   enum :type,
-       { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
+       {
+         school: 0,
+         generic_clinic: 1,
+         community_clinic: 2,
+         gp_practice: 3,
+         generic_school: 4
+       }
 
   scope :clinic, -> { generic_clinic.or(community_clinic) }
 
@@ -174,6 +180,15 @@ class Location < ApplicationRecord
     validates :urn, absence: true
   end
 
+  with_options if: :generic_school? do
+    validates :gias_establishment_number, absence: true
+    validates :gias_local_authority_code, absence: true
+    validates :gias_phase, inclusion: %w[not_applicable]
+    validates :ods_code, absence: true
+    validates :site, absence: true
+    validates :urn, inclusion: [URN_HOME_EDUCATED, URN_UNKNOWN]
+  end
+
   with_options if: :gp_practice? do
     validates :gias_establishment_number, absence: true
     validates :gias_local_authority_code, absence: true
@@ -186,7 +201,7 @@ class Location < ApplicationRecord
   with_options if: :school? do
     validates :gias_establishment_number, presence: true
     validates :gias_local_authority_code, presence: true
-    validates :gias_phase, presence: true
+    validates :gias_phase, inclusion: Location.gias_phases.keys
     validates :ods_code, absence: true
     validates :site, uniqueness: { scope: :urn }, allow_nil: true
     validates :urn, presence: true, uniqueness: { unless: :site }

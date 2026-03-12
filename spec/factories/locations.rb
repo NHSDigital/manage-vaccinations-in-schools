@@ -29,7 +29,7 @@
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
-#  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
+#  index_locations_on_urn             (urn) UNIQUE WHERE ((type = 0) AND (site IS NULL))
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
 
@@ -73,7 +73,7 @@ FactoryBot.define do
     end
 
     factory :generic_clinic do
-      type { :generic_clinic }
+      type { "generic_clinic" }
       name { "Community clinic" }
       alternative_name { "No known school (including home-schooled children)" }
 
@@ -99,8 +99,23 @@ FactoryBot.define do
       end
     end
 
+    factory :generic_school do
+      type { "generic_school" }
+      gias_phase { "not_applicable" }
+
+      trait :unknown do
+        name { "Unknown school" }
+        urn { Location::URN_UNKNOWN }
+      end
+
+      trait :home_educated do
+        name { "Home-educated" }
+        urn { Location::URN_HOME_EDUCATED }
+      end
+    end
+
     factory :gp_practice do
-      type { :gp_practice }
+      type { "gp_practice" }
       name { "#{Faker::University.name} Practice" }
       with_address
 
@@ -117,7 +132,7 @@ FactoryBot.define do
     end
 
     factory :school do
-      type { :school }
+      type { "school" }
       name { Faker::Educator.primary_school }
       with_address
 

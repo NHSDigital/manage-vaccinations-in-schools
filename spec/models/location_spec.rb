@@ -29,7 +29,7 @@
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
-#  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
+#  index_locations_on_urn             (urn) UNIQUE WHERE ((type = 0) AND (site IS NULL))
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
 
@@ -230,6 +230,16 @@ describe Location do
       it { should validate_absence_of(:site) }
     end
 
+    context "with a generic school" do
+      subject(:location) { build(:generic_school) }
+
+      it { should validate_absence_of(:gias_establishment_number) }
+      it { should validate_absence_of(:gias_local_authority_code) }
+      it { should validate_absence_of(:ods_code) }
+      it { should validate_inclusion_of(:urn).in_array(%w[888888 999999]) }
+      it { should validate_absence_of(:site) }
+    end
+
     context "with a GP practice" do
       subject(:location) { build(:gp_practice, ods_code: "abc") }
 
@@ -247,7 +257,6 @@ describe Location do
 
       it { should validate_presence_of(:gias_establishment_number) }
       it { should validate_presence_of(:gias_local_authority_code) }
-      it { should validate_presence_of(:gias_phase) }
       it { should validate_absence_of(:ods_code) }
       it { should_not validate_absence_of(:site) }
       it { should_not validate_presence_of(:site) }

@@ -319,7 +319,7 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
         schools,
         on_duplicate_key_update: {
           conflict_target: %i[urn],
-          index_predicate: "site IS NULL",
+          index_predicate: "type = 0 AND site IS NULL",
           columns: %i[
             address_line_1
             address_line_2
