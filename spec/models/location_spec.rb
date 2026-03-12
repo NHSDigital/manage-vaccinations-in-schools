@@ -191,6 +191,12 @@ describe Location do
     end
   end
 
+  describe "normalisations" do
+    it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
+    it { should normalize(:ods_code).from(" r1a ").to("R1A") }
+    it { should normalize(:urn).from(" 123 ").to("123") }
+  end
+
   describe "validations" do
     it { should validate_presence_of(:name) }
 
@@ -198,23 +204,17 @@ describe Location do
       subject(:location) { build(:community_clinic, team:) }
 
       let(:team) { create(:team) }
+      let(:team_ods_code) { team.organisation.ods_code }
 
-      it { should_not validate_presence_of(:gias_establishment_number) }
-      it { should_not validate_presence_of(:gias_local_authority_code) }
-      it { should_not validate_presence_of(:gias_phase) }
-
+      it { should validate_absence_of(:gias_establishment_number) }
+      it { should validate_absence_of(:gias_local_authority_code) }
+      it { should validate_absence_of(:gias_phase) }
+      it { should_not validate_absence_of(:ods_code) }
       it { should_not validate_presence_of(:ods_code) }
+      it { should validate_exclusion_of(:ods_code).in_array([team_ods_code]) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
-
-      it do
-        expect(location).to validate_exclusion_of(:ods_code).in_array(
-          [team.organisation.ods_code]
-        )
-      end
-
-      it { should_not validate_presence_of(:urn) }
-      it { should validate_uniqueness_of(:urn) }
-      it { should validate_uniqueness_of(:site).scoped_to(:urn) }
+      it { should validate_absence_of(:urn) }
+      it { should validate_absence_of(:site) }
     end
 
     context "with a generic clinic" do
@@ -222,28 +222,24 @@ describe Location do
 
       let(:team) { create(:team) }
 
-      it { should_not validate_presence_of(:gias_establishment_number) }
-      it { should_not validate_presence_of(:gias_local_authority_code) }
-      it { should_not validate_presence_of(:gias_phase) }
-
+      it { should validate_absence_of(:gias_establishment_number) }
+      it { should validate_absence_of(:gias_local_authority_code) }
+      it { should validate_absence_of(:gias_phase) }
       it { should validate_absence_of(:ods_code) }
-
-      it { should_not validate_presence_of(:urn) }
-      it { should validate_uniqueness_of(:urn) }
+      it { should validate_absence_of(:urn) }
+      it { should validate_absence_of(:site) }
     end
 
     context "with a GP practice" do
       subject(:location) { build(:gp_practice, ods_code: "abc") }
 
-      it { should_not validate_presence_of(:gias_establishment_number) }
-      it { should_not validate_presence_of(:gias_local_authority_code) }
-      it { should_not validate_presence_of(:gias_phase) }
-
+      it { should validate_absence_of(:gias_establishment_number) }
+      it { should validate_absence_of(:gias_local_authority_code) }
+      it { should validate_absence_of(:gias_phase) }
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
-
-      it { should_not validate_presence_of(:urn) }
-      it { should validate_uniqueness_of(:urn) }
+      it { should validate_absence_of(:urn) }
+      it { should validate_absence_of(:site) }
     end
 
     context "with a school" do
@@ -252,18 +248,13 @@ describe Location do
       it { should validate_presence_of(:gias_establishment_number) }
       it { should validate_presence_of(:gias_local_authority_code) }
       it { should validate_presence_of(:gias_phase) }
-
-      it { should_not validate_presence_of(:ods_code) }
-      it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
-
+      it { should validate_absence_of(:ods_code) }
+      it { should_not validate_absence_of(:site) }
+      it { should_not validate_presence_of(:site) }
       it { should validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
     end
   end
-
-  it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
-  it { should normalize(:ods_code).from(" r1a ").to("R1A") }
-  it { should normalize(:urn).from(" 123 ").to("123") }
 
   describe "#to_param" do
     subject { location.to_param }

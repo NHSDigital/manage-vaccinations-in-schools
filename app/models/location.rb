@@ -150,33 +150,47 @@ class Location < ApplicationRecord
 
   scope :order_by_name, -> { order(:name) }
 
+  normalizes :site, with: -> { it.presence&.strip }
+  normalizes :urn, with: -> { it.presence&.strip }
+
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
 
-  validates :urn, uniqueness: true, allow_nil: true, if: -> { site.nil? }
-  validates :site, uniqueness: { scope: :urn }, allow_nil: true
-
   with_options if: :community_clinic? do
+    validates :gias_establishment_number, absence: true
+    validates :gias_local_authority_code, absence: true
+    validates :gias_phase, absence: true
     validates :ods_code, exclusion: { in: :organisation_ods_codes }
+    validates :site, absence: true
+    validates :urn, absence: true
   end
 
   with_options if: :generic_clinic? do
+    validates :gias_establishment_number, absence: true
+    validates :gias_local_authority_code, absence: true
+    validates :gias_phase, absence: true
     validates :ods_code, absence: true
+    validates :site, absence: true
+    validates :urn, absence: true
   end
 
   with_options if: :gp_practice? do
+    validates :gias_establishment_number, absence: true
+    validates :gias_local_authority_code, absence: true
+    validates :gias_phase, absence: true
     validates :ods_code, presence: true
+    validates :site, absence: true
+    validates :urn, absence: true
   end
 
   with_options if: :school? do
     validates :gias_establishment_number, presence: true
     validates :gias_local_authority_code, presence: true
     validates :gias_phase, presence: true
-    validates :urn, presence: true
+    validates :ods_code, absence: true
+    validates :site, uniqueness: { scope: :urn }, allow_nil: true
+    validates :urn, presence: true, uniqueness: { unless: :site }
   end
-
-  normalizes :site, with: -> { it.presence&.strip }
-  normalizes :urn, with: -> { it.presence&.strip }
 
   delegate :fhir_reference, to: :fhir_mapper
 
