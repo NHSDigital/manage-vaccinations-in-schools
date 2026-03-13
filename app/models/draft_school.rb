@@ -13,6 +13,7 @@ class DraftSchool
   attribute :address_line_2, :string
   attribute :address_town, :string
   attribute :address_postcode, :string
+  attribute :selected_year_groups, default: []
   attribute :context, :string
 
   attr_reader :current_team
@@ -50,6 +51,7 @@ class DraftSchool
       (:details if add_site_context? || editing?),
       (:urn if add_school_context?),
       (:confirm_urn if add_school_context?),
+      :year_groups,
       :confirm
     ].compact
   end
@@ -89,6 +91,10 @@ class DraftSchool
     validates :address_line_1, presence: true
     validates :address_town, presence: true
     validates :address_postcode, postcode: true
+  end
+
+  on_wizard_step :year_groups, exact: true do
+    validates :selected_year_groups, presence: true
   end
 
   # Returns the source location based on context:
@@ -160,9 +166,17 @@ class DraftSchool
     existing_sites.max_by { [it.length, it] }.next
   end
 
-  def year_groups
+  def existing_year_groups
     source_location&.year_groups.presence ||
       source_location&.gias_year_groups || []
+  end
+
+  def year_groups
+    selected_year_groups.presence || existing_year_groups
+  end
+
+  def year_groups=(values)
+    self.selected_year_groups = values&.compact_blank&.map(&:to_i) || []
   end
 
   def programmes

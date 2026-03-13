@@ -3,7 +3,11 @@
 <% end %>
 
 <% if @draft_school.editing? %>
-  <%= h1 "Edit school site" %>
+  <% if @draft_school.source_location.site.present? %>
+    <%= h1 "Edit school site" %>
+  <% else %>
+    <%= h1 "Edit school" %>
+  <% end %>
 <% else %>
   <%= h1 "Check and confirm" %>
 <% end %>
@@ -16,10 +20,15 @@
   <% end %>
 
   <% change_links = if @draft_school.editing?
-         {
-           name: { link: wizard_path(:details) },
-           address: { link: wizard_path(:details) },
-         }
+         if @draft_school.source_location.site.present?
+           {
+             name: { link: wizard_path(:details) },
+             address: { link: wizard_path(:details) },
+             year_groups: { link: wizard_path("year-groups") },
+           }
+         else
+           { year_groups: { link: wizard_path("year-groups") } }
+         end
        elsif @draft_school.add_site_context?
          { urn: { link: wizard_path(:school), text: "Change parent school" } }
        else

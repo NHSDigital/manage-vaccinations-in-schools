@@ -88,6 +88,8 @@ en:
               blank: Enter a name
             parent_urn_and_site:
               blank: Choose a school
+            selected_year_groups:
+              blank: Choose which year groups are in this school
             urn:
               blank: Enter a school URN
         draft_session:

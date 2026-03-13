@@ -122,6 +122,35 @@ describe DraftSchool do
       end
     end
 
+    context "on the year_groups step" do
+      context "without any year groups selected" do
+        let(:attributes) do
+          valid_attributes.merge(
+            wizard_step: :year_groups,
+            selected_year_groups: []
+          )
+        end
+
+        it "is invalid" do
+          expect(draft_school).not_to be_valid(:update)
+          expect(draft_school.errors[:selected_year_groups]).to include(
+            "Choose which year groups are in this school"
+          )
+        end
+      end
+
+      context "with year groups selected" do
+        let(:attributes) do
+          valid_attributes.merge(
+            wizard_step: :year_groups,
+            selected_year_groups: [8, 9]
+          )
+        end
+
+        it { should be_valid(:update) }
+      end
+    end
+
     context "on the confirm step" do
       let(:attributes) { valid_attributes.merge(wizard_step: :confirm) }
 
@@ -134,7 +163,9 @@ describe DraftSchool do
       let(:attributes) { { context: "add_site" } }
 
       it "returns all steps including school selection" do
-        expect(draft_school.wizard_steps).to eq(%i[school details confirm])
+        expect(draft_school.wizard_steps).to eq(
+          %i[school details year_groups confirm]
+        )
       end
     end
 
@@ -142,7 +173,9 @@ describe DraftSchool do
       let(:attributes) { { context: "add_school" } }
 
       it "returns URN flow steps" do
-        expect(draft_school.wizard_steps).to eq(%i[urn confirm_urn confirm])
+        expect(draft_school.wizard_steps).to eq(
+          %i[urn confirm_urn year_groups confirm]
+        )
       end
     end
 
@@ -150,7 +183,15 @@ describe DraftSchool do
       let(:attributes) { { editing_id: school.id, context: "add_site" } }
 
       it "skips the school selection step" do
-        expect(draft_school.wizard_steps).to eq(%i[details confirm])
+        expect(draft_school.wizard_steps).to eq(%i[details year_groups confirm])
+      end
+    end
+
+    context "when editing an existing school (no site)" do
+      let(:attributes) { { editing_id: school.id } }
+
+      it "includes only details, year_groups and confirm" do
+        expect(draft_school.wizard_steps).to eq(%i[details year_groups confirm])
       end
     end
   end
@@ -359,6 +400,7 @@ describe DraftSchool do
           "editing_id" => nil,
           "name" => "New Site Name",
           "parent_urn_and_site" => school.urn_and_site,
+          "selected_year_groups" => [],
           "urn" => nil
         }
       )
@@ -378,6 +420,7 @@ describe DraftSchool do
           "editing_id" => nil,
           "name" => nil,
           "parent_urn_and_site" => nil,
+          "selected_year_groups" => nil,
           "urn" => nil
         }
       )
@@ -491,6 +534,14 @@ describe DraftSchool do
 
       it "returns the location's year groups" do
         expect(draft_school.year_groups).to eq(existing_site.year_groups)
+      end
+    end
+
+    context "when selected_year_groups is set" do
+      let(:attributes) { valid_attributes.merge(selected_year_groups: [8, 9]) }
+
+      it "returns the explicitly selected year groups over the existing ones" do
+        expect(draft_school.year_groups).to eq([8, 9])
       end
     end
   end

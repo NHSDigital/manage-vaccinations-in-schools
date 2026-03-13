@@ -1,0 +1,15 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<% legend = "Year groups " %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @draft_school, url: wizard_path, method: :put do |f| %>
+  <%= f.mavis_error_summary %>
+  <%= f.govuk_collection_check_boxes :year_groups, @year_groups, :id, :name,
+                                     legend: { text: legend, size: "l", tag: "h1" },
+                                     caption: { text: @draft_school.name || @draft_school.source_location&.name, size: "l" } %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

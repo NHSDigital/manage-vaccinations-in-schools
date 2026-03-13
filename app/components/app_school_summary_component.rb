@@ -106,7 +106,7 @@ class AppSchoolSummaryComponent < ViewComponent::Base
   end
 
   def year_groups_row
-    {
+    row = {
       key: {
         text: "Year groups"
       },
@@ -114,5 +114,17 @@ class AppSchoolSummaryComponent < ViewComponent::Base
         text: helpers.format_year_groups(schoolable.year_groups)
       }
     }
+
+    if change_links[:year_groups]
+      row[:actions] = [
+        {
+          text: change_links[:year_groups][:text] || "Change",
+          href: change_links[:year_groups][:link],
+          visually_hidden_text: "year groups"
+        }
+      ]
+    end
+
+    row
   end
 end

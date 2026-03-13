@@ -52,6 +52,9 @@ describe AppSchoolSummaryComponent do
         address: {
           link: "/address",
           text: "Change address"
+        },
+        year_groups: {
+          link: "/year-groups"
         }
       }
     end
@@ -59,6 +62,7 @@ describe AppSchoolSummaryComponent do
 
     it { should have_link("Change name", href: "/name") }
     it { should have_link("Change address", href: "/address") }
+    it { should have_link("Change year groups", href: "/year-groups") }
   end
 
   context "when schoolable is a DraftSchool (adding a new site)" do

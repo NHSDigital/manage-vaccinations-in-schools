@@ -50,11 +50,17 @@ describe "Manage teams" do
 
     when_i_confirm_the_school
     and_i_continue
+    then_i_see_the_year_groups_screen
+    and_year_groups_are_pre_selected
+
+    when_i_add_more_year_groups
+    and_i_continue
     then_i_see_the_check_and_confirm_screen_for_school
 
     when_i_confirm_add_school
     then_i_see_the_school_confirmation_banner
     and_the_school_is_added_to_my_team
+    and_the_school_has_the_correct_year_groups
   end
 
   scenario "Adding a school site" do
@@ -74,11 +80,17 @@ describe "Manage teams" do
 
     when_i_fill_in_the_school_site_details
     and_i_continue
+    then_i_see_the_year_groups_screen
+    and_year_groups_are_pre_selected
+
+    when_i_add_more_year_groups
+    and_i_continue
     then_i_see_the_check_and_confirm_screen
 
     when_i_confirm
     then_i_see_the_school_site_confirmation_banner
     and_a_school_site_is_created
+    and_the_school_site_has_the_correct_year_groups
 
     when_i_go_back
     then_i_am_redirected_to_the_schools_list
@@ -91,7 +103,7 @@ describe "Manage teams" do
     when_i_click_on_team_settings
     when_i_click_on_schools
     then_i_see_the_team_schools
-    and_i_can_only_edit_school_sites
+    and_all_schools_have_edit_links
 
     when_i_click_on_edit_a_school_site
     then_i_see_the_school_summary_with_edit_links
@@ -109,9 +121,34 @@ describe "Manage teams" do
     and_i_continue
     then_i_see_the_address_is_updated
 
+    when_i_click_on_change_year_groups
+    and_i_fill_in_the_new_year_groups
+    and_i_continue
+    then_i_see_the_year_groups_are_updated
+
     when_i_click_save_changes
     then_i_see_the_team_schools
     and_the_site_details_are_updated
+  end
+
+  scenario "Editing a school" do
+    given_my_team_exists
+
+    when_i_click_on_team_settings
+    when_i_click_on_schools
+    then_i_see_the_team_schools
+
+    when_i_click_on_edit_a_school
+    then_i_see_the_school_summary_with_only_year_groups_link
+
+    when_i_click_on_change_year_groups
+    and_i_fill_in_the_new_year_groups
+    and_i_continue
+    then_i_see_the_year_groups_are_updated
+
+    when_i_click_save_changes
+    then_i_see_the_team_schools
+    and_the_school_year_groups_are_updated
   end
 
   def given_my_team_exists
@@ -168,9 +205,8 @@ describe "Manage teams" do
   alias_method :then_i_am_redirected_to_the_schools_list,
                :then_i_see_the_team_schools
 
-  def and_i_can_only_edit_school_sites
-    expect(page).not_to have_link("Edit", href: edit_team_school_path("34567"))
-
+  def and_all_schools_have_edit_links
+    expect(page).to have_link("Edit", href: edit_team_school_path("34567"))
     expect(page).to have_link("Edit", href: edit_team_school_path("12345A"))
     expect(page).to have_link("Edit", href: edit_team_school_path("12345B"))
   end
@@ -179,10 +215,22 @@ describe "Manage teams" do
     within("tr", text: "Site B") { click_on "Edit" }
   end
 
+  def when_i_click_on_edit_a_school
+    within("tr", text: @school.name) { click_on "Edit" }
+  end
+
   def then_i_see_the_school_summary_with_edit_links
     expect(page).to have_content("Site B")
     expect(page).to have_link("Change", text: /name/i)
     expect(page).to have_link("Change", text: /address/i)
+    expect(page).to have_link("Change", text: /year groups/i)
+  end
+
+  def then_i_see_the_school_summary_with_only_year_groups_link
+    expect(page).to have_content(@school.name)
+    expect(page).to have_link("Change", text: /year groups/i)
+    expect(page).not_to have_link("Change", text: /name/i)
+    expect(page).not_to have_link("Change", text: /address/i)
   end
 
   def when_i_click_on_change_name
@@ -223,6 +271,18 @@ describe "Manage teams" do
     expect(page).to have_content("SW1A 2AA")
   end
 
+  def when_i_click_on_change_year_groups
+    click_on "Change year groups"
+  end
+
+  def and_i_fill_in_the_new_year_groups
+    check "Year 12"
+  end
+
+  def then_i_see_the_year_groups_are_updated
+    expect(page).to have_content("years 1 to 12")
+  end
+
   def when_i_click_continue
     click_on "Continue"
   end
@@ -238,6 +298,12 @@ describe "Manage teams" do
     expect(@site_b.address_line_2).to eq("Floor 2")
     expect(@site_b.address_town).to eq("New Town")
     expect(@site_b.address_postcode).to eq("SW1A 2AA")
+    expect(@site_b.location_year_groups.pluck(:value)).to include(12)
+  end
+
+  def and_the_school_year_groups_are_updated
+    @school.reload
+    expect(@school.location_year_groups.pluck(:value)).to include(12)
   end
 
   def when_i_click_on_sessions
@@ -288,9 +354,23 @@ describe "Manage teams" do
     fill_in "Postcode", with: "SW1A 1AA"
   end
 
+  def then_i_see_the_year_groups_screen
+    expect(page).to have_content("Year groups")
+  end
+
+  def and_year_groups_are_pre_selected
+    expect(find_field("Year 8")).to be_checked
+  end
+
+  def when_i_add_more_year_groups
+    check "Year 12"
+  end
+
   def then_i_see_the_check_and_confirm_screen
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("12345B")
+    expect(page).to have_content("Year groups")
+    expect(page).to have_content("years 1 to 12")
   end
 
   def when_i_confirm
@@ -313,6 +393,11 @@ describe "Manage teams" do
     expect(site.urn).to eq("12345")
     expect(site.site).to eq("B")
     expect(site.teams).to include(@team)
+  end
+
+  def and_the_school_site_has_the_correct_year_groups
+    site = Location.school.last
+    expect(site.location_year_groups.pluck(:value)).to include(12)
   end
 
   def when_i_go_back
@@ -387,6 +472,8 @@ describe "Manage teams" do
     expect(page).to have_content("School details")
     expect(page).to have_content(@available_school.name)
     expect(page).to have_content(@available_school.urn)
+    expect(page).to have_content("Year groups")
+    expect(page).to have_content("years 1 to 12")
   end
 
   def when_i_confirm_add_school
@@ -402,5 +489,10 @@ describe "Manage teams" do
   def and_the_school_is_added_to_my_team
     @available_school.reload
     expect(@available_school.teams).to include(@team)
+  end
+
+  def and_the_school_has_the_correct_year_groups
+    @available_school.reload
+    expect(@available_school.location_year_groups.pluck(:value)).to include(12)
   end
 end

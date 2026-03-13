@@ -31,7 +31,9 @@ class Location::YearGroup < ApplicationRecord
            foreign_key: :location_year_group_id,
            dependent: :destroy
 
-  enum :source, { gias: 0, generic_clinic_factory: 1, cli: 2 }, validate: true
+  enum :source,
+       { gias: 0, generic_clinic_factory: 1, cli: 2, manual: 3 },
+       validate: true
 
   CLINIC_VALUE_RANGE = (-3..15)
 

@@ -12,6 +12,7 @@ class DraftSchoolsController < ApplicationController
   before_action :set_name, if: -> { current_step == :confirm_urn }
   before_action :set_address,
                 if: -> { %i[details confirm_urn].include?(current_step) }
+  before_action :set_year_groups, if: -> { current_step == :year_groups }
   before_action :set_back_link_path
 
   skip_after_action :verify_policy_scoped
@@ -90,6 +91,13 @@ class DraftSchoolsController < ApplicationController
     @draft_school.name ||= @draft_school.source_location&.name
   end
 
+  def set_year_groups
+    @year_groups =
+      (-3..15).map do |n|
+        OpenStruct.new(id: n, name: helpers.format_year_group(n))
+      end
+  end
+
   def handle_confirm_urn
     jump_to("urn") if @draft_school.confirm_school == "no"
   end
@@ -127,6 +135,19 @@ class DraftSchoolsController < ApplicationController
 
       source_school.save!
 
+      if @draft_school.selected_year_groups.present?
+        academic_year = AcademicYear.pending
+        source_school.import_year_groups!(
+          @draft_school.year_groups,
+          academic_year:,
+          source: "manual"
+        )
+        source_school.import_default_programme_year_groups!(
+          current_team.programmes,
+          academic_year:
+        )
+      end
+
       flash[:success] = "#{source_school.name} has been updated."
     elsif @draft_school.add_school_context?
       # Add all sites of the school to the team
@@ -136,7 +157,11 @@ class DraftSchoolsController < ApplicationController
 
         schools.each do |school|
           school.attach_to_team!(current_team, academic_year:)
-          school.import_year_groups_from_gias!(academic_year:)
+          source_school.import_year_groups!(
+            @draft_school.year_groups,
+            academic_year:,
+            source: "manual"
+          )
           school.import_default_programme_year_groups!(
             current_team.programmes,
             academic_year:
@@ -170,7 +195,11 @@ class DraftSchoolsController < ApplicationController
           .teams_for_academic_year(academic_year)
           .each do |team|
             @school.attach_to_team!(team, academic_year:)
-            @school.import_year_groups_from_gias!(academic_year:)
+            @school.import_year_groups!(
+              @draft_school.year_groups,
+              academic_year:,
+              source: "manual"
+            )
             @school.import_default_programme_year_groups!(
               team.programmes,
               academic_year:
@@ -202,6 +231,7 @@ class DraftSchoolsController < ApplicationController
         address_town
         address_postcode
       ],
+      year_groups: [year_groups: []],
       confirm: []
     }.fetch(current_step)
 
