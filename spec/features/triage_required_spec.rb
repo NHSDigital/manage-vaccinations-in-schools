@@ -377,7 +377,12 @@ describe "Triage" do
     current_patient =
       @patient_triage_needed || @patient_injection_only || @patient_nasal_only
     current_patient.parents.each do |parent|
-      expect_email_to parent.email, :triage_vaccination_wont_happen, :any
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: parent.email,
+          template: :triage_vaccination_wont_happen
+        ).with_content_including("cannot have the", "Please get in touch")
+      )
     end
   end
 
