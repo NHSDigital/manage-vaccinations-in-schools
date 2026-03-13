@@ -25,6 +25,7 @@ class SchoolMovePolicy < ApplicationPolicy
         .where(patient_in_team)
         .where(school: nil)
         .or(scope.where(school: team.schools))
+        .or(scope.where(school: team.generic_schools))
         .or(scope.where(team:))
     end
   end

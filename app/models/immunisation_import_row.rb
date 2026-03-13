@@ -92,9 +92,6 @@ class ImmunisationImportRow
     "already had elsewhere" => :already_had
   }.freeze
 
-  SCHOOL_URN_HOME_EDUCATED = "999999"
-  SCHOOL_URN_UNKNOWN = "888888"
-
   attr_reader :team, :type, :patient
 
   def initialize(data:, team:, type:)
@@ -349,7 +346,7 @@ class ImmunisationImportRow
     return unless location.nil?
 
     if is_school_setting? || (is_unknown_setting? && clinic_name.blank?)
-      school&.name || school_name&.to_s || "Unknown"
+      school&.school? ? school.name : school_name&.to_s || "Unknown"
     else
       clinic&.name || clinic_name&.to_s || "Unknown"
     end
@@ -375,8 +372,11 @@ class ImmunisationImportRow
 
   def school
     @school ||=
-      if school_urn.present? && school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
-           school_urn.to_s != SCHOOL_URN_UNKNOWN
+      if school_urn.to_s == Location::URN_HOME_EDUCATED
+        team.home_educated_school
+      elsif school_urn.to_s == Location::URN_UNKNOWN
+        team.unknown_school
+      elsif school_urn.present?
         Location.school.find_by_urn_and_site(school_urn.to_s) ||
           Location.school.find_by(systm_one_code: school_urn.to_s)
       end
@@ -1120,7 +1120,7 @@ class ImmunisationImportRow
   def validate_school_name
     return if national_reporting?
 
-    school_name_required = school_urn&.to_s == SCHOOL_URN_UNKNOWN
+    school_name_required = school_urn&.to_s == Location::URN_UNKNOWN
 
     if school_name.present?
       if school_name.to_s.length > MAX_FIELD_LENGTH
@@ -1155,8 +1155,9 @@ class ImmunisationImportRow
     end
 
     school_urn_acceptable =
-      school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]) ||
-        Location.school.where_urn_and_site(school_urn.to_s).exists? ||
+      school_urn.to_s.in?(
+        [Location::URN_HOME_EDUCATED, Location::URN_UNKNOWN]
+      ) || Location.school.where_urn_and_site(school_urn.to_s).exists? ||
         Location.school.exists?(systm_one_code: school_urn.to_s)
 
     unless school_urn_acceptable

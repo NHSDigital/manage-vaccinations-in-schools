@@ -42,7 +42,6 @@ describe PatientChangeset do
 
   let(:team) { create(:team) }
   let(:school) { create(:school, urn: "123456", team:) }
-  let(:home_educated) { false }
 
   let(:valid_data) do
     {
@@ -66,8 +65,7 @@ describe PatientChangeset do
       parent_1_import_attributes:,
       parent_2_import_attributes:,
       academic_year: AcademicYear.current,
-      school_move_source: "import",
-      home_educated:
+      school_move_source: "import"
     )
   end
 
@@ -164,7 +162,6 @@ describe PatientChangeset do
 
     context "when new location is a known school" do
       let(:school) { create(:school) }
-      let(:home_educated) { false }
 
       before do
         create(:patient, nhs_number: "9990000026", school: school_in_other_team)
@@ -174,8 +171,7 @@ describe PatientChangeset do
     end
 
     context "when new location is home educated" do
-      let(:school) { nil }
-      let(:home_educated) { true }
+      let(:school) { team.home_educated_school }
 
       before do
         create(:patient, nhs_number: "9990000026", school: school_in_other_team)
@@ -185,8 +181,7 @@ describe PatientChangeset do
     end
 
     context "when new location is unknown school" do
-      let(:school) { nil }
-      let(:home_educated) { false }
+      let(:school) { team.unknown_school }
 
       context "patient is in a school in another team" do
         before do
@@ -205,8 +200,7 @@ describe PatientChangeset do
           create(
             :patient,
             nhs_number: "9990000026",
-            school: nil,
-            home_educated: false
+            school: another_team.unknown_school
           )
         end
 
@@ -218,8 +212,7 @@ describe PatientChangeset do
           create(
             :patient,
             nhs_number: "9990000026",
-            school: nil,
-            home_educated: true
+            school: another_team.home_educated_school
           )
         end
 

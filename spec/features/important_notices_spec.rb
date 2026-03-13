@@ -218,6 +218,8 @@ describe "Important notices" do
     wait_for_import_to_complete(CohortImport)
 
     @patient = Patient.find_by(nhs_number: "9990000018")
+
+    @other_patient = Patient.find_by(given_name: "Mark", family_name: "Doe")
   end
 
   alias_method :when_i_import_the_patient_back_into_team_one,

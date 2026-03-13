@@ -10,7 +10,10 @@ class PatientsAgedOutOfSchoolJob
 
     academic_year = AcademicYear.pending
 
-    school = Location.school.includes(:location_year_groups).find(school_id)
+    school =
+      Location.school.includes(:location_year_groups).find_by(id: school_id)
+
+    return if school.nil?
 
     # Year groups not yet set up for the next academic year.
     if school.location_year_groups.none? { it.academic_year == academic_year }

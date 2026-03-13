@@ -10,13 +10,7 @@ class ClassImportRow < PatientImportRow
 
   attr_reader :school
 
-  def school_move_source
-    :class_list_import
-  end
-
-  def home_educated
-    nil # false is used when school is unknown
-  end
+  def school_move_source = :class_list_import
 
   private
 

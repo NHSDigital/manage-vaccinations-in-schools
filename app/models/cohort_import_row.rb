@@ -3,41 +3,27 @@
 class CohortImportRow < PatientImportRow
   validate :validate_address_postcode, :validate_school_urn
 
-  SCHOOL_URN_HOME_EDUCATED = "999999"
-  SCHOOL_URN_UNKNOWN = "888888"
-
   def initialize(data:, team:, academic_year:)
     super(data:, team:, academic_year:, year_groups: team.year_groups)
   end
 
   def school_urn = @data[:child_school_urn]
 
-  def school_move_source
-    :cohort_import
-  end
+  def school_move_source = :cohort_import
 
   def school
     @school ||=
-      if (urn = school_urn&.to_s).present? &&
-           ![SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(urn)
+      if (urn = school_urn&.to_s).present?
         schools.find_by_urn_and_site(urn) ||
           schools.find_by(systm_one_code: urn)
       end
-  end
-
-  def home_educated
-    if school_urn&.to_s == SCHOOL_URN_HOME_EDUCATED
-      true
-    elsif school_urn&.to_s == SCHOOL_URN_UNKNOWN
-      false
-    end
   end
 
   private
 
   def schools
     Location
-      .school
+      .where(type: %w[school generic_school])
       .joins(:team_locations)
       .where(team_locations: { team:, academic_year: })
   end
@@ -79,9 +65,7 @@ class CohortImportRow < PatientImportRow
               )
           } instead."
       )
-    elsif !school_urn.to_s.in?(
-          [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
-        ) && !schools.where_urn_and_site(school_urn.to_s).exists? &&
+    elsif !schools.where_urn_and_site(school_urn.to_s).exists? &&
           !schools.exists?(systm_one_code: school_urn.to_s)
       errors.add(
         school_urn.header,
