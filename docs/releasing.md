@@ -33,16 +33,22 @@ given:
    they haven't had a specific branch deployed to them (check [recent
    deploys](https://github.com/nhsuk/manage-vaccinations-in-schools/actions/workflows/deploy.yml)).
    This can be used as a test that the tag deploys as expected.
-7. If there are migrations that need testing (e.g. a data migration or a
-   long-running migration), deploy this release to `data-replication` and test
-   the performance of the migration(s) there.
+7. If there are migrations that need testing (e.g. a db or data migrations),
+   deploy this release to `data-replication` and test the performance of the
+   migration(s) there.
 8. Perform pre-release tasks.
-9. Run the `Deploy` workflow to deploy to production.
-10. Smoke test: login to the production service to ensure it looks normal.
-11. Perform post-release tasks.
-12. Fast-forward or reset `release` to the release tag.
-13. Update the service management channel on NHSE Slack.
-14. Update the topic in the Mavis tech channel to reflect the new version.
+9. Run the [Deploy
+   workflow](https://github.com/NHSDigital/manage-vaccinations-in-schools/actions/workflows/deploy.yml)
+   to deploy to production.
+10. Run the [Deploy application
+    workflow](https://github.com/NHSDigital/manage-vaccinations-in-schools-reporting/actions/workflows/deploy-application.yml)
+    for the reporting app. You may need to ask other team members for the
+    correct tag.
+11. Smoke test: login to the production service to ensure it looks normal.
+12. Perform post-release tasks.
+13. Fast-forward or reset `release` to the release tag.
+14. Update the service management channel on NHSE Slack.
+15. Update the topic in the Mavis tech channel to reflect the new version.
 
 Additional notes below.
 
