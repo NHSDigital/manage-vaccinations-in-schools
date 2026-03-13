@@ -481,9 +481,12 @@ describe "Triage" do
 
   def then_the_mmr_second_dose_will_happen_email_is_sent
     @patient_triage_needed.parents.each do |parent|
-      expect_email_to parent.email,
-                      :triage_vaccination_will_happen_mmr_second_dose,
-                      :any
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: parent.email,
+          template: :triage_vaccination_will_happen_mmr_second_dose
+        ).with_content_including("We recently gave", "2nd dose")
+      )
     end
   end
 end
