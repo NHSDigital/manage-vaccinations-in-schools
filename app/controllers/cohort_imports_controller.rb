@@ -189,8 +189,14 @@ class CohortImportsController < ApplicationController
         page_param: :new_records_page
       )
     @auto_matched_records =
-      @cohort_import.changesets.ready_for_review.auto_match.where.not(
-        id: @inter_team_ids
+      pagy(
+        @cohort_import
+          .changesets
+          .ready_for_review
+          .auto_match
+          .where.not(id: @inter_team_ids)
+          .order(:row_number),
+        page_param: :auto_matched_records_page
       )
     @import_issues =
       @cohort_import

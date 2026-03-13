@@ -8,7 +8,7 @@ describe AppImportReviewComponent do
       import:,
       inter_team:,
       new_records: [new_records_pagy, new_records],
-      auto_matched_records:,
+      auto_matched_records: [auto_matched_records_pagy, auto_matched_records],
       import_issues:,
       school_moves:,
       skipped_school_moves:,
@@ -39,6 +39,9 @@ describe AppImportReviewComponent do
     instance_double(Pagy, count: 0, limit: 50).as_null_object
   end
   let(:auto_matched_records) { [] }
+  let(:auto_matched_records_pagy) do
+    instance_double(Pagy, count: 0, limit: 50).as_null_object
+  end
   let(:import_issues) { [] }
   let(:inter_team) { [] }
   let(:school_moves) { [] }
@@ -96,6 +99,9 @@ describe AppImportReviewComponent do
   end
 
   describe "with auto-matched records" do
+    let(:auto_matched_records_pagy) do
+      instance_double(Pagy, count: 3, limit: 50).as_null_object
+    end
     let(:auto_matched_records) do
       [
         create(
@@ -107,6 +113,10 @@ describe AppImportReviewComponent do
         create(:patient_changeset, :auto_match, import:),
         create(:patient_changeset, :auto_match, import:)
       ]
+    end
+
+    before do
+      allow(AppPaginationComponent).to receive(:new) { double.as_null_object }
     end
 
     include_examples "section with details",
