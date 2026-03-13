@@ -149,6 +149,51 @@ describe DraftSchool do
 
         it { should be_valid(:update) }
       end
+
+      context "when editing and removing existing year groups" do
+        let(:existing_site) do
+          create(
+            :school,
+            urn: school.urn,
+            site: "A",
+            gias_year_groups: [8, 9, 10]
+          )
+        end
+        let(:attributes) do
+          {
+            editing_id: existing_site.id,
+            wizard_step: :year_groups,
+            selected_year_groups: [8]
+          }
+        end
+
+        it "is invalid" do
+          expect(draft_school).not_to be_valid(:update)
+          expect(draft_school.errors[:selected_year_groups]).to include(
+            "You cannot remove a year group from the school once it has been added"
+          )
+        end
+      end
+
+      context "when editing and keeping all existing year groups" do
+        let(:existing_site) do
+          create(
+            :school,
+            urn: school.urn,
+            site: "A",
+            gias_year_groups: [8, 9, 10]
+          )
+        end
+        let(:attributes) do
+          {
+            editing_id: existing_site.id,
+            wizard_step: :year_groups,
+            selected_year_groups: [8, 9, 10, 11]
+          }
+        end
+
+        it { should be_valid(:update) }
+      end
     end
 
     context "on the confirm step" do

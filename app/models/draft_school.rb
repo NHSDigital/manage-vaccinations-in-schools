@@ -95,6 +95,7 @@ class DraftSchool
 
   on_wizard_step :year_groups, exact: true do
     validates :selected_year_groups, presence: true
+    validate :cannot_remove_year_groups
   end
 
   # Returns the source location based on context:
@@ -199,6 +200,15 @@ class DraftSchool
   end
 
   private
+
+  def cannot_remove_year_groups
+    return unless editing?
+    return if selected_year_groups.blank?
+
+    if (source_location.year_groups - selected_year_groups).present?
+      errors.add(:selected_year_groups, :inclusion)
+    end
+  end
 
   def school_exists_and_available
     return if urn.blank?

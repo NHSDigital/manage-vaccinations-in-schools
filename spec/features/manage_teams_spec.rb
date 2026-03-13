@@ -122,6 +122,11 @@ describe "Manage teams" do
     then_i_see_the_address_is_updated
 
     when_i_click_on_change_year_groups
+    when_i_try_to_remove_a_year_group
+    and_i_continue
+    then_i_see_a_year_groups_removal_error
+
+    and_i_restore_the_year_group
     and_i_fill_in_the_new_year_groups
     and_i_continue
     then_i_see_the_year_groups_are_updated
@@ -142,6 +147,11 @@ describe "Manage teams" do
     then_i_see_the_school_summary_with_only_year_groups_link
 
     when_i_click_on_change_year_groups
+    when_i_try_to_remove_a_year_group
+    and_i_continue
+    then_i_see_a_year_groups_removal_error
+
+    and_i_restore_the_year_group
     and_i_fill_in_the_new_year_groups
     and_i_continue
     then_i_see_the_year_groups_are_updated
@@ -277,6 +287,20 @@ describe "Manage teams" do
 
   def and_i_fill_in_the_new_year_groups
     check "Year 12"
+  end
+
+  def when_i_try_to_remove_a_year_group
+    uncheck "Year 8"
+  end
+
+  def then_i_see_a_year_groups_removal_error
+    expect(page).to have_content(
+      "You cannot remove a year group from the school once it has been added"
+    )
+  end
+
+  def and_i_restore_the_year_group
+    check "Year 8"
   end
 
   def then_i_see_the_year_groups_are_updated

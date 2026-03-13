@@ -90,6 +90,7 @@ en:
               blank: Choose a school
             selected_year_groups:
               blank: Choose which year groups are in this school
+              inclusion: You cannot remove a year group from the school once it has been added
             urn:
               blank: Enter a school URN
         draft_session:
