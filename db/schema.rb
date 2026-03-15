@@ -864,7 +864,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_165220) do
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
-    t.date "send_invitations_at"
     t.string "slug", null: false
     t.bigint "team_location_id", null: false
     t.datetime "updated_at", null: false
@@ -904,7 +903,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_165220) do
     t.datetime "created_at", null: false
     t.integer "days_before_consent_reminders", default: 7, null: false
     t.integer "days_before_consent_requests", default: 21, null: false
-    t.integer "days_before_invitations", default: 21, null: false
     t.string "email"
     t.text "name", null: false
     t.date "national_reporting_cut_off_date"

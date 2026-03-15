@@ -37,8 +37,6 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Team < ApplicationRecord
-  self.ignored_columns = %w[days_before_invitations]
-
   include DaysBeforeToWeeksBefore
   include FlipperActor
   include HasManyProgrammes

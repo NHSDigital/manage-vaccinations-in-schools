@@ -27,8 +27,6 @@
 #  fk_rails_...  (team_location_id => team_locations.id)
 #
 class Session < ApplicationRecord
-  self.ignored_columns = %w[send_invitations_at]
-
   include BelongsToTeamLocation
   include Consentable
   include DaysBeforeToWeeksBefore
