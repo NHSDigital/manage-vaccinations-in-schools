@@ -152,22 +152,11 @@ class SchoolMove < ApplicationRecord
 
     location = destination_school
 
-    # TODO: Remove this once we add patients to clinics individually.
-    #  This is stop patients being taken out of the generic clinic when we add
-    #  them to the unknown or home-educated school location.
-    source_locations =
-      (
-        if location.generic_school?
-          ([location] + destination_teams.map(&:generic_clinic))
-        else
-          [location]
-        end
-      )
-
     patient
       .patient_locations
       .where("academic_year >= ?", academic_year)
-      .where.not(location: source_locations)
+      .where.not(location:)
+      .where.not(location: destination_teams.map(&:generic_clinic))
       .find_each do |patient_location|
         end_date = Date.yesterday
 
@@ -198,33 +187,6 @@ class SchoolMove < ApplicationRecord
 
         patient_locations << patient_location
       end
-
-    # TODO: Remove this once we add patients to clinics individually.
-    if location.generic_school?
-      destination_teams.each do |destination_team|
-        PatientLocation
-          .find_or_initialize_by(
-            patient:,
-            location: destination_team.generic_clinic,
-            academic_year:
-          )
-          .tap do |patient_location|
-            patient_location.end_date = nil
-
-            # We only want to change the date if this is a new patient location
-            #  for this patient, or if the existing patient location already has
-            #  a start date. This is because if there's an existing patient
-            #  location without a start date, changing the date will take the
-            #  patient out of existing sessions.
-            if patient_location.new_record? ||
-                 patient_location.begin_date&.past?
-              patient_location.begin_date = Date.current
-            end
-
-            patient_locations << patient_location
-          end
-      end
-    end
 
     PatientLocation.import!(
       patient_locations,

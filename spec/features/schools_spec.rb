@@ -71,11 +71,6 @@ describe "Schools" do
       patient: @patient_in_both_schools,
       session: @primary_session
     )
-    create(
-      :patient_location,
-      patient: @patient_in_both_schools,
-      session: @secondary_session
-    )
 
     @nurse = create(:nurse, team: @team)
   end

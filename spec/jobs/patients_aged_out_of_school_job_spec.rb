@@ -56,11 +56,8 @@ describe PatientsAgedOutOfSchoolJob do
     end
 
     it "adds the patient to the clinic session" do
-      expect { perform }.to change { patient.locations.count }.by(2)
-      expect(patient.locations).to include(
-        team.unknown_school,
-        team.generic_clinic
-      )
+      expect { perform }.to change { patient.locations.count }.by(1)
+      expect(patient.locations).to include(team.unknown_school)
     end
   end
 end

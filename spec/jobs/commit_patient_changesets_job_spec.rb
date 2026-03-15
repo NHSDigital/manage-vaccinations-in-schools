@@ -303,6 +303,8 @@ describe CommitPatientChangesetsJob do
         )
       end
 
+      before { patient.patient_locations.destroy_all }
+
       it "adds the patient to the session" do
         expect(patient.sessions).not_to include(session)
         PatientChangeset.all.map(&:calculate_review_data!)

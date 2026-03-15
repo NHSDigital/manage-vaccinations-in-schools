@@ -58,10 +58,7 @@ describe AppPatientCardComponent do
       create(:school_move, :to_school, patient:, school: other_school)
     end
 
-    before do
-      create(:patient_location, patient:, location: school)
-      school_move.confirm!
-    end
+    before { school_move.confirm! }
 
     it { should have_content("Child has moved to #{other_team.name} area") }
   end

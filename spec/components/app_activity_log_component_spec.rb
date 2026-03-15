@@ -36,12 +36,10 @@ describe AppActivityLogComponent do
     create(:parent_relationship, :mother, parent: mum, patient:)
     create(:parent_relationship, :father, parent: dad, patient:)
 
-    create(
-      :patient_location,
-      patient:,
-      session:,
-      created_at: Time.zone.local(2025, 5, 29, 12)
-    )
+    patient
+      .patient_locations
+      .find_by(location_id: session.location_id)
+      &.update!(created_at: Time.zone.local(2025, 5, 29, 12))
 
     patient.reload
   end

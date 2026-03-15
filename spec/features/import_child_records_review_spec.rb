@@ -58,13 +58,6 @@ describe "Import child records review" do
         address_postcode: "SW1A 1AA",
         school: @other_school
       )
-
-    create(
-      :patient_location,
-      patient: @patient,
-      location: @other_school,
-      academic_year: AcademicYear.current
-    )
   end
 
   def when_i_visit_the_import_page

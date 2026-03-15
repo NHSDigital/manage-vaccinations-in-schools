@@ -131,14 +131,6 @@ describe SchoolMove do
       end
     end
 
-    shared_examples "adds the patient to the community clinic" do
-      it "adds the patient to the community clinic" do
-        expect(patient.sessions).not_to include(generic_clinic_session)
-        confirm!
-        expect(patient.reload.sessions).to include(generic_clinic_session)
-      end
-    end
-
     shared_examples "keeps the patient in the community clinic" do
       it "keeps the patient in the community clinic" do
         expect(patient.sessions).to include(generic_clinic_session)
@@ -242,7 +234,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "adds the patient to the community clinic"
           include_examples "destroys the school move"
         end
       end
@@ -307,7 +298,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "adds the patient to the community clinic"
           include_examples "unarchives the patient"
           include_examples "destroys the school move"
         end
@@ -375,7 +365,6 @@ describe SchoolMove do
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "removes the patient from the old school sessions"
-          include_examples "adds the patient to the community clinic"
           include_examples "destroys the school move"
         end
 
@@ -424,7 +413,6 @@ describe SchoolMove do
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "removes the patient from the old school sessions"
-          include_examples "adds the patient to the community clinic"
           include_examples "destroys the school move"
         end
       end
@@ -554,7 +542,6 @@ describe SchoolMove do
           end
 
           include_examples "creates a log entry"
-          include_examples "adds the patient to the community clinic"
           include_examples "destroys the school move"
         end
       end
@@ -678,7 +665,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "adds the patient to the community clinic"
           include_examples "destroys the school move"
         end
       end

@@ -126,14 +126,6 @@ describe AppImportReviewComponent do
       ]
     end
 
-    before do
-      create(
-        :patient_location,
-        patient: inter_team_patient,
-        location: other_location
-      )
-    end
-
     include_examples "section with details",
                      title:
                        "Children moving from another SAIS team's area - resolve after import",
@@ -163,14 +155,6 @@ describe AppImportReviewComponent do
           school: location
         )
       ]
-    end
-
-    before do
-      create(
-        :patient_location,
-        patient: inter_team_patient,
-        location: other_location
-      )
     end
 
     it "renders separate expander for close matches" do
@@ -278,12 +262,6 @@ describe AppImportReviewComponent do
     before do
       skipped_school_moves.first.data["upload"]["home_educated"] = false
       skipped_school_moves.first.save!
-
-      create(
-        :patient_location,
-        patient: skipped_patient,
-        location: other_team_school
-      )
     end
 
     include_examples "section with details",
