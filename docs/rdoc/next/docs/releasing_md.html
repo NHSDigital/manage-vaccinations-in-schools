@@ -553,11 +553,13 @@
 </li><li>
 <p>Deploy the release to the <code>preview</code> and <code>training</code> envs, first checking that they haven’t had a specific branch deployed to them (check <a href="https://github.com/nhsuk/manage-vaccinations-in-schools/actions/workflows/deploy.yml">recent deploys</a>). This can be used as a test that the tag deploys as expected.</p>
 </li><li>
-<p>If there are migrations that need testing (e.g. a data migration or a long-running migration), deploy this release to <code>data-replication</code> and test the performance of the migration(s) there.</p>
+<p>If there are migrations that need testing (e.g. a db or data migrations), deploy this release to <code>data-replication</code> and test the performance of the migration(s) there.</p>
 </li><li>
 <p>Perform pre-release tasks.</p>
 </li><li>
-<p>Run the <code>Deploy</code> workflow to deploy to production.</p>
+<p>Run the <a href="https://github.com/NHSDigital/manage-vaccinations-in-schools/actions/workflows/deploy.yml">Deploy workflow</a> to deploy to production.</p>
+</li><li>
+<p>Run the <a href="https://github.com/NHSDigital/manage-vaccinations-in-schools-reporting/actions/workflows/deploy-application.yml">Deploy application workflow</a> for the reporting app. You may need to ask other team members for the correct tag.</p>
 </li><li>
 <p>Smoke test: login to the production service to ensure it looks normal.</p>
 </li><li>
