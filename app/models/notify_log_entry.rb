@@ -183,7 +183,7 @@ class NotifyLogEntry < ApplicationRecord
   def template_name
     return unless email? || sms?
 
-    template = CommsTemplate.find_by_id(template_id, channel: type.to_sym)
+    template = NotifyTemplate.find_by_id(template_id, channel: type.to_sym)
     template&.name || RETIRED_TEMPLATE_IDS[template_id.to_s]
   end
 end

@@ -318,7 +318,7 @@ class Notifier::Patient
     combinations
       .lazy
       .map { |parts| :"#{base_template}_#{parts.join("_")}" }
-      .detect { NotifyTemplate.exists?(it, channel:, source: :any) }
+      .detect { NotifyTemplate.exists?(it, channel:) }
   end
 
   def programmes_to_send_clinic_invitation_for(

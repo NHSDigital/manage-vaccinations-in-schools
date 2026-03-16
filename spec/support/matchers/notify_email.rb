@@ -16,14 +16,7 @@ RSpec::Matchers.define :matching_notify_email do |to:, template:|
       raise ArgumentError, "Unknown email template :#{template}"
     end
     next false unless actual[:email_address] == to
-    expected_template_id =
-      (
-        if notify_template.local?
-          EmailDeliveryJob::PASSTHROUGH_TEMPLATE_ID
-        else
-          notify_template.id
-        end
-      )
+    expected_template_id = EmailDeliveryJob::PASSTHROUGH_TEMPLATE_ID
     next false unless actual[:template_id] == expected_template_id
     next true if @expected_content_strings.blank?
 

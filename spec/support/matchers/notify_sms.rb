@@ -16,14 +16,7 @@ RSpec::Matchers.define :matching_notify_sms do |phone_number:, template:|
       raise ArgumentError, "Unknown SMS template :#{template}"
     end
     next false unless actual[:phone_number] == phone_number
-    expected_template_id =
-      (
-        if notify_template.local?
-          SMSDeliveryJob::PASSTHROUGH_TEMPLATE_ID
-        else
-          notify_template.id
-        end
-      )
+    expected_template_id = SMSDeliveryJob::PASSTHROUGH_TEMPLATE_ID
     next false unless actual[:template_id] == expected_template_id
     next true if @expected_content_strings.blank?
 

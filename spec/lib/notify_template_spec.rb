@@ -2,26 +2,28 @@
 
 describe NotifyTemplate do
   describe ".find" do
-    context "with a locally-migrated email template" do
+    context "with a local email template" do
       subject(:template) do
         described_class.find(:consent_confirmation_given, channel: :email)
       end
 
       it { should_not be_nil }
-      it { should be_local }
 
       it "has a UUID as the template ID" do
-        expect(template.id).to match(/\A[0-9a-f-]{36}\z/)
+        expect(template.id).to eq("c6c8dbfc-b429-4468-bd0b-176e771b5a8e")
       end
     end
 
-    context "with a locally-migrated SMS template" do
+    context "with a local SMS template" do
       subject(:template) do
         described_class.find(:consent_confirmation_given, channel: :sms)
       end
 
       it { should_not be_nil }
-      it { should be_local }
+
+      it "has a UUID as the template ID" do
+        expect(template.id).to eq("8eb8d05e-b8d8-4bf9-8a38-c009ae989a4e")
+      end
     end
 
     context "with an unknown template name" do
@@ -34,7 +36,7 @@ describe NotifyTemplate do
   end
 
   describe ".find_by_id" do
-    context "with a locally-migrated template's ID" do
+    context "with a local template's ID" do
       subject(:template) do
         described_class.find_by_id(template_id, channel: :email)
       end
@@ -44,7 +46,6 @@ describe NotifyTemplate do
       end
 
       it { should_not be_nil }
-      it { should be_local }
 
       it "resolves the template name" do
         expect(template.name).to eq(:consent_confirmation_given)
@@ -80,42 +81,75 @@ describe NotifyTemplate do
   end
 
   describe ".exists?" do
-    context "with a locally-migrated template" do
-      it "returns true for source: :local" do
-        expect(
-          described_class.exists?(
-            :consent_confirmation_given,
-            channel: :email,
-            source: :local
-          )
-        ).to be true
-      end
-
-      it "returns true for source: :any (default)" do
-        expect(
-          described_class.exists?(:consent_confirmation_given, channel: :email)
-        ).to be true
-      end
+    it "returns true for a local template" do
+      expect(
+        described_class.exists?(:consent_confirmation_given, channel: :email)
+      ).to be true
     end
 
-    context "with an unknown template" do
-      it "returns false" do
-        expect(
-          described_class.exists?(:nonexistent, channel: :email)
-        ).to be false
-      end
+    it "returns false for an unknown template" do
+      expect(described_class.exists?(:nonexistent, channel: :email)).to be false
+    end
+  end
+
+  describe ".all_ids" do
+    it "includes the ID of a known local template" do
+      id = described_class.find(:consent_confirmation_given, channel: :email).id
+      expect(described_class.all_ids(channel: :email)).to include(id)
+    end
+  end
+
+  describe "frontmatter parsing" do
+    it "parses frontmatter and body from ERB content" do
+      content = "---\ntemplate_id: \"abc\"\n---\nHello world\n"
+      template = described_class.new(name: :test, channel: :email, content:)
+      expect(template.id).to eq("abc")
+      expect(template.render(Object.new)).to eq(
+        { subject: "", body: "Hello world\n" }
+      )
     end
 
-    context "with an unknown source" do
-      it "raises ArgumentError" do
-        expect {
-          described_class.exists?(
-            :consent_school_request_hpv,
-            channel: :email,
-            source: :unknown
-          )
-        }.to raise_error(ArgumentError, /Unknown source/)
+    it "returns empty frontmatter when no delimiter present" do
+      content = "Hello world\n"
+      template = described_class.new(name: :test, channel: :email, content:)
+      expect(template.id).to be_nil
+      expect(template.render(Object.new)).to eq(
+        { subject: "", body: "Hello world\n" }
+      )
+    end
+  end
+
+  describe "#render" do
+    context "when the template references an undefined variable" do
+      subject(:template) do
+        described_class.find(:consent_confirmation_given, channel: :email)
       end
+
+      it "raises NameError mentioning the channel and template name" do
+        expect { template.render(Object.new) }.to raise_error(
+          NameError,
+          /in email template 'consent_confirmation_given'/
+        )
+      end
+    end
+  end
+
+  context "local SMS templates" do
+    # smart quotes should not be used in SMS template bodies and subject lines
+    # to avoid Notify switching to UCS-2 encoding and
+    # dropping the character limit per SMS to 70 characters
+    # https://www.notifications.service.gov.uk/pricing/text-messages
+
+    it "does not contain any smart quotes of any kind" do
+      described_class
+        .all_ids(channel: :sms)
+        .each do |id|
+          template = described_class.find_by_id(id, channel: :sms)
+          %w[“ ’ ’ ”].each do |quote|
+            expect(template.body).not_to include(quote)
+            expect(template.subject).not_to include(quote)
+          end
+        end
     end
   end
 end
