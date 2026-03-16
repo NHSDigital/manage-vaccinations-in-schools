@@ -93,7 +93,9 @@ describe ImmunisationImportRow do
     )
   end
 
-  let!(:location) { create(:school, urn: "123456", name: "Waterloo Road") }
+  let!(:location) do
+    create(:school, urn: "123456", name: "Waterloo Road", programmes:)
+  end
 
   let(:import_type) { "point_of_care" }
 
@@ -449,18 +451,16 @@ describe ImmunisationImportRow do
         end
       end
 
-      context "with clinic care setting" do
+      context "when recording offline in to a clinic" do
         let(:valid_clinic_data) do
           valid_data.merge(
             "CARE_SETTING" => "2",
-            "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
-            "SESSION_ID" => session.id.to_s,
+            "DATE_OF_VACCINATION" => Date.current.strftime("%Y%m%d"),
+            "SESSION_ID" => "clinic",
             "ORGANISATION_CODE" => team.organisation.ods_code,
             "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email
           )
         end
-
-        let(:session) { create(:session, team:, programmes:) }
 
         before { create(:community_clinic, name: "A clinic", team:) }
 
@@ -579,9 +579,7 @@ describe ImmunisationImportRow do
         end
 
         let(:programmes) { [Programme.hpv, Programme.menacwy] }
-        let(:session) do
-          create(:session, team:, programmes: [programmes.first])
-        end
+        let(:session) { create(:session, team:, programmes: [Programme.hpv]) }
 
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
@@ -1739,7 +1737,7 @@ describe ImmunisationImportRow do
           it "has errors about the programme but not the dose sequence" do
             expect(immunisation_import_row).to be_invalid
             expect(immunisation_import_row.errors["PROGRAMME"]).to eq(
-              ["This programme is not available in this session."]
+              ["This programme is not recognised."]
             )
             expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to be_empty
           end
@@ -1843,6 +1841,20 @@ describe ImmunisationImportRow do
           let(:session) { create(:session, team:, location:, programmes:) }
 
           it { should be_nil }
+        end
+
+        context "with a clinic session" do
+          let(:data) do
+            valid_data.merge(
+              "DATE_OF_VACCINATION" => Date.current.strftime("%Y%m%d"),
+              "SESSION_ID" => "clinic",
+              "ORGANISATION_CODE" => team.organisation.ods_code,
+              "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+              "DOSE_SEQUENCE" => "1"
+            )
+          end
+
+          it { should eq("Waterloo Road") }
         end
 
         context "without a school URN" do

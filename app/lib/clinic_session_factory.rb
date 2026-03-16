@@ -23,6 +23,10 @@ class ClinicSessionFactory
           programme_types:
             (session.programme_types + [programme_type]).sort.uniq
         )
+
+        # This is needed because `programme_types` is memoized when it's called above.
+        session.reload
+        session.instance_variable_set(:@programme_types, nil)
       end
 
       session
