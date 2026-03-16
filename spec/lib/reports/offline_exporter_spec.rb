@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Reports::OfflineSessionExporter do
+describe Reports::OfflineExporter do
   def worksheet_to_hashes(worksheet)
     headers = worksheet[0].cells.map(&:value)
     rows =
@@ -27,7 +27,7 @@ describe Reports::OfflineSessionExporter do
       .expression
   end
 
-  subject(:call) { described_class.call(session) }
+  subject(:output) { described_class.from_session(session) }
 
   shared_examples "generates a report" do
     let(:organisation) { create(:organisation) }
@@ -44,7 +44,7 @@ describe Reports::OfflineSessionExporter do
     before { PatientStatusUpdater.call(patient:) }
 
     context "a school session" do
-      subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+      subject(:workbook) { RubyXL::Parser.parse_buffer(output) }
 
       let(:location) { create(:school, subteam:) }
 
@@ -790,7 +790,7 @@ describe Reports::OfflineSessionExporter do
     end
 
     context "a clinic session" do
-      subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+      subject(:workbook) { RubyXL::Parser.parse_buffer(output) }
 
       let(:location) { team.locations.generic_clinic.first }
 
@@ -1122,7 +1122,7 @@ describe Reports::OfflineSessionExporter do
           year_group:
         )
       end
-      let(:workbook) { RubyXL::Parser.parse_buffer(call) }
+      let(:workbook) { RubyXL::Parser.parse_buffer(output) }
 
       it "adds a row with the triage details" do
         patient
@@ -1188,28 +1188,5 @@ describe Reports::OfflineSessionExporter do
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
-  end
-
-  describe "#vaccine_values_for_programmes" do
-    let(:programme) { Programme.mmr }
-    let(:mmr_programme_variant) do
-      Programme::Variant.new(programme, variant_type: "mmr")
-    end
-    let(:mmrv_programme_variant) do
-      Programme::Variant.new(programme, variant_type: "mmrv")
-    end
-    let(:session) { create(:session, programmes: [programme]) }
-
-    it "returns the correct vaccines for the given programme variants" do
-      exporter = described_class.send(:new, session)
-
-      expect(
-        exporter.send(:vaccine_values_for_programme, mmr_programme_variant)
-      ).to eq(%w[Priorix VaxPro])
-
-      expect(
-        exporter.send(:vaccine_values_for_programme, mmrv_programme_variant)
-      ).to eq(%w[ProQuad Priorix-Tetra])
-    end
   end
 end

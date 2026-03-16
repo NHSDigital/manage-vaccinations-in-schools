@@ -1,11 +1,35 @@
 # frozen_string_literal: true
 
-class Reports::OfflineSessionExporter
+class Reports::OfflineExporter
   include Reports::ExportFormatters
   include TriagesHelper
 
-  def initialize(session)
-    @session = session
+  def initialize(
+    team:,
+    programmes:,
+    academic_year:,
+    patients:,
+    dates:,
+    include_psd:,
+    programmes_for:,
+    location:,
+    session_id:
+  )
+    @team = team
+    @programmes = programmes
+    @academic_year = academic_year
+    @patients =
+      patients.includes(
+        :programme_statuses,
+        :school,
+        parent_relationships: :parent,
+        vaccination_records: %i[performed_by_user vaccine session]
+      ).order_by_name
+    @dates = dates
+    @include_psd = include_psd
+    @programmes_for = programmes_for
+    @location = location
+    @session_id = session_id
     @vaccines = {}
     @batches = {}
   end
@@ -31,15 +55,35 @@ class Reports::OfflineSessionExporter
       .read
   end
 
-  def self.call(...) = new(...).call
+  def self.from_session(session)
+    new(
+      team: session.team,
+      programmes: session.programmes,
+      academic_year: session.academic_year,
+      patients: session.patients,
+      dates: session.dates,
+      include_psd: session.psd_enabled?,
+      programmes_for: ->(patient) { session.programmes_for(patient:) },
+      location: session.location,
+      session_id: session.id
+    ).call
+  end
 
   private_class_method :new
 
   private
 
-  attr_reader :session
+  attr_reader :team,
+              :programmes,
+              :academic_year,
+              :patients,
+              :dates,
+              :include_psd,
+              :programmes_for,
+              :location,
+              :session_id
 
-  delegate :academic_year, :location, :organisation, :team, to: :session
+  delegate :organisation, to: :team
 
   def add_vaccinations_sheet(package)
     workbook = package.workbook
@@ -75,7 +119,7 @@ class Reports::OfflineSessionExporter
   end
 
   def add_batch_numbers_sheets(package)
-    session.programmes.map do |programme|
+    programmes.map do |programme|
       add_reference_sheet package,
                           name: "#{programme.type} Batch Numbers",
                           values_name: "NUMBER",
@@ -110,7 +154,7 @@ class Reports::OfflineSessionExporter
         gillick_assessment_date
         gillick_assessed_by
         gillick_assessment_notes
-      ] + (session.psd_enabled? ? [:psd_status] : []) +
+      ] + (include_psd ? [:psd_status] : []) +
         %i[
           vaccinated
           date_of_vaccination
@@ -128,19 +172,6 @@ class Reports::OfflineSessionExporter
           session_id
           uuid
         ]
-  end
-
-  def patients
-    @patients ||=
-      session
-        .patients
-        .includes(
-          :programme_statuses,
-          :school,
-          parent_relationships: :parent,
-          vaccination_records: %i[performed_by_user vaccine session]
-        )
-        .order_by_name
   end
 
   def consents
@@ -169,8 +200,7 @@ class Reports::OfflineSessionExporter
         .select(
           "DISTINCT ON (patient_id, programme_type) gillick_assessments.*"
         )
-        .where(patient_id: patients.select(:id))
-        .for_session(session)
+        .where(patient_id: patients.select(:id), date: dates)
         .order(:patient_id, :programme_type, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)
@@ -210,8 +240,8 @@ class Reports::OfflineSessionExporter
   end
 
   def rows(patient:)
-    session
-      .programmes_for(patient:)
+    programmes_for
+      .call(patient)
       .flat_map do |programme|
         programme_status = patient.programme_status(programme, academic_year:)
 
@@ -296,9 +326,7 @@ class Reports::OfflineSessionExporter
     row[:gillick_assessed_by] = gillick_assessment&.performed_by&.full_name
     row[:gillick_assessment_notes] = gillick_assessment&.notes
 
-    row[:psd_status] = psd_status(
-      patient_specific_direction:
-    ) if session.psd_enabled?
+    row[:psd_status] = psd_status(patient_specific_direction:) if include_psd
   end
 
   def add_existing_row_cells(row, vaccination_record:)
@@ -382,7 +410,13 @@ class Reports::OfflineSessionExporter
     row[:date_of_vaccination] = Cell.new(type: :date)
     row[:school_name] = school_name(location:, patient:)
     row[:care_setting] = Cell.new(
-      care_setting(location:),
+      (
+        if location
+          care_setting(location:)
+        else
+          ImmunisationImportRow::CARE_SETTING_COMMUNITY
+        end
+      ),
       type: :integer,
       allowed_values: [1, 2]
     )
@@ -409,9 +443,9 @@ class Reports::OfflineSessionExporter
       allowed_values: ImmunisationImportRow::REASONS_NOT_ADMINISTERED.keys
     )
 
-    row[:session_id] = session.id
+    row[:session_id] = session_id
 
-    if location.generic_clinic?
+    if location.nil? || location.generic_clinic?
       row[:clinic_name] = Cell.new(allowed_values: clinic_name_values)
     end
   end

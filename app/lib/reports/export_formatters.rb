@@ -20,7 +20,11 @@ module Reports::ExportFormatters
   end
 
   def care_setting(location:)
-    location&.school? ? "1" : "2"
+    if location&.school?
+      ImmunisationImportRow::CARE_SETTING_SCHOOL
+    else
+      ImmunisationImportRow::CARE_SETTING_COMMUNITY
+    end
   end
 
   def clinic_name(location:, vaccination_record:)
