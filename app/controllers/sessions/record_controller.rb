@@ -31,7 +31,7 @@ class Sessions::RecordController < Sessions::BaseController
 
     @pagy, @patients = pagy_array(patients)
 
-    render layout: "full"
+    render layout: "session"
   end
 
   def edit_batch
