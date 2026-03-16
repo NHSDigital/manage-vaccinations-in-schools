@@ -154,4 +154,19 @@ describe NotifyTemplate do
         end
     end
   end
+
+  context "local email templates" do
+    it "uses smart apostrophes instead of straight apostrophe" do
+      straight_apostrophe = "'"
+      described_class
+        .all_ids(channel: :email)
+        .each do |id|
+          template = described_class.find_by_id(id, channel: :email)
+          expect(template.body).not_to include(straight_apostrophe),
+          "template #{template.id} (#{template.name}) body should not include #{straight_apostrophe.inspect}"
+          expect(template.subject).not_to include(straight_apostrophe),
+          "template #{template.id} (#{template.name}) subject should not include #{straight_apostrophe.inspect}"
+        end
+    end
+  end
 end
