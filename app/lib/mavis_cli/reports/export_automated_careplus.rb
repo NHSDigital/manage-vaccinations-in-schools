@@ -65,6 +65,11 @@ module MavisCLI
 
         team = teams.sole
 
+        unless team.careplus_enabled?
+          warn "Team '#{team.name}' does not have CarePlus enabled."
+          return
+        end
+
         parsed_start_date =
           if start_date
             begin

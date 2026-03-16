@@ -83,6 +83,30 @@ describe "mavis reports export-automated-careplus" do
     end
   end
 
+  context "when the team does not have CarePlus enabled" do
+    it "warns and does not call the exporter" do
+      given_an_organisation_with_a_team_without_careplus
+
+      when_i_run_the_command_with_options_and_capture_error(
+        "--ods_code=#{@organisation.ods_code}"
+      )
+      then_the_error_output_includes("does not have CarePlus enabled")
+      and_the_exporter_is_not_called
+    end
+  end
+
+  context "when the team has CarePlus enabled" do
+    it "calls the exporter" do
+      given_an_organisation_with_a_single_team
+
+      when_i_run_the_command_with_options(
+        "--ods_code=#{@organisation.ods_code}",
+        "--output=#{output_path}"
+      )
+      then_the_exporter_is_called_with(team: @team)
+    end
+  end
+
   private
 
   def command(*args)
@@ -91,17 +115,37 @@ describe "mavis reports export-automated-careplus" do
     )
   end
 
+  def given_an_organisation_with_a_team_without_careplus
+    @organisation = create(:organisation)
+    create(:team, organisation: @organisation, programmes: Programme.all)
+  end
+
   def given_an_organisation_with_a_single_team
     @organisation = create(:organisation)
     @team =
-      create(:team, organisation: @organisation, programmes: Programme.all)
+      create(
+        :team,
+        :with_careplus_enabled,
+        organisation: @organisation,
+        programmes: Programme.all
+      )
   end
 
   def given_an_organisation_with_multiple_teams
     @organisation = create(:organisation)
     @team =
-      create(:team, organisation: @organisation, programmes: Programme.all)
-    create(:team, organisation: @organisation, programmes: Programme.all)
+      create(
+        :team,
+        :with_careplus_enabled,
+        organisation: @organisation,
+        programmes: Programme.all
+      )
+    create(
+      :team,
+      :with_careplus_enabled,
+      organisation: @organisation,
+      programmes: Programme.all
+    )
   end
 
   def when_i_run_the_command_with_options(*args)
