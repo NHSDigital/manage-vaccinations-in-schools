@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
     rescue_from UnprocessableEntity, with: :handle_unprocessable_entity
   end
 
-  default_form_builder(GOVUKDesignSystemFormBuilder::FormBuilder)
+  default_form_builder(MavisFormBuilder)
 
   layout "two_thirds"
 
