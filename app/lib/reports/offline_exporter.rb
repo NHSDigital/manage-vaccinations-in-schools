@@ -55,6 +55,26 @@ class Reports::OfflineExporter
       .read
   end
 
+  def self.from_patients(patients, team:, programmes:, academic_year:)
+    new(
+      team:,
+      programmes:,
+      academic_year:,
+      patients:,
+      dates: [Date.current],
+      include_psd: false,
+      programmes_for: ->(patient) do
+        programmes.select do |programme|
+          programme.default_year_groups.include?(
+            patient.year_group(academic_year:)
+          )
+        end
+      end,
+      location: nil,
+      session_id: "clinic"
+    ).call
+  end
+
   def self.from_session(session)
     new(
       team: session.team,
