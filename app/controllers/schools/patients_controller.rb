@@ -22,7 +22,31 @@ class Schools::PatientsController < Schools::BaseController
 
     patients = @form.apply(scope)
 
-    @pagy, @patients = pagy(patients)
+    respond_to do |format|
+      format.html { @pagy, @patients = pagy(patients) }
+
+      format.xlsx do
+        data =
+          Reports::OfflineExporter.from_patients(
+            patients,
+            team: current_team,
+            programmes: @location.programmes,
+            academic_year: @academic_year
+          )
+
+        location_name =
+          if (urn_and_site = @location.urn_and_site).present?
+            "#{@location.name} (#{urn_and_site})"
+          else
+            @location.name
+          end
+
+        filename =
+          "#{location_name} - exported on #{Date.current.to_fs(:long)}.xlsx"
+
+        send_data(data, filename:, disposition: "attachment")
+      end
+    end
   end
 
   private

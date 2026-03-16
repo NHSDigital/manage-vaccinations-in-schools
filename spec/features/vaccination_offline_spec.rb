@@ -27,7 +27,7 @@ describe "Offline vaccination" do
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway(clinic: true)
-    when_i_choose_to_record_offline_from_a_clinic_page
+    when_i_choose_to_record_offline_from_a_school_page
     then_i_see_an_excel_spreadsheet_for_recording_offline
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
@@ -107,7 +107,7 @@ describe "Offline vaccination" do
     programmes = [Programme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
-    school = create(:school, team: @team)
+    school = clinic ? @team.unknown_school : create(:school, team: @team)
     previous_date = 1.month.ago.to_date
 
     if clinic
@@ -133,15 +133,17 @@ describe "Offline vaccination" do
 
     create(:gp_practice, ods_code: "Y12345")
 
-    @session =
-      create(
-        :session,
-        :today,
-        team: @team,
-        programmes:,
-        location: school,
-        dates: [previous_date, Date.current]
-      )
+    unless clinic
+      @session =
+        create(
+          :session,
+          :today,
+          team: @team,
+          programmes:,
+          location: school,
+          dates: [previous_date, Date.current]
+        )
+    end
 
     @vaccinated_patient, @unvaccinated_patient =
       create_list(
@@ -324,13 +326,11 @@ describe "Offline vaccination" do
     click_on "Download offline spreadsheet"
   end
 
-  def when_i_choose_to_record_offline_from_a_clinic_page
+  def when_i_choose_to_record_offline_from_a_school_page
     sign_in @team.users.first
     visit "/dashboard"
-    click_link "Sessions", match: :first
-    choose "Scheduled"
-    click_button "Update results"
-    click_link "Community clinic"
+    click_link "Schools", match: :first
+    click_link "Unknown school"
     click_on "Download offline spreadsheet"
   end
 
