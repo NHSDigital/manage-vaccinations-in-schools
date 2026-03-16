@@ -86,6 +86,10 @@ en:
               inclusion: Choose if this is the correct school
             name:
               blank: Enter a name
+            parent_urn_and_site:
+              blank: Choose a school
+            urn:
+              blank: Enter a school URN
         draft_session:
           attributes:
             location_id:
