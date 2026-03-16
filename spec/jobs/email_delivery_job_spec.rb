@@ -87,7 +87,7 @@ describe EmailDeliveryJob do
         email_address: "test@example.com",
         email_reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
         personalisation: an_instance_of(Hash),
-        template_id: NotifyTemplate.find(template_name, channel: :email).id
+        template_id: EmailDeliveryJob::PASSTHROUGH_TEMPLATE_ID
       )
       perform_now
     end
@@ -99,7 +99,7 @@ describe EmailDeliveryJob do
         expect(notifications_client).to receive(:send_email).with(
           email_address: "test@example.com",
           personalisation: an_instance_of(Hash),
-          template_id: NotifyTemplate.find(template_name, channel: :email).id
+          template_id: EmailDeliveryJob::PASSTHROUGH_TEMPLATE_ID
         )
         perform_now
       end
@@ -177,7 +177,7 @@ describe EmailDeliveryJob do
           email_address: "test@example.com",
           email_reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
           personalisation: an_instance_of(Hash),
-          template_id: NotifyTemplate.find(template_name, channel: :email).id
+          template_id: EmailDeliveryJob::PASSTHROUGH_TEMPLATE_ID
         )
         perform_now
       end
@@ -189,7 +189,7 @@ describe EmailDeliveryJob do
           expect(notifications_client).to receive(:send_email).with(
             email_address: "test@example.com",
             personalisation: an_instance_of(Hash),
-            template_id: NotifyTemplate.find(template_name, channel: :email).id
+            template_id: EmailDeliveryJob::PASSTHROUGH_TEMPLATE_ID
           )
           perform_now
         end
