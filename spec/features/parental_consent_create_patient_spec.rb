@@ -198,7 +198,7 @@ describe "Parental consent create patient" do
   end
 
   def when_the_nurse_clicks_on_the_consent_form
-    click_link "Jane #{@child.family_name}"
+    click_link "Jane #{@child.family_name}", match: :first
   end
 
   def then_they_are_not_able_to_create_a_new_patient
