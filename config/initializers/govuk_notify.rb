@@ -5,7 +5,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
 }.freeze
 
 GOVUK_NOTIFY_SMS_TEMPLATES = {
-  clinic_initial_invitation: "790c9c72-729a-40d6-b44d-d480e38f0990",
   clinic_initial_invitation_rt5: "7be79abb-7295-4e6f-8cfb-9597bfad2f56",
   clinic_initial_invitation_ryg: "8ef5712f-bb7f-4911-8f3b-19df6f8a7179",
   clinic_subsequent_invitation: "ce7a6a1b-465e-4be4-b9e0-47ddb64f3adb",

@@ -464,7 +464,12 @@ describe "School sessions" do
         template: :clinic_initial_invitation
       ).with_content_including("Our records show that", "has not had their")
     )
-    expect_sms_to @parent.phone, :clinic_initial_invitation, :any
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :clinic_initial_invitation
+      ).with_content_including("community clinic", "has not had their")
+    )
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme_for_ods_code(
