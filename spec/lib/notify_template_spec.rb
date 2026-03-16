@@ -56,12 +56,14 @@ describe NotifyTemplate do
         described_class.find_by_id(template_id, channel: :email)
       end
 
-      let(:template_id) { GOVUK_NOTIFY_UNUSED_TEMPLATES.keys.first }
+      let(:template_id) { NotifyTemplate::RETIRED_TEMPLATE_IDS.keys.first }
 
       it { should_not be_nil }
 
       it "resolves the template name" do
-        expect(template.name).to eq(GOVUK_NOTIFY_UNUSED_TEMPLATES[template_id])
+        expect(template.name).to eq(
+          NotifyTemplate::RETIRED_TEMPLATE_IDS[template_id]
+        )
       end
     end
 
