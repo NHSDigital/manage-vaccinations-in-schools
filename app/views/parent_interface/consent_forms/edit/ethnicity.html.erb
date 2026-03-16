@@ -13,7 +13,7 @@
 </p>
 
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :ethnicity_question,
                                      legend: { size: "m", text: title, tag: "h2" } do %>

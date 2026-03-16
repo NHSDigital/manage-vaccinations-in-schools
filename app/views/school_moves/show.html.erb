@@ -42,7 +42,7 @@
       method: :patch,
       class: "nhsuk-u-width-two-thirds",
     ) do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :action, legend: { text: "Update the child’s record with this new information?" } do %>
     <%= f.govuk_radio_button :action, :confirm, label: { text: "Update record with new school" }, link_errors: true %>

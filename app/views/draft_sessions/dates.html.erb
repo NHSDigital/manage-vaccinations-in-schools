@@ -8,7 +8,7 @@
 <% multiple_dates = @draft_session.session_dates.length > 1 %>
 
 <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <% if multiple_dates %>
     <%= h1 "When will this session be held?" %>

@@ -11,13 +11,13 @@
     <%= @patient.full_name %>
   </h1>
 
-  <%= form_with url: wizard_path, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |search_form| %>
+  <%= form_with url: wizard_path, method: :get, builder: MavisFormBuilder do |search_form| %>
     <%= render AppSearchInputComponent.new(name: :q, value: @location_query, label: { text: "Search for a school" }) %>
   <% end %>
 
   <% if @location_query.present? %>
     <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
-      <%= content_for(:before_content) { f.govuk_error_summary } %>
+      <%= f.mavis_error_summary %>
 
       <%# Used to preserve the current location if the user doesn't select a new one %>
       <%= f.hidden_field :location_id, value: @draft_vaccination_record.location_id %>
@@ -45,7 +45,7 @@
   <% end %>
 <% else %>
   <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
-    <%= f.govuk_error_summary %>
+    <%= f.mavis_error_summary %>
 
     <%= f.govuk_radio_buttons_fieldset :location_id,
                                        caption: { text: @patient.full_name, size: "l" },

@@ -5,7 +5,7 @@
                   data: { module: "autosubmit",
                           turbo: "true",
                           turbo_action: "replace" },
-                  builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+                  builder: MavisFormBuilder do |f| %>
 
       <% if pii_access_allowed %>
         <%= f.govuk_check_boxes_fieldset :show_pii, legend: { text: "PII", size: "s" }, small: true do %>

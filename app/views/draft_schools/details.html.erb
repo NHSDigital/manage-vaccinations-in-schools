@@ -5,6 +5,7 @@
 <%= h1 "Site details" %>
 
 <%= form_with model: @draft_school, url: wizard_path, method: :put do |f| %>
+  <%= f.mavis_error_summary %>
   <%= f.govuk_text_field :name, hint: { text: "The site name must be unique. It is shown to parents on the consent form and related emails. Existing sites for this school are: #{@draft_school.existing_names.to_sentence}." } %>
   <%= f.govuk_text_field :address_line_1, label: { text: "Address line 1" } %>
   <%= f.govuk_text_field :address_line_2, label: { text: "Address line 2 (optional)" } %>

@@ -14,7 +14,7 @@
 <% gillick_competent = @patient.gillick_assessments.order(created_at: :desc).for_session(@session).for_programme(@programme)&.first&.gillick_competent? %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset(:new_or_existing_contact, legend: nil) do %>
     <% if gillick_competent %>

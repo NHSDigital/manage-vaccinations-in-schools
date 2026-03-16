@@ -6,7 +6,7 @@
 <% content_for :page_title, title %>
 
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :supplied_by_user_id,
                                      caption: { text: @patient.full_name, size: "l" },

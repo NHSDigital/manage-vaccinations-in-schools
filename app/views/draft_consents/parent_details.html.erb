@@ -16,7 +16,7 @@
 <% end %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_text_field :parent_full_name, label: { text: "Full name" } %>
 

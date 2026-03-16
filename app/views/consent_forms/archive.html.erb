@@ -3,7 +3,7 @@
 <% end %>
 
 <%= form_with model: @consent_form, url: archive_consent_form_path, method: :post do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <% page_title = "Archive response" %>
   <%= h1 page_title: do %>

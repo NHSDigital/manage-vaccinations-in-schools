@@ -8,7 +8,7 @@
 <% hint = "#{@patient.given_name} is eligible for the new MMRV vaccine. If MMRV is out of stock, select ‘No’ and complete the consent response for MMR." %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :vaccine_stock_is_available,
                                      caption: { size: "l", text: @patient.full_name },

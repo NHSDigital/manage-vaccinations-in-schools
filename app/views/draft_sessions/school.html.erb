@@ -3,7 +3,7 @@
 <% end %>
 
 <%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= h1 "Where is this school session taking place?" %>
 

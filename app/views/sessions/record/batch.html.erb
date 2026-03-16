@@ -12,7 +12,7 @@
 <% content_for :page_title, page_title %>
 
 <%= form_with model: @todays_batch, url: batch_session_record_path(@session, @programme), method: :post do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :batch_id,
                                      caption: { text: @session.location.name, size: "l" },
