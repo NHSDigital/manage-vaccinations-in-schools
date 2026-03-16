@@ -89,6 +89,8 @@ class VaccinationRecord < ApplicationRecord
   include PerformableBy
   include SyncableToNHSImmunisationsAPI
 
+  self.ignored_columns = %w[reported_at]
+
   audited associated_with: :patient
 
   DELIVERY_SITE_SNOMED_CODES_AND_TERMS = {

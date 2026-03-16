@@ -477,13 +477,13 @@ class AppActivityLogComponent < ViewComponent::Base
 
       subtitle =
         if historical_vaccination_event?(vaccination_record)
-          "Record added to Mavis #{vaccination_record.reported_at.to_fs(:long)} · " \
+          "Record added to Mavis #{vaccination_record.created_at.to_fs(:long)} · " \
             "Vaccination given #{vaccination_record.performed_at.to_date.to_fs(:long)}"
         end
 
       at =
         if historical_vaccination_event?(vaccination_record)
-          vaccination_record.reported_at
+          vaccination_record.created_at
         else
           vaccination_record.performed_at
         end
@@ -511,11 +511,8 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def historical_vaccination_event?(vaccination_record)
-    vaccination_record.reported_at.present? &&
-      (
-        vaccination_record.sourced_from_manual_report? ||
-          vaccination_record.sourced_from_historical_upload?
-      )
+    vaccination_record.sourced_from_historical_upload? ||
+      vaccination_record.sourced_from_manual_report?
   end
 
   def attendance_events

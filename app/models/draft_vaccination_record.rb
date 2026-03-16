@@ -36,7 +36,6 @@ class DraftVaccinationRecord
   attribute :performed_ods_code, :string
   attribute :programme_type, :string
   attribute :protocol, :string
-  attribute :reported_at, :datetime
   attribute :reported_by_id, :integer
   attribute :session_id, :integer
   attribute :source, :string
@@ -188,6 +187,8 @@ class DraftVaccinationRecord
     validates :full_dose, inclusion: { in: [true, false] }
     validates :source, inclusion: { in: VaccinationRecord.sources.keys }
   end
+
+  def created_at = Time.current
 
   def administered?
     return nil if outcome.nil?
@@ -442,7 +443,6 @@ class DraftVaccinationRecord
       performed_ods_code
       programme_type
       protocol
-      reported_at
       reported_by_id
       session_id
       source
@@ -515,8 +515,8 @@ class DraftVaccinationRecord
 
   def can_change_outcome?
     (
-      (outcome != "already_had" && reported_at.nil?) || editing? ||
-        session.nil? || session.today?
+      (outcome != "already_had" && !reported_as_already_vaccinated?) ||
+        editing? || session.nil? || session.today?
     ) && !national_reporting_user_and_record?
   end
 

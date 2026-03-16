@@ -299,10 +299,10 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.reported_at.present?
+      if historical_vaccination_event?
         summary_list.with_row do |row|
           row.with_key { "Reported on" }
-          row.with_value { @vaccination_record.reported_at.to_fs(:long) }
+          row.with_value { @vaccination_record.created_at.to_fs(:long) }
         end
       end
 
@@ -474,5 +474,10 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def highlight_if(value, condition)
     condition ? tag.span(value, class: "app-highlight") : value
+  end
+
+  def historical_vaccination_event?
+    @vaccination_record.sourced_from_historical_upload? ||
+      @vaccination_record.sourced_from_manual_report?
   end
 end

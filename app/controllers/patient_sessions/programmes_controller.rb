@@ -31,7 +31,6 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       patient: @patient,
       performed_ods_code: current_team.organisation.ods_code,
       programme: programme_for_record_already_vaccinated,
-      reported_at: Time.current,
       reported_by_id: current_user.id,
       session: @session,
       source: :manual_report

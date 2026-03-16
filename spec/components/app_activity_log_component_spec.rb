@@ -179,8 +179,8 @@ describe AppActivityLogComponent do
         patient:,
         session:,
         performed_at: Date.new(2025, 1, 6),
+        created_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         performed_by: nil,
-        reported_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         source: :manual_report,
         vaccine: nil
       )
@@ -191,8 +191,8 @@ describe AppActivityLogComponent do
         patient:,
         session: nil,
         performed_at: Date.new(2025, 1, 24),
+        created_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         performed_by: nil,
-        reported_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         source: :historical_upload,
         vaccine: nil
       )
@@ -369,6 +369,30 @@ describe AppActivityLogComponent do
                      date: "31 May 2025 at 1:00pm",
                      notes: "Some notes.",
                      by: "JOY, Nurse",
+                     programme: "HPV"
+  end
+
+  describe "historical upload" do
+    let(:date_and_time) { Time.zone.local(2026, 3, 4, 11, 30) }
+
+    around { |example| travel_to(date_and_time { example.run }) }
+
+    before do
+      create(
+        :vaccination_record,
+        programme: programmes.first,
+        patient:,
+        performed_at: Date.new(2026, 1, 1),
+        created_at: date_and_time,
+        session: nil,
+        source: :historical_upload
+      )
+    end
+
+    include_examples "card",
+                     title: "Vaccination record uploaded",
+                     date:
+                       "Record added to Mavis Today at 11:30am · Vaccination given 1 January 2026",
                      programme: "HPV"
   end
 
