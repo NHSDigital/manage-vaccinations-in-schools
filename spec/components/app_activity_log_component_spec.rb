@@ -375,7 +375,7 @@ describe AppActivityLogComponent do
   describe "historical upload" do
     let(:date_and_time) { Time.zone.local(2026, 3, 4, 11, 30) }
 
-    around { |example| travel_to(date_and_time { example.run }) }
+    around { |example| travel_to(date_and_time) { example.run } }
 
     before do
       create(
@@ -392,7 +392,7 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Vaccination record uploaded",
                      date:
-                       "Record added to Mavis Today at 11:30am · Vaccination given 1 January 2026",
+                       "Record added to Mavis 4 March 2026 at 11:30am · Vaccination given 1 January 2026",
                      programme: "HPV"
   end
 
