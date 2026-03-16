@@ -1,6 +1,6 @@
 <% content_for :page_title, @patient.initials %>
 
-<% content_for :before_main do %>
+<% content_for :navigation do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: "Home", href: dashboard_path },
                                           { text: t("sessions.index.title"), href: sessions_path },

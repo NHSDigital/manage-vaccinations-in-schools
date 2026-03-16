@@ -1,41 +1,39 @@
-<% content_for :before_container do %>
-  <div class="app-session-banner">
-    <div class="nhsuk-width-container">
-      <div class="nhsuk-main-wrapper nhsuk-main-wrapper--s">
-        <%= h1 session_title(@session), class: "nhsuk-u-margin-bottom-2" %>
+<div class="app-session-banner">
+  <div class="nhsuk-width-container">
+    <div class="nhsuk-main-wrapper nhsuk-main-wrapper--s">
+      <%= h1 session_title(@session), class: "nhsuk-u-margin-bottom-2" %>
 
-        <p class="nhsuk-caption-l nhsuk-u-margin-bottom-0">
-          <%= format_year_groups(@session.year_groups) %>
-        </p>
-      </div>
-
-      <%= render AppSecondaryNavigationComponent.new(reverse: true) do |nav|
-            nav.with_item(
-              href: session_path(@session),
-              text: t("sessions.tabs.overview"),
-              selected: request.path == session_path(@session),
-            )
-          
-            nav.with_item(
-              href: session_patients_path(@session),
-              text: t("sessions.tabs.patients"),
-              selected: request.path == session_patients_path(@session),
-            )
-          
-            if @session.psd_enabled?
-              nav.with_item(
-                href: session_patient_specific_directions_path(@session),
-                text: t("sessions.tabs.patient_specific_directions"),
-                selected: request.path == session_patient_specific_directions_path(@session),
-              )
-            end
-          
-            nav.with_item(
-              href: session_record_path(@session),
-              text: t("sessions.tabs.record"),
-              selected: request.path == session_record_path(@session),
-            )
-          end %>
+      <p class="nhsuk-caption-l nhsuk-u-margin-bottom-0">
+        <%= format_year_groups(@session.year_groups) %>
+      </p>
     </div>
+
+    <%= render AppSecondaryNavigationComponent.new(reverse: true) do |nav|
+          nav.with_item(
+            href: session_path(@session),
+            text: t("sessions.tabs.overview"),
+            selected: request.path == session_path(@session),
+          )
+        
+          nav.with_item(
+            href: session_patients_path(@session),
+            text: t("sessions.tabs.patients"),
+            selected: request.path == session_patients_path(@session),
+          )
+        
+          if @session.psd_enabled?
+            nav.with_item(
+              href: session_patient_specific_directions_path(@session),
+              text: t("sessions.tabs.patient_specific_directions"),
+              selected: request.path == session_patient_specific_directions_path(@session),
+            )
+          end
+        
+          nav.with_item(
+            href: session_record_path(@session),
+            text: t("sessions.tabs.record"),
+            selected: request.path == session_record_path(@session),
+          )
+        end %>
   </div>
-<% end %>
+</div>
