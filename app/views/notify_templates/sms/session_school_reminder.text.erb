@@ -1,0 +1,13 @@
+---
+template_id: "cc4a7f89-d260-461c-80f0-7e6e9af75e7a"
+template_name: session_school_reminder
+---
+<%= short_patient_name %> may get their <%= vaccination %> at school on <%= next_session_date %>.
+
+<% if vaccine_is?("injection") %>Please make sure they have breakfast and encourage them to wear a short-sleeved shirt.<% end %>
+
+<% if vaccine_is?("nasal") %>If your child has asthma, please let us know if they've had a flare-up of asthma symptoms in the 3 days before the vaccination is due to take place, or on the day of the vaccination. This includes wheezing or needing to use a reliever inhaler more than usual.<% end %>
+
+If <%= short_patient_name %> is absent or unwell on the day of the vaccination session, contact us to ask about alternative sessions.
+
+<%= subteam_name %>, <%= subteam_phone %>

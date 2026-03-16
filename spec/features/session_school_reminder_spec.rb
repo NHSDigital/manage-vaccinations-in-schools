@@ -53,6 +53,11 @@ describe "Session school reminders" do
   end
 
   def and_the_consenting_parent_receives_an_sms_reminder
-    expect_sms_to @parent.phone, :session_school_reminder, :any
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :session_school_reminder
+      ).with_content_including("may get their", "at school on")
+    )
   end
 end
