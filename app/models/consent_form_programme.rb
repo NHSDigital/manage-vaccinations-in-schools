@@ -4,15 +4,16 @@
 #
 # Table name: consent_form_programmes
 #
-#  id                 :bigint           not null, primary key
-#  disease_types      :enum             is an Array
-#  notes              :text             default(""), not null
-#  programme_type     :enum             not null
-#  reason_for_refusal :integer
-#  response           :integer
-#  vaccine_methods    :integer          default([]), not null, is an Array
-#  without_gelatine   :boolean
-#  consent_form_id    :bigint           not null
+#  id                  :bigint           not null, primary key
+#  disease_types       :enum             is an Array
+#  follow_up_requested :boolean
+#  notes               :text             default(""), not null
+#  programme_type      :enum             not null
+#  reason_for_refusal  :integer
+#  response            :integer
+#  vaccine_methods     :integer          default([]), not null, is an Array
+#  without_gelatine    :boolean
+#  consent_form_id     :bigint           not null
 #
 # Indexes
 #

@@ -235,6 +235,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
   create_table "consent_form_programmes", force: :cascade do |t|
     t.bigint "consent_form_id", null: false
     t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.boolean "follow_up_requested"
     t.text "notes", default: "", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"
