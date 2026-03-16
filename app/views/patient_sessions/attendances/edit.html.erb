@@ -1,4 +1,4 @@
-<% content_for :before_main do %>
+<% content_for :navigation do %>
   <%= govuk_back_link(href: session_patient_programme_path(@session, @patient, @session.programmes_for(patient: @patient).first)) %>
 <% end %>
 

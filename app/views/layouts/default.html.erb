@@ -1,6 +1,6 @@
 <% content_for :main_content do %>
   <div class="nhsuk-width-container">
-    <%= yield :before_main %>
+    <%= yield :navigation %>
 
     <div class="nhsuk-main-wrapper">
       <%= render(AppFlashMessageComponent.new(flash: flash)) %>
