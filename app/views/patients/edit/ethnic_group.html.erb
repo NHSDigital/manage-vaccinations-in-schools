@@ -8,7 +8,7 @@
 <% ethnic_group_options = Patient.ethnic_backgrounds_by_group.keys %>
 
 <%= form_with model: @patient, url: edit_ethnic_group_patient_path(@patient), method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :ethnic_group, legend: { size: "l", text: title, tag: "h1" } do %>
     <% ethnic_group_options.each_with_index do |group, index| %>

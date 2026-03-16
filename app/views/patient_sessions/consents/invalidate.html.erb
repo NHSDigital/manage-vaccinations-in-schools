@@ -3,7 +3,7 @@
 <% end %>
 
 <%= form_with model: @consent, url: invalidate_session_patient_programme_consent_path, method: :post do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <% page_title = "Mark response as invalid" %>
   <%= h1 page_title: do %>

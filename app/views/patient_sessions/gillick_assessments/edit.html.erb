@@ -19,7 +19,7 @@
 <% end %>
 
 <%= form_with model: @gillick_assessment, url: session_patient_programme_gillick_assessment_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <% options = [OpenStruct.new(value: true, label: "Yes"), OpenStruct.new(value: false, label: "No")] %>
 
