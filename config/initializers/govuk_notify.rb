@@ -5,7 +5,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
 }.freeze
 
 GOVUK_NOTIFY_SMS_TEMPLATES = {
-  clinic_subsequent_invitation_ryg: "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
+
 }.freeze
 
 # Here we track email and SMS templates that we used to send but no longer
