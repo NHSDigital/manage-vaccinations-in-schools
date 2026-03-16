@@ -4,7 +4,7 @@ class AppCreateNoteComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppDetailsComponent.new(summary: "Add a note", open:, expander: true) do %>
       <%= form_with model: note, url:, builder: do |f| %>
-        <% content_for(:before_content) { f.govuk_error_summary } %>
+        <%= f.mavis_error_summary %>
 
         <%= f.govuk_text_area :body, label: { text: "Note" } %>
         <%= f.govuk_submit "Save note", class: "nhsuk-u-margin-bottom-0" %>

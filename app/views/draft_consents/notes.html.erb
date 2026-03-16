@@ -3,7 +3,7 @@
 <% end %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= h1 t(@draft_consent.reason_for_refusal, scope: %i[draft_consents notes title]) %>
 

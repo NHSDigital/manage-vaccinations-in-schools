@@ -6,7 +6,7 @@
 <% content_for :page_title, legend %>
 
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_collection_radio_buttons :full_dose,
                                        %i[true false],

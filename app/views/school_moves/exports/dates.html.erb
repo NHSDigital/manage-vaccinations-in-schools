@@ -13,7 +13,7 @@
 <h3>Select a date range</h3>
 
 <%= form_with model: @school_move_export, url: wizard_path, method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
   <%= f.govuk_date_field :date_from,
                          legend: { text: "From (optional)" },
                          hint: { text: "For example, 27 3 2024" } %>

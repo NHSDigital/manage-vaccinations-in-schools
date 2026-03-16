@@ -57,7 +57,7 @@
 <% end %>
 
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <% if @draft_vaccination_record.editing? %>
     <%= f.govuk_submit "Save changes" %>

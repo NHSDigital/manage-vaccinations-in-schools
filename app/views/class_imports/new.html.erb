@@ -7,7 +7,7 @@
 <% content_for :page_title, title %>
 
 <%= form_with model: @class_import, url: class_imports_path do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <h1 class="nhsuk-heading-l">
     <span class="nhsuk-caption-l"><%= @location.name %></span>

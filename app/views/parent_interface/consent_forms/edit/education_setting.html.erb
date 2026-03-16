@@ -6,7 +6,7 @@
 <% content_for :page_title, title %>
 
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :education_setting,
                                      legend: { size: "l", tag: "h1", text: title } do %>
