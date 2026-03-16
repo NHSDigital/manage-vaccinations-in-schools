@@ -7,7 +7,7 @@ class Sessions::PatientsController < Sessions::BaseController
   before_action :set_registration_statuses, only: :show
   before_action :set_patient, only: :register
 
-  layout "full"
+  layout "session"
 
   def show
     scope =

@@ -1,4 +1,4 @@
-<% content_for :before_main do %>
+<% content_for :navigation do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("dashboard.index.title"), href: dashboard_path },
                                           { text: t("imports.index.title"), href: imports_path },
