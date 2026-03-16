@@ -21,11 +21,7 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
       patient.consent_given_and_safe_to_vaccinate?(
         programme:,
         academic_year:
-      ) &&
-      (
-        registration_status&.attending? || registration_status&.completed? ||
-          !session.requires_registration?
-      )
+      ) && can_record_today?
   end
 
   private
@@ -37,6 +33,19 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   def registration_status
     @registration_status ||= patient.registration_status(session:)
+  end
+
+  def can_record_today?
+    return true unless session.requires_registration?
+
+    today_attendance_record.present? && today_attendance_record&.attending?
+  end
+
+  def today_attendance_record
+    patient.attendance_records.find do |attendance_record|
+      attendance_record.location_id == session.location_id &&
+        attendance_record.date == Date.current
+    end
   end
 
   def vaccination_record

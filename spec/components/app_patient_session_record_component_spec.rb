@@ -39,6 +39,30 @@ describe AppPatientSessionRecordComponent do
       it { should be(false) }
     end
 
+    context "patient attended the session yesterday but not marked as attending today" do
+      let(:session) do
+        create(:session, programmes:, dates: [Date.yesterday, Date.current])
+      end
+
+      let(:patient) do
+        create(:patient, :consent_given_triage_not_needed, session:)
+      end
+
+      before do
+        create(
+          :attendance_record,
+          patient:,
+          location: session.location,
+          date: Date.yesterday,
+          attending: true
+        )
+
+        create(:patient_registration_status, :completed, patient:, session:)
+      end
+
+      it { should be(false) }
+    end
+
     context "patient is fully vaccinated" do
       let(:patient) { create(:patient, :vaccinated, programmes:) }
 
