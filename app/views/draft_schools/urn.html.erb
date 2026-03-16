@@ -5,6 +5,7 @@
 <%= h1 "Find a school to add to your team" %>
 
 <%= form_with(model: @draft_school, url: wizard_path, method: :put) do |f| %>
+  <%= f.mavis_error_summary %>
   <%= f.govuk_text_field :urn,
                          label: {
                            text: "School URN",
