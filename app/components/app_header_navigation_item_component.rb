@@ -14,7 +14,7 @@ class AppHeaderNavigationItemComponent < ViewComponent::Base
         @path,
         class: "nhsuk-header__navigation-link",
         aria: {
-          current: current? ? "true" : nil
+          current: current? ? "page" : nil
         }
       ) { safe_join([@title, count_tag].compact) }
     end
