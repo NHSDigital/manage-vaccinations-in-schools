@@ -227,8 +227,12 @@ class GovukNotifyPersonalisation
     ].join("\n\n")
   end
 
-  def mmr_second_dose_required
+  def mmr_second_dose_required?
     mmr_programme.present? && patient_eligible_for_additional_dose?
+  end
+
+  def mmr_second_dose_required
+    mmr_second_dose_required?
   end
 
   def invitation_to_clinic_generic_message

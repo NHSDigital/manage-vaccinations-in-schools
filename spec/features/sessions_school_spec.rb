@@ -458,7 +458,12 @@ describe "School sessions" do
   def and_the_parent_receives_an_invitation
     perform_enqueued_jobs
 
-    expect_email_to @parent.email, :clinic_initial_invitation
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template: :clinic_initial_invitation
+      ).with_content_including("Our records show that", "has not had their")
+    )
     expect_sms_to @parent.phone, :clinic_initial_invitation, :any
   end
 

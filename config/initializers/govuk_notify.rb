@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 GOVUK_NOTIFY_EMAIL_TEMPLATES = {
-  clinic_initial_invitation: "ceea5ff5-2250-4eb2-ab35-4e9e840b2a6f",
   clinic_initial_invitation_rt5: "17e63d67-53fc-4e9a-a533-74974412aac0",
   clinic_initial_invitation_ryg: "5fe4fb4d-6f0a-4149-a80a-232bdfdf4f73",
   clinic_subsequent_invitation: "a86a3b3f-a848-41d8-9a6f-d38174981388",

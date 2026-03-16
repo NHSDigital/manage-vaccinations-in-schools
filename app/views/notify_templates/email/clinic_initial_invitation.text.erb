@@ -1,0 +1,12 @@
+---
+template_id: "ceea5ff5-2250-4eb2-ab35-4e9e840b2a6f"
+template_name: clinic_initial_invitation
+subject: "<%= short_patient_name %> has still not had their <%= vaccination %>"
+---
+Our records show that <%= full_and_preferred_patient_name %> has not had their <%= vaccination %> yet. <% if mmr_second_dose_required? %>They need this to be fully vaccinated.<% end %>
+
+<%= invitation_to_clinic_generic_message %> 
+
+<%= subteam_name %>
+<%= subteam_email %>
+<%= subteam_phone %>
