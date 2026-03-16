@@ -25,5 +25,5 @@ class AppCreateNoteComponent < ViewComponent::Base
 
   def url = session_patient_activity_path(session, patient)
 
-  def builder = GOVUKDesignSystemFormBuilder::FormBuilder
+  def builder = MavisFormBuilder
 end

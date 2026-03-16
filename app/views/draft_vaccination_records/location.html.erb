@@ -11,7 +11,7 @@
     <%= @patient.full_name %>
   </h1>
 
-  <%= form_with url: wizard_path, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |search_form| %>
+  <%= form_with url: wizard_path, method: :get, builder: MavisFormBuilder do |search_form| %>
     <%= render AppSearchInputComponent.new(name: :q, value: @location_query, label: { text: "Search for a school" }) %>
   <% end %>
 

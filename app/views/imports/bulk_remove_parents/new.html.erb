@@ -9,7 +9,7 @@
 
 <%= form_with model: @form,
               url: imports_bulk_remove_parents_path(import_type: @import.class.name.underscore, import_id: @import.id),
-              builder: GOVUKDesignSystemFormBuilder::FormBuilder,
+              builder: MavisFormBuilder,
               local: true do |f| %>
   <% if @consents.any? %>
 
