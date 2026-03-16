@@ -490,6 +490,11 @@ describe "MMR/MMRV" do
   end
 
   def and_the_parent_receives_a_vaccination_already_had_sms
-    expect_sms_to @parent.phone, :vaccination_already_had, :any
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :vaccination_already_had
+      ).with_content_including("at school", "another location")
+    )
   end
 end

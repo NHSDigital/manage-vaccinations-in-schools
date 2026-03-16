@@ -16,7 +16,6 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   clinic_subsequent_invitation: "ce7a6a1b-465e-4be4-b9e0-47ddb64f3adb",
   clinic_subsequent_invitation_ryg: "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
   session_school_reminder: "cc4a7f89-d260-461c-80f0-7e6e9af75e7a",
-  vaccination_already_had: "fab1e355-bde1-47d5-835c-103bfd232b93",
   vaccination_not_administered: "aae061e0-b847-4d4c-a87a-12508f95a302"
 }.freeze
 
