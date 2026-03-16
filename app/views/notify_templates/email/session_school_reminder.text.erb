@@ -1,0 +1,31 @@
+---
+template_id: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d"
+template_name: session_school_reminder
+subject: "<%= full_and_preferred_patient_name %> may get their <%= vaccination %> on <%= next_session_dates_or %>"
+---
+This is a quick reminder that <%= full_and_preferred_patient_name %> may get their <%= vaccination %> at <%= location_name %> on <%= next_session_date %>.  <%= subsequent_session_dates_offered_message %>
+
+If you haven’t already told <%= short_patient_name %> that they’ll be vaccinated, please let them know what to expect.
+
+If <%= short_patient_name_apos %> health changes, or you arrange for them to be vaccinated elsewhere, please contact us. You should also contact us to ask about alternative sessions if <%= short_patient_name %> is absent or unwell on the day of the vaccination session. You can email <%= subteam_email %> or phone <%= subteam_phone %>.
+
+<% if vaccine_is?("injection") %>##Helping the session run smoothly
+
+It’s helpful for your child to wear a short-sleeved shirt on the day of the vaccination to give us easy access to the arm.
+
+It’s also helpful for them to have breakfast, as this reduces the likelihood of fainting.<% end %>
+
+<% if vaccine_is?("nasal") %>^If your child has asthma, please let us know if they’ve had a flare-up of asthma symptoms in the 3 days before the vaccination is due to take place, or on the day of the vaccination. This includes wheezing or needing to use a reliever inhaler more than usual.<% end %>
+
+## Possible side effects
+
+<%= short_patient_name %> might have some of the following side effects after their vaccination:
+
+<%= vaccine_side_effects %>
+
+If you’re concerned about your child’s reaction, contact your GP in the usual way.
+
+
+<%= subteam_name %>
+<%= subteam_email %>
+<%= subteam_phone %>

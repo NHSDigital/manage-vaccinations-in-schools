@@ -44,7 +44,12 @@ describe "Session school reminders" do
   end
 
   def then_the_consenting_parent_receives_an_email_reminder
-    expect_email_to @parent.email, :session_school_reminder
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template: :session_school_reminder
+      ).with_content_including("quick reminder", "haven’t already told")
+    )
   end
 
   def and_the_consenting_parent_receives_an_sms_reminder
