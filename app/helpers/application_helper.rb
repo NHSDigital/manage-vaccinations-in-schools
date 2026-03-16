@@ -24,11 +24,20 @@ module ApplicationHelper
     title = content_for(:page_title)
 
     if title.blank?
-      raise "No page title set. Either use the <%= h1 %> helper in your page, \
-or set it with content_for(:page_title)."
+      raise "No page title set. All pages must have a unique title and an " \
+            "h1. Use the <%= h1 %> helper in your page, or set a title via " \
+            "content_for(:page_title)."
     end
 
-    title = "Error: #{title}" if response.status == 422
+    if response.status == 422
+      unless content_for?(:error_summary_rendered)
+        raise "No error summary found. All pages that respond with a 422 " \
+              "have an Error: prefixed title and must render an error " \
+              "summary via f.mavis_error_summary."
+      end
+
+      title = "Error: #{title}"
+    end
 
     safe_join([title, service_name], " – ")
   end
