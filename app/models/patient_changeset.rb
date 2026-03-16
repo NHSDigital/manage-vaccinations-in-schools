@@ -506,6 +506,6 @@ class PatientChangeset < ApplicationRecord
   end
 
   def csv_row_number
-    row_number + 2
+    (row_number || 0) + 2
   end
 end

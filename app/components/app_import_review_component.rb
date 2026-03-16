@@ -19,8 +19,8 @@ class AppImportReviewComponent < ViewComponent::Base
       @inter_team.select { it.record_type == "import_issue" }
     @new_records_pagy, @new_records = new_records
     @auto_matched_records_pagy, @auto_matched_records = auto_matched_records
-    @import_issues = import_issues.sort_by(&:row_number)
-    @school_moves = school_moves
+    @import_issues_pagy, @import_issues = import_issues
+    @school_moves_pagy, @school_moves = school_moves
     @school_moves_from_file = @school_moves.reject { it.row_number.nil? }
     @skipped_school_moves = skipped_school_moves.sort_by(&:row_number)
     @open_sections = open_sections
@@ -84,8 +84,8 @@ class AppImportReviewComponent < ViewComponent::Base
 
   def show_cancel_button?
     @new_records_pagy.count.positive? ||
-      @auto_matched_records_pagy.count.positive? || @import_issues.any? ||
-      @school_moves_from_file.any?
+      @auto_matched_records_pagy.count.positive? ||
+      @import_issues_pagy.count.positive? || @school_moves_from_file.any?
   end
 
   def cancel_button_text

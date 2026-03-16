@@ -9,8 +9,8 @@ describe AppImportReviewComponent do
       inter_team:,
       new_records: [new_records_pagy, new_records],
       auto_matched_records: [auto_matched_records_pagy, auto_matched_records],
-      import_issues:,
-      school_moves:,
+      import_issues: [import_issues_pagy, import_issues],
+      school_moves: [school_moves_pagy, school_moves],
       skipped_school_moves:,
       open_sections:
     )
@@ -43,8 +43,14 @@ describe AppImportReviewComponent do
     instance_double(Pagy, count: 0, limit: 50).as_null_object
   end
   let(:import_issues) { [] }
+  let(:import_issues_pagy) do
+    instance_double(Pagy, count: 0, limit: 50).as_null_object
+  end
   let(:inter_team) { [] }
   let(:school_moves) { [] }
+  let(:school_moves_pagy) do
+    instance_double(Pagy, count: 0, limit: 50).as_null_object
+  end
   let(:skipped_school_moves) { [] }
   let(:open_sections) { [] }
 

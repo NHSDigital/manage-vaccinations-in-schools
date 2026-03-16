@@ -199,19 +199,25 @@ class CohortImportsController < ApplicationController
         page_param: :auto_matched_records_page
       )
     @import_issues =
-      @cohort_import
-        .changesets
-        .includes(:patient)
-        .ready_for_review
-        .import_issue
-        .where.not(id: @inter_team_ids)
+      pagy(
+        @cohort_import
+          .changesets
+          .includes(:patient)
+          .ready_for_review
+          .import_issue
+          .where.not(id: @inter_team_ids)
+          .order(:row_number)
+      )
     @school_moves =
-      @cohort_import
-        .changesets
-        .includes(:school, patient: :school)
-        .ready_for_review
-        .with_school_moves
-        .where.not(id: @inter_team_ids)
+      pagy(
+        @cohort_import
+          .changesets
+          .includes(:school, patient: :school)
+          .ready_for_review
+          .with_school_moves
+          .where.not(id: @inter_team_ids)
+          .order(:row_number)
+      )
     @skipped_school_moves =
       @cohort_import
         .changesets
