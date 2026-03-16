@@ -51,10 +51,19 @@
             <% end %>
 
             <%= row.with_cell do %>
-              <span class="nhsuk-table-responsive__heading">Decision</span>
+              <span class="nhsuk-table-responsive__heading">Actions</span>
+              <% hidden = "response from #{consent_form.parent_full_name} for #{consent_form.full_name}" %>
               <%= render AppActionListComponent.new do |action_list| %>
-                <% action_list.with_item(text: "Match", href: search_consent_form_path(consent_form)) %>
-                <% action_list.with_item(text: "Archive", href: archive_consent_form_path(consent_form)) %>
+                <% action_list.with_item(
+                     text: "Match",
+                     href: search_consent_form_path(consent_form),
+                     visually_hidden_text: hidden,
+                   ) %>
+                <% action_list.with_item(
+                     text: "Archive",
+                     href: archive_consent_form_path(consent_form),
+                     visually_hidden_text: hidden,
+                   ) %>
               <% end %>
             <% end %>
           <% end %>
