@@ -14,18 +14,33 @@ class AppActionListComponent < ViewComponent::Base
   ERB
 
   class Item < ViewComponent::Base
-    def initialize(text: nil, href: nil)
+    def initialize(text: nil, href: nil, visually_hidden_text: nil)
       @text = html_escape(text)
       @href = href
+      @visually_hidden_text = visually_hidden_text
     end
 
     def call
+      label = content || @text
+      if @visually_hidden_text.present?
+        label =
+          safe_join(
+            [
+              label,
+              tag.span(
+                " #{@visually_hidden_text}",
+                class: "nhsuk-u-visually-hidden"
+              )
+            ]
+          )
+      end
+
       if @href.present?
-        link_to(content || @text, @href)
-      elsif @text.present?
-        @text
+        link_to(label, @href)
+      elsif label.present?
+        label
       else
-        content || raise(ArgumentError, "no text or content")
+        raise(ArgumentError, "no text or content")
       end
     end
   end
