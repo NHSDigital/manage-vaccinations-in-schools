@@ -12,7 +12,7 @@
 <% end %>
 
 <%= form_with model: @form, url: vaccine_batches_path(@vaccine), method: :post do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_text_field :number, label: { text: "Batch number" }, width: 10, class: "nhsuk-input--code" %>
 

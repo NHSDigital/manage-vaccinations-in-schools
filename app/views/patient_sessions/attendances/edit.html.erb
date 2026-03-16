@@ -8,7 +8,7 @@
 <%= form_with model: @attendance_record,
               url: session_patient_attendance_path(@session, @patient),
               method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:attending,
                                      caption: { size: "l",
                                                 text: @session.location.name },

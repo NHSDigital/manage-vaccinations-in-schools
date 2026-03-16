@@ -6,7 +6,7 @@
 <% content_for :page_title, legend %>
 
 <%= form_with model: @form, url: patient_archive_path(@patient) do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :type,
                                      legend: { text: legend, size: "l", tag: "h1" },

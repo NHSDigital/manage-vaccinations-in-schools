@@ -6,7 +6,7 @@
 <% content_for :page_title, legend %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :notify_parents_on_vaccination,
                                      caption: { size: "l", text: @patient.full_name },

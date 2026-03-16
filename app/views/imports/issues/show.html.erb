@@ -59,7 +59,7 @@
     <%= f.hidden_field :apply_changes, value: "discard" %>
     <%= f.govuk_submit "Discard incoming changes" %>
   <% else %>
-    <% content_for(:before_content) { f.govuk_error_summary } %>
+    <%= f.mavis_error_summary %>
 
     <%= f.govuk_collection_radio_buttons :apply_changes,
                                          @form.apply_changes_options,

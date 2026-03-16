@@ -6,7 +6,7 @@
 <% content_for :page_title, title %>
 
 <%= form_with model: @health_answer, url: wizard_path, method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= hidden_field_tag "question_number", @question_number %>
 
