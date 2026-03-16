@@ -12,7 +12,7 @@
 <% any_other_backgrounds = Patient.any_other_ethnic_backgrounds.map(&:to_s) %>
 
 <%= form_with model: @patient, url: edit_ethnic_background_patient_path(@patient), method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :ethnic_background, legend: { size: "l", text: title, tag: "h1" } do %>
     <% ethnic_background_options.each_with_index do |background, index| %>

@@ -1,5 +1,5 @@
 <%= form_with model: form, url:, method:, builder: do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.mavis_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset :status_option, **fieldset_options do %>
     <% form.safe_to_vaccinate_options.each do |option| %>

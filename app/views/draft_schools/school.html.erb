@@ -7,6 +7,7 @@
   <%= h1 "Which school do you want to add a site to?" %>
 
   <%= form_with(model: @draft_school, url: wizard_path, method: :put) do |f| %>
+    <%= f.mavis_error_summary %>
     <%= f.govuk_select :parent_urn_and_site,
                        label: {
                          text: "Select a school",

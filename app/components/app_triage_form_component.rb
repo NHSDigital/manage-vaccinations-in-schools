@@ -16,7 +16,7 @@ class AppTriageFormComponent < ViewComponent::Base
   delegate :policy, to: :helpers
   delegate :patient, :session, :programme, to: :form
 
-  def builder = GOVUKDesignSystemFormBuilder::FormBuilder
+  def builder = MavisFormBuilder
 
   def hint_text
     if programme.mmr? && patient_eligible_for_additional_dose?
