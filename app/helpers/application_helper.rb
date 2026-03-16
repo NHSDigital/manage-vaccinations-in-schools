@@ -25,15 +25,15 @@ module ApplicationHelper
 
     if title.blank?
       raise "No page title set. All pages must have a unique title and an " \
-            "h1. Use the <%= h1 %> helper in your page, or set a title via " \
-            "content_for(:page_title)."
+              "h1. Use the <%= h1 %> helper in your page, or set a title via " \
+              "content_for(:page_title)."
     end
 
     if response.status == 422
       unless content_for?(:error_summary_rendered)
         raise "No error summary found. All pages that respond with a 422 " \
-              "have an Error: prefixed title and must render an error " \
-              "summary via f.mavis_error_summary."
+                "have an Error: prefixed title and must render an error " \
+                "summary via f.mavis_error_summary."
       end
 
       title = "Error: #{title}"
