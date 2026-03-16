@@ -139,6 +139,7 @@ en:
               too_long: Enter a batch number that is less than %{count} characters long
             batch_expiry:
               blank: Enter an expiry date
+              invalid: Enter a valid expiry date
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
@@ -430,6 +431,8 @@ en:
               too_many_rows: >-
                 The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of
                 less than %{count} rows
+            csv_filename:
+              blank: Choose a file
         cohort_import:
           attributes:
             csv:
@@ -439,6 +442,8 @@ en:
               too_many_rows: >-
                 The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of
                 less than %{count} rows
+            csv_filename:
+              blank: Choose a file
         consent:
           attributes:
             notes:
@@ -559,6 +564,8 @@ en:
               too_many_rows: >-
                 The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of
                 less than %{count} rows
+            csv_filename:
+              blank: Choose a file
         note:
           attributes:
             body:
