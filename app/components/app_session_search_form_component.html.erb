@@ -1,4 +1,4 @@
-<%= form_with url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+<%= form_with url:, method: :get, builder: MavisFormBuilder do |f| %>
   <%= render AppCardComponent.new(filters: true) do |card| %>
     <% card.with_heading(level: 2) { "Find session" } %>
 
