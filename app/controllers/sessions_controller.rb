@@ -49,7 +49,7 @@ class SessionsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html { render layout: "full" }
+      format.html { render layout: "session" }
 
       format.xlsx do
         filename =

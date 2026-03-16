@@ -15,7 +15,7 @@ class Sessions::PatientSpecificDirectionsController < Sessions::BaseController
     patients = @form.apply(scope)
     @pagy, @patients = pagy(patients)
 
-    render layout: "full"
+    render layout: "session"
   end
 
   def new
