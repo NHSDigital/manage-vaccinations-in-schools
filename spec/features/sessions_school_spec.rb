@@ -581,6 +581,11 @@ describe "School sessions" do
         template: :clinic_initial_invitation_ryg
       ).with_content_including("swiftqueue.co.uk", "Jepson House")
     )
-    expect_sms_to @parent.phone, :clinic_initial_invitation_ryg, :any
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :clinic_initial_invitation_ryg
+      ).with_content_including("swiftqueue.co.uk")
+    )
   end
 end
