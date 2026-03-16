@@ -7,7 +7,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   clinic_subsequent_invitation: "a86a3b3f-a848-41d8-9a6f-d38174981388",
   clinic_subsequent_invitation_ryg: "eee59c1b-3af4-4ccd-8653-940887066390",
   session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",
-  vaccination_already_had: "e37fe0a2-7584-4c25-983a-8f5a11c818a1",
   vaccination_deleted: "1caf1459-abc9-4944-b8c0-deba906ea005",
   vaccination_not_administered: "130fe52a-014a-45dd-9f53-8e65c1b8bb79"
 }.freeze
