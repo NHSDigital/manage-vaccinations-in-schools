@@ -18,7 +18,7 @@ class AppSessionVaccinationsComponent < ViewComponent::Base
         <% table.with_body do |body| %>
           <% rows.each_with_index do |row_data| %>
             <% body.with_row do |row| %>
-              <% row.with_cell(text: row_data[:label]) %>
+              <% row.with_cell(text: row_data[:label], header: true) %>
               <% row_data[:tallies].each do |tally| %>
                 <% row.with_cell(text: tally.to_s, numeric: true) %>
               <% end %>

@@ -33,7 +33,10 @@
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Actions</span>
               <% if notice.can_dismiss? %>
-                <%= link_to "Dismiss", dismiss_imports_notice_path(notice) %>
+                <%= link_to dismiss_imports_notice_path(notice) do %>
+                  Dismiss<span class="nhsuk-u-visually-hidden"> notice for
+                    <%= notice.patient.full_name %></span>
+                <% end %>
               <% end %>
             <% end %>
         <% end %>

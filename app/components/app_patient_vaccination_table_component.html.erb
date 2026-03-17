@@ -16,7 +16,7 @@
       <% vaccination_records.each do |vaccination_record| %>
         <% body.with_row do |row| %>
           <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Vaccination date</span>
+            <span class="nhsuk-table-responsive__heading">Date</span>
             <%= link_to vaccination_record.performed_at.to_date.to_fs(:long),
                         vaccination_record_path(vaccination_record) %>
           <% end %>

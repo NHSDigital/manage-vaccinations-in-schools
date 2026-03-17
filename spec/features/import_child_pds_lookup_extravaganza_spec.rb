@@ -516,7 +516,7 @@ describe "Import child records" do
   def when_i_click_review_for(name)
     within(
       :xpath,
-      "//h3[contains(text(), 'Close matches')]/following-sibling::details[1]"
+      "//h2[contains(text(), 'Close matches')]/following-sibling::details[1]"
     ) do
       within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
     end

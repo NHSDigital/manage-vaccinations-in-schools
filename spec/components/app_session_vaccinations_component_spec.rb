@@ -27,7 +27,7 @@ describe AppSessionVaccinationsComponent do
     expect(column_index).not_to be_nil,
     "Column '#{column_name}' not found in headers: #{headers}"
 
-    cells = row.all("td")
+    cells = row.all("th, td")
     cell_value = cells[column_index].text.strip
 
     expect(cell_value).to eq(count.to_s),

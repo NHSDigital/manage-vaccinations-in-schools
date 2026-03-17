@@ -79,9 +79,9 @@
 <% if import.processed? || import.partially_processed? || import.removing_parent_relationships? %>
 
   <% if @cancelled.present? %>
-    <h3 class="nhsuk-u-reading-width">
+    <h2 class="nhsuk-u-reading-width">
       Records not imported
-    </h3>
+    </h2>
     <details class="nhsuk-details nhsuk-expander">
       <summary class="nhsuk-details__summary" data-module="app-sticky">
         <span class="nhsuk-details__summary-text">
@@ -95,9 +95,9 @@
   <% end %>
 
   <% if @skipped_school_moves.present? %>
-    <h3 class="nhsuk-u-reading-width">
+    <h2 class="nhsuk-u-reading-width">
       Records not imported - children at schools in other team areas
-    </h3>
+    </h2>
     <p class="nhsuk-hint">
       This upload included <%= @skipped_school_moves.count > 1 ? "children" : "a child" %> who <%= @skipped_school_moves.count == 1 ? "was" : "were" %> already
       registered at a school in another team's area. <%= @skipped_school_moves.count == 1 ? "This child remains" : "These children remain" %>
@@ -116,9 +116,9 @@
   <% end %>
 
   <% if @nhs_discrepancies.present? %>
-    <h3 class="nhsuk-u-reading-width">
+    <h2 class="nhsuk-u-reading-width">
       NHS numbers updated from PDS
-    </h3>
+    </h2>
     <p class="nhsuk-hint">
       <%= pluralize(@nhs_discrepancies.count, "incorrect NHS number") %>
       updated with <%= @nhs_discrepancies.count == 1 ? "that" : "those" %> found on Spine.
@@ -128,9 +128,9 @@
     <% end %>
 
   <% if @duplicates.present? %>
-    <h3 class="nhsuk-u-reading-width">
+    <h2 class="nhsuk-u-reading-width">
       Close matches to existing records - needs review
-    </h3>
+    </h2>
     <p class="nhsuk-hint">
       <%= pluralize(@duplicates.count,
                     "record") %> flagged with upload issues for review
@@ -149,16 +149,16 @@
   <% end %>
 
   <% if @patients.present? %>
-    <h3 class="nhsuk-u-reading-width">
+    <h2 class="nhsuk-u-reading-width">
       Imported records
-    </h3>
+    </h2>
     <%= render AppPatientTableComponent.new(@patients, current_user:, pagy: @pagy) %>
   <% end %>
 
   <% if @vaccination_records.present? %>
-    <h3 class="nhsuk-u-reading-width">
+    <h2 class="nhsuk-u-reading-width">
       Imported records
-    </h3>
+    </h2>
     <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, current_user:, pagy: @pagy) %>
   <% end %>
 <% end %>

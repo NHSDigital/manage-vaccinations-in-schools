@@ -20,7 +20,7 @@
     <% programme = consent_form_programme.programme %>
 
     <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading { t(programme.to_param, scope: %i[consent_forms confirm consent_card_title]) } %>
+      <% card.with_heading(level: 2) { t(programme.to_param, scope: %i[consent_forms confirm consent_card_title]) } %>
 
       <%= govuk_summary_list do |summary_list|
             summary_list.with_row do |row|
@@ -52,7 +52,7 @@
     <% programme = consent_form_programme.programme %>
 
     <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading { t(programme.to_param, scope: %i[consent_forms confirm consent_card_title]) } %>
+      <% card.with_heading(level: 2) { t(programme.to_param, scope: %i[consent_forms confirm consent_card_title]) } %>
 
       <%= govuk_summary_list do |summary_list|
             summary_list.with_row do |row|
@@ -79,7 +79,7 @@
 <% end %>
 
 <%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "About your child" } %>
+  <% card.with_heading(level: 2) { "About your child" } %>
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Child’s name" }
@@ -156,7 +156,7 @@
 <% end %>
 
 <%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "About you" } %>
+  <% card.with_heading(level: 2) { "About you" } %>
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Your name" }
@@ -214,7 +214,7 @@
 
 <% if @consent_form.response_given? %>
   <%= render AppCardComponent.new do |card| %>
-    <% card.with_heading { "Health questions" } %>
+    <% card.with_heading(level: 2) { "Health questions" } %>
     <%= govuk_summary_list classes: "app-summary-list--full-width" do |summary_list|
           @consent_form.each_health_answer do |ha|
             summary_list.with_row do |row|

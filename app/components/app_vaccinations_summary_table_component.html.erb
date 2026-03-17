@@ -23,7 +23,9 @@
                 <% batch = default_batch(vaccine) %>
                 <%= batch&.number || "Not set" %>
                 <% if batch %>
-                  <%= link_to "Change", batch_session_record_path(session, vaccine.programme, vaccine.method) %>
+                  <%= link_to batch_session_record_path(session, vaccine.programme, vaccine.method) do %>
+                    Change<span class="nhsuk-u-visually-hidden"> default batch for <%= vaccine.brand %></span>
+                  <% end %>
                 <% end %>
               <% end %>
             <% end %>

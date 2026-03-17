@@ -59,7 +59,9 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Actions</span>
-              <%= link_to "Review", school_move_path(school_move) %>
+              <%= link_to school_move_path(school_move) do %>
+                Review<span class="nhsuk-u-visually-hidden"> school move for <%= school_move.patient.full_name %></span>
+              <% end %>
             <% end %>
           <% end %>
         <% end %>
