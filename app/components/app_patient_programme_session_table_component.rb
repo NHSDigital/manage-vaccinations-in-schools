@@ -39,7 +39,7 @@ class AppPatientProgrammeSessionTableComponent < ViewComponent::Base
         <% end %>
       <% end %>
     <% else %>
-      <p class="nhsuk-body">No sessions</p>
+      <p>No sessions</p>
     <% end %>
   ERB
 

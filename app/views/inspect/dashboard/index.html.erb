@@ -1,19 +1,19 @@
 <%= h1 "Operational support tools", size: "xl" %>
 
-<p class="nhsuk-body">These tools are only accessible to authorised operational support staff. Use them to inspect and troubleshoot individual records in the system.</p>
+<p>These tools are only accessible to authorised operational support staff. Use them to inspect and troubleshoot individual records in the system.</p>
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: "/inspect/graph/patient/#{@sample_patient_id}") do |card| %>
       <% card.with_heading { "Object graphing tool" } %>
-      <p class="nhsuk-body">Explore the data graph for any object type (e.g., sessions, consents, patients) to trace relationships and links.</p>
+      <p>Explore the data graph for any object type (e.g., sessions, consents, patients) to trace relationships and links.</p>
       <p class="nhsuk-hint">URL format: <code>/inspect/graph/&lt;object_type&gt;/&lt;ID&gt;</code></p>
     <% end %>
   </li>
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: "/inspect/timeline/patients/#{@sample_patient_id}") do |card| %>
       <% card.with_heading { "Patient timeline tool" } %>
-      <p class="nhsuk-body">Use this tool to view a chronological timeline of key events for a specific patient.</p>
+      <p>Use this tool to view a chronological timeline of key events for a specific patient.</p>
       <p class="nhsuk-hint">URL format: <code>/inspect/timeline/patients/&lt;ID&gt;</code></p>
     <% end %>
   </li>

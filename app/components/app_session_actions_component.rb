@@ -7,7 +7,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       <% if rows.any? %>
         <%= govuk_summary_list(rows:) %>
       <% else %>
-        <p class="nhsuk-body">No action required</p>
+        <p>No action required</p>
       <% end %>
     <% end %>
   ERB

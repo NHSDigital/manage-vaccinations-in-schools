@@ -117,7 +117,7 @@ class AppParentSummaryComponent < ViewComponent::Base
     delivery_status = @parent.email_delivery_status
 
     elements = [
-      tag.p(@parent.email, class: "nhsuk-body nhsuk-u-margin-0"),
+      tag.p(@parent.email, class: "nhsuk-u-margin-0"),
       if (failure_text = EMAIL_FAILURE_TEXTS[delivery_status])
         render AppStatusComponent.new(
                  text: failure_text,
@@ -141,7 +141,7 @@ class AppParentSummaryComponent < ViewComponent::Base
     delivery_status = @parent.sms_delivery_status
 
     elements = [
-      tag.p(@parent.phone, class: "nhsuk-body nhsuk-u-margin-0"),
+      tag.p(@parent.phone, class: "nhsuk-u-margin-0"),
       if (failure_text = PHONE_FAILURE_TEXTS[delivery_status])
         render AppStatusComponent.new(
                  text: failure_text,
