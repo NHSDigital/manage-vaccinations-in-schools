@@ -713,10 +713,8 @@ class Patient < ApplicationRecord
       school_moves.each do |school_move|
         new_patient.school_moves.build(
           academic_year: school_move.academic_year,
-          home_educated: school_move.home_educated,
           school_id: school_move.school_id,
-          source: school_move.source,
-          team_id: school_move.team_id
+          source: school_move.source
         )
       end
 

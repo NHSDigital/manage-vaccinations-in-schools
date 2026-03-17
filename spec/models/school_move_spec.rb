@@ -6,13 +6,11 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer          not null
-#  home_educated :boolean
 #  source        :integer          not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  patient_id    :bigint           not null
 #  school_id     :bigint           not null
-#  team_id       :bigint
 #
 # Indexes
 #
@@ -75,19 +73,10 @@ describe SchoolMove do
           :count
         ).by(1)
 
-        # TODO: Remove this once `team_id` and `home_educated` columns have
-        #  been dropped.
-        school =
-          school_move.school ||
-            (
-              if school_move.home_educated
-                school_move.team.home_educated_school
-              else
-                school_move.team.unknown_school
-              end
-            )
-
-        expect(SchoolMoveLogEntry.last).to have_attributes(school:, user:)
+        expect(SchoolMoveLogEntry.last).to have_attributes(
+          school: school_move.school,
+          user:
+        )
       end
     end
 

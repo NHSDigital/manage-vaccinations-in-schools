@@ -6,13 +6,11 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer          not null
-#  home_educated :boolean
 #  source        :integer          not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  patient_id    :bigint           not null
 #  school_id     :bigint           not null
-#  team_id       :bigint
 #
 # Indexes
 #
@@ -28,27 +26,22 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class SchoolMove < ApplicationRecord
+  self.ignored_columns = %w[home_educated team_id]
+
   audited associated_with: :patient
 
   belongs_to :patient
   belongs_to :school, class_name: "Location"
 
-  belongs_to :team, optional: true
-
-  has_many :school_team_locations,
+  has_many :team_locations,
            -> do
              where(academic_year: it.academic_year).order(created_at: :desc)
            end,
-           through: :school,
-           source: :team_locations,
-           class_name: "TeamLocation"
+           through: :school
 
-  has_many :school_teams,
-           through: :school_team_locations,
-           source: :team,
-           class_name: "Team"
+  has_many :teams, through: :team_locations
 
-  scope :joins_team_locations_for_school, -> { joins(<<-SQL) }
+  scope :joins_team_locations, -> { joins(<<-SQL) }
     INNER JOIN team_locations
     ON team_locations.location_id = school_moves.school_id
     AND team_locations.academic_year = school_moves.academic_year
@@ -59,13 +52,7 @@ class SchoolMove < ApplicationRecord
        prefix: true,
        validate: true
 
-  validates :team,
-            presence: {
-              if: -> { school.nil? }
-            },
-            absence: {
-              unless: -> { school.nil? }
-            }
+  validates :school, presence: true
 
   def confirm!(user: nil)
     ActiveRecord::Base.transaction do
@@ -98,36 +85,15 @@ class SchoolMove < ApplicationRecord
 
     return false if current_teams.empty?
 
-    new_teams =
-      if school
-        school_teams
-      elsif team
-        [team]
-      end
-
-    (new_teams & current_teams).empty?
+    (teams & current_teams).empty?
   end
 
   private
 
-  # TODO: Remove these once we've dropped the `team_id` and `home_educated`
-  #  columns.
-  def destination_school
-    @destination_school ||=
-      school ||
-        (home_educated ? team.home_educated_school : team.unknown_school)
-  end
-
-  def destination_teams
-    @destination_teams ||= school_id.present? ? school_teams : [team]
-  end
-
-  def update_patient!
-    patient.update!(school: destination_school)
-  end
+  def update_patient! = patient.update!(school:)
 
   def update_archive_reasons!(user:)
-    new_team_ids = (school_teams.map(&:id) + [team_id]).compact
+    new_team_ids = teams.map(&:id)
 
     patient.archive_reasons.where(team_id: new_team_ids).destroy_all
 
@@ -149,13 +115,11 @@ class SchoolMove < ApplicationRecord
   def update_locations!
     patient_locations = []
 
-    location = destination_school
-
     patient
       .patient_locations
       .where("academic_year >= ?", academic_year)
-      .where.not(location:)
-      .where.not(location: destination_teams.map(&:generic_clinic))
+      .where.not(location: school)
+      .where.not(location: teams.map(&:generic_clinic))
       .find_each do |patient_location|
         end_date = Date.yesterday
 
@@ -171,7 +135,7 @@ class SchoolMove < ApplicationRecord
       end
 
     PatientLocation
-      .find_or_initialize_by(patient:, location:, academic_year:)
+      .find_or_initialize_by(patient:, location: school, academic_year:)
       .tap do |patient_location|
         patient_location.end_date = nil
 
@@ -197,15 +161,11 @@ class SchoolMove < ApplicationRecord
   end
 
   def create_log_entry!(user:)
-    SchoolMoveLogEntry.create!(
-      patient:,
-      school_id: destination_school.id,
-      user:
-    )
+    SchoolMoveLogEntry.create!(patient:, school:, user:)
   end
 
   def create_important_notice!(school_move_log_entry)
-    new_team_ids = (school_teams.map(&:id) + [team_id]).compact
+    new_team_ids = teams.map(&:id)
 
     patient.teams.each do |team|
       next if team.id.in?(new_team_ids)
@@ -215,7 +175,7 @@ class SchoolMove < ApplicationRecord
         team:,
         type: :team_changed,
         recorded_at: school_move_log_entry.created_at,
-        school_move_log_entry:
+        school_move_log_entry_id: school_move_log_entry.id
       )
     end
   end
