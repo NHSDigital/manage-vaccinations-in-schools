@@ -10,7 +10,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     show_patient_specific_direction_status: false,
     show_programme_status: false,
     show_registration_status: false,
-    show_vaccine_type: false
+    show_vaccine_type: false,
+    heading_level: 4
   )
     @patient = patient
     @session = session
@@ -30,11 +31,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     @show_programme_status = show_programme_status
     @show_registration_status = show_registration_status
     @show_vaccine_type = show_vaccine_type
+    @heading_level = heading_level
   end
 
   def call
     render AppCardComponent.new(link_to: card_link, compact: true) do |card|
-      card.with_heading(level: 4) { heading }
+      card.with_heading(level: @heading_level) { heading }
       safe_join([summary_list, registration_buttons].compact)
     end
   end
