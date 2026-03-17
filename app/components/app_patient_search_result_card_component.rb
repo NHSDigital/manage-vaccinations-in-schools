@@ -14,7 +14,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     show_programme_status: true,
     show_school: false,
     show_vaccinated_programme_status_only: false,
-    show_year_group: false
+    show_year_group: false,
+    heading_level: 4
   )
     @patient = patient
     @link_to = link_to
@@ -22,6 +23,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
     @programmes = programmes
     @academic_year = academic_year || AcademicYear.pending
+    @heading_level = heading_level
 
     @show_clinic_invitations = show_clinic_invitations
     @show_nhs_number = show_nhs_number
@@ -36,7 +38,9 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   def call
     render AppCardComponent.new(link_to:, compact: true) do |card|
-      card.with_heading(level: 4) { patient.full_name_with_known_as }
+      card.with_heading(level: @heading_level) do
+        patient.full_name_with_known_as
+      end
       govuk_summary_list(rows:)
     end
   end
