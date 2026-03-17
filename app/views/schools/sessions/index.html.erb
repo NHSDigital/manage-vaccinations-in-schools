@@ -6,6 +6,7 @@
                                         ]) %>
 <% end %>
 
+<% content_for :page_title, "#{t("schools.sessions.title")} – #{@location.school_name}" %>
 <%= render "schools/header" %>
 
 <%= govuk_button_link_to "Add a new session", new_session_path(school_id: @location.id), secondary: true %>
