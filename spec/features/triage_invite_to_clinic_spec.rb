@@ -161,18 +161,36 @@ describe "Triage" do
   end
 
   def and_a_vaccination_at_clinic_email_is_sent_to_the_parent
-    expect_email_to @patient.consents.first.parent.email,
-                    :triage_vaccination_at_clinic
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.first.parent.email,
+        template: :triage_vaccination_at_clinic
+      ).with_content_including(
+        "vaccinated in a clinic",
+        "contact us using the details below"
+      )
+    )
   end
 
   def and_a_vaccination_at_clinic_rt5_email_is_sent_to_the_parent
-    expect_email_to @patient.consents.first.parent.email,
-                    :triage_vaccination_at_clinic_rt5
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.first.parent.email,
+        template: :triage_vaccination_at_clinic_rt5
+      ).with_content_including(
+        "invitation to book a clinic appointment",
+        "2 to 3 working days"
+      )
+    )
   end
 
   def and_a_vaccination_at_clinic_ryg_email_is_sent_to_the_parent
-    expect_email_to @patient.consents.first.parent.email,
-                    :triage_vaccination_at_clinic_ryg
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.first.parent.email,
+        template: :triage_vaccination_at_clinic_ryg
+      ).with_content_including("vaccinated in a clinic", "swiftqueue.co.uk")
+    )
   end
 
   def when_i_filter_by_invited_to_clinic

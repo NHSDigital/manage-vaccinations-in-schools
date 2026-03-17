@@ -72,6 +72,11 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_that_vaccination_will_happen
-    expect_email_to(@parent.email, :triage_delay_vaccination)
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template: :triage_delay_vaccination
+      ).with_content_including("better for", "to be vaccinated at a later date")
+    )
   end
 end

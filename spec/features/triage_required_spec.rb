@@ -377,7 +377,12 @@ describe "Triage" do
     current_patient =
       @patient_triage_needed || @patient_injection_only || @patient_nasal_only
     current_patient.parents.each do |parent|
-      expect_email_to parent.email, :triage_vaccination_wont_happen, :any
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: parent.email,
+          template: :triage_vaccination_wont_happen
+        ).with_content_including("cannot have the", "Please get in touch")
+      )
     end
   end
 
@@ -385,7 +390,15 @@ describe "Triage" do
     current_patient =
       @patient_triage_needed || @patient_injection_only || @patient_nasal_only
     current_patient.parents.each do |parent|
-      expect_email_to parent.email, :triage_vaccination_will_happen, :any
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: parent.email,
+          template: :triage_vaccination_will_happen
+        ).with_content_including(
+          "confirmed it\u2019s safe",
+          "We\u2019ll let you know once"
+        )
+      )
     end
   end
 
@@ -473,9 +486,12 @@ describe "Triage" do
 
   def then_the_mmr_second_dose_will_happen_email_is_sent
     @patient_triage_needed.parents.each do |parent|
-      expect_email_to parent.email,
-                      :triage_vaccination_will_happen_mmr_second_dose,
-                      :any
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: parent.email,
+          template: :triage_vaccination_will_happen_mmr_second_dose
+        ).with_content_including("We recently gave", "2nd dose")
+      )
     end
   end
 end
