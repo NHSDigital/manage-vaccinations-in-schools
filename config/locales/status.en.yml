@@ -97,7 +97,7 @@ en:
         cannot_vaccinate_refused: Child refused
         cannot_vaccinate_unwell: Child unwell
         has_refusal_consent_conflicts: Conflicting consent
-        has_refusal_consent_refused: Parent refused
+        has_refusal_consent_refused: Consent refused
         needs_consent_follow_up_requested: Follow-up requested
         needs_consent_no_response: No response
         needs_consent_request_failed: Request failed

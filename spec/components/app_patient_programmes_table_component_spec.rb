@@ -68,7 +68,7 @@ describe AppPatientProgrammesTableComponent do
       before { PatientStatusUpdater.call(patient:) }
 
       it { should have_content("Has a refusal") }
-      it { should have_content("Parent refused") }
+      it { should have_content("Consent refused") }
     end
 
     context "when triage outcome was 'Do not vaccinate'" do
