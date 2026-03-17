@@ -12,7 +12,7 @@
 <%= govuk_button_link_to "Add a new session", new_session_path(school_id: @location.id), secondary: true %>
 
 <% if @scheduled_sessions.present? %>
-  <h3 class="nhsuk-heading-m">Scheduled sessions</h3>
+  <h2 class="nhsuk-heading-m">Scheduled sessions</h2>
 
   <div class="nhsuk-grid-row nhsuk-card-group">
     <% @scheduled_sessions.each do |session| %>
@@ -31,7 +31,7 @@
 <% end %>
 
 <% if @unscheduled_sessions.present? %>
-  <h3 class="nhsuk-heading-m">Unscheduled sessions</h3>
+  <h2 class="nhsuk-heading-m">Unscheduled sessions</h2>
 
   <div class="nhsuk-grid-row nhsuk-card-group">
     <% @unscheduled_sessions.each do |session| %>
@@ -50,7 +50,7 @@
 <% end %>
 
 <% if @completed_sessions.present? %>
-  <h3 class="nhsuk-heading-m">Completed sessions</h3>
+  <h2 class="nhsuk-heading-m">Completed sessions</h2>
 
   <div class="nhsuk-grid-row nhsuk-card-group">
     <% @completed_sessions.each do |session| %>
