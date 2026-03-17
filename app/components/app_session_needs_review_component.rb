@@ -6,7 +6,7 @@ class AppSessionNeedsReviewComponent < ViewComponent::Base
   end
 
   def call
-    render AppWarningCalloutComponent.new(heading: "Needs review") do
+    render AppWarningCalloutComponent.new(heading: "Needs review", level: 2) do
       tag.ul do
         safe_join(
           items.map do |item|

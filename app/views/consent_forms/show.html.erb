@@ -5,8 +5,8 @@
 <%= h1 "Consent response from #{@consent_form.parent_full_name}" %>
 
 <% if @nhs_number_taken %>
-  <%= render AppWarningCalloutComponent.new(heading: "A child record with this NHS number already exists.") do %>
-    <p>Match this consent response to the existing child record.</p> 
+  <%= render AppWarningCalloutComponent.new(heading: "A child record with this NHS number already exists.", level: 2) do %>
+    <p>Match this consent response to the existing child record.</p>
   <% end %>
 <% end %>
 
