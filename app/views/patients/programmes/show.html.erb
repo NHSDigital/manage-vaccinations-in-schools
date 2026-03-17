@@ -5,6 +5,7 @@
                                         ]) %>
 <% end %>
 
+<% content_for :page_title, "#{@patient.initials} – #{@programme.name}" %>
 <%= render "patients/header" %>
 
 <%= render AppPatientNavigationComponent.new(@patient, current_user.programmes, active: @programme.type.to_sym) %>
