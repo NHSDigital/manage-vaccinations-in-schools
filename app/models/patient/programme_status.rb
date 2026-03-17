@@ -120,7 +120,14 @@ class Patient::ProgrammeStatus < ApplicationRecord
        validate: true
 
   enum :consent_status,
-       { no_response: 0, given: 1, refused: 2, conflicts: 3, not_required: 4 },
+       {
+         no_response: 0,
+         given: 1,
+         refused: 2,
+         conflicts: 3,
+         not_required: 4,
+         follow_up_requested: 5
+       },
        default: :no_response,
        prefix: :consent,
        validate: true

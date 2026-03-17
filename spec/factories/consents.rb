@@ -139,8 +139,18 @@ FactoryBot.define do
     trait :refused do
       response { "refused" }
       reason_for_refusal { "personal_choice" }
+      follow_up_requested { false }
       health_answers { [] }
       notes { "Refused." }
+      vaccine_methods { [] }
+    end
+
+    trait :follow_up_requested do
+      response { "refused" }
+      reason_for_refusal { "personal_choice" }
+      follow_up_requested { true }
+      health_answers { [] }
+      notes { "" }
       vaccine_methods { [] }
     end
 

@@ -292,6 +292,7 @@ en:
           personal_choice: Personal choice
           will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
         responses:
+          follow_up_requested: Follow-up requested
           given: Consent given
           given_injection: Consent given
           given_nasal: Consent given

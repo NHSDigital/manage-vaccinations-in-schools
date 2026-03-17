@@ -48,6 +48,12 @@ describe StatusGenerator::Consent do
       it { should be(:refused) }
     end
 
+    context "with a follow_up_requested consent" do
+      before { create(:consent, :follow_up_requested, patient:, programme:) }
+
+      it { should be(:follow_up_requested) }
+    end
+
     context "with a given consent" do
       before { create(:consent, :given, patient:, programme:) }
 
@@ -60,6 +66,36 @@ describe StatusGenerator::Consent do
         create(
           :consent,
           :refused,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:conflicts) }
+    end
+
+    context "with a given and follow_up_requested consent from different parents" do
+      before do
+        create(:consent, :given, patient:, programme:)
+        create(
+          :consent,
+          :follow_up_requested,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:follow_up_requested) }
+    end
+
+    context "with a refused and follow_up_requested consent from different parents" do
+      before do
+        create(:consent, :refused, patient:, programme:)
+        create(
+          :consent,
+          :follow_up_requested,
           patient:,
           programme:,
           parent: create(:parent)
@@ -293,6 +329,12 @@ describe StatusGenerator::Consent do
       it { should be_empty }
     end
 
+    context "with a follow_up_requested consent" do
+      before { create(:consent, :follow_up_requested, patient:, programme:) }
+
+      it { should be_empty }
+    end
+
     context "with an injection given consent" do
       before do
         create(
@@ -441,6 +483,12 @@ describe StatusGenerator::Consent do
 
     context "with a refused consent" do
       before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a follow_up_requested consent" do
+      before { create(:consent, :follow_up_requested, patient:, programme:) }
 
       it { should be_nil }
     end

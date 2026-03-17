@@ -54,6 +54,8 @@ module ConsentsHelper
     text =
       if consent.withdrawn?
         Consent.human_enum_name(:response, :given)
+      elsif consent.try(:refusal_with_follow_up?)
+        Consent.human_enum_name(:response, :follow_up_requested)
       else
         consent.human_enum_name(:response)
       end
@@ -63,6 +65,8 @@ module ConsentsHelper
         "grey"
       elsif consent.response_given?
         "green"
+      elsif consent.try(:refusal_with_follow_up?)
+        "orange"
       elsif consent.response_refused?
         "red"
       else

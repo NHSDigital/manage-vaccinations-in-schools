@@ -14,11 +14,13 @@ en:
         given_injection_without_gelatine: Consent given for gelatine-free injection
         given_injection_without_gelatine_flu: Consent given for injection
         given_nasal: Consent given for nasal spray
+        follow_up_requested: Follow-up requested
         no_response: No response
         not_required: No consent needed
         refused: Consent refused
       colour:
         conflicts: orange
+        follow_up_requested: orange
         given: green
         given_injection: green
         given_injection_without_gelatine: green

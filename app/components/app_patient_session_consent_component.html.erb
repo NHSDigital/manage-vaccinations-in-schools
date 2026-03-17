@@ -13,6 +13,8 @@
       <% end %>
     <% elsif consent_status_value == :conflicts %>
       <p>You can only vaccinate if all respondents give consent.</p>
+    <% elsif consent_status_value == :follow_up_requested %>
+      <p><%= who_refused %> would like to speak to a member of the team about other options for their child's vaccination.</p>
     <% elsif consent_status_value == :refused %>
       <p><%= who_refused %> refused to give consent.</p>
     <% elsif consent_status_generator.status == :given %>

@@ -102,7 +102,10 @@ class StatusGenerator::Programme
     if not_eligible? ||
          triage_generator.status.in?(
            %i[required invite_to_clinic do_not_vaccinate]
-         ) || consent_status.in?(%i[no_response conflicts refused])
+         ) ||
+         consent_status.in?(
+           %i[no_response conflicts refused follow_up_requested]
+         )
       return nil
     end
 
@@ -113,7 +116,10 @@ class StatusGenerator::Programme
     if not_eligible? ||
          triage_generator.status.in?(
            %i[required invite_to_clinic do_not_vaccinate]
-         ) || consent_status.in?(%i[no_response conflicts refused])
+         ) ||
+         consent_status.in?(
+           %i[no_response conflicts refused follow_up_requested]
+         )
       return nil
     end
 
@@ -217,7 +223,7 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_consent_follow_up_requested?
-    false # TODO: Implement this status.
+    consent_status == :follow_up_requested
   end
 
   def should_be_needs_consent_request_failed?

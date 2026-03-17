@@ -336,6 +336,22 @@ describe StatusGenerator::Programme do
     its(:without_gelatine) { should be_nil }
   end
 
+  context "when consent is follow_up_requested" do
+    let(:programme) { Programme.mmr }
+
+    before { create(:consent, :follow_up_requested, patient:, programme:) }
+
+    its(:consent_status) { should be(:follow_up_requested) }
+    its(:consent_vaccine_methods) { should be_empty }
+    its(:date) { should be_nil }
+    its(:disease_types) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:needs_consent_follow_up_requested) }
+    its(:vaccine_methods) { should be_nil }
+    its(:without_gelatine) { should be_nil }
+  end
+
   context "when consent is conflicting" do
     let(:programme) { Programme.mmr }
 
