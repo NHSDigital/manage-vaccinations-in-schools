@@ -29,40 +29,31 @@
 #
 FactoryBot.define do
   factory :school_move do
+    transient { team { nil } }
+
     patient
 
     academic_year { AcademicYear.pending }
     source { SchoolMove.sources.keys.sample }
 
     trait :to_school do
-      home_educated { nil }
-      team { nil }
       school
     end
 
     trait :to_home_educated do
-      home_educated { true }
-      team
-      school { nil }
+      team { create(:team) }
+      school { team.home_educated_school }
     end
 
     trait :to_unknown_school do
-      home_educated { false }
-      team
-      school { nil }
+      team { create(:team) }
+      school { team.unknown_school }
     end
 
     after(:create) do |school_move|
-      team_scope =
-        if (id = school_move.team_id)
-          Team.where(id:)
-        else
-          school_move.school.teams
-        end
-
       PatientTeamUpdater.call(
         patient_scope: Patient.where(id: school_move.patient_id),
-        team_scope:
+        team_scope: school_move.school.teams
       )
     end
   end

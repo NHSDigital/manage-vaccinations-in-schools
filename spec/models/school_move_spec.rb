@@ -99,9 +99,7 @@ describe SchoolMove do
 
     shared_examples "sets the patient to home-schooled" do
       it "sets the patient to home-schooled" do
-        expect { confirm! }.to change(patient, :school).to(
-          school_move.team.home_educated_school
-        )
+        expect { confirm! }.to change(patient, :school).to(school_move.school)
       end
     end
 
