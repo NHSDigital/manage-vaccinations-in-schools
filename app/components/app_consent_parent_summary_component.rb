@@ -40,9 +40,7 @@ class AppConsentParentSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Email address" }
           if (email = consent_parent_email(@consentable)).present?
-            row.with_value do
-              tag.p(email, class: "nhsuk-body nhsuk-u-margin-0")
-            end
+            row.with_value { tag.p(email, class: "nhsuk-u-margin-0") }
             if (href = @change_links[:email])
               row.with_action(
                 text: "Change",
@@ -60,9 +58,7 @@ class AppConsentParentSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Phone number" }
           if (phone = consent_parent_phone(@consentable)).present?
-            row.with_value do
-              tag.p(phone, class: "nhsuk-body nhsuk-u-margin-0")
-            end
+            row.with_value { tag.p(phone, class: "nhsuk-u-margin-0") }
             if (href = @change_links[:phone])
               row.with_action(
                 text: "Change",

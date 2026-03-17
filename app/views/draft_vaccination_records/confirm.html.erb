@@ -46,7 +46,7 @@
     <% end %>
   <% else %>
     <%= render AppWarningCalloutComponent.new(heading: "Incorrect vaccine given") do %>
-      <p class="nhsuk-body">The vaccine given does not match that determined by the child’s consent or triage outcome</p>
+      <p>The vaccine given does not match that determined by the child’s consent or triage outcome</p>
       <%= render vaccination_summary %>
     <% end %>
   <% end %>
