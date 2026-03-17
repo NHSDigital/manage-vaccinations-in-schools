@@ -1,3 +1,5 @@
+<% content_for :page_title, "#{t("sessions.tabs.patients")} – #{session_title(@session)}" %>
+
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">
     <%= render AppPatientSearchFormComponent.new(
