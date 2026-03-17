@@ -14,7 +14,7 @@
           row.with_value { @school_move_export.date_from_formatted }
           row.with_action(text: "Change", href: wizard_path(:dates), visually_hidden_text: "from date")
         end
-
+      
         summary_list.with_row do |row|
           row.with_key { "Until" }
           row.with_value { @school_move_export.date_to_formatted }
