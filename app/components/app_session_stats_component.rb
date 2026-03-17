@@ -20,7 +20,7 @@ class AppSessionStatsComponent < ViewComponent::Base
               <%= render AppCardComponent.new(compact: true,
                                               colour: card_data[:colour],
                                               link_to: card_data[:link_to]) do |card| %>
-                <% card.with_heading(size: "xs") { card_data[:heading] } %>
+                <% card.with_heading(level: 4, size: "xs") { card_data[:heading] } %>
                 <% card.with_data { card_data[:count].to_s } %>
               <% end %>
             </li>
