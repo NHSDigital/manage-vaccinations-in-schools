@@ -5,6 +5,7 @@
                                         ]) %>
 <% end %>
 
+<% content_for :page_title, "#{t("schools.patients.title")} – #{@location.school_name}" %>
 <%= render "schools/header" %>
 
 <% if @location.school? %>
