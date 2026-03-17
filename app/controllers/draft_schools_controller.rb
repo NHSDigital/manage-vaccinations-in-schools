@@ -93,7 +93,7 @@ class DraftSchoolsController < ApplicationController
 
   def set_year_groups
     @year_groups =
-      (-3..15).map do |n|
+      Location::YearGroup::DEFAULT_VALUE_RANGE.map do |n|
         OpenStruct.new(id: n, name: helpers.format_year_group(n))
       end
   end

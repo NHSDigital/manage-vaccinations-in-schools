@@ -26,7 +26,7 @@ FactoryBot.define do
     location
 
     academic_year { AcademicYear.pending }
-    value { Location::YearGroup::CLINIC_VALUE_RANGE.to_a.sample }
+    value { Location::YearGroup::DEFAULT_VALUE_RANGE.to_a.sample }
 
     source { Location::YearGroup.sources.keys.sample }
 

@@ -250,7 +250,7 @@ describe "Import child records" do
       @school.import_year_groups_from_gias!(academic_year:)
       @school.import_default_programme_year_groups!(programmes, academic_year:)
       @generic_clinic.import_year_groups!(
-        Location::YearGroup::CLINIC_VALUE_RANGE,
+        Location::YearGroup::DEFAULT_VALUE_RANGE,
         academic_year:,
         source: "generic_clinic_factory"
       )

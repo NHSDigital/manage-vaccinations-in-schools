@@ -35,7 +35,7 @@ class Location::YearGroup < ApplicationRecord
        { gias: 0, generic_clinic_factory: 1, cli: 2, manual: 3 },
        validate: true
 
-  CLINIC_VALUE_RANGE = (-3..15)
+  DEFAULT_VALUE_RANGE = (-3..15)
 
   validates :value,
             presence: true,

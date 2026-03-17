@@ -85,7 +85,7 @@ FactoryBot.define do
           team.team_locations.create!(location:, academic_year:, subteam:)
         end
 
-        year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
+        year_groups = Location::YearGroup::DEFAULT_VALUE_RANGE.to_a
 
         location.import_year_groups!(
           year_groups,
