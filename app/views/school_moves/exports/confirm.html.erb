@@ -6,19 +6,19 @@
 <%= h1 "Check and confirm" %>
 
 <%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "Requested download" } %>
+  <% card.with_heading(level: 2) { "Requested download" } %>
 
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "From" }
           row.with_value { @school_move_export.date_from_formatted }
-          row.with_action(text: "Change", href: wizard_path(:dates))
+          row.with_action(text: "Change", href: wizard_path(:dates), visually_hidden_text: "from date")
         end
-      
+
         summary_list.with_row do |row|
           row.with_key { "Until" }
           row.with_value { @school_move_export.date_to_formatted }
-          row.with_action(text: "Change", href: wizard_path(:dates))
+          row.with_action(text: "Change", href: wizard_path(:dates), visually_hidden_text: "until date")
         end
       
         summary_list.with_row do |row|
