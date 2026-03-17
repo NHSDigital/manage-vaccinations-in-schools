@@ -21,6 +21,7 @@ class AppImportReviewRecordsSummaryComponent < ViewComponent::Base
         <% changesets.each do |changeset| %>
           <% body.with_row do |row| %>
             <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">CSV file row</span>
               <%= changeset.row_number ? changeset.csv_row_number.to_s : "" %>
             <% end %>
             <% row.with_cell do %>
