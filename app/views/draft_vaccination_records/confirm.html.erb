@@ -41,17 +41,17 @@
 <% if @draft_vaccination_record.administered? || @draft_vaccination_record.reported_as_already_vaccinated? %>
   <% if @draft_vaccination_record.vaccine_method_matches_consent_and_triage? || @draft_vaccination_record.reported_as_already_vaccinated? %>
     <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading { "Vaccination details" } %>
+      <% card.with_heading(level: 2) { "Vaccination details" } %>
       <%= render vaccination_summary %>
     <% end %>
   <% else %>
-    <%= render AppWarningCalloutComponent.new(heading: "Incorrect vaccine given") do %>
+    <%= render AppWarningCalloutComponent.new(heading: "Incorrect vaccine given", level: 2) do %>
       <p>The vaccine given does not match that determined by the child’s consent or triage outcome</p>
       <%= render vaccination_summary %>
     <% end %>
   <% end %>
 <% else %>
-  <%= render AppWarningCalloutComponent.new(heading: "Vaccination was not given") do %>
+  <%= render AppWarningCalloutComponent.new(heading: "Vaccination was not given", level: 2) do %>
     <%= render vaccination_summary %>
   <% end %>
 <% end %>

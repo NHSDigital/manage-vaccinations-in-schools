@@ -10,7 +10,7 @@
 <% end %>
 
 <% if (count = @notices_count) %>
-  <%= render AppWarningCalloutComponent.new(heading: "Important notices") do %>
+  <%= render AppWarningCalloutComponent.new(heading: "Important notices", level: 2) do %>
     <p><%= link_to t(".notices.description", count:), imports_notices_path %></p>
   <% end %>
 <% end %>

@@ -4,12 +4,12 @@ class AppWarningCalloutComponent < ViewComponent::Base
   erb_template <<-ERB
     <div class="nhsuk-card nhsuk-card--warning">
       <div class="nhsuk-card__content">
-        <h3 class="nhsuk-card__heading">
+        <h<%= @level %> class="nhsuk-card__heading">
           <span role="text">
             <span class="nhsuk-u-visually-hidden">Important: </span>
             <%= @heading %>
           </span>
-        </h3>
+        </h<%= @level %>>
 
         <% if @description.present? %>
           <p><%= @description %></p>
@@ -20,8 +20,9 @@ class AppWarningCalloutComponent < ViewComponent::Base
     </div>
   ERB
 
-  def initialize(heading:, description: nil)
+  def initialize(heading:, description: nil, level: 3)
     @heading = heading
     @description = description
+    @level = level
   end
 end
