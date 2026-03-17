@@ -22,6 +22,11 @@ export class Sticky extends Component {
 
     window.addEventListener("scroll", this.throttledStickyState);
 
+    const nav = $root.querySelector(".app-secondary-navigation");
+    if (nav) {
+      document.documentElement.style.scrollPaddingTop = `${nav.offsetHeight}px`;
+    }
+
     this.determineStickyState();
   }
 
