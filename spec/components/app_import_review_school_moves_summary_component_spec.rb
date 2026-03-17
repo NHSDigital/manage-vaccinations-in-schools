@@ -189,7 +189,8 @@ describe AppImportReviewSchoolMovesSummaryComponent do
 
     it "displays empty string for row number" do
       first_cell = rendered.css("tbody tr td").first
-      expect(first_cell.text.strip).to be_empty
+      row_number = first_cell.text.sub("CSV file row", "").strip
+      expect(row_number).to be_empty
     end
 
     it "still displays patient and school information" do
