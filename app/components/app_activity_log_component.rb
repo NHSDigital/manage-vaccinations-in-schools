@@ -4,7 +4,7 @@ class AppActivityLogComponent < ViewComponent::Base
   erb_template <<-ERB
     <div class="app-timeline">
       <% all_events.each do |event| %>
-        <%= render AppTimelineItemComponent.new(is_past: true) do |item| %>
+        <%= render AppTimelineItemComponent.new(is_past: true, heading_level: 4) do |item| %>
           <% item.with_heading do %>
             <%= event[:invalidated] ? tag.s(event[:title]) : event[:title] %>
           <% end %>
