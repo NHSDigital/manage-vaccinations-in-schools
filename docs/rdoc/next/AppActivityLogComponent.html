@@ -1258,7 +1258,7 @@
     <span class="ruby-keyword">else</span>
       {
         <span class="ruby-value">title:</span>
-          <span class="ruby-node">&quot;Consent #{original_response} by #{consent.name} (#{consent.who_responded})&quot;</span>,
+          <span class="ruby-node">&quot;Consent #{original_response} by #{consent.name} (#{consent.who_responded.downcase_first})&quot;</span>,
         <span class="ruby-value">at:</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">submitted_at</span>,
         <span class="ruby-value">by:</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">recorded_by</span>,
         <span class="ruby-value">programmes:</span> [<span class="ruby-identifier">consent</span>.<span class="ruby-identifier">programme</span>]

@@ -665,7 +665,7 @@ fk_rails_...  (patient_id =&gt; patients.id)</pre>
           <div class="method-source-code" id="label-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/parent_relationship.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">label</span>
-  (<span class="ruby-identifier">other?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">other_name</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">human_enum_name</span>(<span class="ruby-value">:type</span>)).<span class="ruby-identifier">capitalize</span>
+  <span class="ruby-identifier">other?</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;Other – #{other_name}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">human_enum_name</span>(<span class="ruby-value">:type</span>).<span class="ruby-identifier">capitalize</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -707,7 +707,7 @@ fk_rails_...  (patient_id =&gt; patients.id)</pre>
           <div class="method-source-code" id="label_with_parent-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/parent_relationship.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">label_with_parent</span>
-  <span class="ruby-identifier">unknown?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">label</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{parent.label} (#{label})&quot;</span>
+  <span class="ruby-identifier">unknown?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">label</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{parent.label} (#{label.downcase_first})&quot;</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
