@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 class AppLocationCardComponent < ViewComponent::Base
-  def initialize(location, patient_count:, next_session_date:)
+  def initialize(location, patient_count:, next_session_date:, heading_level: 4)
     @location = location
     @patient_count = patient_count
     @next_session_date = next_session_date
+    @heading_level = heading_level
   end
 
   def call
     render AppCardComponent.new(link_to:, compact: true) do |card|
-      card.with_heading(level: 4) { heading }
+      card.with_heading(level: @heading_level) { heading }
       govuk_summary_list(rows:)
     end
   end

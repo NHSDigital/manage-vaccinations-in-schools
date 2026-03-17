@@ -17,6 +17,7 @@
               location,
               patient_count: @patient_count_by_school_id.fetch(location.school_id, 0),
               next_session_date: @next_session_date_by_location_id[location.id],
+              heading_level: 3,
             ) %>
       <% end %>
     <% end %>
