@@ -8,7 +8,8 @@ class AppSessionCardComponent < ViewComponent::Base
     full_width: false,
     show_buttons: false,
     show_status: false,
-    return_to: nil
+    return_to: nil,
+    heading_level: 4
   )
     @session = session
     @patient_count = patient_count
@@ -17,11 +18,12 @@ class AppSessionCardComponent < ViewComponent::Base
     @show_buttons = show_buttons
     @show_status = show_status
     @return_to = return_to
+    @heading_level = heading_level
   end
 
   def call
     render AppCardComponent.new(link_to:, compact: true) do |card|
-      card.with_heading(level: 4) { heading }
+      card.with_heading(level: @heading_level) { heading }
       safe_join([summary_list, button_group].compact)
     end
   end

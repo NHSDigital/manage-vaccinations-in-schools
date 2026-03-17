@@ -21,6 +21,7 @@
               session,
               patient_count: @patient_count_by_session_id.fetch(session.id, 0),
               show_status: true,
+              heading_level: 3,
             ) %>
       <% end %>
     <% end %>
