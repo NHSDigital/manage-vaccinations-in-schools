@@ -10,7 +10,7 @@
 <%= form_with url: url_for(action: :create) do |f| %>
   <%= hidden_field_tag :session_slug, @session.slug %>
   <%= hidden_field_tag :programme_types, programme_params %>
-  <%= f.govuk_submit "Start now", role: "link" %>
+  <%= f.govuk_submit "Start now" %>
 <% end %>
 
 <h3 class="nhsuk-heading-s">Other ways to give consent</h3>
