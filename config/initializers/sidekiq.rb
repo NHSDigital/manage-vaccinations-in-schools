@@ -47,6 +47,7 @@ Sidekiq.configure_server do |config|
 
     config.on :startup do
       PrometheusExporter::Instrumentation::Process.start type: "sidekiq"
+      PrometheusExporter::Instrumentation::ActiveRecord.start
       PrometheusExporter::Instrumentation::SidekiqProcess.start
       PrometheusExporter::Instrumentation::SidekiqQueue.start
       PrometheusExporter::Instrumentation::SidekiqStats.start
