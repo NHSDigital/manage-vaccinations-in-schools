@@ -17,15 +17,36 @@ module PatientMatcher
       return [patient]
     end
 
-    scope = relation.where(given_name:, family_name:, date_of_birth:)
+    scope =
+      relation.where(
+        "lower(given_name) = lower(?) AND lower(family_name) = lower(?)",
+        given_name,
+        family_name
+      ).where(date_of_birth:)
 
     if address_postcode.present?
       scope =
         if include_3_out_of_4_matches
           scope
-            .or(relation.where(given_name:, family_name:, address_postcode:))
-            .or(relation.where(given_name:, date_of_birth:, address_postcode:))
-            .or(relation.where(family_name:, date_of_birth:, address_postcode:))
+            .or(
+              relation.where(
+                "lower(given_name) = lower(?) AND lower(family_name) = lower(?)",
+                given_name,
+                family_name
+              ).where(address_postcode:)
+            )
+            .or(
+              relation.where("lower(given_name) = lower(?)", given_name).where(
+                date_of_birth:,
+                address_postcode:
+              )
+            )
+            .or(
+              relation.where(
+                "lower(family_name) = lower(?)",
+                family_name
+              ).where(date_of_birth:, address_postcode:)
+            )
         else
           scope.where(address_postcode:)
         end

@@ -16,9 +16,9 @@
 #  ethnic_background          :integer
 #  ethnic_background_other    :string
 #  ethnic_group               :integer
-#  family_name                :citext           not null
+#  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
-#  given_name                 :citext           not null
+#  given_name                 :string           not null
 #  home_educated              :boolean
 #  invalidated_at             :datetime
 #  local_authority_mhclg_code :string
