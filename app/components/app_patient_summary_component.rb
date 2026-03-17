@@ -8,7 +8,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
     
     <%= govuk_summary_list(rows:, classes:) %>
     
-    <p class="nhsuk-body">
+    <p>
       <%= link_to "View full child record", patient_path(patient) %>
     </p>
   ERB

@@ -6,7 +6,7 @@
 
 <% if @nhs_number_taken %>
   <%= render AppWarningCalloutComponent.new(heading: "A child record with this NHS number already exists.") do %>
-    <p class="nhsuk-body">Match this consent response to the existing child record.</p> 
+    <p>Match this consent response to the existing child record.</p> 
   <% end %>
 <% end %>
 

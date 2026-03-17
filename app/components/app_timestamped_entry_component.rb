@@ -2,7 +2,7 @@
 
 class AppTimestampedEntryComponent < ViewComponent::Base
   erb_template <<-ERB
-    <p class="nhsuk-body">
+    <p>
       <%= @text %>
     </p>
     <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-colour nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
