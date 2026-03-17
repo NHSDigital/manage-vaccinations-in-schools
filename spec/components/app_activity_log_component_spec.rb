@@ -57,7 +57,7 @@ describe AppActivityLogComponent do
           page
             .all(".app-timeline__item")
             .find do |card_element|
-              card_element.has_css?("h3", text: title) &&
+              card_element.has_css?(".app-timeline__header", text: title) &&
                 card_element.has_css?(
                   "p.app-timeline__description",
                   text: programme

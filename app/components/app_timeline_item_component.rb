@@ -14,9 +14,9 @@ class AppTimelineItemComponent < ViewComponent::Base
       <% end %>
 
       <div class="app-timeline__content">
-        <h3 class="app-timeline__header <%= 'nhsuk-u-font-weight-bold' if @is_active %>">
+        <h<%= @heading_level %> class="app-timeline__header <%= 'nhsuk-u-font-weight-bold' if @is_active %>">
           <%= heading %>
-        </h3>
+        </h<%= @heading_level %>>
 
         <p class="app-timeline__description">
           <%= description %>
@@ -30,8 +30,9 @@ class AppTimelineItemComponent < ViewComponent::Base
   renders_one :heading
   renders_one :description
 
-  def initialize(is_active: false, is_past: false)
+  def initialize(is_active: false, is_past: false, heading_level: 3)
     @is_active = is_active
     @is_past = is_past
+    @heading_level = heading_level
   end
 end
