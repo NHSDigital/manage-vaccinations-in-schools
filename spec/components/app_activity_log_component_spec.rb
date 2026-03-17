@@ -526,6 +526,24 @@ describe AppActivityLogComponent do
                      programme: "HPV"
   end
 
+  describe "follow-up requested consent" do
+    before do
+      create(
+        :consent,
+        :follow_up_requested,
+        programme: programmes.first,
+        patient:,
+        parent: mum,
+        submitted_at: Time.zone.local(2025, 5, 30, 12)
+      )
+    end
+
+    include_examples "card",
+                     title: "Follow-up requested by Jane Doe (mum)",
+                     date: "30 May 2025 at 12:00pm",
+                     programme: "HPV"
+  end
+
   describe "gillick assessments" do
     let(:programmes) { [Programme.td_ipv] }
 
