@@ -266,7 +266,12 @@ describe "Archive vaccination record" do
   end
 
   def and_the_parent_receives_an_email
-    expect_email_to(@patient.parents.first.email, :vaccination_deleted)
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.parents.first.email,
+        template: :vaccination_deleted
+      ).with_content_including("sent in error", "Please ignore it")
+    )
   end
 
   def and_the_parent_doesnt_receives_an_email

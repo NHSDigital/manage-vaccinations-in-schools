@@ -298,9 +298,11 @@ describe "MMR vaccination" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
-    expect_email_to(
-      @patient.consents.last.parent.email,
-      :vaccination_administered_mmr
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.last.parent.email,
+        template: :vaccination_administered_mmr
+      ).with_content_including("blotchy rash", "swollen glands")
     )
   end
 

@@ -1,0 +1,30 @@
+---
+template_id: "0b1095db-fb38-4105-9f01-a364fa8bbb1c"
+template_name: vaccination_administered_mmr
+subject: "Your child had their <%= vaccination %> <%= today_or_date_of_vaccination %>"
+---
+<%= full_and_preferred_patient_name %> had their <%= vaccination %> at <%= location_name %> <%= today_or_date_of_vaccination %>. 
+
+We suggest you make a note of the following details somewhere.
+
+Vaccination: <%= vaccination %>
+Vaccine: <%= vaccine_brand %>
+Date of vaccination: <%= day_month_year_of_vaccination %>
+Batch number: <%= batch_name %>
+
+## Possible side effects 
+
+Your child might have some of the following side effects:
+
+* a raised, blotchy rash (similar to a measles rash), feeling unwell, and a high temperature around 7 to 11 days after the vaccination
+* swollen glands around the cheeks, neck and jaw, and aching joints (similar to a mild form of mumps) around 2 to 3 weeks after the vaccination
+
+These side effects are usually mild and only last 2 to 3 days. If you’re concerned about your child’s reaction to the vaccine, contact your GP in the usual way.
+
+<%= mmr_second_dose_message %>
+
+You can [give feedback](https://feedback.digital.nhs.uk/jfe/form/SV_3fICo6frMvUZX1k) about the ‘Give or refuse consent’ service by completing our short survey. Your feedback will help us improve the service. 
+
+<%= subteam_name %>
+<%= subteam_email %>
+<%= subteam_phone %>

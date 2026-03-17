@@ -208,9 +208,11 @@ describe "MenACWY vaccination" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
-    expect_email_to(
-      @patient.consents.last.parent.email,
-      :vaccination_administered_menacwy
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.last.parent.email,
+        template: :vaccination_administered_menacwy
+      ).with_content_including("MenACWY vaccination", "MenQuadfi")
     )
   end
 

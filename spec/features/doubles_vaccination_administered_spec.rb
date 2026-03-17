@@ -130,16 +130,18 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccinations
-    expect_email_to(
-      @patient.consents.last.parent.email,
-      :vaccination_administered_menacwy,
-      :any
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.last.parent.email,
+        template: :vaccination_administered_menacwy
+      ).with_content_including("MenACWY vaccination", "MenQuadfi")
     )
 
-    expect_email_to(
-      @patient.consents.last.parent.email,
-      :vaccination_administered_td_ipv,
-      :any
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.last.parent.email,
+        template: :vaccination_administered_td_ipv
+      ).with_content_including("3-in-1 teenage booster", "Revaxis")
     )
   end
 

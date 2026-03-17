@@ -208,9 +208,11 @@ describe "Td/IPV vaccination" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
-    expect_email_to(
-      @patient.consents.last.parent.email,
-      :vaccination_administered_td_ipv
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.last.parent.email,
+        template: :vaccination_administered_td_ipv
+      ).with_content_including("3-in-1 teenage booster", "Revaxis")
     )
   end
 

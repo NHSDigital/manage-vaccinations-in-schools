@@ -1,0 +1,15 @@
+---
+template_id: "1caf1459-abc9-4944-b8c0-deba906ea005"
+template_name: vaccination_deleted
+subject: "Our last email to you was inaccurate"
+---
+<% if outcome_administered.present? %>You recently received an email saying that your child got a vaccination.<% end %>
+<% if outcome_not_administered.present? %>You recently received an email saying that your child did not get a vaccination.<% end %>
+
+This was sent in error. Please ignore it.
+
+If you have any questions or concerns, get in touch with us.
+
+<%= subteam_name %>
+<%= subteam_email %>
+<%= subteam_phone %>
