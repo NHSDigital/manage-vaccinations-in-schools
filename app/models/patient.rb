@@ -56,8 +56,6 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class Patient < ApplicationRecord
-  self.ignored_columns = %w[home_educated]
-
   include AddressConcern
   include AgeConcern
   include EthnicityConcern
