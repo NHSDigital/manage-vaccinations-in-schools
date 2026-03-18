@@ -124,7 +124,7 @@ class SchoolMove < ApplicationRecord
   end
 
   def update_patient!
-    patient.update!(home_educated: nil, school: destination_school)
+    patient.update!(school: destination_school)
   end
 
   def update_archive_reasons!(user:)

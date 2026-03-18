@@ -62,8 +62,9 @@ class SchoolMovesController < ApplicationController
     @patient_with_changes =
       @patient.dup.tap do |patient|
         patient.clear_changes_information
-        patient.school = @school_move.school
-        patient.home_educated = @school_move.home_educated
+        # TODO: Switch this to `school` once `home_educated` and `team_id`
+        #  columns have been removed.
+        patient.school = @school_move.send(:destination_school)
       end
   end
 end

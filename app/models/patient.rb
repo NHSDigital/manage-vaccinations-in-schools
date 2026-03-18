@@ -19,7 +19,6 @@
 #  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
 #  given_name                 :string           not null
-#  home_educated              :boolean
 #  invalidated_at             :datetime
 #  local_authority_mhclg_code :string
 #  nhs_number                 :string
@@ -57,18 +56,20 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class Patient < ApplicationRecord
+  self.ignored_columns = %w[home_educated]
+
   include AddressConcern
   include AgeConcern
   include EthnicityConcern
   include FullNameConcern
   include Invalidatable
   include PendingChangesConcern
-  include Schoolable
 
   audited
   has_associated_audits
 
   belongs_to :gp_practice, class_name: "Location", optional: true
+  belongs_to :school, class_name: "Location", optional: true
 
   has_many :access_log_entries
   has_many :archive_reasons
@@ -479,7 +480,7 @@ class Patient < ApplicationRecord
 
   validates :address_postcode, postcode: { allow_nil: true }
 
-  validate :gp_practice_is_correct_type
+  validate :locations_are_correct_type
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
 
@@ -811,10 +812,13 @@ class Patient < ApplicationRecord
 
   private
 
-  def gp_practice_is_correct_type
-    location = gp_practice
-    if location && !location.gp_practice?
+  def locations_are_correct_type
+    if gp_practice && !gp_practice.gp_practice?
       errors.add(:gp_practice, "must be a GP practice location type")
+    end
+
+    if school && !(school.school? || school.generic_school?)
+      errors.add(:school, "must be a school location type")
     end
   end
 

@@ -94,7 +94,6 @@ describe SchoolMove do
     shared_examples "sets the patient school" do
       it "sets the patient school" do
         expect { confirm! }.to change(patient, :school).to(school)
-        expect(patient.home_educated).to be_nil
       end
     end
 
@@ -103,7 +102,6 @@ describe SchoolMove do
         expect { confirm! }.to change(patient, :school).to(
           school_move.team.home_educated_school
         )
-        expect(patient.home_educated).to be_nil
       end
     end
 
@@ -538,7 +536,9 @@ describe SchoolMove do
           end
 
           it "keeps the patient as home-schooled" do
-            expect { confirm! }.not_to(change { patient.reload.home_educated })
+            expect { confirm! }.to change { patient.reload.school }.to(
+              new_team.home_educated_school
+            )
           end
 
           include_examples "creates a log entry"
@@ -697,10 +697,6 @@ describe SchoolMove do
     shared_examples "an ignored school move" do
       it "doesn't change the patient's school" do
         expect { ignore! }.not_to change(patient, :school)
-      end
-
-      it "doesn't change the patient's home educated status" do
-        expect { ignore! }.not_to change(patient, :home_educated)
       end
 
       it "destroys the school move" do

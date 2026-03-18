@@ -384,7 +384,6 @@ describe CommitPatientChangesetsJob do
           year_group: 9,
           preferred_given_name: "Jenny",
           school: nil,
-          home_educated: false,
           session: other_session
         )
       end

@@ -49,13 +49,7 @@ module PatientsHelper
   end
 
   def patient_school(patient)
-    if (school = patient.school).present?
-      school.name
-    elsif patient.home_educated
-      "Home-educated"
-    else
-      "Unknown school"
-    end
+    patient&.school&.name || "Unknown school"
   end
 
   def patient_year_group(patient, academic_year:)

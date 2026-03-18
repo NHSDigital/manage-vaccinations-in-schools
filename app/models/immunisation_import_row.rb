@@ -549,8 +549,7 @@ class ImmunisationImportRow
       given_name: patient_first_name.to_s,
       gender_code: patient_gender_code_value,
       nhs_number: patient_nhs_number_value,
-      school: nil,
-      home_educated: false
+      school: nil
     }.compact
   end
 
