@@ -321,7 +321,7 @@ describe "Offline vaccination" do
   def when_i_choose_to_record_offline_from_a_school_session_page
     sign_in @team.users.first
     visit session_path(@session)
-    click_link "Record offline"
+    click_on "Download offline spreadsheet"
   end
 
   def when_i_choose_to_record_offline_from_a_clinic_page
@@ -331,7 +331,7 @@ describe "Offline vaccination" do
     choose "Scheduled"
     click_button "Update results"
     click_link "Community clinic"
-    click_link "Record offline"
+    click_on "Download offline spreadsheet"
   end
 
   def and_alter_an_existing_vaccination_record_to_create_a_duplicate

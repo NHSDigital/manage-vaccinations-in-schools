@@ -6,7 +6,9 @@ class AppSessionButtonsComponent < ViewComponent::Base
       <% if policy(session).edit? %>
         <%= govuk_button_link_to "Edit session", edit_session_path(session), secondary: true %>
 
-        <%= link_to "Record offline", session_path(session, format: :xlsx) %>
+        <%= govuk_button_link_to "Download offline spreadsheet",
+                                 session_path(session, format: :xlsx),
+                                 secondary: true %>
 
         <% if policy(session).invite_to_clinic? %>
           <%= link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
