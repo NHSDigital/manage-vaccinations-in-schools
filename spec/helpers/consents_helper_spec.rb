@@ -18,7 +18,7 @@ describe ConsentsHelper do
         let(:programme) { Programme.flu }
 
         include_examples "refusal reason label",
-                         "Nasal vaccine contains gelatine"
+                         "I’m concerned the nasal vaccine contains gelatine"
       end
 
       context "when the programme is MMR" do
@@ -28,7 +28,7 @@ describe ConsentsHelper do
 
         include_examples(
           "refusal reason label",
-          "Do not want my child to have the MMR vaccine that contains gelatine"
+          "I’m concerned the vaccine contains gelatine"
         )
       end
 
@@ -39,14 +39,15 @@ describe ConsentsHelper do
 
         include_examples(
           "refusal reason label",
-          "Do not want my child to have the MMRV vaccine that contains gelatine"
+          "I’m concerned the vaccine contains gelatine"
         )
       end
 
       context "when the programme is not flu or MMR" do
         let(:programme) { Programme.hpv }
 
-        include_examples "refusal reason label", "Vaccine contains gelatine"
+        include_examples "refusal reason label",
+                         "I’m concerned the vaccine contains gelatine"
       end
     end
 
@@ -57,7 +58,7 @@ describe ConsentsHelper do
         let(:programme) { Programme.flu }
 
         include_examples "refusal reason label",
-                         "Nasal vaccine contains gelatine"
+                         "I’m concerned the nasal vaccine contains gelatine"
       end
 
       context "when the programme is MMR" do
@@ -67,7 +68,7 @@ describe ConsentsHelper do
 
         include_examples(
           "refusal reason label",
-          "Do not want my child to have the MMR vaccine that contains gelatine"
+          "I’m concerned the vaccine contains gelatine"
         )
       end
 
@@ -78,14 +79,15 @@ describe ConsentsHelper do
 
         include_examples(
           "refusal reason label",
-          "Do not want my child to have the MMRV vaccine that contains gelatine"
+          "I’m concerned the vaccine contains gelatine"
         )
       end
 
       context "when the programme is not flu or MMR" do
         let(:programme) { Programme.hpv }
 
-        include_examples "refusal reason label", "Vaccine contains gelatine"
+        include_examples "refusal reason label",
+                         "I’m concerned the vaccine contains gelatine"
       end
     end
   end

@@ -130,7 +130,7 @@ describe AppConsentSummaryComponent do
 
     it "shows the flu-specific gelatine copy" do
       expect(rendered).to have_content(
-        "Reason for refusalNasal vaccine contains gelatine"
+        "Reason for refusalI’m concerned the nasal vaccine contains gelatine"
       )
     end
   end
@@ -150,7 +150,7 @@ describe AppConsentSummaryComponent do
 
     it "shows the MMR-specific gelatine copy" do
       expect(rendered).to have_content(
-        "Do not want my child to have the MMR vaccine that contains gelatine"
+        "I’m concerned the vaccine contains gelatine"
       )
     end
   end

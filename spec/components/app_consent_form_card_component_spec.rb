@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppConsentFormCardComponent do
-  subject { render_inline(component) }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(consent_form) }
 
@@ -35,6 +35,10 @@ describe AppConsentFormCardComponent do
       )
     end
 
-    it { should have_text("Refusal reasonNasal vaccine contains gelatine") }
+    it do
+      expect(rendered).to have_text(
+        "Refusal reasonI’m concerned the nasal vaccine contains gelatine"
+      )
+    end
   end
 end

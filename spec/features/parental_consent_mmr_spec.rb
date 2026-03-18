@@ -144,14 +144,12 @@ describe "Parental consent" do
     click_button "Continue"
 
     # Resaon for refusal
-    choose "Do not want my child to have the MMR vaccine that contains gelatine"
+    choose "I’m concerned the vaccine contains gelatine"
     click_button "Continue"
   end
 
   def and_i_see_the_refusal_reason_on_the_check_and_confirm_page
-    expect(page).to have_content(
-      "Do not want my child to have the MMR vaccine that contains gelatine"
-    )
+    expect(page).to have_content("I’m concerned the vaccine contains gelatine")
   end
 
   def then_i_see_the_first_health_question
