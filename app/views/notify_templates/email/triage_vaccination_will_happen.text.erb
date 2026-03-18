@@ -11,8 +11,8 @@ This will take place at <%= location_name %> on <%= next_session_dates_or %>. Pl
 
 We’ll let you know once <%= short_patient_name %> is vaccinated.
 
-If <%= short_patient_name_apos %> health changes, or you arrange for them to be vaccinated elsewhere, please let us know. 
+If <%= short_patient_name_apos %> health changes, or you arrange for them to be vaccinated elsewhere, please let us know.
 
-<% if vaccine_is_nasal.present? %>^If your child has asthma, please let us know if they have a flare-up of asthma symptoms in the 3 days before the vaccination is due to take place. This includes wheezing or needing to use a reliever inhaler more than usual.<% end %>
+<% if vaccine_is?("nasal") %>^If your child has asthma, please let us know if they have a flare-up of asthma symptoms in the 3 days before the vaccination is due to take place. This includes wheezing or needing to use a reliever inhaler more than usual.<% end %>
 
 You can email <%= subteam_email %> or call <%= subteam_phone %>.

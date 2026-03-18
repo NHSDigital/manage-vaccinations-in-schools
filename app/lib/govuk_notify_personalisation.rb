@@ -552,30 +552,27 @@ class GovukNotifyPersonalisation
     vaccination_record&.vaccine&.brand
   end
 
-  def vaccine_is_injection = vaccine_is?("injection")
+  def vaccine_is_injection = vaccine_is?("injection") ? "yes" : "no"
 
-  def vaccine_is_nasal = vaccine_is?("nasal")
+  def vaccine_is_nasal = vaccine_is?("nasal") ? "yes" : "no"
 
   def vaccine_is?(method)
     if vaccination_record
-      vaccination_record.vaccine&.method == method ? "yes" : "no"
+      vaccination_record.vaccine&.method == method
     elsif programmes.present?
-      any_vaccines_with_method =
-        if patient
-          programmes.any? do |programme|
-            # We pick the first method as it's the one most likely to be used
-            # to vaccinate the patient. For example, in the case of Flu, the
-            # parents will approve nasal (and then optionally injection).
-            patient
-              .vaccine_criteria(programme:, academic_year:)
-              .vaccine_methods
-              .first == method
-          end
-        else
-          Vaccine.for_programmes(programmes).exists?(method:)
+      if patient
+        programmes.any? do |programme|
+          # We pick the first method as it's the one most likely to be used
+          # to vaccinate the patient. For example, in the case of Flu, the
+          # parents will approve nasal (and then optionally injection).
+          patient
+            .vaccine_criteria(programme:, academic_year:)
+            .vaccine_methods
+            .first == method
         end
-
-      any_vaccines_with_method ? "yes" : "no"
+      else
+        Vaccine.for_programmes(programmes).exists?(method:)
+      end
     end
   end
 

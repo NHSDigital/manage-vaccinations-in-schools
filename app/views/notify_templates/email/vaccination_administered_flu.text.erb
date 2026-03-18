@@ -9,7 +9,7 @@ We suggest you record the following details somewhere.
 
 Vaccination: flu
 Vaccine: <%= vaccine_brand %>
-Method: <% if vaccine_is_injection.present? %>injection<% end %><% if vaccine_is_nasal.present? %>nasal spray<% end %>
+Method: <%= if vaccine_is?("injection") then "injection" elsif vaccine_is?("nasal") then "nasal spray" end %>
 Date of vaccination: <%= day_month_year_of_vaccination %>
 Batch number: <%= batch_name %>
 
@@ -21,7 +21,7 @@ Your child might have some of the following side effects:
 
 If you’re concerned about your child’s reaction to the vaccine, contact your GP in the usual way.
 
-You can [give feedback](https://feedback.digital.nhs.uk/jfe/form/SV_3fICo6frMvUZX1k) about the ‘Give or refuse consent’ service by completing our short survey. Your feedback will help us improve the service. 
+You can [give feedback](https://feedback.digital.nhs.uk/jfe/form/SV_3fICo6frMvUZX1k) about the ‘Give or refuse consent’ service by completing our short survey. Your feedback will help us improve the service.
 
 <%= subteam_name %>
 <%= subteam_email %>
