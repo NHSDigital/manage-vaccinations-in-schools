@@ -58,6 +58,7 @@ module FHIRMapper
 
     def self.from_fhir_record(fhir_record, patient:)
       attrs = {}
+      notes = []
 
       attrs[:source] = "nhs_immunisations_api"
 
@@ -104,7 +105,13 @@ module FHIRMapper
       attrs[:delivery_method] = delivery_method_from_fhir(fhir_record)
       attrs[:delivery_site] = site_from_fhir(fhir_record)
 
-      attrs[:dose_sequence] = dose_sequence_from_fhir(fhir_record)
+      dose_sequence = dose_sequence_from_fhir(fhir_record)
+      max_dose_sequence = attrs[:programme].maximum_dose_sequence
+      if dose_sequence.present? && dose_sequence > max_dose_sequence
+        notes << "Reported dose sequence: #{dose_sequence}"
+      else
+        attrs[:dose_sequence] = dose_sequence
+      end
 
       attrs[:vaccine] = Vaccine.from_fhir_record(fhir_record)
       attrs[:batch_number] = fhir_record.lotNumber&.to_s
@@ -118,9 +125,11 @@ module FHIRMapper
         )
       else
         attrs[:disease_types] = attrs[:programme].disease_types
-        attrs[:notes] = vaccine_batch_notes_from_fhir(fhir_record)
+        notes << vaccine_batch_notes_from_fhir(fhir_record)
         attrs[:full_dose] = true
       end
+
+      attrs[:notes] = notes.compact.join("\n").presence
 
       ::VaccinationRecord.new(attrs)
     end

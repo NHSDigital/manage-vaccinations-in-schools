@@ -494,6 +494,48 @@ describe FHIRMapper::VaccinationRecord do
         end
       end
 
+      describe "the parsed dose_sequence value" do
+        subject { record.dose_sequence }
+
+        let(:fixture_file_name) { "fhir/flu/fhir_record_full.json" }
+
+        before do
+          allow(fhir_immunization.protocolApplied.sole).to receive(
+            :doseNumberPositiveInt
+          ).and_return(dose_number)
+        end
+
+        context "when doseNumberPositiveInt is nil" do
+          let(:dose_number) { nil }
+
+          it { should be_nil }
+
+          it "does not include a dose sequence note" do
+            expect(record.notes.to_s).not_to include("Reported dose sequence")
+          end
+        end
+
+        context "when doseNumberPositiveInt is less than the maximum dose sequence for flu" do
+          let(:dose_number) { 1 }
+
+          it { should eq 1 }
+
+          it "does not include a dose sequence note" do
+            expect(record.notes.to_s).not_to include("Reported dose sequence")
+          end
+        end
+
+        context "when doseNumberPositiveInt exceeds the maximum dose sequence for flu" do
+          let(:dose_number) { 3 }
+
+          it { should be_nil }
+
+          it "records the out-of-range dose sequence in notes" do
+            expect(record.notes.to_s).to include("Reported dose sequence: 3")
+          end
+        end
+      end
+
       context "with a full fhir record" do
         let(:fixture_file_name) { "fhir/flu/fhir_record_full.json" }
 
