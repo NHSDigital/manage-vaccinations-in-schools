@@ -5,7 +5,7 @@ subject: "Your child did not have their <%= vaccination %> today"
 ---
 <%= full_and_preferred_patient_name %> did not have their <%= vaccination %> at school today. This was because <%= reason_did_not_vaccinate %>.
 
-<% if show_additional_instructions.present? %>If you’d still like your child to be vaccinated, you can book an appointment at a catch-up clinic by contacting our team.<% end %>
+<% if show_additional_instructions == "yes" %>If you’d still like your child to be vaccinated, you can book an appointment at a catch-up clinic by contacting our team.<% end %>
 
 <%= subteam_name %>
 <%= subteam_email %>
