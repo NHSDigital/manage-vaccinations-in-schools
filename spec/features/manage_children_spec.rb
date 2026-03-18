@@ -123,6 +123,7 @@ describe "Manage children" do
     when_i_click_on_children
     and_i_check_invited_to_clinic
     then_i_see_the_child_has_been_invited
+    and_i_can_see_a_button_to_download_offline
     and_i_click_on_a_child
     and_i_click_on_a_programme
 
@@ -137,6 +138,29 @@ describe "Manage children" do
     and_i_click_on_a_child
     and_i_click_on_a_programme
     then_i_see_a_community_clinic_session
+  end
+
+  scenario "inviting to community clinic and downloading spreadsheet" do
+    given_patients_exist
+    and_a_clinic_session_exists
+
+    when_i_click_on_children
+    and_i_filter_for_children
+    and_i_click_on_a_child
+    and_i_click_on_a_programme
+    and_i_dont_see_a_community_clinic_session
+
+    when_i_click_on_invite_to_clinic
+    then_i_see_a_success_banner
+    and_i_dont_see_a_community_clinic_session
+    and_i_dont_see_an_invite_to_clinic_button
+
+    when_i_click_on_children
+    and_i_check_invited_to_clinic
+    then_i_see_the_child_has_been_invited
+
+    when_i_click_on_download_offline_spreadsheet
+    then_i_download_an_excel_file
   end
 
   scenario "Removing an NHS number" do
@@ -411,6 +435,18 @@ describe "Manage children" do
   def then_i_see_the_child_has_been_invited
     expect(page).to have_content("SMITH, John")
     expect(page).to have_content("Clinic invitationsFlu")
+  end
+
+  def and_i_can_see_a_button_to_download_offline
+    expect(page).to have_link("Download offline spreadsheet")
+  end
+
+  def when_i_click_on_download_offline_spreadsheet
+    click_on "Download offline spreadsheet"
+  end
+
+  def then_i_download_an_excel_file
+    expect(page.status_code).to eq(200)
   end
 
   def when_i_click_on_edit_child_record
