@@ -1,30 +1,46 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-TASK_DETAILS=$(curl ${ECS_CONTAINER_METADATA_URI_V4})
-TASK_ID=$(echo "$TASK_DETAILS" | jq -r '.Labels["com.amazonaws.ecs.task-arn"] | split("/") | last')
+require "bundler/setup"
+require "prometheus_exporter"
+require "prometheus_exporter/server"
+require "json"
+require "net/http"
 
-task_details() {
-  curl -sSf ${ECS_CONTAINER_METADATA_URI_V4}
-}
+require_relative "../lib/prometheus_exporter/custom_active_record_collector"
 
-MAX_RETRIES=12
-RETRY_DELAY=10
-TASK_DETAILS=""
+def fetch_ecs_task_id
+  metadata_uri = ENV.fetch("ECS_CONTAINER_METADATA_URI_V4")
+  max_retries = 12
+  retry_delay = 10
 
-for ((i=1; i<=MAX_RETRIES; i++)); do
-    if TASK_DETAILS=$(task_details); then
-        break
-    fi
-    if [[ $i -eq $MAX_RETRIES ]]; then
-        echo "Failed to fetch task details after $MAX_RETRIES attempts" >&2
-        exit 1
-    fi
-    sleep $RETRY_DELAY
-done
+  max_retries.times do |i|
+    response = Net::HTTP.get(URI(metadata_uri))
+    metadata = JSON.parse(response)
+    task_arn = metadata.dig("Labels", "com.amazonaws.ecs.task-arn")
+    return task_arn.split("/").last if task_arn
+  rescue StandardError => e
+    if i == max_retries - 1
+      abort "Failed to fetch task details after #{max_retries} attempts: #{e.message}"
+    end
+    sleep retry_delay
+  end
+end
 
-TASK_ID=$(echo "$TASK_DETAILS" | jq '.Labels["com.amazonaws.ecs.task-arn"] | split("/") | last')
+if ARGV.include?("local")
+  task_id = "N/A"
+  service_name = "N/A"
+else
+  task_id = fetch_ecs_task_id
+  service_name = ENV["SERVICE_NAME"]
+end
 
-bundle exec prometheus_exporter \
-  --port 9394 \
-  --bind 0.0.0.0 \
-  --label "{\"TaskId\": ${TASK_ID}, \"ServiceName\": \"${SERVICE_NAME}\"}"
+runner = PrometheusExporter::Server::Runner.new(
+  port: 9394,
+  bind: "0.0.0.0",
+  label: { "TaskId" => task_id, "ServiceName" => service_name },
+  type_collectors: [PrometheusExporter::CustomActiveRecordCollector],
+)
+
+runner.start
+sleep
