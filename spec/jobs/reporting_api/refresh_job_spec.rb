@@ -4,8 +4,7 @@ describe ReportingAPI::RefreshJob do
   describe "#perform" do
     subject(:perform) { described_class.new.perform }
 
-    it "refreshes the reporting API materialized views" do
-      expect(ReportingAPI::PatientProgrammeStatus).to receive(:refresh!)
+    it "refreshes the reporting API materialized view" do
       expect(ReportingAPI::Total).to receive(:refresh!)
       perform
     end

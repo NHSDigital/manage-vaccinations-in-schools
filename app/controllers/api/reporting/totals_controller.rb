@@ -193,7 +193,11 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       )
       .then do |scope|
         if params[:programme].present?
-          scope.where(vaccination_records: { programme_type: params[:programme] })
+          scope.where(
+            vaccination_records: {
+              programme_type: params[:programme]
+            }
+          )
         else
           scope
         end
