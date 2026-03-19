@@ -41,6 +41,7 @@ class AppCardComponent < ViewComponent::Base
   def initialize(
     colour: nil,
     link_to: nil,
+    clickable: nil,
     feature: false,
     secondary: false,
     compact: false,
@@ -48,6 +49,7 @@ class AppCardComponent < ViewComponent::Base
     section: false
   )
     @link_to = link_to
+    @clickable = clickable.nil? ? link_to.present? : clickable
     @colour = colour
     @feature = filters || feature
     @secondary = secondary
@@ -63,7 +65,7 @@ class AppCardComponent < ViewComponent::Base
   def card_classes
     [
       "nhsuk-card",
-      ("nhsuk-card--clickable" if @link_to.present?),
+      ("nhsuk-card--clickable" if @clickable),
       ("nhsuk-card--feature" if @feature),
       ("nhsuk-card--secondary" if @secondary),
       "app-card",
