@@ -554,11 +554,15 @@
     <ul class="nav-list">
 
 
-      <li><a class="include" href="RequestSessionPersistable.html">RequestSessionPersistable</a></li>
+      <li><span class="include">ActiveModel::Model</span></li>
 
 
 
-      <li><a class="include" href="WizardStepConcern.html">WizardStepConcern</a></li>
+      <li><span class="include">ActiveModel::Attributes</span></li>
+
+
+
+      <li><span class="include">ActiveRecord::AttributeAssignment</span></li>
 
 
     </ul>
@@ -569,25 +573,6 @@
   
 
   
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-class-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Class Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li class="calls-super" ><a href="#method-c-new">new</a></li>
-
-      </ul>
-    </details>
-  </div>
-
 
 
   <div class="nav-section">
@@ -612,8 +597,6 @@
         <li ><a href="#method-i-programme">programme</a></li>
 
         <li ><a href="#method-i-programme-3D">programme=</a></li>
-
-        <li ><a href="#method-i-wizard_steps">wizard_steps</a></li>
 
       </ul>
     </details>
@@ -661,66 +644,34 @@
 
 
 
+    <section class="attribute-method-details method-section">
+      <header>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
+      </header>
 
 
-
-
-
-     <section id="public-class-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
-       </header>
-
-
-      <div id="method-c-new" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-new" title="Link to this method">
-                <span class="method-name">new</span>
-                <span class="method-args">(current_user:, **attributes)</span>
-              </a>
-            </div>
-
+      <div id="attribute-i-team" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-team" title="Link to this attribute">
+            <span class="method-name">team</span>
+            <span class="attribute-access-type">[RW]</span>
+          </a>
         </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 13</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">current_user:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">attributes</span>)
-  <span class="ruby-ivar">@current_user</span> = <span class="ruby-identifier">current_user</span>
-  <span class="ruby-keyword">super</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">attributes</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
 
         <div class="method-description">
 
 
-          
-
-
-            <div class="method-calls-super">
-              Calls superclass method
-              <a href="RequestSessionPersistable.html#method-c-new"><code>RequestSessionPersistable::new</code></a>
-            </div>
+        
 
         </div>
-
-
-
-
-
       </div>
 
-
     </section>
+
+
+
+
+
 
 
 
@@ -753,10 +704,10 @@
             </details>
           </div>
           <div class="method-source-code" id="csv_data-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 41</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_data</span>
   <span class="ruby-identifier">exporter_class</span>.<span class="ruby-identifier">call</span>(
-    <span class="ruby-value">team:</span> <span class="ruby-ivar">@current_user</span>.<span class="ruby-identifier">selected_team</span>,
+    <span class="ruby-value">team:</span>,
     <span class="ruby-value">programme:</span>,
     <span class="ruby-value">academic_year:</span>,
     <span class="ruby-value">start_date:</span> <span class="ruby-identifier">date_from</span>,
@@ -801,7 +752,7 @@
             </details>
           </div>
           <div class="method-source-code" id="csv_filename-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 51</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 36</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_filename</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">invalid?</span>
 
@@ -848,10 +799,10 @@
             </details>
           </div>
           <div class="method-source-code" id="file_formats-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 60</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">file_formats</span>
   <span class="ruby-identifier">common_file_formats</span> = <span class="ruby-node">%w[mavis systm_one]</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@current_user</span>.<span class="ruby-identifier">selected_team</span>.<span class="ruby-identifier">careplus_enabled?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_enabled?</span>
     <span class="ruby-identifier">common_file_formats</span> <span class="ruby-operator">+</span> [<span class="ruby-string">&quot;careplus&quot;</span>]
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">common_file_formats</span>
@@ -895,7 +846,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 33</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme</span>
   <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_type</span>
 <span class="ruby-keyword">end</span></pre>
@@ -937,51 +888,9 @@
             </details>
           </div>
           <div class="method-source-code" id="programme-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">programme_type</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">type</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-wizard_steps" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-wizard_steps" title="Link to this method">
-                <span class="method-name">wizard_steps</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="wizard_steps-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_report.rb, line 18</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">wizard_steps</span>
-  <span class="ruby-node">%i[dates file_format]</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
