@@ -109,6 +109,7 @@ describe Reports::CareplusExporter do
           programme:,
           vaccine:,
           delivery_method:,
+          delivery_site: "left_arm_upper_position",
           patient:,
           session:,
           performed_at: 2.weeks.ago,
@@ -383,6 +384,23 @@ describe Reports::CareplusExporter do
             expect(data_rows.first[gender_index]).to eq(expected_code)
           end
         end
+      end
+    end
+
+    context "with a lower position anatomical site" do
+      # The lower position anatomical site is still in the deltoid
+      # so mapped to the upper arm code
+      it "includes the vaccination details" do
+        patient = create(:patient, session:)
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          session:,
+          delivery_site: "left_arm_lower_position"
+        )
+
+        expect(data_rows.first[headers.index("Site 1")]).to eq("ULA")
       end
     end
   end

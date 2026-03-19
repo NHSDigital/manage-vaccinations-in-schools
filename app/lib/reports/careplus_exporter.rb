@@ -278,9 +278,9 @@ class Reports::CareplusExporter
   def coded_site(site)
     {
       left_arm_upper_position: "ULA",
-      left_arm_lower_position: "LLIF",
+      left_arm_lower_position: "ULA",
       right_arm_upper_position: "URA",
-      right_arm_lower_position: "RLIF",
+      right_arm_lower_position: "URA",
       left_thigh: "LT",
       right_thigh: "RT",
       left_buttock: "LB",

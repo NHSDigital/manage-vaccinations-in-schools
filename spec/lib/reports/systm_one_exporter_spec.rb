@@ -367,7 +367,7 @@ describe Reports::SystmOneExporter do
     context "left arm lower position" do
       let(:delivery_site) { "left_arm_lower_position" }
 
-      it { should eq "Left anterior forearm" }
+      it { should eq "Left deltoid" }
     end
   end
 

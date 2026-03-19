@@ -60,10 +60,10 @@ class Reports::SystmOneExporter
 
   DELIVERY_SITE_MAPPINGS = {
     left_arm_upper_position: "Left deltoid",
-    left_arm_lower_position: "Left anterior forearm",
+    left_arm_lower_position: "Left deltoid",
     left_thigh: "Left lateral thigh",
     right_arm_upper_position: "Right deltoid",
-    right_arm_lower_position: "Right anterior forearm",
+    right_arm_lower_position: "Right deltoid",
     right_thigh: "Right lateral thigh",
     nose: "Nasal"
   }.with_indifferent_access.freeze
