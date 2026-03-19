@@ -146,7 +146,7 @@ FactoryBot.define do
     trait :mmrv_vaccination do
       title do
         "Has your child had a severe allergic reaction (anaphylaxis) to a " \
-          "previous dose of MMRV or any other measles, mumps, rubella or chickenpox vaccine?"
+          "previous dose of MMRV or any other measles, mumps, rubella or varicella (chickenpox) vaccine?"
       end
     end
   end
