@@ -11,7 +11,7 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  patient_id    :bigint           not null
-#  school_id     :bigint
+#  school_id     :bigint           not null
 #  team_id       :bigint
 #
 # Indexes
@@ -28,11 +28,10 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class SchoolMove < ApplicationRecord
-  include Schoolable
-
   audited associated_with: :patient
 
   belongs_to :patient
+  belongs_to :school, class_name: "Location"
 
   belongs_to :team, optional: true
 

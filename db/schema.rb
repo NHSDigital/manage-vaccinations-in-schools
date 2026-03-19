@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_30_075714) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -836,7 +836,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.datetime "created_at", null: false
     t.boolean "home_educated"
     t.bigint "patient_id", null: false
-    t.bigint "school_id"
+    t.bigint "school_id", null: false
     t.integer "source", null: false
     t.bigint "team_id"
     t.datetime "updated_at", null: false
