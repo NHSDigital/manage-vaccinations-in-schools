@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-describe "Programmes" do
+describe "Consent forms" do
   let(:team) { create(:team) }
   let(:nurse) { create(:nurse, teams: [team]) }
 
-  describe "downloading consent form" do
-    let(:path) { "/programmes/mmr/consent-form" }
+  describe "downloading paper version" do
+    let(:path) { "/consent-form/mmr" }
 
     before do
       sign_in nurse

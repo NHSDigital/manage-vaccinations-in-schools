@@ -35,23 +35,11 @@ describe "Import child records" do
     when_i_click_on_a_patient
     then_i_should_see_the_patient_details
 
-    when_i_visit_the_hpv_programme_page
-    then_i_should_see_the_cohorts_for_hpv
-
-    when_i_click_on_the_cohort_for_hpv
-    then_i_should_see_the_children_for_hpv
-
     when_i_search_for_a_child
     then_i_should_see_only_the_child
 
-    when_i_visit_the_doubles_programme_page
-    then_i_should_see_the_cohorts_for_doubles
-
-    when_i_click_on_the_cohort_for_doubles
-    then_i_should_see_the_children_for_doubles
-
-    when_i_visit_the_hpv_programme_page
-    and_i_import_child_records_from_children_tab
+    when_i_visit_the_import_page
+    and_i_choose_to_import_child_records
     then_i_should_see_the_import_page
 
     travel 1.minute # to ensure the created_at is different for the import jobs
@@ -95,23 +83,11 @@ describe "Import child records" do
       when_i_click_on_a_patient
       then_i_should_see_the_patient_details
 
-      when_i_visit_the_hpv_programme_page
-      then_i_should_see_the_cohorts_for_hpv
-
-      when_i_click_on_the_cohort_for_hpv
-      then_i_should_see_the_children_for_hpv
-
       when_i_search_for_a_child
       then_i_should_see_only_the_child
 
-      when_i_visit_the_doubles_programme_page
-      then_i_should_see_the_cohorts_for_doubles
-
-      when_i_click_on_the_cohort_for_doubles
-      then_i_should_see_the_children_for_doubles
-
-      when_i_visit_the_hpv_programme_page
-      and_i_import_child_records_from_children_tab
+      when_i_visit_the_import_page
+      and_i_choose_to_import_child_records
       then_i_should_see_the_import_page
 
       travel 1.minute # to ensure the created_at is different for the import jobs
@@ -233,33 +209,8 @@ describe "Import child records" do
     expect(page).to have_content("Uploaded byUSER, Test")
   end
 
-  def when_i_visit_the_hpv_programme_page
-    visit programme_overview_path(Programme.hpv, AcademicYear.current)
-  end
-
-  def when_i_visit_the_doubles_programme_page
-    visit programme_overview_path(Programme.menacwy, AcademicYear.current)
-  end
-
-  def then_i_should_see_the_cohorts_for_hpv
-    expect(page).to have_content("Children\n3")
-    expect(page).to have_content("Year 8\n2 children")
-    expect(page).to have_content("Year 9\n1 child")
-    expect(page).to have_content("Year 10\nNo children")
-    expect(page).to have_content("Year 11\nNo children")
-  end
-
-  def when_i_click_on_the_cohort_for_hpv
-    click_on "Year 8"
-  end
-
-  def then_i_should_see_the_children_for_hpv
-    expect(page).to have_content("2 children")
-    expect(page).to have_content("DOE, Mark")
-    expect(page).to have_content("SMITH, Jimmy")
-  end
-
   def when_i_search_for_a_child
+    click_on "Children", match: :first
     fill_in "Search", with: "DOE, Mark"
     click_on "Search"
   end
@@ -267,26 +218,6 @@ describe "Import child records" do
   def then_i_should_see_only_the_child
     expect(page).to have_content("1 child")
     expect(page).to have_content("DOE, Mark")
-  end
-
-  def then_i_should_see_the_cohorts_for_doubles
-    expect(page).to have_content("Children\n1")
-    expect(page).not_to have_content("Year 8")
-    expect(page).to have_content("Year 9\n1 child")
-    expect(page).to have_content("Year 10\nNo children")
-    expect(page).to have_content("Year 11\nNo children")
-  end
-
-  def when_i_click_on_the_cohort_for_doubles
-    within all(".nhsuk-card")[0] do
-      click_on "Children"
-    end
-  end
-
-  def then_i_should_see_the_children_for_doubles
-    expect(page).not_to have_content("Year 8")
-    expect(page).to have_content("1 child")
-    expect(page).to have_content("CLARKE, Jennifer")
   end
 
   def when_i_continue_without_uploading_a_file
@@ -345,13 +276,6 @@ describe "Import child records" do
 
   def when_i_go_to_the_import_page
     click_on_most_recent_import(CohortImport)
-  end
-
-  def and_i_import_child_records_from_children_tab
-    within(".app-secondary-navigation") { click_on "Children" }
-
-    click_on "Import child records"
-    click_on "Continue"
   end
 
   def when_i_upload_a_valid_file_with_changes

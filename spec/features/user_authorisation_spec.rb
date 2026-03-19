@@ -18,7 +18,7 @@ describe "User authorisation" do
     when_i_go_to_the_patient_page_of_another_team
     then_i_should_see_page_not_found
 
-    when_i_go_to_the_sessions_page_filtered_by_programme
+    when_i_go_to_the_sessions_page
     then_i_should_only_see_my_sessions
   end
 
@@ -81,8 +81,8 @@ describe "User authorisation" do
     visit "/patients/#{@other_session.id}/consent/given/patients/#{@other_child.id}"
   end
 
-  def when_i_go_to_the_sessions_page_filtered_by_programme
-    visit "/programmes/#{@programme.type}/#{AcademicYear.current}/sessions"
+  def when_i_go_to_the_sessions_page
+    visit "/sessions"
   end
 
   def then_i_should_only_see_my_sessions

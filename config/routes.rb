@@ -239,22 +239,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :programmes, only: :index, param: :type do
-    get "consent-form", on: :member, action: :consent_form
-
-    scope module: :programmes do
-      resource :overview,
-               path: ":academic_year",
-               only: :show,
-               controller: :overview
-      resources :patients, path: ":academic_year/patients", only: :index do
-        get "import", on: :collection
-      end
-      resources :reports, path: ":academic_year/reports", only: :create
-      resources :sessions, path: ":academic_year/sessions", only: :index
-    end
-  end
-
   resources :reports, only: :index
 
   resources :school_moves, path: "school-moves", only: %i[index show update]

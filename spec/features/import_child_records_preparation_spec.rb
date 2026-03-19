@@ -16,21 +16,6 @@ describe "Import child records" do
     when_i_upload_a_valid_file
     then_i_should_see_the_upload
     and_i_should_see_the_patients
-
-    when_i_visit_the_hpv_programme_page_for_upcoming_year
-    then_i_should_see_the_cohorts_for_hpv
-
-    when_i_click_on_the_cohort_for_hpv
-    then_i_should_see_the_children_for_hpv
-
-    when_i_search_for_a_child
-    then_i_should_see_only_the_child
-
-    when_i_visit_the_doubles_programme_page_for_upcoming_year
-    then_i_should_see_the_cohorts_for_doubles
-
-    when_i_click_on_the_cohort_for_doubles
-    then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
   end
 
   scenario "User uploads a file during preparation period (not including current year)" do
@@ -46,21 +31,6 @@ describe "Import child records" do
     when_i_upload_a_valid_file
     then_i_should_see_the_upload
     and_i_should_see_the_patients
-
-    when_i_visit_the_hpv_programme_page_for_upcoming_year
-    then_i_should_see_the_cohorts_for_hpv
-
-    when_i_click_on_the_cohort_for_hpv
-    then_i_should_see_the_children_for_hpv
-
-    when_i_search_for_a_child
-    then_i_should_see_only_the_child
-
-    when_i_visit_the_doubles_programme_page_for_upcoming_year
-    then_i_should_see_the_cohorts_for_doubles
-
-    when_i_click_on_the_cohort_for_doubles
-    then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
   end
 
   scenario "User uploads a file during preparation period (including current year)" do
@@ -76,21 +46,6 @@ describe "Import child records" do
     when_i_upload_a_valid_file
     then_i_should_see_the_upload
     and_i_should_see_the_patients
-
-    when_i_visit_the_hpv_programme_page_for_current_year
-    then_i_should_see_the_cohorts_for_hpv
-
-    when_i_click_on_the_cohort_for_hpv
-    then_i_should_see_the_children_for_hpv
-
-    when_i_search_for_a_child
-    then_i_should_see_only_the_child
-
-    when_i_visit_the_doubles_programme_page_for_current_year
-    then_i_should_see_the_cohorts_for_doubles
-
-    when_i_click_on_the_cohort_for_doubles
-    then_i_should_see_the_children_for_doubles_in_current_academic_year
   end
 
   context "when PDS lookup during import and review screen is enabled" do
@@ -108,21 +63,6 @@ describe "Import child records" do
       when_i_upload_a_valid_file
       then_i_should_see_the_upload
       and_i_should_see_the_patients
-
-      when_i_visit_the_hpv_programme_page_for_upcoming_year
-      then_i_should_see_the_cohorts_for_hpv
-
-      when_i_click_on_the_cohort_for_hpv
-      then_i_should_see_the_children_for_hpv
-
-      when_i_search_for_a_child
-      then_i_should_see_only_the_child
-
-      when_i_visit_the_doubles_programme_page_for_upcoming_year
-      then_i_should_see_the_cohorts_for_doubles
-
-      when_i_click_on_the_cohort_for_doubles
-      then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
     end
 
     scenario "User uploads a file during preparation period (not including current year)" do
@@ -139,21 +79,6 @@ describe "Import child records" do
       when_i_upload_a_valid_file
       then_i_should_see_the_upload
       and_i_should_see_the_patients
-
-      when_i_visit_the_hpv_programme_page_for_upcoming_year
-      then_i_should_see_the_cohorts_for_hpv
-
-      when_i_click_on_the_cohort_for_hpv
-      then_i_should_see_the_children_for_hpv
-
-      when_i_search_for_a_child
-      then_i_should_see_only_the_child
-
-      when_i_visit_the_doubles_programme_page_for_upcoming_year
-      then_i_should_see_the_cohorts_for_doubles
-
-      when_i_click_on_the_cohort_for_doubles
-      then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
     end
 
     scenario "User uploads a file during preparation period (including current year)" do
@@ -170,21 +95,6 @@ describe "Import child records" do
       when_i_upload_a_valid_file
       then_i_should_see_the_upload
       and_i_should_see_the_patients
-
-      when_i_visit_the_hpv_programme_page_for_current_year
-      then_i_should_see_the_cohorts_for_hpv
-
-      when_i_click_on_the_cohort_for_hpv
-      then_i_should_see_the_children_for_hpv
-
-      when_i_search_for_a_child
-      then_i_should_see_only_the_child
-
-      when_i_visit_the_doubles_programme_page_for_current_year
-      then_i_should_see_the_cohorts_for_doubles
-
-      when_i_click_on_the_cohort_for_doubles
-      then_i_should_see_the_children_for_doubles_in_current_academic_year
     end
   end
 
@@ -317,75 +227,5 @@ describe "Import child records" do
 
   def then_i_should_see_the_import
     expect(page).to have_content("1 completed import")
-  end
-
-  def when_i_visit_the_hpv_programme_page_for_upcoming_year
-    visit programme_overview_path(Programme.hpv, AcademicYear.current.next)
-  end
-
-  def when_i_visit_the_doubles_programme_page_for_upcoming_year
-    visit programme_overview_path(Programme.menacwy, AcademicYear.current.next)
-  end
-
-  def when_i_visit_the_hpv_programme_page_for_current_year
-    visit programme_overview_path(Programme.hpv, AcademicYear.current)
-  end
-
-  def when_i_visit_the_doubles_programme_page_for_current_year
-    visit programme_overview_path(Programme.menacwy, AcademicYear.current)
-  end
-
-  def then_i_should_see_the_cohorts_for_hpv
-    expect(page).to have_content("Children\n3")
-    expect(page).to have_content("Year 8\n2 children")
-    expect(page).to have_content("Year 9\n1 child")
-    expect(page).to have_content("Year 10\nNo children")
-    expect(page).to have_content("Year 11\nNo children")
-  end
-
-  def when_i_click_on_the_cohort_for_hpv
-    click_on "Year 8"
-  end
-
-  def then_i_should_see_the_children_for_hpv
-    expect(page).to have_content("2 children")
-    expect(page).to have_content("DOE, Mark")
-    expect(page).to have_content("SMITH, Jimmy")
-  end
-
-  def when_i_search_for_a_child
-    fill_in "Search", with: "DOE, Mark"
-    click_on "Search"
-  end
-
-  def then_i_should_see_only_the_child
-    expect(page).to have_content("1 child")
-    expect(page).to have_content("DOE, Mark")
-  end
-
-  def then_i_should_see_the_cohorts_for_doubles
-    expect(page).to have_content("Children\n1")
-    expect(page).not_to have_content("Year 8")
-    expect(page).to have_content("Year 9\n1 child")
-    expect(page).to have_content("Year 10\nNo children")
-    expect(page).to have_content("Year 11\nNo children")
-  end
-
-  def when_i_click_on_the_cohort_for_doubles
-    within all(".nhsuk-card")[0] do
-      click_on "Children"
-    end
-  end
-
-  def then_i_should_see_the_children_for_doubles_in_current_academic_year
-    expect(page).to have_content("1 child")
-    expect(page).to have_content("CLARKE, Jennifer")
-    expect(page).to have_content("Year 9")
-  end
-
-  def then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
-    expect(page).to have_content("1 child")
-    expect(page).to have_content("CLARKE, Jennifer")
-    expect(page).to have_content("Year 9 (2022 to 2023 academic year)")
   end
 end

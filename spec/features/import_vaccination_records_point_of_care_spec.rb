@@ -35,9 +35,6 @@ describe "Immunisation imports" do
     then_i_should_see_the_vaccination_record
     and_the_patient_should_be_archived
 
-    when_i_click_on_cohorts
-    then_i_should_see_no_children_in_the_cohorts
-
     when_i_go_to_the_children_page
     and_i_search_for_existing_patient
     then_i_should_see_the_existing_patient
@@ -192,17 +189,6 @@ describe "Immunisation imports" do
   def when_i_click_on_a_vaccination_record
     find(".nhsuk-details__summary", text: "1 imported record").click
     click_on "PICKLE, Chyna"
-  end
-
-  def when_i_click_on_cohorts
-    visit programme_overview_path(Programme.hpv, AcademicYear.current)
-  end
-
-  def then_i_should_see_no_children_in_the_cohorts
-    expect(page).to have_content("Year 8\n1 child")
-    expect(page).to have_content("Year 9\nNo children")
-    expect(page).to have_content("Year 10\nNo children")
-    expect(page).to have_content("Year 11\nNo children")
   end
 
   def then_i_should_see_the_vaccination_record
