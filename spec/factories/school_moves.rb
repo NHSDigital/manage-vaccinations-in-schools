@@ -17,13 +17,11 @@
 #  index_school_moves_on_patient_id                (patient_id) UNIQUE
 #  index_school_moves_on_patient_id_and_school_id  (patient_id,school_id)
 #  index_school_moves_on_school_id                 (school_id)
-#  index_school_moves_on_team_id                   (team_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (school_id => locations.id)
-#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :school_move do
