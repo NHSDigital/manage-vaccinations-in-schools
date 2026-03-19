@@ -211,7 +211,7 @@ To run the JS unit tests:
 yarn test
 ```
 
-End-to-end, performance, security and accessibility tests can be found in the [Mavis testing respository](https://github.com/NHSDigital/manage-vaccinations-in-schools-testing).
+End-to-end, performance, security and accessibility tests can be found in the [Mavis testing respository](https://github.com/NHSDigital/manage-vaccinations-in-schools-testing). There is also some [additional documentation](https://github.com/NHSDigital/manage-vaccinations-in-schools-testing/tree/main/.github/workflows/) that describes how to run these via GitHub actions.
 
 You can also run the end-to-end tests from this repository:
 
@@ -219,7 +219,9 @@ You can also run the end-to-end tests from this repository:
 bin/e2e tests/test_start.py::test_start_page_elements_visible
 ```
 
-This requires [uv](https://docs.astral.sh/uv/) and to have the testing repository available locally at `../manage-vaccinations-in-schools-testing`(an alternative location can be used by setting the `MAVIS_E2E_REPO` environment variable). You can also include the `--main` argument when running tests to force using the latest main version of the testing repo.
+This requires having the testing repository available locally at `../manage-vaccinations-in-schools-testing`(an alternative location can be used by setting the `MAVIS_E2E_REPO` environment variable) and following the setup steps (installing [uv](https://docs.astral.sh/uv/) and obtaining a .env file).
+
+You can also include the `--main` argument when running tests to force using the latest main version of the testing repo.
 
 This runs tests in the `end_to_end` rails environment which will not interfere with the development server/database. The database needs to be setup in this environment before the tests can be run.
 
@@ -227,7 +229,6 @@ This runs tests in the `end_to_end` rails environment which will not interfere w
 RAILS_ENV=end_to_end bin/rails db:setup
 RAILS_ENV=end_to_end bin/rails feature_flags:enable_for_development
 RAILS_ENV=end_to_end bin/mavis gias import --input-file=spec/fixtures/dfe-schools.zip
-RAILS_ENV=end_to_end bin/rails assets:precompile
 ```
 
 ### Example programmes
