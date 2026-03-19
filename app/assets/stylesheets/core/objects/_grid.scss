@@ -4,7 +4,7 @@
 [class^="app-grid-column"],
 [class^="nhsuk-grid-column"] {
   &[data-app-sticky-init] {
-    @include nhsuk-media-query($from: desktop) {
+    @include nhsuk-media-query($from: large-desktop) {
       position: sticky;
       top: 0;
     }
@@ -20,7 +20,7 @@
   @include nhsuk-grid-column(one-quarter, $float: right, $at: large-desktop);
 
   &[data-app-sticky-init] {
-    @include nhsuk-media-query($from: desktop) {
+    @include nhsuk-media-query($from: large-desktop) {
       top: #{nhsuk-spacing(9) + nhsuk-spacing(3)};
     }
   }
