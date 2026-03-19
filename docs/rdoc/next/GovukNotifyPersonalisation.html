@@ -621,6 +621,8 @@
 
         <li ><a href="#method-i-has_multiple_dates">has_multiple_dates</a></li>
 
+        <li ><a href="#method-i-has_multiple_dates-3F">has_multiple_dates?</a></li>
+
         <li ><a href="#method-i-host">host</a></li>
 
         <li ><a href="#method-i-invitation_to_clinic_custom_mmr_message">invitation_to_clinic_custom_mmr_message</a></li>
@@ -660,6 +662,8 @@
         <li ><a href="#method-i-not_catch_up">not_catch_up</a></li>
 
         <li ><a href="#method-i-outcome_administered">outcome_administered</a></li>
+
+        <li ><a href="#method-i-outcome_administered-3F">outcome_administered?</a></li>
 
         <li ><a href="#method-i-outcome_not_administered">outcome_not_administered</a></li>
 
@@ -1168,8 +1172,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_dates</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+  <span class="ruby-identifier">has_multiple_dates?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">host</span>
@@ -1369,13 +1372,13 @@
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_administered</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">outcome_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_not_administered</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">not_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-operator">!</span><span class="ruby-identifier">outcome_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_date_of_birth</span>
@@ -1540,30 +1543,27 @@
   <span class="ruby-identifier">vaccination_record</span>&amp;.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">brand</span>
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_injection</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;injection&quot;</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_injection</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;injection&quot;</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_nasal</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;nasal&quot;</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_nasal</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;nasal&quot;</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is?</span>(<span class="ruby-identifier">method</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>
-    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">any_vaccines_with_method</span> =
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
-        <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-          <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
-          <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
-          <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
-          <span class="ruby-identifier">patient</span>
-            .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
-            .<span class="ruby-identifier">vaccine_methods</span>
-            .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+        <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
+        <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
+        <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
+        <span class="ruby-identifier">patient</span>
+          .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
+          .<span class="ruby-identifier">vaccine_methods</span>
+          .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
       <span class="ruby-keyword">end</span>
-
-    <span class="ruby-identifier">any_vaccines_with_method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
@@ -1600,14 +1600,24 @@
   <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">map</span> { <span class="ruby-node">&quot;- #{it}&quot;</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n&quot;</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-identifier">private</span>
-
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">empty?</span>
 
   <span class="ruby-ivar">@is_catch_up</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">is_catch_up?</span>(<span class="ruby-value">year_group:</span> <span class="ruby-identifier">patient_year_group</span>) }
 <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_dates?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_administered?</span>
+  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_dates_are_accurate?</span>
   <span class="ruby-identifier">consent_form</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">session_dates_are_accurate?</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>
@@ -1889,7 +1899,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delay_vaccination_review_context-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 315</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 314</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delay_vaccination_review_context</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
 
@@ -1996,8 +2006,51 @@
             <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 182</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_dates</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">has_multiple_dates?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
 
-  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-has_multiple_dates-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-has_multiple_dates-3F" title="Link to this method">
+                <span class="method-name">has_multiple_dates?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="has_multiple_dates-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 619</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_dates?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -2037,7 +2090,7 @@
             </details>
           </div>
           <div class="method-source-code" id="host-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 188</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 187</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">host</span>
   <span class="ruby-keyword">if</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">local?</span>
     <span class="ruby-string">&quot;http://localhost:4000&quot;</span>
@@ -2083,7 +2136,7 @@
             </details>
           </div>
           <div class="method-source-code" id="invitation_to_clinic_custom_mmr_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 245</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 244</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invitation_to_clinic_custom_mmr_message</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">mmr_second_dose_required</span>
 
@@ -2141,7 +2194,7 @@
             </details>
           </div>
           <div class="method-source-code" id="invitation_to_clinic_generic_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 230</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 229</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invitation_to_clinic_generic_message</span>
   [
     (
@@ -2194,7 +2247,7 @@
             </details>
           </div>
           <div class="method-source-code" id="is_catch_up-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 618</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 612</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">empty?</span>
 
@@ -2239,7 +2292,7 @@
             </details>
           </div>
           <div class="method-source-code" id="is_outbreak-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 196</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 195</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_outbreak</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
 
@@ -2283,7 +2336,7 @@
             </details>
           </div>
           <div class="method-source-code" id="location_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 202</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>
     <span class="ruby-identifier">vaccination_record_location</span>(<span class="ruby-identifier">vaccination_record</span>)
@@ -2329,7 +2382,7 @@
             </details>
           </div>
           <div class="method-source-code" id="mmr_or_mmrv_vaccine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 301</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 300</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">mmr_or_mmrv_vaccine</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr_programme</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr_programme</span>.<span class="ruby-identifier">variant_type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;mmrv&quot;</span>
@@ -2377,7 +2430,7 @@
             </details>
           </div>
           <div class="method-source-code" id="mmr_programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 311</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 310</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">mmr_programme</span>
   <span class="ruby-ivar">@mmr_programme</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">find</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:mmr?</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2419,7 +2472,7 @@
             </details>
           </div>
           <div class="method-source-code" id="mmr_second_dose_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 210</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 209</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">mmr_second_dose_message</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">patient</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">mmr_programme</span>
@@ -2473,7 +2526,7 @@
             </details>
           </div>
           <div class="method-source-code" id="mmr_second_dose_required-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 226</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 225</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">mmr_second_dose_required</span>
   <span class="ruby-identifier">mmr_programme</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_eligible_for_additional_dose?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2515,7 +2568,7 @@
             </details>
           </div>
           <div class="method-source-code" id="mmr_second_dose_waiting_period_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 265</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 264</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">mmr_second_dose_waiting_period_message</span>
   <span class="ruby-string">&quot;It’s important to wait at least 28 days after the 1st dose of an MMR or &quot;</span> \
     <span class="ruby-node">&quot;MMRV vaccination before getting the 2nd dose. #{short_patient_name} &quot;</span> \
@@ -2560,7 +2613,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_mmr_dose_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 272</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 271</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_mmr_dose_date</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr_programme</span>.<span class="ruby-identifier">nil?</span>
@@ -2614,7 +2667,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_or_today_session_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 339</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 338</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_or_today_session_date</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session_dates_are_accurate?</span>
 
@@ -2658,7 +2711,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_or_today_session_dates-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 345</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 344</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_or_today_session_dates</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session_dates_are_accurate?</span>
 
@@ -2705,7 +2758,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_or_today_session_dates_or-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 354</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 353</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_or_today_session_dates_or</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session_dates_are_accurate?</span>
 
@@ -2752,7 +2805,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_session_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 363</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 362</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_session_date</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session_dates_are_accurate?</span>
 
@@ -2796,7 +2849,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_session_dates-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 369</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 368</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_session_dates</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session_dates_are_accurate?</span>
 
@@ -2840,7 +2893,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_session_dates_or-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 375</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 374</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_session_dates_or</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session_dates_are_accurate?</span>
 
@@ -2951,8 +3004,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_dates</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+  <span class="ruby-identifier">has_multiple_dates?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">host</span>
@@ -3152,13 +3204,13 @@
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_administered</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">outcome_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_not_administered</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">not_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-operator">!</span><span class="ruby-identifier">outcome_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_date_of_birth</span>
@@ -3323,30 +3375,27 @@
   <span class="ruby-identifier">vaccination_record</span>&amp;.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">brand</span>
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_injection</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;injection&quot;</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_injection</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;injection&quot;</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_nasal</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;nasal&quot;</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_nasal</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;nasal&quot;</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is?</span>(<span class="ruby-identifier">method</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>
-    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">any_vaccines_with_method</span> =
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
-        <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-          <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
-          <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
-          <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
-          <span class="ruby-identifier">patient</span>
-            .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
-            .<span class="ruby-identifier">vaccine_methods</span>
-            .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+        <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
+        <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
+        <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
+        <span class="ruby-identifier">patient</span>
+          .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
+          .<span class="ruby-identifier">vaccine_methods</span>
+          .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
       <span class="ruby-keyword">end</span>
-
-    <span class="ruby-identifier">any_vaccines_with_method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
@@ -3383,14 +3432,24 @@
   <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">map</span> { <span class="ruby-node">&quot;- #{it}&quot;</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n&quot;</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-identifier">private</span>
-
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">empty?</span>
 
   <span class="ruby-ivar">@is_catch_up</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">is_catch_up?</span>(<span class="ruby-value">year_group:</span> <span class="ruby-identifier">patient_year_group</span>) }
 <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_dates?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_administered?</span>
+  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_dates_are_accurate?</span>
   <span class="ruby-identifier">consent_form</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">session_dates_are_accurate?</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>
@@ -3466,10 +3525,52 @@
             </details>
           </div>
           <div class="method-source-code" id="outcome_administered-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 384</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 383</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_administered</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">outcome_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-outcome_administered-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-outcome_administered-3F" title="Link to this method">
+                <span class="method-name">outcome_administered?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="outcome_administered-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 625</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_administered?</span>
+  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -3509,10 +3610,10 @@
             </details>
           </div>
           <div class="method-source-code" id="outcome_not_administered-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 389</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 388</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_not_administered</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">not_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-operator">!</span><span class="ruby-identifier">outcome_administered?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -3552,7 +3653,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_date_of_birth-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 394</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 393</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_date_of_birth</span>
   <span class="ruby-identifier">patient</span>&amp;.<span class="ruby-identifier">date_of_birth</span>&amp;.<span class="ruby-identifier">to_fs</span>(<span class="ruby-value">:long</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -3594,7 +3695,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_eligible_for_additional_dose-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 288</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 287</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_eligible_for_additional_dose?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">patient</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr_programme</span>.<span class="ruby-identifier">nil?</span>
@@ -3645,7 +3746,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_year_group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 629</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 635</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_year_group</span>
   <span class="ruby-ivar">@patient_year_group</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">year_group</span>(<span class="ruby-value">academic_year:</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -3687,7 +3788,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 633</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 639</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_names</span>
   <span class="ruby-ivar">@programme_names</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:name</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -3729,7 +3830,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_names_and_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 637</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 643</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_names_and_methods</span>
   <span class="ruby-ivar">@programme_names_and_methods</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
@@ -3792,7 +3893,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_did_not_vaccinate-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 398</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 397</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_did_not_vaccinate</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span>
 
@@ -3840,7 +3941,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 408</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 407</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal</span>
   <span class="ruby-identifier">reason</span> = <span class="ruby-identifier">consent_form</span>&amp;.<span class="ruby-identifier">reason_for_refusal</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">consent</span>&amp;.<span class="ruby-identifier">reason_for_refusal</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">reason</span>.<span class="ruby-identifier">nil?</span>
@@ -3885,7 +3986,7 @@
             </details>
           </div>
           <div class="method-source-code" id="session_dates_are_accurate-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 625</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 631</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_dates_are_accurate?</span>
   <span class="ruby-identifier">consent_form</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">session_dates_are_accurate?</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
@@ -3927,7 +4028,7 @@
             </details>
           </div>
           <div class="method-source-code" id="short_patient_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 415</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 414</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">short_patient_name</span>
   [
     <span class="ruby-identifier">consent_form</span>&amp;.<span class="ruby-identifier">preferred_given_name</span>,
@@ -3974,7 +4075,7 @@
             </details>
           </div>
           <div class="method-source-code" id="short_patient_name_apos-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 424</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 423</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">short_patient_name_apos</span>
   <span class="ruby-identifier">apos</span> = <span class="ruby-string">&quot;’&quot;</span>
   <span class="ruby-identifier">apos</span> <span class="ruby-operator">+=</span> <span class="ruby-string">&quot;s&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">short_patient_name</span>.<span class="ruby-identifier">ends_with?</span>(<span class="ruby-string">&quot;s&quot;</span>)
@@ -4018,7 +4119,7 @@
             </details>
           </div>
           <div class="method-source-code" id="show_additional_instructions-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 430</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 429</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show_additional_instructions</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
 
@@ -4062,7 +4163,7 @@
             </details>
           </div>
           <div class="method-source-code" id="subsequent_session_dates_offered_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 436</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 435</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">subsequent_session_dates_offered_message</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
 
@@ -4111,7 +4212,7 @@
             </details>
           </div>
           <div class="method-source-code" id="subteam_email-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 447</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 446</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">subteam_email</span>
   (<span class="ruby-identifier">subteam</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>).<span class="ruby-identifier">email</span>
 <span class="ruby-keyword">end</span></pre>
@@ -4153,7 +4254,7 @@
             </details>
           </div>
           <div class="method-source-code" id="subteam_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 451</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 450</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">subteam_name</span>
   (<span class="ruby-identifier">subteam</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>).<span class="ruby-identifier">name</span>
 <span class="ruby-keyword">end</span></pre>
@@ -4195,7 +4296,7 @@
             </details>
           </div>
           <div class="method-source-code" id="subteam_phone-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 455</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 454</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">subteam_phone</span>
   <span class="ruby-identifier">format_phone_with_instructions</span>(<span class="ruby-identifier">subteam</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4237,7 +4338,7 @@
             </details>
           </div>
           <div class="method-source-code" id="survey_deadline_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 459</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 458</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">survey_deadline_date</span>
   <span class="ruby-identifier">recorded_at</span> = <span class="ruby-identifier">consent_form</span>&amp;.<span class="ruby-identifier">recorded_at</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">consent</span>&amp;.<span class="ruby-identifier">created_at</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">recorded_at</span>.<span class="ruby-identifier">nil?</span>
@@ -4282,7 +4383,7 @@
             </details>
           </div>
           <div class="method-source-code" id="talk_to_your_child_message-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 466</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 465</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">talk_to_your_child_message</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_year_group</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">6</span>
@@ -4429,7 +4530,7 @@
             </details>
           </div>
           <div class="method-source-code" id="today_or_date_of_vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 483</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 482</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">today_or_date_of_vaccination</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span>
 
@@ -4477,7 +4578,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 493</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 492</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-comment"># We&#39;re sending communication about a specific vaccination that took place.</span>
@@ -4533,7 +4634,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination_and_dates-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 511</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 510</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_and_dates</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">next_or_today_session_dates_or</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-node">&quot;#{vaccination} on #{next_or_today_session_dates_or}&quot;</span>
@@ -4579,7 +4680,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination_and_dates_sms-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 520</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 519</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_and_dates_sms</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">next_or_today_session_dates_or</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-node">&quot;#{vaccination} on #{next_or_today_session_dates_or}&quot;</span>
@@ -4625,7 +4726,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination_and_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 528</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 527</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_and_method</span>
   <span class="ruby-node">&quot;#{programme_names_and_methods.to_sentence} vaccination&quot;</span>.<span class="ruby-identifier">pluralize</span>(
     <span class="ruby-identifier">programme_names_and_methods</span>.<span class="ruby-identifier">length</span>
@@ -4669,7 +4770,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 534</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 533</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine</span>
   <span class="ruby-node">&quot;#{programme_names.to_sentence} vaccine&quot;</span>.<span class="ruby-identifier">pluralize</span>(<span class="ruby-identifier">programme_names</span>.<span class="ruby-identifier">length</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4711,7 +4812,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_and_dose-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 538</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 537</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_and_dose</span>
   <span class="ruby-keyword">if</span> (<span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">vaccination_record</span>&amp;.<span class="ruby-identifier">dose_sequence</span>)
     <span class="ruby-node">&quot;#{programme_names.to_sentence} #{dose_sequence.ordinalize} dose&quot;</span>
@@ -4757,7 +4858,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_and_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 546</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 545</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_and_method</span>
   <span class="ruby-node">&quot;#{programme_names_and_methods.to_sentence} vaccine&quot;</span>.<span class="ruby-identifier">pluralize</span>(
     <span class="ruby-identifier">programme_names_and_methods</span>.<span class="ruby-identifier">length</span>
@@ -4801,7 +4902,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_brand-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 552</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 551</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_brand</span>
   <span class="ruby-identifier">vaccination_record</span>&amp;.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">brand</span>
 <span class="ruby-keyword">end</span></pre>
@@ -4843,27 +4944,24 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_is-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 560</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 559</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is?</span>(<span class="ruby-identifier">method</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>
-    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">any_vaccines_with_method</span> =
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
-        <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-          <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
-          <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
-          <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
-          <span class="ruby-identifier">patient</span>
-            .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
-            .<span class="ruby-identifier">vaccine_methods</span>
-            .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+        <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
+        <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
+        <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
+        <span class="ruby-identifier">patient</span>
+          .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
+          .<span class="ruby-identifier">vaccine_methods</span>
+          .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
       <span class="ruby-keyword">end</span>
-
-    <span class="ruby-identifier">any_vaccines_with_method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -4891,7 +4989,7 @@
             <div class="method-heading">
               <a href="#method-i-vaccine_is_injection" title="Link to this method">
                 <span class="method-name">vaccine_is_injection</span>
-                <span class="method-args">(= vaccine_is?(&quot;injection&quot;))</span>
+                <span class="method-args">(= vaccine_is?(&quot;injection&quot;) ? &quot;yes&quot; : &quot;no&quot;)</span>
               </a>
             </div>
 
@@ -4904,31 +5002,28 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_is_injection-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 556</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_injection</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;injection&quot;</span>)
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 555</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_injection</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;injection&quot;</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_nasal</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;nasal&quot;</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_nasal</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;nasal&quot;</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is?</span>(<span class="ruby-identifier">method</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>
-    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">any_vaccines_with_method</span> =
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
-        <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-          <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
-          <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
-          <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
-          <span class="ruby-identifier">patient</span>
-            .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
-            .<span class="ruby-identifier">vaccine_methods</span>
-            .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+        <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
+        <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
+        <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
+        <span class="ruby-identifier">patient</span>
+          .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
+          .<span class="ruby-identifier">vaccine_methods</span>
+          .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
       <span class="ruby-keyword">end</span>
-
-    <span class="ruby-identifier">any_vaccines_with_method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
@@ -4965,14 +5060,24 @@
   <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">map</span> { <span class="ruby-node">&quot;- #{it}&quot;</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n&quot;</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-identifier">private</span>
-
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">empty?</span>
 
   <span class="ruby-ivar">@is_catch_up</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">is_catch_up?</span>(<span class="ruby-value">year_group:</span> <span class="ruby-identifier">patient_year_group</span>) }
 <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_dates?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_administered?</span>
+  <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_dates_are_accurate?</span>
   <span class="ruby-identifier">consent_form</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">session_dates_are_accurate?</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>
@@ -5035,7 +5140,7 @@
             <div class="method-heading">
               <a href="#method-i-vaccine_is_nasal" title="Link to this method">
                 <span class="method-name">vaccine_is_nasal</span>
-                <span class="method-args">(= vaccine_is?(&quot;nasal&quot;))</span>
+                <span class="method-args">(= vaccine_is?(&quot;nasal&quot;) ? &quot;yes&quot; : &quot;no&quot;)</span>
               </a>
             </div>
 
@@ -5048,29 +5153,26 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_is_nasal-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 558</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_nasal</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;nasal&quot;</span>)
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 557</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is_nasal</span> = <span class="ruby-identifier">vaccine_is?</span>(<span class="ruby-string">&quot;nasal&quot;</span>) <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_is?</span>(<span class="ruby-identifier">method</span>)
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>
-      <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+      <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">method</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-identifier">any_vaccines_with_method</span> =
-        <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
-          <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-            <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
-            <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
-            <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
-            <span class="ruby-identifier">patient</span>
-              .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
-              .<span class="ruby-identifier">vaccine_methods</span>
-              .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
-          <span class="ruby-keyword">end</span>
-        <span class="ruby-keyword">else</span>
-          <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>
+        <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+          <span class="ruby-comment"># We pick the first method as it&#39;s the one most likely to be used</span>
+          <span class="ruby-comment"># to vaccinate the patient. For example, in the case of Flu, the</span>
+          <span class="ruby-comment"># parents will approve nasal (and then optionally injection).</span>
+          <span class="ruby-identifier">patient</span>
+            .<span class="ruby-identifier">vaccine_criteria</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
+            .<span class="ruby-identifier">vaccine_methods</span>
+            .<span class="ruby-identifier">first</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">method</span>
         <span class="ruby-keyword">end</span>
-
-      <span class="ruby-identifier">any_vaccines_with_method</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;yes&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;no&quot;</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">exists?</span>(<span class="ruby-value">method:</span>)
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
@@ -5107,14 +5209,24 @@
     <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">map</span> { <span class="ruby-node">&quot;- #{it}&quot;</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n&quot;</span>)
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">private</span>
-
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">empty?</span>
 
     <span class="ruby-ivar">@is_catch_up</span> <span class="ruby-operator">||=</span>
       <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">is_catch_up?</span>(<span class="ruby-value">year_group:</span> <span class="ruby-identifier">patient_year_group</span>) }
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_dates?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">outcome_administered?</span>
+    <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">private</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_dates_are_accurate?</span>
     <span class="ruby-identifier">consent_form</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">session_dates_are_accurate?</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>
@@ -5191,7 +5303,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_side_effects-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 583</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/govuk_notify_personalisation.rb, line 579</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_side_effects</span>
   <span class="ruby-identifier">side_effects</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>
