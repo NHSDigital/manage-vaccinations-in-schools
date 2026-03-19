@@ -1,34 +1,19 @@
 # frozen_string_literal: true
 
 class VaccinationReport
-  include RequestSessionPersistable
-  include WizardStepConcern
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+  include ActiveRecord::AttributeAssignment
 
+  attr_accessor :team
   attribute :date_from, :date
   attribute :date_to, :date
   attribute :file_format, :string
   attribute :programme_type, :string
   attribute :academic_year, :integer
 
-  def initialize(current_user:, **attributes)
-    @current_user = current_user
-    super(**attributes)
-  end
-
-  def wizard_steps
-    %i[dates file_format]
-  end
-
-  on_wizard_step :file_format, exact: true do
-    validates :file_format, inclusion: { in: :file_formats }
-  end
-
-  validates :programme_type,
-            :academic_year,
-            :file_format,
-            presence: true,
-            on: :single_page
-  validates :file_format, inclusion: { in: :file_formats }, on: :single_page
+  validates :programme_type, :academic_year, presence: true
+  validates :file_format, inclusion: { in: :file_formats }
 
   def programme
     Programme.find(programme_type) if programme_type
@@ -40,7 +25,7 @@ class VaccinationReport
 
   def csv_data
     exporter_class.call(
-      team: @current_user.selected_team,
+      team:,
       programme:,
       academic_year:,
       start_date: date_from,
@@ -59,7 +44,7 @@ class VaccinationReport
 
   def file_formats
     common_file_formats = %w[mavis systm_one]
-    if @current_user.selected_team.careplus_enabled?
+    if team.careplus_enabled?
       common_file_formats + ["careplus"]
     else
       common_file_formats
@@ -75,6 +60,4 @@ class VaccinationReport
       systm_one: Reports::SystmOneExporter
     }.fetch(file_format.to_sym)
   end
-
-  def request_session_key = "vaccination_report"
 end

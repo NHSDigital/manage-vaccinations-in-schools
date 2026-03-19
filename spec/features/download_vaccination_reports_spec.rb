@@ -1,62 +1,41 @@
 # frozen_string_literal: true
 
 describe "Download vaccination reports" do
-  scenario "Download in CarePlus format" do
+  scenario "validation errors when required fields are missing" do
+    given_an_hpv_programme_is_underway
+
+    when_i_visit_the_single_page_form
+    and_i_submit_without_filling_in_the_form
+    then_i_see_validation_errors
+  end
+
+  scenario "download in CSV format" do
+    given_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+
+    when_i_visit_the_single_page_form
+    then_i_do_not_see_careplus_as_an_option
+
+    when_i_fill_in_the_form
+    then_i_download_a_csv_file
+  end
+
+  scenario "download in CarePlus format" do
     given_an_hpv_programme_is_underway_and_care_plus_is_enabled
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_the_programme
-    and_i_click_on_download_vaccination_report
-    then_i_see_the_dates_page
-
-    when_i_enter_some_dates
-    then_i_see_the_file_format_page
-
-    when_i_choose_careplus
+    when_i_visit_the_single_page_form
+    and_i_fill_in_the_form_with_careplus_format
     then_i_download_a_careplus_file
   end
 
-  scenario "Download in Mavis format" do
+  scenario "download in SystmOne format" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_the_programme
-    and_i_click_on_download_vaccination_report
-    then_i_see_the_dates_page
-
-    when_i_enter_some_dates
-    then_i_see_the_file_format_page
-
-    when_i_choose_mavis
-    then_i_download_a_mavis_file
-  end
-
-  scenario "Download in SystmOne format" do
-    given_an_hpv_programme_is_underway
-    and_an_administered_vaccination_record_exists
-
-    when_i_go_to_the_programme
-    and_i_click_on_download_vaccination_report
-    then_i_see_the_dates_page
-
-    when_i_enter_some_dates
-    then_i_see_the_file_format_page
-
-    when_i_choose_systm_one
-    then_i_download_a_systm_one_file
-  end
-
-  scenario "Programme is not HPV" do
-    given_a_menacwy_programme_is_underway
-    and_an_administered_vaccination_record_exists
-
-    when_i_go_to_the_programme
-    and_i_click_on_download_vaccination_report
-    then_i_see_the_dates_page
-
-    when_i_enter_some_dates
-    then_i_see_the_file_format_page
-    and_systm_one_export_is_disabled
+    when_i_visit_the_single_page_form
+    and_i_fill_in_the_form_with_systmone_format
+    then_i_download_a_systmone_file
   end
 
   def given_an_hpv_programme_is_underway
@@ -75,28 +54,7 @@ describe "Download vaccination reports" do
         team: @team
       )
 
-    @patient_location =
-      create(:patient_location, patient: @patient, session: @session)
-  end
-
-  def given_a_menacwy_programme_is_underway
-    @programme = Programme.menacwy
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
-
-    @session = create(:session, team: @team, programmes: [@programme])
-
-    @patient =
-      create(
-        :patient,
-        :consent_given_triage_safe_to_vaccinate,
-        given_name: "John",
-        family_name: "Smith",
-        programmes: [@programme],
-        team: @team
-      )
-
-    @patient_location =
-      create(:patient_location, patient: @patient, session: @session)
+    create(:patient_location, patient: @patient, session: @session)
   end
 
   def given_an_hpv_programme_is_underway_and_care_plus_is_enabled
@@ -112,7 +70,6 @@ describe "Download vaccination reports" do
 
   def and_an_administered_vaccination_record_exists
     vaccine = @programme.vaccines.first
-
     batch = create(:batch, :not_expired, team: @team, vaccine:)
 
     create(
@@ -124,52 +81,47 @@ describe "Download vaccination reports" do
     )
   end
 
-  def when_i_go_to_the_programme
+  def when_i_visit_the_single_page_form
     sign_in @team.users.first
-    visit programme_overview_path(@programme, AcademicYear.current)
+    visit new_vaccination_report_path
   end
 
-  def and_i_click_on_download_vaccination_report
-    click_on "Download vaccination report"
+  def and_i_submit_without_filling_in_the_form
+    click_on "Download vaccination data"
   end
 
-  def then_i_see_the_dates_page
-    expect(page).to have_content("Select a vaccination date range")
+  def then_i_see_validation_errors
+    expect(page).to have_content("There is a problem")
+    expect(page).to have_content("Choose a programme")
+    expect(page).to have_content("Choose a file format")
   end
 
-  def when_i_enter_some_dates
-    within all(".nhsuk-fieldset")[0] do
-      fill_in "Day", with: "01"
-      fill_in "Month", with: "01"
-      fill_in "Year", with: "2024"
-    end
-
-    within all(".nhsuk-fieldset")[1] do
-      fill_in "Day", with: "31"
-      fill_in "Month", with: "12"
-      fill_in "Year", with: "2024"
-    end
-
-    click_on "Continue"
+  def then_i_do_not_see_careplus_as_an_option
+    expect(page).not_to have_content("CarePlus")
   end
 
-  def then_i_see_the_file_format_page
-    expect(page).to have_content("Select file format")
+  def fill_in_the_form(file_format:)
+    choose "#{AcademicYear.current} to #{AcademicYear.current + 1}"
+    choose "HPV"
+    choose file_format
+    click_on "Download vaccination data"
   end
 
-  def when_i_choose_careplus
-    choose "CarePlus"
-    click_on "Continue"
+  def when_i_fill_in_the_form
+    fill_in_the_form(file_format: "CSV")
   end
 
-  def when_i_choose_mavis
-    choose "CSV"
-    click_on "Continue"
+  def and_i_fill_in_the_form_with_careplus_format
+    fill_in_the_form(file_format: "CSV for CarePlus (System C)")
   end
 
-  def when_i_choose_systm_one
-    choose "SystmOne"
-    click_on "Continue"
+  def and_i_fill_in_the_form_with_systmone_format
+    fill_in_the_form(file_format: "CSV for SystmOne")
+  end
+
+  def then_i_download_a_csv_file
+    expect(page.status_code).to eq(200)
+    expect(page).to have_content("ORGANISATION_CODE")
   end
 
   def then_i_download_a_careplus_file
@@ -180,23 +132,11 @@ describe "Download vaccination reports" do
     )
   end
 
-  def then_i_download_a_mavis_file
-    expect(page.status_code).to eq(200)
-
-    expect(page).to have_content(
-      "ORGANISATION_CODE,SCHOOL_URN,SCHOOL_NAME,CARE_SETTING,CLINIC_NAME,PERSON_FORENAME,PERSON_SURNAME"
-    )
-  end
-
-  def then_i_download_a_systm_one_file
+  def then_i_download_a_systmone_file
     expect(page.status_code).to eq(200)
 
     expect(page).to have_content(
       "Practice code,NHS number,Surname,Middle name,Forename,Gender,Date of Birth,House name,House number and road,Town"
     )
-  end
-
-  def and_systm_one_export_is_disabled
-    expect(page).not_to have_selector("SystmOne")
   end
 end

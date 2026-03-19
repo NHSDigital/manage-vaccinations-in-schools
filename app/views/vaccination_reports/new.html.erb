@@ -5,7 +5,7 @@
 <% title = "Download vaccination report" %>
 <% content_for :page_title, title %>
 
-<%= form_with model: @vaccination_report, url: vaccination_report_create_path, method: :post do |f| %>
+<%= form_with model: @vaccination_report, url: vaccination_report_path, method: :post do |f| %>
   <%= f.mavis_error_summary %>
 
   <%= h1 title %>
