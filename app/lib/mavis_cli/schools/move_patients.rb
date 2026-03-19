@@ -88,7 +88,8 @@ module MavisCLI
 
         old_team_location.destroy!
 
-        PatientTeamUpdater.call(team_scope: Team.where(id: team_id))
+        patient_scope = Patient.where(school_id: new_loc.id)
+        PatientTeamUpdater.call(patient_scope:)
       end
     end
   end

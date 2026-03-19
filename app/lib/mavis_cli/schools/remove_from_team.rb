@@ -38,15 +38,17 @@ module MavisCLI
 
         academic_year ||= AcademicYear.pending
 
-        ActiveRecord::Base.transaction do
-          urns.each do |urn|
+        locations =
+          urns.filter_map do |urn|
             location = Location.school.find_by_urn_and_site(urn)
 
-            if location.nil?
-              warn "Could not find school with URN #{urn}"
-              next
-            end
+            warn "Could not find school with URN #{urn}" if location.nil?
+            location
+          end
 
+        ActiveRecord::Base.transaction do
+          locations.each do |location|
+            urn = location.urn_and_site
             team_locations =
               TeamLocation.includes(:team).where(
                 team:,
@@ -72,6 +74,13 @@ module MavisCLI
             puts "Location #{location.id} (URN: #{urn}) has been removed from subteam #{subteam_name} " \
                    "for academic year #{academic_year}."
           end
+
+          patients_to_update =
+            Patient
+              .joins(:patient_locations)
+              .where(patient_locations: { location: locations })
+              .distinct
+          PatientTeamUpdater.call(patient_scope: patients_to_update)
         end
       end
     end

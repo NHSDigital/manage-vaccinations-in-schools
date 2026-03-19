@@ -68,7 +68,12 @@ module MavisCLI
             )
           end
 
-          PatientTeamUpdater.call(team:)
+          patients_to_update =
+            Patient
+              .joins(:patient_locations)
+              .where(patient_locations: { location: locations })
+              .distinct
+          PatientTeamUpdater.call(patient_scope: patients_to_update)
         end
       end
 

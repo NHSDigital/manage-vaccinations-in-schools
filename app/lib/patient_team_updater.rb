@@ -102,7 +102,7 @@ class PatientTeamUpdater < PatientScopedUpdater
     #  patient teams no longer exist in the other relations, the sources array
     #  will be empty and then can be upserted.
 
-    source = "NULL"
+    source = "NULL::integer"
 
     scope = merge_team_scope(merge_patient_scope(PatientTeam))
 
