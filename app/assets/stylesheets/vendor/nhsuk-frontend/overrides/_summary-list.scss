@@ -1,12 +1,4 @@
-@use "sass:color";
 @use "../core" as *;
-
-// Ensure border colour inside warning callout can be seen and matches
-.nhsuk-card--warning {
-  .nhsuk-summary-list__row {
-    border-color: color.scale(color.mix($nhsuk-border-colour, nhsuk-colour("yellow"), 50%), $lightness: -10%);
-  }
-}
 
 // Remove bottom border on last row of last child
 .nhsuk-summary-list__row:last-of-type {

@@ -192,3 +192,15 @@ $_orange-text-colour: nhsuk-shade(nhsuk-colour("warm-yellow"), 70%);
     }
   }
 }
+
+.nhsuk-card--warning {
+  // Increase prominence of blockquote border
+  blockquote {
+    border-left-color: nhsuk-colour("black");
+  }
+
+  // Ensure summary row border colour matches card border
+  .nhsuk-summary-list__row {
+    border-color: nhsuk-colour("yellow");
+  }
+}
