@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class API::Reporting::TotalsController < API::Reporting::BaseController
-  # Maps query param names to model attribute names
   FILTERS = {
     academic_year: :academic_year,
     programme: :programme_type,
@@ -41,23 +40,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
 
   before_action :set_default_filters, :set_filters, :set_scope
 
-  # GET /api/reporting/totals
-  # Params:
-  # - all keys in the FILTERS constant can be passed to filter the results returned
-  # - workgroup: team workgroup to filter by (looked up within user's organisations)
-  #   e.g. academic_year=2024&workgroup=teamworkgroup&programme=flu
-  #
-  # Returns JSON object with:
-  #   - cohort: integer - total distinct patients
-  #   - vaccinated: integer - patients with administered outcomes
-  #   - not_vaccinated: integer - cohort minus vaccinated
-  #   - vaccinated_by_sais: integer - same as vaccinated
-  #   - vaccinated_elsewhere_declared: integer - patients who declared "already had" vaccination
-  #   - vaccinated_elsewhere_recorded: integer - patients with external vaccination records (uploads/NHS API)
-  #   - vaccinated_previously: integer - patients vaccinated in prior academic years
-  #   - vaccinations_given: integer - total administered records
-  #   - monthly_vaccinations_given: array - breakdown by month/year
-  #     Each element contains: {year: integer, month: integer, count: integer}
   def index
     respond_to do |format|
       format.csv { render_format_csv }
@@ -76,11 +58,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def set_scope
-    @base_scope =
-      ReportingAPI::PatientProgrammeStatus.where(
-        team_id: current_user.team_ids
-      ).where(@filters.to_where_clause)
-
     @totals_base_scope =
       ReportingAPI::Total.where(team_id: current_user.team_ids).where(
         @filters.to_where_clause
@@ -89,7 +66,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     apply_workgroup_filter
     apply_year_group_filter
 
-    @scope = @base_scope.not_archived
     @totals_scope = @totals_base_scope.not_archived
   end
 
@@ -154,52 +130,30 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def render_totals_json
-    cohort = @totals_scope.cohort_count
-    vaccinated = @totals_scope.vaccinated_count
+    metrics = @totals_scope.with_aggregate_metrics.take
 
-    response_data = {
-      cohort:,
-      vaccinated:,
-      not_vaccinated: cohort - vaccinated,
-      consent_given: @totals_scope.consent_given_count,
-      no_consent: @totals_scope.no_consent_count,
-      consent_no_response: @totals_scope.consent_no_response_count,
-      consent_refused: @totals_scope.consent_refused_count,
-      consent_conflicts: @totals_scope.consent_conflicts_count,
-      vaccinated_by_sais: @scope.vaccinated_by_sais_count,
-      vaccinated_elsewhere_declared: @scope.vaccinated_elsewhere_declared_count,
-      vaccinated_elsewhere_recorded: @scope.vaccinated_elsewhere_recorded_count,
-      vaccinated_previously: @scope.vaccinated_previously_count,
-      vaccinations_given: @base_scope.vaccinations_given_count,
-      monthly_vaccinations_given: @base_scope.monthly_vaccinations_given,
-      parent_refused_consent: @scope.parent_refused_consent_count,
-      child_refused_vaccination: @scope.child_refused_vaccination_count,
-      refusal_reasons: consent_refusal_reasons,
-      consent_routes: consent_routes_breakdown
-    }
-
-    if params[:programme] == "flu"
-      response_data.merge!(
-        vaccinated_nasal: @scope.vaccinated_nasal_count,
-        vaccinated_injection: @scope.vaccinated_injection_count,
-        consent_given_nasal_only: @scope.consent_given_nasal_only_count,
-        consent_given_injection_only: @scope.consent_given_injection_only_count,
-        consent_given_both_methods: @scope.consent_given_both_methods_count
-      )
-    end
-
-    render json: response_data
+    render json: {
+             cohort: metrics.cohort,
+             vaccinated: metrics.vaccinated,
+             not_vaccinated: metrics.cohort - metrics.vaccinated,
+             consent_given: metrics.consent_given,
+             no_consent: metrics.no_consent,
+             consent_no_response: metrics.consent_no_response,
+             consent_refused: metrics.consent_refused,
+             consent_conflicts: metrics.consent_conflicts,
+             vaccinations_given: team_vaccinations_given_count,
+             monthly_vaccinations_given: team_monthly_vaccinations_given
+           }
   end
 
   def apply_workgroup_filter
     workgroup = params[:workgroup].presence || cis2_info.team_workgroup
     return unless workgroup
 
-    team = current_user.teams.find_by(workgroup:)
-    return unless team
+    @team = current_user.teams.find_by(workgroup:)
+    return unless @team
 
-    @base_scope = @base_scope.where(team_id: team.id)
-    @totals_base_scope = @totals_base_scope.where(team_id: team.id)
+    @totals_base_scope = @totals_base_scope.where(team_id: @team.id)
   end
 
   def apply_year_group_filter
@@ -207,18 +161,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
 
     lpyg_table = Location::ProgrammeYearGroup.arel_table
     lyg_table = Location::YearGroup.arel_table
-
-    patient_table = ReportingAPI::PatientProgrammeStatus.arel_table
-    subquery =
-      lpyg_table
-        .project(Arel.star)
-        .join(lyg_table)
-        .on(lpyg_table[:location_year_group_id].eq(lyg_table[:id]))
-        .where(lyg_table[:location_id].eq(patient_table[:session_location_id]))
-        .where(lyg_table[:value].eq(patient_table[:patient_year_group]))
-        .where(lyg_table[:academic_year].eq(patient_table[:academic_year]))
-        .where(lpyg_table[:programme_type].eq(params[:programme]))
-    @base_scope = @base_scope.where(Arel::Nodes::Exists.new(subquery))
 
     totals_table = ReportingAPI::Total.arel_table
     totals_subquery =
@@ -234,33 +176,53 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       @totals_base_scope.where(Arel::Nodes::Exists.new(totals_subquery))
   end
 
-  def consent_refusal_reasons
-    Consent
-      .joins(:patient)
+  def team_vaccination_records_scope
+    VaccinationRecord
+      .where(discarded_at: nil, outcome: :administered)
+      .joins(session: :team_location)
       .where(
-        patient_id: @scope.select(:patient_id),
-        programme_type: @scope.select(:programme_type).distinct,
-        academic_year: @scope.select(:academic_year).distinct,
-        response: :refused
+        team_locations: {
+          team_id: @team&.id || current_user.team_ids,
+          academic_year: params[:academic_year]
+        }
       )
-      .not_invalidated
-      .not_withdrawn
-      .group(:reason_for_refusal)
-      .count
+      .where(
+        "vaccination_records.programme_type != 'td_ipv'" \
+          " OR vaccination_records.dose_sequence = 5" \
+          " OR vaccination_records.dose_sequence IS NULL"
+      )
+      .then do |scope|
+        if params[:programme].present?
+          scope.where(
+            vaccination_records: {
+              programme_type: params[:programme]
+            }
+          )
+        else
+          scope
+        end
+      end
   end
 
-  def consent_routes_breakdown
-    Consent
-      .joins(:patient)
-      .where(
-        patient_id: @scope.select(:patient_id),
-        programme_type: @scope.select(:programme_type).distinct,
-        academic_year: @scope.select(:academic_year).distinct
-      )
-      .not_invalidated
-      .not_withdrawn
-      .response_provided
-      .group(:route)
-      .count
+  def team_vaccinations_given_count
+    team_vaccination_records_scope.count
+  end
+
+  def team_monthly_vaccinations_given
+    counts =
+      team_vaccination_records_scope
+        .group(
+          Arel.sql(
+            "EXTRACT(YEAR FROM vaccination_records.performed_at_date)::integer"
+          ),
+          Arel.sql(
+            "EXTRACT(MONTH FROM vaccination_records.performed_at_date)::integer"
+          )
+        )
+        .count
+        .map do |(year, month), count|
+          { year:, month: Date::MONTHNAMES[month], count: }
+        end
+    counts.sort_by! { [it[:year], Date::MONTHNAMES.index(it[:month])] }
   end
 end

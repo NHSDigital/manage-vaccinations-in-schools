@@ -2,7 +2,6 @@
 
 class ReportingAPI::RefreshJob < ApplicationJob
   def perform
-    ReportingAPI::PatientProgrammeStatus.refresh!
     ReportingAPI::Total.refresh!
   end
 end
