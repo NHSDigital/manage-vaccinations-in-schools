@@ -125,7 +125,7 @@ GEM
     array_enum (1.6.0)
       activemodel
     asciidoctor (2.0.26)
-    asciidoctor-diagram (3.2.0)
+    asciidoctor-diagram (3.2.1)
       asciidoctor (>= 1.5.7, < 3.x)
       rexml
     ast (2.4.3)
