@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_19_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_20_150753) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -293,12 +293,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_130000) do
     t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.bigint "sent_by_user_id"
-    t.bigint "session_id", null: false
+    t.bigint "session_id"
+    t.bigint "team_location_id"
     t.integer "type", null: false
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
     t.index ["programme_types"], name: "index_consent_notifications_on_programme_types", using: :gin
     t.index ["sent_by_user_id"], name: "index_consent_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_consent_notifications_on_session_id"
+    t.index ["team_location_id"], name: "index_consent_notifications_on_team_location_id"
   end
 
   create_table "consents", force: :cascade do |t|

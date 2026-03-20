@@ -35,6 +35,7 @@ class TeamLocation < ApplicationRecord
   belongs_to :subteam, optional: true
 
   has_many :consent_forms
+  has_many :consent_notifications
   has_many :sessions
 
   has_many :patient_locations,

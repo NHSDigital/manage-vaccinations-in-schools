@@ -37,6 +37,13 @@ class API::Testing::TeamsController < API::Testing::BaseController
       )
     )
     log_destroy(
+      ConsentNotification.joins(:team_location).where(
+        team_location: {
+          team_id:
+        }
+      )
+    )
+    log_destroy(
       SessionNotification.joins(session: :team_location).where(
         team_location: {
           team_id:
