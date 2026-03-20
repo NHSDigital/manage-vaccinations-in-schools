@@ -29,7 +29,7 @@ service hostname do
     options = { protocol: protocol }
 
     if scheme == "https"
-      authority = Localhost::Authority.fetch
+      authority = Localhost::Authority.fetch(path: "/rails/tmp")
       ssl_context = authority.server_context
       alpn_names = protocol.names
       ssl_context.alpn_select_cb = ->(offered) { (offered & alpn_names).first }
