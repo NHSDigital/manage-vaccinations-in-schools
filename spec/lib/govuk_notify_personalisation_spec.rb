@@ -5,28 +5,27 @@
 
 describe GovukNotifyPersonalisation do
   subject(:to_h) do
-    personalisation =
-      described_class.new(
-        consent:,
-        consent_form:,
-        patient:,
-        programme_types:,
-        session:,
-        team_location:,
-        vaccination_record:
-      ).to_h
-
-    populate_notify_template(personalisation)
-
-    personalisation
+    hash = personalisation.to_h
+    populate_notify_template(hash)
+    hash
   end
 
+  let(:personalisation) do
+    described_class.new(
+      patient:,
+      session:,
+      consent:,
+      consent_form:,
+      programme_types:,
+      team_location:,
+      vaccination_record:
+    )
+  end
   let(:hpv_programme) { Programme.hpv }
   let(:flu_programme) { Programme.flu }
   let(:programmes) { [hpv_programme] }
   let(:programme_types) { programmes.map(&:type) }
   let(:ods_code) { "ABC" }
-
   let(:team) do
     create(
       :team,
@@ -48,7 +47,6 @@ describe GovukNotifyPersonalisation do
       team:
     )
   end
-
   let(:patient) do
     create(
       :patient,
@@ -81,13 +79,10 @@ describe GovukNotifyPersonalisation do
               "if they show they fully understand what’s involved. Our team might " \
               "give young people this opportunity if they assess them as suitably " \
               "competent.",
-          catch_up: "no",
           consent_deadline: "Wednesday 31 December",
           consent_link:
             "http://localhost:4000/consents/#{session.slug}/hpv/start",
           full_and_preferred_patient_name: "John Smith",
-          has_multiple_dates: "no",
-          is_outbreak: "no",
           location_name: "Hogwarts",
           invitation_to_clinic_custom_mmr_message: "",
           mmr_second_dose_required: false,
@@ -101,7 +96,6 @@ describe GovukNotifyPersonalisation do
           next_session_date: "Thursday 1 January",
           next_session_dates: "Thursday 1 January",
           next_session_dates_or: "Thursday 1 January",
-          not_catch_up: "yes",
           patient_date_of_birth: "1 February 2013",
           short_patient_name: "John",
           short_patient_name_apos: "John’s",
@@ -118,8 +112,6 @@ describe GovukNotifyPersonalisation do
           vaccine: "HPV vaccine",
           vaccine_and_dose: "HPV",
           vaccine_and_method: "HPV vaccine",
-          vaccine_is_injection: "no",
-          vaccine_is_nasal: "no",
           vaccine_side_effects: ""
         }
       )
@@ -152,7 +144,7 @@ describe GovukNotifyPersonalisation do
       it { should include(vaccination: "MMRV vaccination") }
       it { should include(vaccination_and_dates_sms: "MMRV vaccination") }
       it { should include(mmr_or_mmrv_vaccine: "MMR or MMRV vaccine") }
-      it { should include(is_outbreak: "no") }
+      it { expect(personalisation.outbreak?).to be false }
 
       it "generates consent link with mmrv variant" do
         expect(to_h[:consent_link]).to end_with("/mmrv/start")
@@ -161,7 +153,7 @@ describe GovukNotifyPersonalisation do
       context "when session is setup for outbreak communications" do
         before { allow(session).to receive(:outbreak).and_return(true) }
 
-        it { should include(is_outbreak: "yes") }
+        it { expect(personalisation.outbreak?).to be true }
       end
     end
 
@@ -178,7 +170,7 @@ describe GovukNotifyPersonalisation do
       context "when session is setup for outbreak communications" do
         before { allow(session).to receive(:outbreak).and_return(true) }
 
-        it { should include(is_outbreak: "yes") }
+        it { expect(personalisation.outbreak?).to be true }
       end
     end
   end
@@ -196,24 +188,10 @@ describe GovukNotifyPersonalisation do
 
     it "doesn't show today's date in next date" do
       expect(to_h).to include(
-        has_multiple_dates: "no",
         next_or_today_session_date: Date.current.to_fs(:short_day_of_week),
         next_session_date: Date.tomorrow.to_fs(:short_day_of_week)
       )
     end
-  end
-
-  context "when patient is in Year 9" do
-    let(:patient) do
-      create(
-        :patient,
-        given_name: "John",
-        family_name: "Smith",
-        date_of_birth: Date.current - 14.years
-      )
-    end
-
-    it { should include(catch_up: "yes", not_catch_up: "no") }
   end
 
   context "with multiple programmes" do
@@ -240,7 +218,6 @@ describe GovukNotifyPersonalisation do
         expect(to_h).to match(
           hash_including(
             consent_deadline: "Wednesday 31 December",
-            has_multiple_dates: "yes",
             next_or_today_session_date: "Thursday 1 January",
             next_or_today_session_dates:
               "Thursday 1 January and Friday 2 January",
@@ -701,8 +678,6 @@ describe GovukNotifyPersonalisation do
         hash_including(
           day_month_year_of_vaccination: "01/01/2024",
           today_or_date_of_vaccination: "on 1 January 2024",
-          outcome_administered: "yes",
-          outcome_not_administered: "no",
           vaccine_and_dose: "HPV 1st dose",
           vaccine_brand: "Gardasil 9"
         )
@@ -762,16 +737,21 @@ describe GovukNotifyPersonalisation do
         hash_including(
           day_month_year_of_vaccination: "01/01/2024",
           reason_did_not_vaccinate: "the nurse decided John was not well",
-          show_additional_instructions: "yes",
-          today_or_date_of_vaccination: "on 1 January 2024",
-          outcome_administered: "no",
-          outcome_not_administered: "yes"
+          today_or_date_of_vaccination: "on 1 January 2024"
         )
       )
     end
   end
 
   context "with vaccine methods" do
+    subject(:personalisation) do
+      described_class.new(
+        patient:,
+        session:,
+        programme_types: programmes.map(&:type)
+      )
+    end
+
     context "and an injection-only programme" do
       before do
         create(
@@ -783,7 +763,8 @@ describe GovukNotifyPersonalisation do
         )
       end
 
-      it { should include(vaccine_is_injection: "yes", vaccine_is_nasal: "no") }
+      it { expect(personalisation.vaccine_is?("injection")).to be true }
+      it { expect(personalisation.vaccine_is?("nasal")).to be false }
     end
 
     context "and a nasal spray programme" do
@@ -799,7 +780,8 @@ describe GovukNotifyPersonalisation do
         )
       end
 
-      it { should include(vaccine_is_injection: "no", vaccine_is_nasal: "yes") }
+      it { expect(personalisation.vaccine_is?("injection")).to be false }
+      it { expect(personalisation.vaccine_is?("nasal")).to be true }
     end
 
     context "and multiple programmes" do
@@ -822,12 +804,8 @@ describe GovukNotifyPersonalisation do
         )
       end
 
-      it do
-        expect(to_h).to include(
-          vaccine_is_injection: "yes",
-          vaccine_is_nasal: "yes"
-        )
-      end
+      it { expect(personalisation.vaccine_is?("injection")).to be true }
+      it { expect(personalisation.vaccine_is?("nasal")).to be true }
     end
   end
 

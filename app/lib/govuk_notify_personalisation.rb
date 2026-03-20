@@ -52,16 +52,13 @@ class GovukNotifyPersonalisation
   def to_h
     {
       batch_name:,
-      catch_up:,
       consent_deadline:,
       consent_link:,
       consented_vaccine_methods_message:,
       day_month_year_of_vaccination:,
       delay_vaccination_review_context:,
       full_and_preferred_patient_name:,
-      has_multiple_dates:,
       invitation_to_clinic_generic_message:,
-      is_outbreak:,
       location_name:,
       invitation_to_clinic_custom_mmr_message:,
       mmr_or_mmrv_vaccine:,
@@ -73,15 +70,11 @@ class GovukNotifyPersonalisation
       next_session_date:,
       next_session_dates:,
       next_session_dates_or:,
-      not_catch_up:,
-      outcome_administered:,
-      outcome_not_administered:,
       patient_date_of_birth:,
       reason_did_not_vaccinate:,
       reason_for_refusal:,
       short_patient_name:,
       short_patient_name_apos:,
-      show_additional_instructions:,
       subsequent_session_dates_offered_message:,
       subteam_email:,
       subteam_name:,
@@ -99,8 +92,6 @@ class GovukNotifyPersonalisation
       vaccine_and_dose:,
       vaccine_and_method:,
       vaccine_brand:,
-      vaccine_is_injection:,
-      vaccine_is_nasal:,
       vaccine_side_effects:
     }.compact
   end
@@ -120,10 +111,6 @@ class GovukNotifyPersonalisation
   def batch_name
     vaccination_record&.batch_number
   end
-
-  def catch_up = is_catch_up? ? "yes" : "no"
-
-  def not_catch_up = is_catch_up? ? "no" : "yes"
 
   def consent_deadline
     return nil if session.nil?
@@ -184,11 +171,6 @@ class GovukNotifyPersonalisation
     (consent_form || patient).full_name_with_known_as(context: :parents)
   end
 
-  def has_multiple_dates
-    return nil if session.nil?
-    has_multiple_dates? ? "yes" : "no"
-  end
-
   def host
     if Rails.env.local?
       "http://localhost:4000"
@@ -197,11 +179,7 @@ class GovukNotifyPersonalisation
     end
   end
 
-  def is_outbreak
-    return nil if session.nil?
-
-    session.outbreak? ? "yes" : "no"
-  end
+  def outbreak? = session&.outbreak?
 
   def location_name
     if vaccination_record
@@ -389,14 +367,8 @@ class GovukNotifyPersonalisation
       &.to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end
 
-  def outcome_administered
-    return nil if vaccination_record.nil?
-    outcome_administered? ? "yes" : "no"
-  end
-
-  def outcome_not_administered
-    return nil if vaccination_record.nil?
-    !outcome_administered? ? "yes" : "no"
+  def outcome_not_administered?
+    vaccination_record.nil? || !outcome_administered?
   end
 
   def patient_date_of_birth
@@ -435,11 +407,8 @@ class GovukNotifyPersonalisation
     short_patient_name + apos
   end
 
-  def show_additional_instructions
-    return if vaccination_record.nil?
-
-    vaccination_record.already_had? ? "no" : "yes"
-  end
+  def show_additional_instructions? =
+    vaccination_record.present? && !vaccination_record.already_had?
 
   def subsequent_session_dates_offered_message
     return nil if session.nil?
@@ -556,10 +525,6 @@ class GovukNotifyPersonalisation
   def vaccine_brand
     vaccination_record&.vaccine&.brand
   end
-
-  def vaccine_is_injection = vaccine_is?("injection") ? "yes" : "no"
-
-  def vaccine_is_nasal = vaccine_is?("nasal") ? "yes" : "no"
 
   def vaccine_is?(method)
     if vaccination_record
