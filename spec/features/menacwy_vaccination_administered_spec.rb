@@ -201,7 +201,7 @@ describe "MenACWY vaccination" do
   end
 
   def and_i_see_the_vaccination_details
-    expect(page).to have_content("Vaccination records")
+    expect(page).to have_content("Vaccination outcomes")
     click_on Date.current.to_fs(:long)
 
     expect(page).to have_content("Vaccination details")
