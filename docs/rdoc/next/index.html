@@ -785,20 +785,21 @@ rake parallel:spec</pre>
 
 <pre class="shell">yarn test</pre>
 
-<p>End-to-end, performance, security and accessibility tests can be found in the <a href="https://github.com/NHSDigital/manage-vaccinations-in-schools-testing">Mavis testing respository</a>.</p>
+<p>End-to-end, performance, security and accessibility tests can be found in the <a href="https://github.com/NHSDigital/manage-vaccinations-in-schools-testing">Mavis testing respository</a>. There is also some <a href="https://github.com/NHSDigital/manage-vaccinations-in-schools-testing/tree/main/.github/workflows/">additional documentation</a> that describes how to run these via GitHub actions.</p>
 
 <p>You can also run the end-to-end tests from this repository:</p>
 
 <pre class="shell">bin/e2e tests/test_start.py::test_start_page_elements_visible</pre>
 
-<p>This requires <a href="https://docs.astral.sh/uv/">uv</a> and to have the testing repository available locally at <code>../manage-vaccinations-in-schools-testing</code>(an alternative location can be used by setting the <code>MAVIS_E2E_REPO</code> environment variable). You can also include the <code>--main</code> argument when running tests to force using the latest main version of the testing repo.</p>
+<p>This requires having the testing repository available locally at <code>../manage-vaccinations-in-schools-testing</code>(an alternative location can be used by setting the <code>MAVIS_E2E_REPO</code> environment variable) and following the setup steps (installing <a href="https://docs.astral.sh/uv/">uv</a> and obtaining a .env file).</p>
+
+<p>You can also include the <code>--main</code> argument when running tests to force using the latest main version of the testing repo.</p>
 
 <p>This runs tests in the <code>end_to_end</code> rails environment which will not interfere with the development server/database. The database needs to be setup in this environment before the tests can be run.</p>
 
 <pre class="shell">RAILS_ENV=end_to_end bin/rails db:setup
 RAILS_ENV=end_to_end bin/rails feature_flags:enable_for_development
-RAILS_ENV=end_to_end bin/mavis gias import --input-file=spec/fixtures/dfe-schools.zip
-RAILS_ENV=end_to_end bin/rails assets:precompile</pre>
+RAILS_ENV=end_to_end bin/mavis gias import --input-file=spec/fixtures/dfe-schools.zip</pre>
 
 <span id="label-Example+programmes" class="legacy-anchor"></span>
 <h3 id="example-programmes"><a href="#example-programmes">Example programmes</a></h3>
