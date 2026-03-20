@@ -24,13 +24,6 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
   end
 
   def send_request
-    unless @patient.programme_status(
-             @programme,
-             academic_year: @academic_year
-           ).needs_consent_no_response?
-      return
-    end
-
     # For programmes that are administered together we should send the consent request together.
     programmes =
       ProgrammeGrouper
@@ -38,11 +31,16 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
         .values
         .find { it.include?(@programme) }
 
-    @patient.notifier.send_consent_request(
-      programmes,
-      session: @session,
-      sent_by: current_user
-    )
+    if @patient.notifier.can_send_consent_request?(
+         programmes,
+         academic_year: @academic_year
+       )
+      @patient.notifier.send_consent_request(
+        programmes,
+        session: @session,
+        sent_by: current_user
+      )
+    end
 
     redirect_to session_patient_programme_path(@session, @patient, @programme),
                 flash: {

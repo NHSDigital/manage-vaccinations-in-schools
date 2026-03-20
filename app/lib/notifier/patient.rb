@@ -8,6 +8,19 @@ class Notifier::Patient
   end
 
   ##
+  # Determine whether a consent request can be sent to the parents of this
+  # patient.
+  def can_send_consent_request?(programmes, academic_year:)
+    programmes.any? do |programme|
+      programme_status = patient.programme_status(programme, academic_year:)
+
+      programme_status.needs_consent_no_response? ||
+        programme_status.needs_consent_request_scheduled? ||
+        programme_status.needs_consent_request_not_scheduled?
+    end
+  end
+
+  ##
   # Send a consent request email and SMS to the parents of this patient.
   def send_consent_request(programmes, session:, sent_by:)
     send_consent_notification(programmes, type: :request, session:, sent_by:)
@@ -36,7 +49,7 @@ class Notifier::Patient
   ##
   # Determine whether a clinic invitation can be sent to the parents of this
   # patient.
-
+  #
   # Normally this would be +true+, but it can be +false+ in some scenarios,
   # for example, if the patient has no parent contact details or has already
   # been invited to the clinic.
