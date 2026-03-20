@@ -252,16 +252,10 @@ class GovukNotifyPersonalisation
     return if patient.nil?
     return if mmr_programme.nil?
 
-    programme_status = patient.programme_status(mmr_programme, academic_year:)
-
-    date =
-      if programme_status.cannot_vaccinate_delay_vaccination?
-        programme_status.date
-      elsif (first_dose_date = programme_status.date)
-        (first_dose_date + 28.days).to_date
-      end
-
-    date.to_fs(:long)
+    patient
+      .programme_status(mmr_programme, academic_year:)
+      .next_dose_eligible_date
+      &.to_fs(:long)
   end
 
   def patient_on_last_dose?

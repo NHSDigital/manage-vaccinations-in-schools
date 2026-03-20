@@ -34,6 +34,19 @@ class Programme
     "td_ipv" => 6
   }.freeze
 
+  # Minimum interval between doses. Only relevant for multi-dose
+  # programmes where SAIS administers more than one dose.
+  # Td/IPV intervals vary by dose number so a single value won't
+  # suffice — this will need rethinking if we start scheduling
+  # multiple Td/IPV doses.
+  MINIMUM_DOSE_INTERVALS = {
+    "flu" => nil,
+    "hpv" => nil,
+    "menacwy" => nil,
+    "mmr" => 28.days,
+    "td_ipv" => nil
+  }.freeze
+
   IMPORT_NAMES = {
     "flu" => %w[Flu],
     "hpv" => %w[HPV],
@@ -226,6 +239,8 @@ class Programme
   def default_dose_sequence = hpv? || flu? ? 1 : nil
 
   def maximum_dose_sequence = MAXIMUM_DOSE_SEQUENCES.fetch(type)
+
+  def minimum_dose_interval = MINIMUM_DOSE_INTERVALS.fetch(type)
 
   def import_names = IMPORT_NAMES.fetch(type)
 

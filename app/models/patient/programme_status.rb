@@ -165,6 +165,17 @@ class Patient::ProgrammeStatus < ApplicationRecord
     dose_sequence == Programme.find(programme_type).maximum_dose_sequence
   end
 
+  def next_dose_eligible_date
+    interval = Programme.find(programme_type).minimum_dose_interval
+    return unless interval
+
+    if cannot_vaccinate_delay_vaccination?
+      date
+    elsif date
+      (date + interval).to_date
+    end
+  end
+
   private
 
   def generator
