@@ -6,12 +6,12 @@
   </div>
 
   <div class="app-grid-column-patient-session">
+    <%= render AppPatientSessionProgrammeComponent.new(patient: @patient, session: @session, programme: @programme) %>
+
     <%= render AppPatientSessionConsentComponent.new(patient: @patient, session: @session, programme: @programme) %>
 
     <%= render AppPatientSessionTriageComponent.new(patient: @patient, session: @session, programme: @programme, current_user:, triage_form: @triage_form) %>
 
     <%= render AppPatientSessionRecordComponent.new(patient: @patient, session: @session, programme: @programme, current_user:, vaccinate_form: @vaccinate_form) %>
-
-    <%= render AppPatientSessionVaccinationComponent.new(patient: @patient, session: @session, programme: @programme) %>
   </div>
 </div>
