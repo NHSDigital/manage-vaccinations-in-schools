@@ -7,9 +7,10 @@ module ParentInterface
     skip_after_action :verify_policy_scoped
 
     skip_before_action :set_navigation_items
-    prepend_before_action :set_team_location
+
     prepend_before_action :set_programmes
     prepend_before_action :set_team
+    prepend_before_action :set_team_location
     prepend_before_action :set_session
     prepend_before_action :set_consent_form
 
@@ -27,27 +28,27 @@ module ParentInterface
     end
 
     def set_session
-      if params[:session_slug]
-        @session = Session.find_by!(slug: params[:session_slug])
-      elsif @consent_form.present?
-        @session = @consent_form.session
-      end
+      @session =
+        if @consent_form
+          @consent_form.session
+        elsif params[:session_slug].present?
+          Session.find_by!(slug: params[:session_slug])
+        end
+    end
+
+    def set_team_location
+      @team_location = @consent_form&.team_location || @session&.team_location
     end
 
     def set_team
-      @team =
-        if @consent_form.present?
-          @consent_form.team
-        elsif @session.present?
-          @session.team
-        end
+      @team = @team_location.team
     end
 
     def set_programmes
       @programmes =
-        if @consent_form.present?
+        if @consent_form
           @consent_form.consent_form_programmes.map(&:programme)
-        elsif @session.present? && params[:programme_types].present?
+        elsif @session && params[:programme_types].present?
           types = params[:programme_types].split("-")
 
           @session.programmes.flat_map do
@@ -56,15 +57,6 @@ module ParentInterface
         end
 
       raise ActiveRecord::RecordNotFound if @programmes.empty?
-    end
-
-    def set_team_location
-      @team_location =
-        if @consent_form.present?
-          @consent_form.team_location
-        elsif @session.present?
-          @session.team_location
-        end
     end
 
     def set_header_path
