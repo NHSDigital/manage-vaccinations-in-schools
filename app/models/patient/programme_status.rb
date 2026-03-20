@@ -154,6 +154,10 @@ class Patient::ProgrammeStatus < ApplicationRecord
 
   def cannot_vaccinate? = status.in?(CANNOT_VACCINATE_STATUSES.keys)
 
+  def needs_triage? = status.in?(NEEDS_TRIAGE_STATUSES.keys)
+
+  def due? = status.in?(DUE_STATUSES.keys)
+
   def vaccinated? = status.in?(VACCINATED_STATUSES.keys)
 
   def group = GROUPS.find { status.starts_with?(it) }
