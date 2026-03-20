@@ -44,13 +44,8 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
 
   def programme_type = programme.type
 
-  def colour
-    I18n.t(triage_status_value, scope: %i[status triage colour])
-  end
-
   def heading
-    status_text = I18n.t(triage_status_value, scope: %i[status triage label])
-    "#{triage_status_generator.programme.name}: #{status_text}"
+    "Triage for #{triage_status_generator.programme.name} vaccination"
   end
 
   def triage_status_value

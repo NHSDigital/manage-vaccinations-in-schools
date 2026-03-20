@@ -101,7 +101,7 @@ describe "MenACWY vaccination" do
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
-    within all("form")[3] do
+    within all("form")[2] do
       within all("fieldset")[1] do
         check "I have checked that the above statements are true"
       end

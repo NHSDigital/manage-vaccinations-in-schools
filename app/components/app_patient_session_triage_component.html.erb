@@ -1,21 +1,16 @@
-<h3 class="nhsuk-heading-m">Triage</h3>
-
-<%= render AppCardComponent.new(feature: true) do |card| %>
-  <% card.with_heading(level: 4, colour:) { heading } %>
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading(level: 2) { heading } %>
 
   <% if triage_status_value == :not_required %>
     <p>No triage is needed for <%= patient.full_name %>.</p>
 
-    <div class="nhsuk-button-group">
-      <% if helpers.policy(Triage).new? %>
-        <%= govuk_button_link_to "Update triage outcome",
-                                 new_session_patient_programme_triages_path(session, patient, programme),
-                                 secondary: true %>
-      <% end %>
-    </div>
+    <% if helpers.policy(Triage).new? %>
+      <%= render AppActionLinkComponent.new(text: "Update triage outcome",
+                                            href: new_session_patient_programme_triages_path(session, patient, programme)) %>
+    <% end %>
   <% elsif latest_triage.nil? || latest_triage.keep_in_triage? %>
     <% if helpers.policy(Triage).new? %>
-      <p>You need to decide if <%= patient.full_name %> is safe to vaccinate.</p>
+      <p>You need to decide if <%= patient.given_name %> is safe to vaccinate.</p>
 
       <% if triage_status_generator.vaccination_history_requires_triage? %>
         <p>Incomplete vaccination history for <%= programme.name_in_sentence %>. Check if the child needs another dose.</p>
@@ -33,13 +28,10 @@
       <p><%= summary %></p>
     <% end %>
 
-    <div class="nhsuk-button-group">
-      <% if helpers.policy(Triage).new? %>
-        <%= govuk_button_link_to "Update triage outcome",
-                                 new_session_patient_programme_triages_path(session, patient, programme),
-                                 secondary: true %>
-      <% end %>
-    </div>
+    <% if helpers.policy(Triage).new? %>
+      <%= render AppActionLinkComponent.new(text: "Update triage outcome",
+                                            href: new_session_patient_programme_triages_path(session, patient, programme)) %>
+    <% end %>
   <% end %>
 
   <%= render AppTriageTableComponent.new(patient:, session:, programme:) %>

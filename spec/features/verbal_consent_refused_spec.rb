@@ -54,7 +54,7 @@ describe "Verbal consent" do
   def when_i_record_a_new_consent_response
     visit session_patients_path(@session)
     click_link @patient.full_name
-    click_button "Record a new consent response"
+    click_on "Record a new consent response"
   end
 
   def and_i_record_the_refusal

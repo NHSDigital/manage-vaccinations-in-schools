@@ -231,7 +231,7 @@ describe "Flu vaccination" do
   end
 
   def then_i_am_able_to_vaccinate_them_with_nasal_via_psd
-    within all("form")[3] do
+    within all("form")[2] do
       within all("fieldset")[1] do
         check "I have checked that the above statements are true"
       end
