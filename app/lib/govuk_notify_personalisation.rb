@@ -295,13 +295,7 @@ class GovukNotifyPersonalisation
     return if patient.nil? || session.nil?
 
     latest_delayed_triage =
-      patient
-        .triages
-        .not_invalidated
-        .where(programme_type: session.programme_types)
-        .delay_vaccination
-        .order(created_at: :desc)
-        .first
+      patient.latest_delayed_triage(programme_types: session.programme_types)
 
     return if latest_delayed_triage.nil?
 
