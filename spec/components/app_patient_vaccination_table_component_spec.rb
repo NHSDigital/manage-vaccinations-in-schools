@@ -4,13 +4,20 @@ describe AppPatientVaccinationTableComponent do
   subject { render_inline(component) }
 
   let(:component) do
-    described_class.new(patient, academic_year:, programme:, show_caption:)
+    described_class.new(
+      patient,
+      academic_year:,
+      programme:,
+      show_caption:,
+      show_details:
+    )
   end
 
   let(:patient) { create(:patient) }
   let(:academic_year) { 2023 }
   let(:programme) { nil }
   let(:show_caption) { false }
+  let(:show_details) { true }
 
   it { should have_content("No vaccinations") }
 
@@ -49,6 +56,15 @@ describe AppPatientVaccinationTableComponent do
     it { should have_content("Waterloo Road, London, SE1 8TY") }
     it { should have_content("Vaccinated") }
     it { should have_content("HPV") }
+
+    context "when show_details is false" do
+      let(:show_details) { false }
+
+      it { should have_link("1 January 2024") }
+      it { should have_content("Vaccinated") }
+      it { should_not have_content("Test School") }
+      it { should_not have_content("Waterloo Road, London, SE1 8TY") }
+    end
 
     context "when showing records from a specific programme" do
       let(:programme) { vaccination_record_programme }
