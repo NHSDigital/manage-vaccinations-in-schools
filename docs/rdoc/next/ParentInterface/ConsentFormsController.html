@@ -670,7 +670,7 @@
             </details>
           </div>
           <div class="method-source-code" id="cannot_consent_responsibility-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 36</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cannot_consent_responsibility</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -711,7 +711,7 @@
             </details>
           </div>
           <div class="method-source-code" id="confirm-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 42</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 44</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">confirm</span>
   <span class="ruby-identifier">previous_step</span> = <span class="ruby-identifier">t</span>(<span class="ruby-ivar">@consent_form</span>.<span class="ruby-identifier">wizard_steps</span>.<span class="ruby-identifier">last</span>, <span class="ruby-value">scope:</span> <span class="ruby-value">:wicked</span>)
 
@@ -765,7 +765,7 @@
             </details>
           </div>
           <div class="method-source-code" id="create-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 20</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>
   <span class="ruby-identifier">consent_form</span> =
     <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
@@ -824,7 +824,7 @@
             </details>
           </div>
           <div class="method-source-code" id="deadline_passed-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 39</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 17</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">deadline_passed</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -865,7 +865,7 @@
             </details>
           </div>
           <div class="method-source-code" id="record-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">record</span>
   <span class="ruby-ivar">@consent_form</span>.<span class="ruby-identifier">update!</span>(<span class="ruby-value">recorded_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>)
 
@@ -925,7 +925,7 @@
             </details>
           </div>
           <div class="method-source-code" id="start-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 12</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 14</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">start</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -966,7 +966,7 @@
             </details>
           </div>
           <div class="method-source-code" id="submitted-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 80</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 82</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">submitted</span>
   <span class="ruby-identifier">session</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:consent_form_id</span>)
 <span class="ruby-keyword">end</span></pre>
