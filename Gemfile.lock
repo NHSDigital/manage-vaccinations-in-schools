@@ -432,7 +432,7 @@ GEM
       bindata
       faraday (~> 2.0)
       faraday-follow_redirects
-    jsonb_accessor (1.4.1)
+    jsonb_accessor (1.4.2)
       activerecord (>= 6.1)
       activesupport (>= 6.1)
       pg (>= 0.18.1)
@@ -859,7 +859,7 @@ GEM
     temple (0.10.4)
     thor (1.5.0)
     tilt (2.7.0)
-    timeout (0.6.0)
+    timeout (0.6.1)
     traces (0.18.2)
     tsort (0.2.0)
     turbo-rails (2.0.23)
