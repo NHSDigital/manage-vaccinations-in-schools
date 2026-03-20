@@ -312,7 +312,7 @@ Rails.application.routes.draw do
       resources :programmes, path: "", param: :type, only: :show do
         get "record-already-vaccinated"
 
-        resources :consents, only: %i[index create show] do
+        resources :consents, only: %i[index new create show] do
           post "send-request", on: :collection, action: :send_request
 
           member do

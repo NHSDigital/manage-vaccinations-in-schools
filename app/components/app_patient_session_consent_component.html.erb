@@ -1,7 +1,5 @@
-<h3 class="nhsuk-heading-m">Consent</h3>
-
-<%= render AppCardComponent.new(feature: true) do |card| %>
-  <% card.with_heading(level: 4, colour:) { heading } %>
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading(level: 2) { heading } %>
 
   <% unless programme_status.vaccinated? %>
     <% if consent_status_value == :no_response %>
@@ -27,23 +25,21 @@
       <p>A consent request will be sent on <%= session.send_consent_requests_at.to_fs(:long) %>.</p>
     <% end %>
 
-    <div class="nhsuk-button-group">
-      <% if can_send_consent_request? %>
+    <%= render AppActionLinkComponent.new(
+          text: "Record a new consent response",
+          href: new_session_patient_programme_consent_path(session, patient, programme),
+        ) %>
+
+    <% if can_send_consent_request? %>
+      <div>
         <%= govuk_button_to "Send consent request",
                             send_request_session_patient_programme_consents_path(
                               session, patient, programme
                             ),
                             secondary: true %>
-      <% end %>
+      </div>
+    <% end %>
 
-      <%= govuk_button_to "Record a new consent response",
-                          session_patient_programme_consents_path(
-                            session, patient, programme
-                          ),
-                          secondary: true %>
-    </div>
-
-    <%= render AppGillickAssessmentComponent.new(patient:, session:, programme:) %>
   <% end %>
 
   <% if consents.any? %>

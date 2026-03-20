@@ -115,12 +115,13 @@ describe "Triage" do
   end
 
   def then_i_see_the_triage_status_with_gelatine
-    expect(page).to have_content("MMR: Safe to vaccinate")
+    expect(page).to have_content("MMR: Due 1st dose")
   end
 
   def then_i_see_the_triage_status_without_gelatine
+    expect(page).to have_content("MMR: Due 1st dose")
     expect(page).to have_content(
-      "MMR: Safe to vaccinate with gelatine-free injection"
+      "is ready to vaccinate (gelatine-free vaccine only)"
     )
   end
 end

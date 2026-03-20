@@ -57,7 +57,7 @@ describe "Verbal consent" do
     visit session_patients_path(@session)
 
     click_link @patient.full_name
-    click_button "Record a new consent response"
+    click_on "Record a new consent response"
 
     # Who are you trying to get consent from?
     click_button "Continue"

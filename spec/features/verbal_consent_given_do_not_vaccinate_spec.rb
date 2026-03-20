@@ -26,7 +26,7 @@ describe "Verbal consent" do
   def when_i_record_that_verbal_consent_was_given_but_that_its_not_safe_to_vaccinate
     visit session_patients_path(@session)
     click_link @patient.full_name
-    click_button "Record a new consent response"
+    click_on "Record a new consent response"
 
     # Who are you trying to get consent from?
     choose @parent.full_name

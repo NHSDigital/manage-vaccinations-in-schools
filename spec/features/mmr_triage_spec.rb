@@ -126,7 +126,7 @@ describe "MMR triage" do
   end
 
   def and_i_get_confirmation_after_recording
-    expect(page).to have_content("MMR: Safe to vaccinate")
+    expect(page).to have_content("MMR: Due 1st dose")
   end
 
   def when_i_go_to_the_activity_log

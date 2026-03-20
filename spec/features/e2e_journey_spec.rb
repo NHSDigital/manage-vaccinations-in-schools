@@ -218,7 +218,7 @@ describe "End-to-end journey" do
     within(".app-secondary-navigation") { click_link "Children" }
     click_link "TABLES, Bobby"
 
-    click_button "Record a new consent response"
+    click_on "Record a new consent response"
 
     choose "Big Daddy Tests"
     click_button "Continue"
@@ -266,7 +266,7 @@ describe "End-to-end journey" do
 
     expect(page).to have_content("Update attendance")
 
-    within all("form")[3] do
+    within all("form")[2] do
       within all("fieldset")[1] do
         check "I have checked that the above statements are true"
       end

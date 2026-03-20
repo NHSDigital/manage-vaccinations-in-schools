@@ -252,7 +252,7 @@ describe "Triage" do
 
   def then_i_see_the_triage_options
     expect(page).to have_content(
-      "You need to decide if #{@patient_triage_needed.full_name} is safe to vaccinate."
+      "You need to decide if #{@patient_triage_needed.given_name} is safe to vaccinate."
     )
     expect(page).to have_selector(:heading, "Is it safe to vaccinate")
   end

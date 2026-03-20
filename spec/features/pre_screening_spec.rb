@@ -144,7 +144,7 @@ describe "Pre-screening" do
   end
 
   def and_i_record_vaccination_without_pre_screening_checks
-    within all("form")[3] do
+    within all("form")[2] do
       within all("fieldset")[2] do
         choose "Yes"
         if has_field?("Left arm (upper position)", wait: 0)
