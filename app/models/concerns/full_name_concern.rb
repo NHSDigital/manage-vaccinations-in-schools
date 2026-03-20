@@ -12,6 +12,10 @@ module FullNameConcern
     FullNameFormatter.call(self, context:)
   end
 
+  def short_name
+    preferred_given_name.presence || given_name
+  end
+
   def has_preferred_name?
     preferred_given_name.present? || preferred_family_name.present?
   end
