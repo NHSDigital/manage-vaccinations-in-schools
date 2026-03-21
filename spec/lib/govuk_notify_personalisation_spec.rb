@@ -4,13 +4,7 @@
 # read the instructions in spec/fixtures/notify_template.txt
 
 describe GovukNotifyPersonalisation do
-  subject(:to_h) do
-    hash = personalisation.to_h
-    populate_notify_template(hash)
-    hash
-  end
-
-  let(:personalisation) do
+  subject(:personalisation) do
     described_class.new(
       patient:,
       session:,
@@ -21,6 +15,7 @@ describe GovukNotifyPersonalisation do
       vaccination_record:
     )
   end
+
   let(:hpv_programme) { Programme.hpv }
   let(:flu_programme) { Programme.flu }
   let(:programmes) { [hpv_programme] }
@@ -68,52 +63,50 @@ describe GovukNotifyPersonalisation do
     around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
 
     it do
-      expect(to_h).to match(
-        {
-          talk_to_your_child_message:
-            "## Talk to your child about what they want\n\nWe suggest you talk to " \
-              "your child about the vaccination before you respond to us. Young " \
-              "people have the right to refuse vaccinations.\n\nThey also have " \
-              "[the right to consent to their own vaccinations]" \
-              "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
-              "if they show they fully understand what’s involved. Our team might " \
-              "give young people this opportunity if they assess them as suitably " \
-              "competent.",
-          consent_deadline: "Wednesday 31 December",
-          consent_link:
-            "http://localhost:4000/consents/#{session.slug}/hpv/start",
-          full_and_preferred_patient_name: "John Smith",
-          location_name: "Hogwarts",
-          invitation_to_clinic_custom_mmr_message: "",
-          mmr_second_dose_required: false,
-          invitation_to_clinic_generic_message:
-            "They can have this vaccination at a community clinic. If you’d like " \
-              "to book a clinic appointment, please contact us using the details " \
-              "below.",
-          next_or_today_session_date: "Thursday 1 January",
-          next_or_today_session_dates: "Thursday 1 January",
-          next_or_today_session_dates_or: "Thursday 1 January",
-          next_session_date: "Thursday 1 January",
-          next_session_dates: "Thursday 1 January",
-          next_session_dates_or: "Thursday 1 January",
-          patient_date_of_birth: "1 February 2013",
-          short_patient_name: "John",
-          short_patient_name_apos: "John’s",
-          subsequent_session_dates_offered_message: "",
-          subteam_email: "team@example.com",
-          subteam_name: "Team",
-          subteam_phone: "01234 567890 (option 1)",
-          team_privacy_notice_url: "https://example.com/privacy-notice",
-          team_privacy_policy_url: "https://example.com/privacy-policy",
-          vaccination: "HPV vaccination",
-          vaccination_and_dates: "HPV vaccination on Thursday 1 January",
-          vaccination_and_dates_sms: "HPV vaccination on Thursday 1 January",
-          vaccination_and_method: "HPV vaccination",
-          vaccine: "HPV vaccine",
-          vaccine_and_dose: "HPV",
-          vaccine_and_method: "HPV vaccine",
-          vaccine_side_effects: ""
-        }
+      expect(personalisation).to have_attributes(
+        talk_to_your_child_message:
+          "## Talk to your child about what they want\n\nWe suggest you talk to " \
+            "your child about the vaccination before you respond to us. Young " \
+            "people have the right to refuse vaccinations.\n\nThey also have " \
+            "[the right to consent to their own vaccinations]" \
+            "(https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+            "if they show they fully understand what’s involved. Our team might " \
+            "give young people this opportunity if they assess them as suitably " \
+            "competent.",
+        consent_deadline: "Wednesday 31 December",
+        consent_link:
+          "http://localhost:4000/consents/#{session.slug}/hpv/start",
+        full_and_preferred_patient_name: "John Smith",
+        location_name: "Hogwarts",
+        invitation_to_clinic_custom_mmr_message: "",
+        mmr_second_dose_required: false,
+        invitation_to_clinic_generic_message:
+          "They can have this vaccination at a community clinic. If you’d like " \
+            "to book a clinic appointment, please contact us using the details " \
+            "below.",
+        next_or_today_session_date: "Thursday 1 January",
+        next_or_today_session_dates: "Thursday 1 January",
+        next_or_today_session_dates_or: "Thursday 1 January",
+        next_session_date: "Thursday 1 January",
+        next_session_dates: "Thursday 1 January",
+        next_session_dates_or: "Thursday 1 January",
+        patient_date_of_birth: "1 February 2013",
+        short_patient_name: "John",
+        short_patient_name_apos: "John’s",
+        subsequent_session_dates_offered_message: "",
+        subteam_email: "team@example.com",
+        subteam_name: "Team",
+        subteam_phone: "01234 567890 (option 1)",
+        team_privacy_notice_url: "https://example.com/privacy-notice",
+        team_privacy_policy_url: "https://example.com/privacy-policy",
+        vaccination: "HPV vaccination",
+        vaccination_and_dates: "HPV vaccination on Thursday 1 January",
+        vaccination_and_dates_sms: "HPV vaccination on Thursday 1 January",
+        vaccination_and_method: "HPV vaccination",
+        vaccine: "HPV vaccine",
+        vaccine_and_dose: "HPV",
+        vaccine_and_method: "HPV vaccine",
+        vaccine_side_effects: ""
       )
     end
   end
@@ -124,7 +117,7 @@ describe GovukNotifyPersonalisation do
     let(:session) { nil }
 
     it do
-      expect(to_h).to include(
+      expect(personalisation).to have_attributes(
         consent_link:
           "http://localhost:4000/consents/#{team_location.id}/hpv/start"
       )
@@ -135,19 +128,25 @@ describe GovukNotifyPersonalisation do
     let(:date_of_birth) { Date.new(2015, 2, 1) }
     let(:patient) { create(:patient, date_of_birth:) }
 
-    it { should include(talk_to_your_child_message: "") }
+    it { should have_attributes(talk_to_your_child_message: "") }
 
     context "when it's an MMR programme and patient is eligible for MMRV" do
       let(:programmes) { [Programme.mmr] }
       let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
 
-      it { should include(vaccination: "MMRV vaccination") }
-      it { should include(vaccination_and_dates_sms: "MMRV vaccination") }
-      it { should include(mmr_or_mmrv_vaccine: "MMR or MMRV vaccine") }
+      it { should have_attributes(vaccination: "MMRV vaccination") }
+
+      it do
+        expect(personalisation).to have_attributes(
+          vaccination_and_dates_sms: "MMRV vaccination"
+        )
+      end
+
+      it { should have_attributes(mmr_or_mmrv_vaccine: "MMR or MMRV vaccine") }
       it { expect(personalisation.outbreak?).to be false }
 
       it "generates consent link with mmrv variant" do
-        expect(to_h[:consent_link]).to end_with("/mmrv/start")
+        expect(personalisation.consent_link).to end_with("/mmrv/start")
       end
 
       context "when session is setup for outbreak communications" do
@@ -161,10 +160,10 @@ describe GovukNotifyPersonalisation do
       let(:programmes) { [Programme.mmr] }
       let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.month }
 
-      it { should include(mmr_or_mmrv_vaccine: "MMR vaccine") }
+      it { should have_attributes(mmr_or_mmrv_vaccine: "MMR vaccine") }
 
       it "generates consent link with mmr variant" do
-        expect(to_h[:consent_link]).to end_with("/mmr/start")
+        expect(personalisation.consent_link).to end_with("/mmr/start")
       end
 
       context "when session is setup for outbreak communications" do
@@ -187,7 +186,7 @@ describe GovukNotifyPersonalisation do
     end
 
     it "doesn't show today's date in next date" do
-      expect(to_h).to include(
+      expect(personalisation).to have_attributes(
         next_or_today_session_date: Date.current.to_fs(:short_day_of_week),
         next_session_date: Date.tomorrow.to_fs(:short_day_of_week)
       )
@@ -197,7 +196,11 @@ describe GovukNotifyPersonalisation do
   context "with multiple programmes" do
     let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
-    it { should include(vaccination: "MenACWY and Td/IPV vaccinations") }
+    it do
+      expect(
+        personalisation.vaccination
+      ).to eq "MenACWY and Td/IPV vaccinations"
+    end
   end
 
   context "with multiple dates" do
@@ -215,20 +218,18 @@ describe GovukNotifyPersonalisation do
       around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
 
       it do
-        expect(to_h).to match(
-          hash_including(
-            consent_deadline: "Wednesday 31 December",
-            next_or_today_session_date: "Thursday 1 January",
-            next_or_today_session_dates:
-              "Thursday 1 January and Friday 2 January",
-            next_or_today_session_dates_or:
-              "Thursday 1 January or Friday 2 January",
-            next_session_date: "Thursday 1 January",
-            next_session_dates: "Thursday 1 January and Friday 2 January",
-            next_session_dates_or: "Thursday 1 January or Friday 2 January",
-            subsequent_session_dates_offered_message:
-              "If they’re not seen, they’ll be offered the vaccination on Friday 2 January."
-          )
+        expect(personalisation).to have_attributes(
+          consent_deadline: "Wednesday 31 December",
+          next_or_today_session_date: "Thursday 1 January",
+          next_or_today_session_dates:
+            "Thursday 1 January and Friday 2 January",
+          next_or_today_session_dates_or:
+            "Thursday 1 January or Friday 2 January",
+          next_session_date: "Thursday 1 January",
+          next_session_dates: "Thursday 1 January and Friday 2 January",
+          next_session_dates_or: "Thursday 1 January or Friday 2 January",
+          subsequent_session_dates_offered_message:
+            "If they’re not seen, they’ll be offered the vaccination on Friday 2 January."
         )
       end
     end
@@ -237,17 +238,15 @@ describe GovukNotifyPersonalisation do
       around { |example| travel_to(Date.new(2026, 1, 1)) { example.run } }
 
       it do
-        expect(to_h).to match(
-          hash_including(
-            consent_deadline: "Thursday 1 January",
-            next_or_today_session_date: "Thursday 1 January",
-            next_or_today_session_dates:
-              "Thursday 1 January and Friday 2 January",
-            next_or_today_session_dates_or:
-              "Thursday 1 January or Friday 2 January",
-            next_session_date: "Friday 2 January",
-            subsequent_session_dates_offered_message: ""
-          )
+        expect(personalisation).to have_attributes(
+          consent_deadline: "Thursday 1 January",
+          next_or_today_session_date: "Thursday 1 January",
+          next_or_today_session_dates:
+            "Thursday 1 January and Friday 2 January",
+          next_or_today_session_dates_or:
+            "Thursday 1 January or Friday 2 January",
+          next_session_date: "Friday 2 January",
+          subsequent_session_dates_offered_message: ""
         )
       end
     end
@@ -268,11 +267,9 @@ describe GovukNotifyPersonalisation do
         end
 
         it do
-          expect(to_h).to match(
-            hash_including(
-              delay_vaccination_review_context:
-                "assessed John in the vaccination session"
-            )
+          expect(personalisation).to have_attributes(
+            delay_vaccination_review_context:
+              "assessed John in the vaccination session"
           )
         end
       end
@@ -293,11 +290,9 @@ describe GovukNotifyPersonalisation do
         end
 
         it do
-          expect(to_h).to match(
-            hash_including(
-              delay_vaccination_review_context:
-                "reviewed the answers you gave to the health questions about John"
-            )
+          expect(personalisation).to have_attributes(
+            delay_vaccination_review_context:
+              "reviewed the answers you gave to the health questions about John"
           )
         end
       end
@@ -317,11 +312,9 @@ describe GovukNotifyPersonalisation do
         end
 
         it do
-          expect(to_h).to match(
-            hash_including(
-              delay_vaccination_review_context:
-                "reviewed the answers you gave to the health questions about John"
-            )
+          expect(personalisation).to have_attributes(
+            delay_vaccination_review_context:
+              "reviewed the answers you gave to the health questions about John"
           )
         end
       end
@@ -339,12 +332,10 @@ describe GovukNotifyPersonalisation do
     end
 
     it do
-      expect(to_h).to match(
-        hash_including(
-          consented_vaccine_methods_message: "",
-          reason_for_refusal: "of personal choice",
-          survey_deadline_date: "8 January 2024"
-        )
+      expect(personalisation).to have_attributes(
+        consented_vaccine_methods_message: "",
+        reason_for_refusal: "of personal choice",
+        survey_deadline_date: "8 January 2024"
       )
     end
 
@@ -352,7 +343,7 @@ describe GovukNotifyPersonalisation do
       let(:programmes) { [Programme.flu] }
 
       it do
-        expect(to_h).to include(
+        expect(personalisation).to have_attributes(
           consented_vaccine_methods_message:
             "You’ve agreed for John to have the injected flu vaccine."
         )
@@ -362,7 +353,7 @@ describe GovukNotifyPersonalisation do
         before { consent.update!(vaccine_methods: %w[nasal injection]) }
 
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             consented_vaccine_methods_message:
               "You’ve agreed for John to have the nasal spray flu vaccine, " \
                 "or the injected flu vaccine if the nasal spray is not suitable."
@@ -374,7 +365,7 @@ describe GovukNotifyPersonalisation do
         before { consent.update!(vaccine_methods: %w[nasal]) }
 
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             consented_vaccine_methods_message:
               "You’ve agreed for John to have the nasal spray flu vaccine."
           )
@@ -383,7 +374,7 @@ describe GovukNotifyPersonalisation do
 
       context "generic message inviting patient to clinic generic" do
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             invitation_to_clinic_generic_message:
               "They can have this vaccination at a community clinic. " \
                 "If you’d like to book a clinic appointment, please contact us using " \
@@ -406,7 +397,7 @@ describe GovukNotifyPersonalisation do
       end
 
       it do
-        expect(to_h).to include(
+        expect(personalisation).to have_attributes(
           consented_vaccine_methods_message: "",
           vaccination: "MMR vaccination"
         )
@@ -424,14 +415,14 @@ describe GovukNotifyPersonalisation do
           )
         end
 
-        it { should include(vaccination: "MMR vaccination") }
+        it { should have_attributes(vaccination: "MMR vaccination") }
       end
 
       context "when consented to vaccine without gelatine" do
         before { consent.update!(without_gelatine: true) }
 
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             consented_vaccine_methods_message:
               "You’ve agreed for John to have the vaccine without gelatine."
           )
@@ -440,7 +431,7 @@ describe GovukNotifyPersonalisation do
 
       context "generic message inviting patient to generic clinic" do
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             mmr_second_dose_required: false,
             vaccination: "MMR vaccination",
             invitation_to_clinic_generic_message:
@@ -456,7 +447,7 @@ describe GovukNotifyPersonalisation do
         let(:session) { nil }
 
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             mmr_second_dose_required: false,
             vaccination: "MMR vaccination",
             invitation_to_clinic_custom_mmr_message: ""
@@ -469,7 +460,7 @@ describe GovukNotifyPersonalisation do
         let(:session) { nil }
 
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             mmr_second_dose_required: false,
             vaccination: "MMR vaccination",
             invitation_to_clinic_custom_mmr_message: ""
@@ -493,7 +484,7 @@ describe GovukNotifyPersonalisation do
 
         context "generic message inviting patient to generic clinic for their 2nd dose" do
           it do
-            expect(to_h).to include(
+            expect(personalisation).to have_attributes(
               mmr_second_dose_required: true,
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_generic_message:
@@ -514,7 +505,7 @@ describe GovukNotifyPersonalisation do
           let(:ods_code) { "RT5" }
 
           it do
-            expect(to_h).to include(
+            expect(personalisation).to have_attributes(
               mmr_second_dose_required: true,
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
@@ -532,7 +523,7 @@ describe GovukNotifyPersonalisation do
           let(:ods_code) { "RYG" }
 
           it do
-            expect(to_h).to include(
+            expect(personalisation).to have_attributes(
               mmr_second_dose_required: true,
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
@@ -562,7 +553,7 @@ describe GovukNotifyPersonalisation do
     end
 
     it do
-      expect(to_h).to include(
+      expect(personalisation).to have_attributes(
         consented_vaccine_methods_message: "",
         location_name: "Hogwarts",
         reason_for_refusal: "of personal choice",
@@ -588,7 +579,7 @@ describe GovukNotifyPersonalisation do
       before { create(:session, location: school, programmes:, team:) }
 
       it do
-        expect(to_h).to include(
+        expect(personalisation).to have_attributes(
           location_name: "Waterloo Road",
           vaccination: "HPV vaccination",
           vaccination_and_dates: "HPV vaccination"
@@ -600,7 +591,7 @@ describe GovukNotifyPersonalisation do
       let(:programmes) { [Programme.flu] }
 
       it do
-        expect(to_h).to include(
+        expect(personalisation).to have_attributes(
           consented_vaccine_methods_message:
             "You’ve agreed for Tom to have the injected flu vaccine."
         )
@@ -614,7 +605,7 @@ describe GovukNotifyPersonalisation do
         end
 
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             consented_vaccine_methods_message:
               "You’ve agreed for Tom to have the nasal spray flu vaccine, " \
                 "or the injected flu vaccine if the nasal spray is not suitable."
@@ -630,7 +621,7 @@ describe GovukNotifyPersonalisation do
         end
 
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             consented_vaccine_methods_message:
               "You’ve agreed for Tom to have the nasal spray flu vaccine."
           )
@@ -641,7 +632,7 @@ describe GovukNotifyPersonalisation do
     context "for the MMR programme" do
       let(:programmes) { [Programme.mmr] }
 
-      it { expect(to_h).to include(consented_vaccine_methods_message: "") }
+      it { should have_attributes(consented_vaccine_methods_message: "") }
 
       context "when consented to vaccine without gelatine" do
         before do
@@ -649,7 +640,7 @@ describe GovukNotifyPersonalisation do
         end
 
         it do
-          expect(to_h).to include(
+          expect(personalisation).to have_attributes(
             consented_vaccine_methods_message:
               "You’ve agreed for Tom to have the vaccine without gelatine."
           )
@@ -674,13 +665,11 @@ describe GovukNotifyPersonalisation do
     end
 
     it do
-      expect(to_h).to match(
-        hash_including(
-          day_month_year_of_vaccination: "01/01/2024",
-          today_or_date_of_vaccination: "on 1 January 2024",
-          vaccine_and_dose: "HPV 1st dose",
-          vaccine_brand: "Gardasil 9"
-        )
+      expect(personalisation).to have_attributes(
+        day_month_year_of_vaccination: "01/01/2024",
+        today_or_date_of_vaccination: "on 1 January 2024",
+        vaccine_and_dose: "HPV 1st dose",
+        vaccine_brand: "Gardasil 9"
       )
     end
 
@@ -692,7 +681,7 @@ describe GovukNotifyPersonalisation do
       end
 
       it do
-        expect(to_h).to include(
+        expect(personalisation).to have_attributes(
           mmr_second_dose_message:
             "## Your child still needs a second dose of the MMR vaccine\n\n" \
               "To be fully protected against measles, mumps and rubella, " \
@@ -717,7 +706,7 @@ describe GovukNotifyPersonalisation do
           PatientStatusUpdater.call(patient:)
         end
 
-        it { should include(mmr_second_dose_message: "") }
+        it { should have_attributes(mmr_second_dose_message: "") }
       end
     end
   end
@@ -733,12 +722,10 @@ describe GovukNotifyPersonalisation do
     end
 
     it do
-      expect(to_h).to match(
-        hash_including(
-          day_month_year_of_vaccination: "01/01/2024",
-          reason_did_not_vaccinate: "the nurse decided John was not well",
-          today_or_date_of_vaccination: "on 1 January 2024"
-        )
+      expect(personalisation).to have_attributes(
+        day_month_year_of_vaccination: "01/01/2024",
+        reason_did_not_vaccinate: "the nurse decided John was not well",
+        today_or_date_of_vaccination: "on 1 January 2024"
       )
     end
   end
@@ -818,7 +805,7 @@ describe GovukNotifyPersonalisation do
         .update!(side_effects: %w[swelling unwell])
     end
 
-    it { should include(vaccine_side_effects: "") }
+    it { should have_attributes(vaccine_side_effects: "") }
 
     context "with injection as an approved vaccine method" do
       before do
@@ -832,11 +819,9 @@ describe GovukNotifyPersonalisation do
       end
 
       it do
-        expect(to_h).to match(
-          hash_including(
-            vaccine_side_effects:
-              "- generally feeling unwell\n- swelling or pain where the injection was given"
-          )
+        expect(personalisation).to have_attributes(
+          vaccine_side_effects:
+            "- generally feeling unwell\n- swelling or pain where the injection was given"
         )
       end
     end
@@ -846,7 +831,7 @@ describe GovukNotifyPersonalisation do
     let(:programmes) { [Programme.flu] }
 
     it do
-      expect(to_h).to include(
+      expect(personalisation).to have_attributes(
         vaccination: "Flu vaccination",
         vaccination_and_method: "flu vaccination",
         vaccine: "Flu vaccine",
@@ -860,7 +845,7 @@ describe GovukNotifyPersonalisation do
       end
 
       it do
-        expect(to_h).to include(
+        expect(personalisation).to have_attributes(
           vaccination: "Flu vaccination",
           vaccination_and_method: "injected flu vaccination",
           vaccine: "Flu vaccine",
@@ -880,7 +865,7 @@ describe GovukNotifyPersonalisation do
       end
 
       it do
-        expect(to_h).to include(
+        expect(personalisation).to have_attributes(
           vaccination: "Flu vaccination",
           vaccination_and_method: "nasal spray flu vaccination",
           vaccine: "Flu vaccine",
@@ -895,7 +880,7 @@ describe GovukNotifyPersonalisation do
     let(:consent) { create(:consent, patient:, programme: programmes.first) }
 
     it "doesn't throw an error" do
-      expect { to_h }.not_to raise_error
+      expect { personalisation }.not_to raise_error
     end
   end
 end

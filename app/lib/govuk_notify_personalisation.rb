@@ -49,53 +49,6 @@ class GovukNotifyPersonalisation
       end
   end
 
-  def to_h
-    {
-      batch_name:,
-      consent_deadline:,
-      consent_link:,
-      consented_vaccine_methods_message:,
-      day_month_year_of_vaccination:,
-      delay_vaccination_review_context:,
-      full_and_preferred_patient_name:,
-      invitation_to_clinic_generic_message:,
-      location_name:,
-      invitation_to_clinic_custom_mmr_message:,
-      mmr_or_mmrv_vaccine:,
-      mmr_second_dose_message:,
-      mmr_second_dose_required:,
-      next_or_today_session_date:,
-      next_or_today_session_dates:,
-      next_or_today_session_dates_or:,
-      next_session_date:,
-      next_session_dates:,
-      next_session_dates_or:,
-      patient_date_of_birth:,
-      reason_did_not_vaccinate:,
-      reason_for_refusal:,
-      short_patient_name:,
-      short_patient_name_apos:,
-      subsequent_session_dates_offered_message:,
-      subteam_email:,
-      subteam_name:,
-      subteam_phone:,
-      survey_deadline_date:,
-      talk_to_your_child_message:,
-      team_privacy_notice_url:,
-      team_privacy_policy_url:,
-      today_or_date_of_vaccination:,
-      vaccination:,
-      vaccination_and_dates:,
-      vaccination_and_dates_sms:,
-      vaccination_and_method:,
-      vaccine:,
-      vaccine_and_dose:,
-      vaccine_and_method:,
-      vaccine_brand:,
-      vaccine_side_effects:
-    }.compact
-  end
-
   attr_reader :academic_year,
               :consent,
               :consent_form,
