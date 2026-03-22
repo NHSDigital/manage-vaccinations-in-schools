@@ -119,6 +119,8 @@ describe EmailDeliveryJob do
       expect(notify_log_entry.patient).to eq(patient)
       expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
       expect(notify_log_entry.sent_by).to eq(sent_by)
+      expect(notify_log_entry.subject).to include("has still not had their")
+      expect(notify_log_entry.body).to include("Our records show that")
     end
 
     context "with a non-MMR programme" do

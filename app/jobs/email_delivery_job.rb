@@ -87,12 +87,14 @@ class EmailDeliveryJob < NotifyDeliveryJob
       end
 
     NotifyLogEntry.create!(
+      body: rendered[:body],
       consent_form: personalisation.consent_form,
       delivery_id:,
       parent: personalisation.parent,
       patient: personalisation.patient,
       recipient: email_address,
       sent_by:,
+      subject: rendered[:subject],
       template_id: template.id,
       type: :email,
       purpose: NotifyLogEntry.purpose_for_template_name(template_name_sym),
