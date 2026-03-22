@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_20_150753) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -558,6 +558,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_20_150753) do
   end
 
   create_table "notify_log_entries", force: :cascade do |t|
+    t.text "body"
     t.bigint "consent_form_id"
     t.datetime "created_at", null: false
     t.uuid "delivery_id"
@@ -567,6 +568,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_20_150753) do
     t.integer "purpose"
     t.string "recipient", null: false
     t.bigint "sent_by_user_id"
+    t.text "subject"
     t.uuid "template_id", null: false
     t.integer "type", null: false
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"

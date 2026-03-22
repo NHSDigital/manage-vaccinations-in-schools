@@ -5,9 +5,11 @@
 # Table name: notify_log_entries
 #
 #  id              :bigint           not null, primary key
+#  body            :text
 #  delivery_status :integer          default("sending"), not null
 #  purpose         :integer
 #  recipient       :string           not null
+#  subject         :text
 #  type            :integer          not null
 #  created_at      :datetime         not null
 #  consent_form_id :bigint
