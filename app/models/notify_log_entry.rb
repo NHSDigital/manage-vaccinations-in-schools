@@ -136,6 +136,7 @@ class NotifyLogEntry < ApplicationRecord
         ->(session) { for_programme_type(session.programme_types) }
 
   encrypts :recipient, deterministic: true
+  encrypts :subject, :body
 
   accepts_nested_attributes_for :notify_log_entry_programmes
 
