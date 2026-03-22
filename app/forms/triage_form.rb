@@ -256,7 +256,7 @@ class TriageForm
       )
     end
 
-    if programme.mmr? && patient_eligible_for_additional_dose? &&
+    if programme.mmr? && patient_on_last_dose? &&
          delay_vaccination_until < next_mmr_dose_date
       errors.add(
         :delay_vaccination_until,
@@ -276,13 +276,10 @@ class TriageForm
     vaccination_record.presence&.update!(next_dose_delay_triage:)
   end
 
-  def patient_eligible_for_additional_dose?
-    next_dose =
-      patient.programme_status(
-        programme,
-        academic_year: session.academic_year
-      ).dose_sequence
-
-    next_dose == programme.maximum_dose_sequence
+  def patient_on_last_dose?
+    patient.programme_status(
+      programme,
+      academic_year: session.academic_year
+    ).on_last_dose?
   end
 end

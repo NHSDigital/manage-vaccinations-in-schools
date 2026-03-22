@@ -268,10 +268,7 @@ class GovukNotifyPersonalisation
     return unless patient
     return if mmr_programme.nil?
 
-    patient
-      .reload
-      .programme_status(mmr_programme, academic_year:)
-      .on_last_dose?
+    patient.reload.programme_status(mmr_programme, academic_year:).on_last_dose?
   end
 
   def mmr_or_mmrv_vaccine

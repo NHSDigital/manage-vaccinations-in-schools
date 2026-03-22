@@ -41,7 +41,7 @@ class Notifier::Consent
 
   def triage_email_template(triage, session)
     if triage.safe_to_vaccinate?
-      if programme.mmr? && patient_eligible_for_additional_dose?(session)
+      if programme.mmr? && patient_on_last_dose?(session)
         :triage_vaccination_will_happen_mmr_second_dose
       else
         :triage_vaccination_will_happen
@@ -80,13 +80,10 @@ class Notifier::Consent
     template_names.find { NotifyTemplate.exists?(it, channel: :email) }
   end
 
-  def patient_eligible_for_additional_dose?(session)
-    next_dose =
-      patient
-        .reload
-        .programme_status(programme, academic_year: session.academic_year)
-        .dose_sequence
-
-    next_dose == programme.maximum_dose_sequence
+  def patient_on_last_dose?(session)
+    patient
+      .reload
+      .programme_status(programme, academic_year: session.academic_year)
+      .on_last_dose?
   end
 end
