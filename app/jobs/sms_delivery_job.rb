@@ -83,6 +83,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
       end
 
     NotifyLogEntry.create!(
+      body: rendered[:body],
       consent_form: personalisation.consent_form,
       delivery_id:,
       delivery_status:,
