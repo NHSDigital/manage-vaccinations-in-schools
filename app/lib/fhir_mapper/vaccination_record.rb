@@ -35,7 +35,8 @@ module FHIRMapper
       immunisation.patient = FHIR::Reference.new(reference: "#Patient1")
       immunisation.occurrenceDateTime = performed_at.to_time.iso8601(3)
       immunisation.recorded = created_at.iso8601(3)
-      immunisation.primarySource = sourced_from_service?
+      immunisation.primarySource =
+        sourced_from_service? || sourced_from_national_reporting?
       immunisation.manufacturer = vaccine.fhir_manufacturer_reference
 
       immunisation.location = (location || ::Location.school.new).fhir_reference
