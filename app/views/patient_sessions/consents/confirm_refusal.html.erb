@@ -2,7 +2,7 @@
   <%= govuk_back_link(href: follow_up_session_patient_programme_consent_path) %>
 <% end %>
 
-<%= form_with model: @consent, url: confirm_refusal_session_patient_programme_consent_path, method: :post do |f| %>
+<%= form_with model: @form, url: confirm_refusal_session_patient_programme_consent_path, method: :post do |f| %>
   <%= f.mavis_error_summary %>
 
   <% page_title = "Update consent response" %>

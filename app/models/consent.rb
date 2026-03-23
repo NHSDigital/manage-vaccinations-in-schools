@@ -66,8 +66,6 @@ class Consent < ApplicationRecord
   include Notable
   include Refusable
 
-  attr_accessor :confirmed, :decision_stands
-
   audited associated_with: :patient
 
   belongs_to :patient

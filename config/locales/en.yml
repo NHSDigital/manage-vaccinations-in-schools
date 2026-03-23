@@ -259,6 +259,14 @@ en:
                 Choose which nurse identified and pre-screened the child and supplied the vaccine
             vaccine_method:
               inclusion: Choose if they are ready to vaccinate
+        consent_refusal_follow_up_form:
+          attributes:
+            decision_stands:
+              inclusion: Select yes or no
+            confirmed:
+              inclusion: Select yes or no
+            notes:
+              too_long: Enter notes that are less than %{count} characters long
         vaccination_report:
           attributes:
             academic_year:
@@ -447,10 +455,6 @@ en:
               blank: Choose a file
         consent:
           attributes:
-            confirmed:
-              blank: Select yes or no
-            decision_stands:
-              blank: Select yes or no
             notes:
               blank: Enter notes
               too_long: Enter notes that are less than %{count} characters long
