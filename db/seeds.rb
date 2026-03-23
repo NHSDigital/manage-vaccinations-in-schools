@@ -157,29 +157,12 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
   end
 end
 
-def setup_clinic(team)
-  academic_year = AcademicYear.current
-
-  dates =
-    [Date.current, Date.yesterday, Date.tomorrow].select do |value|
-      value.in?(academic_year.to_academic_year_date_range)
-    end
-
-  clinic_session =
-    FactoryBot.create(
-      :session,
-      team:,
-      location: team.generic_clinic,
-      programmes: team.programmes,
-      dates:
-    )
-
-  FactoryBot.create_list(:patient, 10, session: clinic_session)
-end
-
 def create_home_educated_or_unknown_school_patients(team)
   team.generic_schools.each do |school|
-    FactoryBot.create_list(:patient, 3, school:, location: school)
+    3.times do
+      parents = FactoryBot.create_list(:parent, rand(1..2))
+      FactoryBot.create(:patient, school:, location: school, parents:)
+    end
   end
 end
 
@@ -286,7 +269,6 @@ def create_nurse_joy_team
     .as_user(user) do
       create_community_clinics(team)
       create_team_sessions(user, team)
-      setup_clinic(team)
       create_home_educated_or_unknown_school_patients(team)
       create_imports(user, team)
       create_school_moves(team)
@@ -339,7 +321,6 @@ def create_a9a5a_team
     .as_user(user) do
       create_community_clinics(team)
       create_team_sessions(user, team)
-      setup_clinic(team)
       create_home_educated_or_unknown_school_patients(team)
       create_imports(user, team)
       create_school_moves(team)
