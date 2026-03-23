@@ -4,7 +4,7 @@ source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby file: ".ruby-version"
-gem "rails", "8.1.2"
+gem "rails", "8.1.2.1"
 
 # Framework gems
 gem "bootsnap", require: false
