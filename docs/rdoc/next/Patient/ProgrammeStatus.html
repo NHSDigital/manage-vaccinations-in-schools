@@ -590,6 +590,10 @@
 
         <li ><a href="#method-i-needs_consent-3F">needs_consent?</a></li>
 
+        <li ><a href="#method-i-next_dose_eligible_date">next_dose_eligible_date</a></li>
+
+        <li ><a href="#method-i-on_last_dose-3F">on_last_dose?</a></li>
+
         <li ><a href="#method-i-vaccinated-3F">vaccinated?</a></li>
 
         <li ><a href="#method-i-vaccine_criteria">vaccine_criteria</a></li>
@@ -867,6 +871,21 @@ index_patient_programme_statuses_on_status                 (status)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_criteria</span> = <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_programme_status</span>(<span class="ruby-keyword">self</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_last_dose?</span>
+  <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">maximum_dose_sequence</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_dose_eligible_date</span>
+  <span class="ruby-identifier">interval</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">minimum_dose_interval</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interval</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
+    <span class="ruby-identifier">date</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date</span>
+    (<span class="ruby-identifier">date</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">interval</span>).<span class="ruby-identifier">to_date</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generator</span>
@@ -919,7 +938,7 @@ index_patient_programme_statuses_on_status                 (status)</pre>
             </details>
           </div>
           <div class="method-source-code" id="generator-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 166</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 181</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generator</span>
   <span class="ruby-ivar">@generator</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">StatusGenerator</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(
@@ -987,6 +1006,21 @@ index_patient_programme_statuses_on_status                 (status)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_criteria</span> = <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_programme_status</span>(<span class="ruby-keyword">self</span>)
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_last_dose?</span>
+  <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">maximum_dose_sequence</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_dose_eligible_date</span>
+  <span class="ruby-identifier">interval</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">minimum_dose_interval</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interval</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
+    <span class="ruby-identifier">date</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date</span>
+    (<span class="ruby-identifier">date</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">interval</span>).<span class="ruby-identifier">to_date</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
 
@@ -1064,6 +1098,21 @@ index_patient_programme_statuses_on_status                 (status)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_criteria</span> = <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_programme_status</span>(<span class="ruby-keyword">self</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_last_dose?</span>
+  <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">maximum_dose_sequence</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_dose_eligible_date</span>
+  <span class="ruby-identifier">interval</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">minimum_dose_interval</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interval</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
+    <span class="ruby-identifier">date</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date</span>
+    (<span class="ruby-identifier">date</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">interval</span>).<span class="ruby-identifier">to_date</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generator</span>
@@ -1140,6 +1189,21 @@ index_patient_programme_statuses_on_status                 (status)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_criteria</span> = <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_programme_status</span>(<span class="ruby-keyword">self</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_last_dose?</span>
+  <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">maximum_dose_sequence</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_dose_eligible_date</span>
+  <span class="ruby-identifier">interval</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">minimum_dose_interval</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interval</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
+    <span class="ruby-identifier">date</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date</span>
+    (<span class="ruby-identifier">date</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">interval</span>).<span class="ruby-identifier">to_date</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generator</span>
@@ -1153,6 +1217,97 @@ index_patient_programme_statuses_on_status                 (status)</pre>
       <span class="ruby-value">triages:</span>,
       <span class="ruby-value">attendance_record:</span>,
 </pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-next_dose_eligible_date" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-next_dose_eligible_date" title="Link to this method">
+                <span class="method-name">next_dose_eligible_date</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="next_dose_eligible_date-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 168</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_dose_eligible_date</span>
+  <span class="ruby-identifier">interval</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">minimum_dose_interval</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interval</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
+    <span class="ruby-identifier">date</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date</span>
+    (<span class="ruby-identifier">date</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">interval</span>).<span class="ruby-identifier">to_date</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-on_last_dose-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-on_last_dose-3F" title="Link to this method">
+                <span class="method-name">on_last_dose?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="on_last_dose-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 164</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_last_dose?</span>
+  <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">maximum_dose_sequence</span>
+<span class="ruby-keyword">end</span></pre>
           </div>
 
 
@@ -1210,6 +1365,21 @@ index_patient_programme_statuses_on_status                 (status)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_criteria</span> = <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_programme_status</span>(<span class="ruby-keyword">self</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_last_dose?</span>
+  <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">maximum_dose_sequence</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_dose_eligible_date</span>
+  <span class="ruby-identifier">interval</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">minimum_dose_interval</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interval</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
+    <span class="ruby-identifier">date</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date</span>
+    (<span class="ruby-identifier">date</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">interval</span>).<span class="ruby-identifier">to_date</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generator</span>
@@ -1265,6 +1435,21 @@ index_patient_programme_statuses_on_status                 (status)</pre>
           <div class="method-source-code" id="vaccine_criteria-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/patient/programme_status.rb, line 162</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_criteria</span> = <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_programme_status</span>(<span class="ruby-keyword">self</span>)
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_last_dose?</span>
+    <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">maximum_dose_sequence</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_dose_eligible_date</span>
+    <span class="ruby-identifier">interval</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>).<span class="ruby-identifier">minimum_dose_interval</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interval</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
+      <span class="ruby-identifier">date</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date</span>
+      (<span class="ruby-identifier">date</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">interval</span>).<span class="ruby-identifier">to_date</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">private</span>
 

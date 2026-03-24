@@ -585,6 +585,10 @@
 
         <li ><a href="#method-i-apply">apply</a></li>
 
+        <li ><a href="#method-i-primary_method">primary_method</a></li>
+
+        <li ><a href="#method-i-side_effects">side_effects</a></li>
+
         <li ><a href="#method-i-to_param">to_param</a></li>
 
       </ul>
@@ -935,7 +939,7 @@
             </details>
           </div>
           <div class="method-source-code" id="apply-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 39</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply</span>(<span class="ruby-identifier">scope</span>)
   <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">with_disease_types</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">disease_types</span>)
 
@@ -946,6 +950,93 @@
   <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">contains_gelatine:</span> <span class="ruby-keyword">false</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">without_gelatine</span>
 
   <span class="ruby-identifier">scope</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-primary_method" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-primary_method" title="Link to this method">
+                <span class="method-name">primary_method</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="primary_method-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 42</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">primary_method</span>
+  <span class="ruby-identifier">vaccine_methods</span>&amp;.<span class="ruby-identifier">first</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>The first method is the one most likely to be used to vaccinate the patient. For example, in the case of Flu, the parents will approve nasal (and then optionally injection).</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-side_effects" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-side_effects" title="Link to this method">
+                <span class="method-name">side_effects</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="side_effects-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">side_effects</span>
+  <span class="ruby-constant">Vaccine</span>
+    .<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>)
+    .<span class="ruby-identifier">where</span>(<span class="ruby-value">method:</span> <span class="ruby-identifier">primary_method</span>)
+    .<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:side_effects</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -985,7 +1076,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 51</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span>
   <span class="ruby-identifier">parts</span> = []
 

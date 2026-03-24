@@ -622,7 +622,7 @@
 
         <li ><a href="#method-i-other_options">other_options</a></li>
 
-        <li ><a href="#method-i-patient_eligible_for_additional_dose-3F">patient_eligible_for_additional_dose?</a></li>
+        <li ><a href="#method-i-patient_on_last_dose-3F">patient_on_last_dose?</a></li>
 
         <li ><a href="#method-i-programme_type">programme_type</a></li>
 
@@ -806,7 +806,7 @@
             </details>
           </div>
           <div class="method-source-code" id="associate_triage_with_vaccination_record-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 268</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 262</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">associate_triage_with_vaccination_record</span>(<span class="ruby-identifier">next_dose_delay_triage</span>)
   <span class="ruby-identifier">vaccination_record</span> =
     <span class="ruby-identifier">patient</span>
@@ -855,7 +855,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_create_patient_specific_directions-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 192</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 186</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_create_patient_specific_directions?</span>
   <span class="ruby-constant">PatientSpecificDirectionPolicy</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-identifier">current_user</span>,
@@ -900,7 +900,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_status_generator-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 131</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_status_generator</span>
   <span class="ruby-ivar">@consent_status_generator</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">StatusGenerator</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(
@@ -960,13 +960,7 @@
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_mmr_dose_date</span>
-  <span class="ruby-identifier">programme_status</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>)
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
-    <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">date</span>
-  <span class="ruby-keyword">elsif</span> (<span class="ruby-identifier">first_dose_date</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">date</span>)
-    (<span class="ruby-identifier">first_dose_date</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span>).<span class="ruby-identifier">to_date</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">next_dose_eligible_date</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
@@ -1122,7 +1116,7 @@
     )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_eligible_for_additional_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_on_last_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
        <span class="ruby-identifier">delay_vaccination_until</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">next_mmr_dose_date</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-value">:delay_vaccination_until</span>,
@@ -1142,14 +1136,11 @@
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">presence</span>&amp;.<span class="ruby-identifier">update!</span>(<span class="ruby-value">next_dose_delay_triage:</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_eligible_for_additional_dose?</span>
-  <span class="ruby-identifier">next_dose</span> =
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
-      <span class="ruby-identifier">programme</span>,
-      <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
-    ).<span class="ruby-identifier">dose_sequence</span>
-
-  <span class="ruby-identifier">next_dose</span> <span class="ruby-operator">==</span> </pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_on_last_dose?</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
+    <span class="ruby-identifier">programme</span>,
+    <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
+  </pre>
           </div>
 
 
@@ -1197,13 +1188,7 @@
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_mmr_dose_date</span>
-  <span class="ruby-identifier">programme_status</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>)
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
-    <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">date</span>
-  <span class="ruby-keyword">elsif</span> (<span class="ruby-identifier">first_dose_date</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">date</span>)
-    (<span class="ruby-identifier">first_dose_date</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span>).<span class="ruby-identifier">to_date</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">next_dose_eligible_date</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
@@ -1359,7 +1344,7 @@
     )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_eligible_for_additional_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_on_last_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
        <span class="ruby-identifier">delay_vaccination_until</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">next_mmr_dose_date</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-value">:delay_vaccination_until</span>,
@@ -1379,14 +1364,11 @@
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">presence</span>&amp;.<span class="ruby-identifier">update!</span>(<span class="ruby-value">next_dose_delay_triage:</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_eligible_for_additional_dose?</span>
-  <span class="ruby-identifier">next_dose</span> =
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
-      <span class="ruby-identifier">programme</span>,
-      <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
-    ).<span class="ruby-identifier">dose_sequence</span>
-
-  <span class="ruby-identifier">next_dose</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">programme</span>.</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_on_last_dose?</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
+    <span class="ruby-identifier">programme</span>,
+    <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
+  ).</pre>
           </div>
 
 
@@ -1425,7 +1407,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consented_vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 116</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 110</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consented_vaccine_methods</span>
   <span class="ruby-ivar">@consented_vaccine_methods</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">consent_vaccine_methods</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
@@ -1469,7 +1451,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consented_without_gelatine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 122</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 116</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consented_without_gelatine</span>
   <span class="ruby-ivar">@consented_without_gelatine</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">consent_without_gelatine</span>.<span class="ruby-identifier">nil?</span>
@@ -1516,7 +1498,7 @@
             </details>
           </div>
           <div class="method-source-code" id="create_patient_specific_direction-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 207</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create_patient_specific_direction!</span>
   <span class="ruby-identifier">vaccine_method</span> = <span class="ruby-string">&quot;nasal&quot;</span>
 
@@ -1579,7 +1561,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delay_vaccination-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 114</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 108</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delay_vaccination?</span> = <span class="ruby-identifier">status_option</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;delay_vaccination&quot;</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consented_vaccine_methods</span>
@@ -1725,7 +1707,7 @@
       )
     <span class="ruby-keyword">end</span>
 
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_eligible_for_additional_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_on_last_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
          <span class="ruby-identifier">delay_vaccination_until</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">next_mmr_dose_date</span>
       <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
         <span class="ruby-value">:delay_vaccination_until</span>,
@@ -1745,14 +1727,11 @@
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">presence</span>&amp;.<span class="ruby-identifier">update!</span>(<span class="ruby-value">next_dose_delay_triage:</span>)
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_eligible_for_additional_dose?</span>
-    <span class="ruby-identifier">next_dose</span> =
-      <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
-        <span class="ruby-identifier">programme</span>,
-        <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
-      ).<span class="ruby-identifier">dose_sequence</span>
-
-    <span class="ruby-identifier">next_dose</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_on_last_dose?</span>
+    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
+      <span class="ruby-identifier">programme</span>,
+      <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
+    ).<span class="ruby-identifier">on_last_dose?</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1835,7 +1814,7 @@
             </details>
           </div>
           <div class="method-source-code" id="handle_patient_specific_direction-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 199</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 193</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">handle_patient_specific_direction</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">add_patient_specific_direction</span>
     <span class="ruby-identifier">create_patient_specific_direction!</span>
@@ -1881,7 +1860,7 @@
             </details>
           </div>
           <div class="method-source-code" id="invalidate_patient_specific_directions-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 232</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 226</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
   <span class="ruby-identifier">patient</span>
     .<span class="ruby-identifier">patient_specific_directions</span>
@@ -1929,13 +1908,7 @@
           <div class="method-source-code" id="next_mmr_dose_date-source">
             <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_mmr_dose_date</span>
-  <span class="ruby-identifier">programme_status</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>)
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">cannot_vaccinate_delay_vaccination?</span>
-    <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">date</span>
-  <span class="ruby-keyword">elsif</span> (<span class="ruby-identifier">first_dose_date</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">date</span>)
-    (<span class="ruby-identifier">first_dose_date</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span>).<span class="ruby-identifier">to_date</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">next_dose_eligible_date</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -2049,12 +2022,12 @@
       </div>
 
 
-      <div id="method-i-patient_eligible_for_additional_dose-3F" class="method-detail anchor-link ">
+      <div id="method-i-patient_on_last_dose-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-patient_eligible_for_additional_dose-3F" title="Link to this method">
-                <span class="method-name">patient_eligible_for_additional_dose?</span>
+              <a href="#method-i-patient_on_last_dose-3F" title="Link to this method">
+                <span class="method-name">patient_on_last_dose?</span>
                 <span class="method-args">()</span>
               </a>
             </div>
@@ -2067,16 +2040,13 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="patient_eligible_for_additional_dose-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 279</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_eligible_for_additional_dose?</span>
-  <span class="ruby-identifier">next_dose</span> =
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
-      <span class="ruby-identifier">programme</span>,
-      <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
-    ).<span class="ruby-identifier">dose_sequence</span>
-
-  <span class="ruby-identifier">next_dose</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+          <div class="method-source-code" id="patient_on_last_dose-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 273</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_on_last_dose?</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
+    <span class="ruby-identifier">programme</span>,
+    <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
+  ).<span class="ruby-identifier">on_last_dose?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -2116,7 +2086,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_type-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 110</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 104</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_type</span> = <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">safe_to_vaccinate?</span> = <span class="ruby-identifier">status_option</span>.<span class="ruby-identifier">starts_with?</span>(<span class="ruby-string">&quot;safe_to_vaccinate&quot;</span>)
@@ -2266,7 +2236,7 @@
     )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_eligible_for_additional_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_on_last_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
        <span class="ruby-identifier">delay_vaccination_until</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">next_mmr_dose_date</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-value">:delay_vaccination_until</span>,
@@ -2286,14 +2256,11 @@
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">presence</span>&amp;.<span class="ruby-identifier">update!</span>(<span class="ruby-value">next_dose_delay_triage:</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_eligible_for_additional_dose?</span>
-  <span class="ruby-identifier">next_dose</span> =
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
-      <span class="ruby-identifier">programme</span>,
-      <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
-    ).<span class="ruby-identifier">dose_sequence</span>
-
-  <span class="ruby-identifier">next_dose</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_on_last_dose?</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
+    <span class="ruby-identifier">programme</span>,
+    <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
+  ).<span class="ruby-identifier">on_last_dose?</span>
 </pre>
           </div>
 
@@ -2333,7 +2300,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_add_patient_specific_direction-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 188</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 182</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_add_patient_specific_direction?</span>
   <span class="ruby-identifier">show_add_patient_specific_direction?</span>(<span class="ruby-identifier">status_option</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2375,7 +2342,7 @@
             </details>
           </div>
           <div class="method-source-code" id="safe_to_vaccinate-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 112</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 106</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">safe_to_vaccinate?</span> = <span class="ruby-identifier">status_option</span>.<span class="ruby-identifier">starts_with?</span>(<span class="ruby-string">&quot;safe_to_vaccinate&quot;</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delay_vaccination?</span> = <span class="ruby-identifier">status_option</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;delay_vaccination&quot;</span>
@@ -2523,7 +2490,7 @@
     )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_eligible_for_additional_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_on_last_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
        <span class="ruby-identifier">delay_vaccination_until</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">next_mmr_dose_date</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-value">:delay_vaccination_until</span>,
@@ -2543,14 +2510,11 @@
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">presence</span>&amp;.<span class="ruby-identifier">update!</span>(<span class="ruby-value">next_dose_delay_triage:</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_eligible_for_additional_dose?</span>
-  <span class="ruby-identifier">next_dose</span> =
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
-      <span class="ruby-identifier">programme</span>,
-      <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
-    ).<span class="ruby-identifier">dose_sequence</span>
-
-  <span class="ruby-identifier">next_dose</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_on_last_dose?</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
+    <span class="ruby-identifier">programme</span>,
+    <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
+  ).<span class="ruby-identifier">on_last_dose?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -2772,7 +2736,7 @@
             </details>
           </div>
           <div class="method-source-code" id="status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 158</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">status</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">status_option</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;safe_to_vaccinate&quot;</span>, <span class="ruby-string">&quot;safe_to_vaccinate_injection&quot;</span>,
@@ -2913,7 +2877,7 @@
             </details>
           </div>
           <div class="method-source-code" id="triage_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 142</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 136</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_attributes</span>
   {
     <span class="ruby-value">academic_year:</span>,
@@ -2967,7 +2931,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 168</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 162</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">status_option</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;safe_to_vaccinate&quot;</span>, <span class="ruby-string">&quot;safe_to_vaccinate_without_gelatine&quot;</span>
@@ -3016,7 +2980,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_delay_vaccination_until_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 240</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 234</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_delay_vaccination_until_date</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">delay_vaccination_until</span>.<span class="ruby-identifier">nil?</span>
 
@@ -3036,7 +3000,7 @@
     )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_eligible_for_additional_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_on_last_dose?</span> <span class="ruby-operator">&amp;&amp;</span>
        <span class="ruby-identifier">delay_vaccination_until</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">next_mmr_dose_date</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-value">:delay_vaccination_until</span>,
@@ -3082,7 +3046,7 @@
             </details>
           </div>
           <div class="method-source-code" id="without_gelatine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 179</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 173</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">without_gelatine</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">status_option</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;safe_to_vaccinate_injection&quot;</span>, <span class="ruby-string">&quot;safe_to_vaccinate_without_gelatine&quot;</span>

@@ -577,6 +577,8 @@
 
         <li ><a href="#method-i-preferred_full_name_changed-3F">preferred_full_name_changed?</a></li>
 
+        <li ><a href="#method-i-short_name">short_name</a></li>
+
       </ul>
     </details>
   </div>
@@ -701,7 +703,7 @@
             </details>
           </div>
           <div class="method-source-code" id="full_name_with_known_as-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 27</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">full_name_with_known_as</span>(<span class="ruby-value">context:</span> <span class="ruby-value">:internal</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">has_preferred_name?</span>
     <span class="ruby-node">&quot;#{full_name(context:)} (known as #{preferred_full_name(context: :parents)})&quot;</span>
@@ -747,7 +749,7 @@
             </details>
           </div>
           <div class="method-source-code" id="has_preferred_name-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 19</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_preferred_name?</span>
   <span class="ruby-identifier">preferred_given_name</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">preferred_family_name</span>.<span class="ruby-identifier">present?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -789,7 +791,7 @@
             </details>
           </div>
           <div class="method-source-code" id="initials-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 35</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initials</span>
   [<span class="ruby-identifier">given_name</span>[<span class="ruby-value">0</span>], <span class="ruby-identifier">family_name</span>[<span class="ruby-value">0</span>]].<span class="ruby-identifier">join</span>
 <span class="ruby-keyword">end</span></pre>
@@ -831,7 +833,7 @@
             </details>
           </div>
           <div class="method-source-code" id="preferred_full_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 19</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preferred_full_name</span>(<span class="ruby-value">context:</span> <span class="ruby-value">:internal</span>)
   <span class="ruby-constant">FullNameFormatter</span>.<span class="ruby-identifier">call</span>(<span class="ruby-keyword">self</span>, <span class="ruby-value">context:</span>, <span class="ruby-value">parts_prefix:</span> <span class="ruby-value">:preferred</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -873,9 +875,51 @@
             </details>
           </div>
           <div class="method-source-code" id="preferred_full_name_changed-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 23</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preferred_full_name_changed?</span>
   <span class="ruby-identifier">preferred_given_name_changed?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">preferred_family_name_changed?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-short_name" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-short_name" title="Link to this method">
+                <span class="method-name">short_name</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="short_name-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/full_name_concern.rb, line 15</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">short_name</span>
+  <span class="ruby-identifier">preferred_given_name</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">given_name</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 

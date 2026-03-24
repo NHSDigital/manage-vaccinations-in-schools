@@ -569,6 +569,8 @@
 
         <li ><a href="#method-i-close_consent_at">close_consent_at</a></li>
 
+        <li ><a href="#method-i-consent_deadline_date">consent_deadline_date</a></li>
+
         <li ><a href="#method-i-next_reminder_date">next_reminder_date</a></li>
 
         <li ><a href="#method-i-next_reminder_dates">next_reminder_dates</a></li>
@@ -659,7 +661,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_receive_consent-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 13</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_receive_consent?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">close_consent_at</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">current</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">close_consent_at</span>
 <span class="ruby-keyword">end</span></pre>
@@ -725,6 +727,49 @@
       </div>
 
 
+      <div id="method-i-consent_deadline_date" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-consent_deadline_date" title="Link to this method">
+                <span class="method-name">consent_deadline_date</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="consent_deadline_date-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 13</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_deadline_date</span>
+  <span class="ruby-identifier">next_date</span> = <span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">first</span>
+  <span class="ruby-identifier">next_date</span> <span class="ruby-operator">?</span> (<span class="ruby-identifier">next_date</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">close_consent_at</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-next_reminder_date" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -744,7 +789,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_reminder_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 29</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 34</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_reminder_date</span> = <span class="ruby-identifier">next_reminder_dates</span>.<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -785,7 +830,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_reminder_dates-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 22</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_reminder_dates</span>
   <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">days_before_consent_reminders</span>.<span class="ruby-identifier">nil?</span>
 
@@ -836,6 +881,11 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">close_consent_at</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-identifier">dates</span>.<span class="ruby-identifier">max</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_deadline_date</span>
+  <span class="ruby-identifier">next_date</span> = <span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">first</span>
+  <span class="ruby-identifier">next_date</span> <span class="ruby-operator">?</span> (<span class="ruby-identifier">next_date</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">close_consent_at</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_receive_consent?</span>
@@ -893,7 +943,7 @@
             </details>
           </div>
           <div class="method-source-code" id="open_for_consent-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 17</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/consentable.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">open_for_consent?</span>
   <span class="ruby-identifier">can_receive_consent?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">open_consent_at</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-constant">Date</span>.<span class="ruby-identifier">current</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">open_consent_at</span>

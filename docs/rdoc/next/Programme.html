@@ -632,6 +632,8 @@
 
         <li ><a href="#method-c-method_missing">method_missing</a></li>
 
+        <li ><a href="#method-c-minimum_dose_interval">minimum_dose_interval</a></li>
+
         <li ><a href="#method-c-name">name</a></li>
 
         <li ><a href="#method-c-name_in_sentence">name_in_sentence</a></li>
@@ -754,6 +756,14 @@
         </dd>
 
 
+        <dt id="MINIMUM_DOSE_INTERVALS">MINIMUM_DOSE_INTERVALS</dt>
+
+        <dd>
+
+          <p>Minimum interval between doses. Only relevant for multi-dose programmes where SAIS administers more than one dose. Td/IPV intervals vary by dose number so a single value won’t suffice — this will need rethinking if we start scheduling multiple Td/IPV doses.</p>
+        </dd>
+
+
         <dt id="MIN_MMRV_ELIGIBILITY_DATE">MIN_MMRV_ELIGIBILITY_DATE</dt>
 
         <dd>
@@ -853,7 +863,7 @@
             </details>
           </div>
           <div class="method-source-code" id="3C-3D-3E-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 131</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">&lt;=&gt;</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">type</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variant_type</span> = <span class="ruby-keyword">nil</span>
@@ -953,6 +963,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -962,7 +974,6 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
-
 </pre>
           </div>
 
@@ -1002,7 +1013,7 @@
             </details>
           </div>
           <div class="method-source-code" id="3D-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 127</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 140</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">==</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eql?</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Programme</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>)
@@ -1106,6 +1117,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1114,7 +1127,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> </pre>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, </pre>
           </div>
 
 
@@ -1153,7 +1166,7 @@
             </details>
           </div>
           <div class="method-source-code" id="all-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 82</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 95</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all</span> = <span class="ruby-constant">TYPES</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">type</span><span class="ruby-operator">|</span> <span class="ruby-identifier">find</span>(<span class="ruby-identifier">type</span>) }
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_all</span>(<span class="ruby-identifier">types</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
@@ -1302,15 +1315,15 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
-
-</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)</pre>
           </div>
 
 
@@ -1349,7 +1362,7 @@
             </details>
           </div>
           <div class="method-source-code" id="all_as_variants-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 88</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 101</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_as_variants</span>
   <span class="ruby-identifier">all</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:variants</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1391,7 +1404,7 @@
             </details>
           </div>
           <div class="method-source-code" id="available_delivery_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 216</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 229</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">available_delivery_methods</span>
   <span class="ruby-ivar">@available_delivery_methods</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">vaccines</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:available_delivery_methods</span>).<span class="ruby-identifier">uniq</span>
@@ -1434,7 +1447,7 @@
             </details>
           </div>
           <div class="method-source-code" id="available_delivery_sites-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 221</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 234</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">available_delivery_sites</span>
   <span class="ruby-ivar">@available_delivery_sites</span> <span class="ruby-operator">||=</span>
     <span class="ruby-identifier">vaccines</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:available_delivery_sites</span>).<span class="ruby-identifier">uniq</span>
@@ -1477,7 +1490,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_save_to_todays_batch-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 190</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 203</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_save_to_todays_batch?</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">mmr?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_on_vaccination_history?</span> = <span class="ruby-identifier">menacwy?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">td_ipv?</span>
@@ -1518,6 +1531,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1532,7 +1547,7 @@
 
 <span class="ruby-identifier">private</span>
 
-<span class="ruby-keyword">def</span> </pre>
+</pre>
           </div>
 
 
@@ -1571,7 +1586,7 @@
             </details>
           </div>
           <div class="method-source-code" id="catch_up_only-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 186</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 199</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">catch_up_only?</span> = <span class="ruby-identifier">mmr?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_delegation?</span> = <span class="ruby-identifier">flu?</span>
@@ -1616,6 +1631,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1628,7 +1645,6 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
 
-<span class="ruby-identifier">private</span>
 </pre>
           </div>
 
@@ -1668,10 +1684,12 @@
             </details>
           </div>
           <div class="method-source-code" id="default_dose_sequence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 226</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 239</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_dose_sequence</span> = <span class="ruby-identifier">hpv?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">flu?</span> <span class="ruby-operator">?</span> <span class="ruby-value">1</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
@@ -1688,7 +1706,7 @@
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span></pre>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span></pre>
           </div>
 
 
@@ -1727,7 +1745,7 @@
             </details>
           </div>
           <div class="method-source-code" id="default_year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 194</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 207</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_year_groups</span> = <span class="ruby-constant">DEFAULT_YEAR_GROUPS_BY_TYPE</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>(<span class="ruby-value">year_group:</span>)
@@ -1764,6 +1782,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1779,7 +1799,7 @@
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span></pre>
+</pre>
           </div>
 
 
@@ -1818,7 +1838,7 @@
             </details>
           </div>
           <div class="method-source-code" id="disease_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 180</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 193</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span> = <span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">doubles?</span> = <span class="ruby-identifier">menacwy?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">td_ipv?</span>
@@ -1869,6 +1889,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1879,7 +1901,7 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = </pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> </pre>
           </div>
 
 
@@ -1918,7 +1940,7 @@
             </details>
           </div>
           <div class="method-source-code" id="doubles-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 182</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 195</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">doubles?</span> = <span class="ruby-identifier">menacwy?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">td_ipv?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">seasonal?</span> = <span class="ruby-identifier">flu?</span>
@@ -1967,6 +1989,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -1977,8 +2001,7 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
-</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = </pre>
           </div>
 
 
@@ -2017,7 +2040,7 @@
             </details>
           </div>
           <div class="method-source-code" id="eql-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 129</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 142</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">eql?</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Programme</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">&lt;=&gt;</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">type</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>
@@ -2119,6 +2142,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -2127,8 +2152,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
-</pre>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> </pre>
           </div>
 
 
@@ -2167,7 +2191,7 @@
             </details>
           </div>
           <div class="method-source-code" id="exists-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 108</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 121</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">exists?</span>(<span class="ruby-identifier">type</span>) = <span class="ruby-identifier">type</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">TYPES</span>)
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sample</span> = <span class="ruby-identifier">find</span>(<span class="ruby-constant">TYPES</span>.<span class="ruby-identifier">sample</span>)
@@ -2290,6 +2314,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -2298,7 +2324,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span></pre>
+</pre>
           </div>
 
 
@@ -2337,7 +2363,7 @@
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 244</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 259</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2379,7 +2405,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 92</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 105</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">validate_type!</span>(<span class="ruby-identifier">type</span>)
 
@@ -2426,7 +2452,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find_all-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 84</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 97</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_all</span>(<span class="ruby-identifier">types</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">types</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">type</span><span class="ruby-operator">|</span> <span class="ruby-identifier">find</span>(<span class="ruby-identifier">type</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">disease_types:</span>) }
 <span class="ruby-keyword">end</span></pre>
@@ -2468,7 +2494,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find_by_snomed_target_disease_codes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 101</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 114</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_by_snomed_target_disease_codes</span>(<span class="ruby-identifier">snomed_target_disease_codes</span>)
   <span class="ruby-identifier">all_as_variants</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">variant</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">variant</span>.<span class="ruby-identifier">snomed_target_disease_codes</span> <span class="ruby-operator">==</span>
@@ -2513,7 +2539,7 @@
             </details>
           </div>
           <div class="method-source-code" id="has_multiple_vaccine_methods-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 214</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 227</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_multiple_vaccine_methods?</span> = <span class="ruby-identifier">vaccine_methods</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">available_delivery_methods</span>
@@ -2530,6 +2556,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -2545,7 +2573,7 @@
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span></pre>
+  <span class="ruby-ivar">@fhir_mapper</span></pre>
           </div>
 
 
@@ -2584,7 +2612,7 @@
             </details>
           </div>
           <div class="method-source-code" id="id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 125</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 138</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">id</span> = <span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">==</span>(<span class="ruby-identifier">other</span>) = <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">type</span>
@@ -2690,6 +2718,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -2698,7 +2728,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, </pre>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span></pre>
           </div>
 
 
@@ -2737,7 +2767,7 @@
             </details>
           </div>
           <div class="method-source-code" id="import_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 230</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 245</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -2792,7 +2822,7 @@
             </details>
           </div>
           <div class="method-source-code" id="initialize-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 119</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">type:</span>)
   <span class="ruby-ivar">@type</span> = <span class="ruby-identifier">type</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2834,7 +2864,7 @@
             </details>
           </div>
           <div class="method-source-code" id="is_catch_up-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 196</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 209</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_catch_up?</span>(<span class="ruby-value">year_group:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">seasonal?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">catch_up_only?</span>
@@ -2882,8 +2912,10 @@
             </details>
           </div>
           <div class="method-source-code" id="maximum_dose_sequence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 228</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
@@ -2900,7 +2932,7 @@
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span></pre>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span></pre>
           </div>
 
 
@@ -2939,7 +2971,7 @@
             </details>
           </div>
           <div class="method-source-code" id="method_missing-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 78</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 91</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">method_missing</span>(<span class="ruby-identifier">type</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">_args</span>) = <span class="ruby-identifier">find</span>(<span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_s</span>)
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">respond_to_missing?</span>(<span class="ruby-identifier">type</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">_args</span>) = <span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_s</span>)
@@ -3092,13 +3124,72 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.</pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-minimum_dose_interval" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-minimum_dose_interval" title="Link to this method">
+                <span class="method-name">minimum_dose_interval</span>
+                <span class="method-args">(= MINIMUM_DOSE_INTERVALS.fetch(type))</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="minimum_dose_interval-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 243</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span></pre>
           </div>
 
 
@@ -3137,7 +3228,7 @@
             </details>
           </div>
           <div class="method-source-code" id="name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 141</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 154</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">name</span>
   <span class="ruby-ivar">@name</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">translation_key</span>, <span class="ruby-value">scope:</span> <span class="ruby-value">:programme_types</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -3179,7 +3270,7 @@
             </details>
           </div>
           <div class="method-source-code" id="name_in_sentence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 145</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 158</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">name_in_sentence</span>
   <span class="ruby-ivar">@name_in_sentence</span> = <span class="ruby-identifier">flu?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">name</span>
 <span class="ruby-keyword">end</span></pre>
@@ -3221,7 +3312,7 @@
             </details>
           </div>
           <div class="method-source-code" id="respond_to_missing-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 80</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 93</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">respond_to_missing?</span>(<span class="ruby-identifier">type</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">_args</span>) = <span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_s</span>)
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all</span> = <span class="ruby-constant">TYPES</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">type</span><span class="ruby-operator">|</span> <span class="ruby-identifier">find</span>(<span class="ruby-identifier">type</span>) }
@@ -3372,13 +3463,15 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(</pre>
           </div>
 
 
@@ -3417,7 +3510,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sample-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 110</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 123</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sample</span> = <span class="ruby-identifier">find</span>(<span class="ruby-constant">TYPES</span>.<span class="ruby-identifier">sample</span>)
 
   <span class="ruby-identifier">private</span>
@@ -3464,7 +3557,7 @@
             </details>
           </div>
           <div class="method-source-code" id="seasonal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 184</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 197</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">seasonal?</span> = <span class="ruby-identifier">flu?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">catch_up_only?</span> = <span class="ruby-identifier">mmr?</span>
@@ -3511,6 +3604,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3522,7 +3617,6 @@
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
-
 </pre>
           </div>
 
@@ -3562,7 +3656,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_codes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 232</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 247</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3615,7 +3709,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 236</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 251</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
@@ -3665,7 +3759,7 @@
             </details>
           </div>
           <div class="method-source-code" id="snomed_target_disease_terms-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 234</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 249</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3717,7 +3811,7 @@
             </details>
           </div>
           <div class="method-source-code" id="supports_delegation-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 188</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_delegation?</span> = <span class="ruby-identifier">flu?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_save_to_todays_batch?</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">mmr?</span>
@@ -3760,6 +3854,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3773,7 +3869,6 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
 
 <span class="ruby-identifier">private</span>
-
 </pre>
           </div>
 
@@ -3813,7 +3908,7 @@
             </details>
           </div>
           <div class="method-source-code" id="supports_outbreak-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 240</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 255</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
 
   <span class="ruby-identifier">private</span>
@@ -3860,7 +3955,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 123</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 136</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span> = <span class="ruby-identifier">type</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">id</span> = <span class="ruby-identifier">type</span>
@@ -3968,6 +4063,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -3976,7 +4073,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span></pre>
+<span class="ruby-identifier">delegate</span></pre>
           </div>
 
 
@@ -4015,7 +4112,7 @@
             </details>
           </div>
           <div class="method-source-code" id="translation_key-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 135</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 148</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">translation_key</span> = <span class="ruby-identifier">mmr?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;mmr_and_mmrv&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">type</span>
 
 <span class="ruby-constant">TYPES</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme_type</span><span class="ruby-operator">|</span>
@@ -4111,6 +4208,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -4121,7 +4220,7 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> </pre>
+<span class="ruby-keyword">def</span> </pre>
           </div>
 
 
@@ -4160,7 +4259,7 @@
             </details>
           </div>
           <div class="method-source-code" id="triage_on_vaccination_history-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 192</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 205</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_on_vaccination_history?</span> = <span class="ruby-identifier">menacwy?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">td_ipv?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">default_year_groups</span> = <span class="ruby-constant">DEFAULT_YEAR_GROUPS_BY_TYPE</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -4199,6 +4298,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -4213,8 +4314,7 @@
 
 <span class="ruby-identifier">private</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-</pre>
+<span class="ruby-keyword">def</span> </pre>
           </div>
 
 
@@ -4253,7 +4353,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 210</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 223</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_methods</span>
   <span class="ruby-ivar">@vaccine_methods</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">vaccines</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:method</span>).<span class="ruby-identifier">uniq</span>
 <span class="ruby-keyword">end</span></pre>
@@ -4295,7 +4395,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccines-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 206</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 219</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4337,7 +4437,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_type-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 114</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 127</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_type!</span>(<span class="ruby-identifier">type</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidType</span>, <span class="ruby-identifier">type</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">type</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4379,7 +4479,7 @@
             </details>
           </div>
           <div class="method-source-code" id="variant_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 149</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 162</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variant_for</span>(<span class="ruby-value">disease_types:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">patient:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">mmr?</span>
 
@@ -4438,7 +4538,7 @@
             </details>
           </div>
           <div class="method-source-code" id="variant_type-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 133</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variant_type</span> = <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">translation_key</span> = <span class="ruby-identifier">mmr?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;mmr_and_mmrv&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">type</span>
@@ -4536,6 +4636,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">maximum_dose_sequence</span> = <span class="ruby-constant">MAXIMUM_DOSE_SEQUENCES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minimum_dose_interval</span> = <span class="ruby-constant">MINIMUM_DOSE_INTERVALS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_names</span> = <span class="ruby-constant">IMPORT_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_codes</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_CODES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
@@ -4546,7 +4648,7 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
-<span class="ruby-keyword">def</span> </pre>
+</pre>
           </div>
 
 
@@ -4585,7 +4687,7 @@
             </details>
           </div>
           <div class="method-source-code" id="variants-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 170</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 183</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">variants</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">mmr?</span>
     <span class="ruby-node">%w[mmr mmrv]</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">variant_type</span><span class="ruby-operator">|</span>
