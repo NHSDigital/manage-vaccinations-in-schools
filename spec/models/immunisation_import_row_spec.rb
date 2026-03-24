@@ -1600,81 +1600,59 @@ describe ImmunisationImportRow do
       describe "#delivery_site" do
         subject { vaccination_record.delivery_site }
 
-        context "with a left thigh anatomical site" do
-          let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left thigh") }
+        shared_examples "an anatomical site" do |upload_value, delivery_site|
+          context "with ANATOMICAL_SITE: #{upload_value}" do
+            let(:data) { valid_data.merge("ANATOMICAL_SITE" => upload_value) }
 
-          it { should eq("left_thigh") }
-        end
+            it "is valid" do
+              expect(vaccination_record).to be_valid
+            end
 
-        context "with a right thigh anatomical site" do
-          let(:data) { valid_data.merge("ANATOMICAL_SITE" => "right thigh") }
-
-          it { should eq("right_thigh") }
-        end
-
-        context "with a left upper arm anatomical site" do
-          let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left upper arm") }
-
-          it { should eq("left_arm_upper_position") }
-        end
-
-        context "with a right upper arm anatomical site" do
-          let(:data) do
-            valid_data.merge("ANATOMICAL_SITE" => "right upper arm")
+            it { should eq(delivery_site) }
           end
-
-          it { should eq("right_arm_upper_position") }
         end
 
-        context "with a left arm (upper position) anatomical site" do
-          let(:data) do
-            valid_data.merge("ANATOMICAL_SITE" => "left arm (upper position)")
-          end
-
-          it { should eq("left_arm_upper_position") }
-        end
-
-        context "with a right arm (upper position) anatomical site" do
-          let(:data) do
-            valid_data.merge("ANATOMICAL_SITE" => "right arm (upper position)")
-          end
-
-          it { should eq("right_arm_upper_position") }
-        end
-
-        context "with a left arm (lower position) anatomical site" do
-          let(:data) do
-            valid_data.merge("ANATOMICAL_SITE" => "left arm (lower position)")
-          end
-
-          it { should eq("left_arm_lower_position") }
-        end
-
-        context "with a right arm (lower position) anatomical site" do
-          let(:data) do
-            valid_data.merge("ANATOMICAL_SITE" => "right arm (lower position)")
-          end
-
-          it { should eq("right_arm_lower_position") }
-        end
-
-        context "with a left buttock anatomical site" do
-          let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left buttock") }
-
-          it { should eq("left_buttock") }
-        end
-
-        context "with a right buttock anatomical site" do
-          let(:data) { valid_data.merge("ANATOMICAL_SITE" => "right buttock") }
-
-          it { should eq("right_buttock") }
-        end
-
-        context "with a nasal anatomical site" do
-          let(:data) { valid_data.merge("ANATOMICAL_SITE" => "nasal") }
-
-          it { should eq("nose") }
-        end
+        include_examples "an anatomical site", "left thigh", "left_thigh"
+        include_examples "an anatomical site", "right thigh", "right_thigh"
+        include_examples "an anatomical site",
+                         "left upper arm",
+                         "left_arm_upper_position"
+        include_examples "an anatomical site",
+                         "left deltoid",
+                         "left_arm_upper_position"
+        include_examples "an anatomical site",
+                         "left arm (upper position)",
+                         "left_arm_upper_position"
+        include_examples "an anatomical site",
+                         "left arm (lower position)",
+                         "left_arm_lower_position"
+        include_examples "an anatomical site",
+                         "Left Lower",
+                         "left_arm_lower_position"
+        include_examples "an anatomical site",
+                         "Left lower arm",
+                         "left_arm_lower_position"
+        include_examples "an anatomical site",
+                         "right upper arm",
+                         "right_arm_upper_position"
+        include_examples "an anatomical site",
+                         "right deltoid",
+                         "right_arm_upper_position"
+        include_examples "an anatomical site",
+                         "right arm (upper position)",
+                         "right_arm_upper_position"
+        include_examples "an anatomical site",
+                         "right arm (lower position)",
+                         "right_arm_lower_position"
+        include_examples "an anatomical site",
+                         "Right Lower",
+                         "right_arm_lower_position"
+        include_examples "an anatomical site",
+                         "Right lower arm",
+                         "right_arm_lower_position"
+        include_examples "an anatomical site", "left buttock", "left_buttock"
+        include_examples "an anatomical site", "right buttock", "right_buttock"
+        include_examples "an anatomical site", "nasal", "nose"
       end
 
       describe "#dose_sequence" do
