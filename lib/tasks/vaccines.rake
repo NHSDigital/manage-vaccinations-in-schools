@@ -389,11 +389,20 @@ def create_mmr_health_questions(vaccine)
   blood_thinning.update!(next_question: blood_or_plasma_transfusion)
 
   severe_reaction_mmr =
-    vaccine.health_questions.create!(
-      title:
-        "Has your child had a severe allergic reaction (anaphylaxis) to " \
-          "a previous dose of #{vaccine.programme.name} or any other vaccine?"
-    )
+    if vaccine.disease_types.include?("varicella")
+      vaccine.health_questions.create!(
+        title:
+          "Has your child had a severe allergic reaction (anaphylaxis) to " \
+            "a previous dose of #{vaccine.programme.name} or any other measles, mumps, rubella or " \
+            "varicella (chickenpox) vaccine?"
+      )
+    else
+      vaccine.health_questions.create!(
+        title:
+          "Has your child had a severe allergic reaction (anaphylaxis) to " \
+            "a previous dose of #{vaccine.programme.name} or any other measles, mumps or rubella vaccine?"
+      )
+    end
 
   blood_or_plasma_transfusion.update!(next_question: severe_reaction_mmr)
 
