@@ -11,6 +11,7 @@ describe FHIRMapper::VaccinationRecord do
   let(:session) do
     create(:session, location: school, programmes: [programme], team:)
   end
+  let(:source) { "service" }
   let(:patient) { create(:patient, session:) }
   let(:vaccination_outcome) { :administered }
   let(:vaccine) { vaccination_record.vaccine }
@@ -23,6 +24,7 @@ describe FHIRMapper::VaccinationRecord do
       patient:,
       programme:,
       session:,
+      source:,
       vaccine: programme.vaccines.first,
       outcome: vaccination_outcome,
       nhs_immunisations_api_id:,
@@ -202,7 +204,7 @@ describe FHIRMapper::VaccinationRecord do
       end
     end
 
-    describe "occurenceDateTime" do
+    describe "occurrenceDateTime" do
       subject { immunisation_fhir.occurrenceDateTime }
 
       it { should eq vaccination_record.performed_at.iso8601(3) }
@@ -223,8 +225,16 @@ describe FHIRMapper::VaccinationRecord do
 
       context "when the vaccination record was imported and has no session" do
         let(:session) { nil }
+        let(:source) { "historical_upload" }
 
         it { should be false }
+      end
+
+      context "when the vaccination record was imported by a national reporting user" do
+        let(:session) { nil }
+        let(:source) { "national_reporting" }
+
+        it { should be true }
       end
     end
 
