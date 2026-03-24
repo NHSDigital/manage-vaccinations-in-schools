@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AddHomeEducatedAndUnknownSchoolPatientsToSchools < ActiveRecord::Migration[8.1]
+  disable_ddl_transaction!
+
   def up
     academic_year = AcademicYear.current
 
