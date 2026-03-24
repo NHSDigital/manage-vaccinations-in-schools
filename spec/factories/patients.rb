@@ -234,6 +234,19 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_follow_up_requested do
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_consent_follow_up_requested,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_no_response do
       programme_statuses do
         programmes.map do |programme|
