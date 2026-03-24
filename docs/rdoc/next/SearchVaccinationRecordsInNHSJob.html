@@ -604,6 +604,23 @@
 
 
 
+    <section class="constants-list">
+      <header>
+        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="ACADEMIC_YEAR_2025_CUTOFF_DATE">ACADEMIC_YEAR_2025_CUTOFF_DATE</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
+
 
 
     <section class="attribute-method-details method-section">
@@ -682,7 +699,7 @@
             </details>
           </div>
           <div class="method-source-code" id="perform-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/search_vaccination_records_in_nhs_job.rb, line 8</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/search_vaccination_records_in_nhs_job.rb, line 10</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>(<span class="ruby-identifier">patient_id</span>)
   <span class="ruby-keyword">begin</span>
     <span class="ruby-ivar">@patient</span> = <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">teams:</span> <span class="ruby-value">:organisation</span>).<span class="ruby-identifier">find</span>(<span class="ruby-identifier">patient_id</span>)
