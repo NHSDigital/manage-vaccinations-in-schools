@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class SendSchoolSessionRemindersJob - Mavis Documentation</title>
+<title>class GenericLocationFactory - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,SendSchoolSessionRemindersJob"
+    content="ruby,class,GenericLocationFactory"
   >
 
     <meta
       name="description"
-      content="Documentation for the SendSchoolSessionRemindersJob class"
+      content="class GenericLocationFactory: Teams are automatically created with three &quot;generic locations&quot; which don&#39;t represent real physical places. the generic clinic, the unknown school, and"
     >
 
 
@@ -24,14 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class SendSchoolSessionRemindersJob - Mavis Documentation">
+<meta property="og:title" content="class GenericLocationFactory - Mavis Documentation">
 
 
 
-    <meta
-      property="og:description"
-      content="Documentation for SendSchoolSessionRemindersJob class - API reference and code examples"
-    >
+    <meta property="og:description" content="Teams are automatically created with three &quot;generic locations&quot; which don&#39;t represent real physical places. the generic clinic, the unknown school, and">
 
 
 
@@ -39,14 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class SendSchoolSessionRemindersJob - Mavis Documentation">
+<meta name="twitter:title" content="class GenericLocationFactory - Mavis Documentation">
 
 
 
-    <meta
-      name="twitter:description"
-      content="Documentation for SendSchoolSessionRemindersJob class - API reference and code examples"
-    >
+    <meta name="twitter:description" content="Teams are automatically created with three &quot;generic locations&quot; which don&#39;t represent real physical places. the generic clinic, the unknown school, and">
 
 
 
@@ -533,7 +527,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="ApplicationJob.html">ApplicationJob</a><ul><li>ActiveJob::Base</li></ul></li></ul>
+    <ul><li>Object</li></ul>
   </details>
 </div>
 
@@ -543,6 +537,27 @@
   
 
   
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-c-call">call</a></li>
+
+        <li ><a href="#method-c-new">new</a></li>
+
+      </ul>
+    </details>
+  </div>
+
 
 
   <div class="nav-section">
@@ -558,9 +573,17 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-perform">perform</a></li>
+        <li ><a href="#method-i-call">call</a></li>
 
-        <li ><a href="#method-i-should_send_notification-3F">should_send_notification?</a></li>
+        <li ><a href="#method-i-generic_clinic_location">generic_clinic_location</a></li>
+
+        <li ><a href="#method-i-home_educated_school_location">home_educated_school_location</a></li>
+
+        <li ><a href="#method-i-locations">locations</a></li>
+
+        <li ><a href="#method-i-unknown_school_location">unknown_school_location</a></li>
+
+        <li ><a href="#method-i-year_groups">year_groups</a></li>
 
       </ul>
     </details>
@@ -585,17 +608,21 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-sendschoolsessionremindersjob">
+<main role="main" aria-labelledby="class-genericlocationfactory">
   
   
 
-  <span id="class-SendSchoolSessionRemindersJob" class="legacy-anchor"></span>
-  <h1 id="class-sendschoolsessionremindersjob" class="anchor-link class">
-    class SendSchoolSessionRemindersJob
+  <span id="class-GenericLocationFactory" class="legacy-anchor"></span>
+  <h1 id="class-genericlocationfactory" class="anchor-link class">
+    class GenericLocationFactory
   </h1>
 
   <section class="description">
     
+<p><a href="Teams.html"><code>Teams</code></a> are automatically created with three “generic locations” which don’t represent real physical places.</p>
+
+<p>These are: the generic clinic, the unknown school, and the home-educated school.</p>
+
   </section>
 
 
@@ -613,6 +640,143 @@
 
 
 
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
+       </header>
+
+
+      <div id="method-c-call" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-call" title="Link to this method">
+                <span class="method-name">call</span>
+                <span class="method-args">(...)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="call-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generic_location_factory.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">call</span>
+
+<span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-identifier">attr_reader</span> <span class="ruby-value">:team</span>, <span class="ruby-value">:academic_year</span>
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:programmes</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:team</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">locations</span>
+  [
+    <span class="ruby-identifier">generic_clinic_location</span>,
+    <span class="ruby-identifier">home_educated_school_location</span>,
+    <span class="ruby-identifier">unknown_school_location</span>
+  ]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span> = <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">YearGroup</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_VALUE_RANGE</span>.<span class="ruby-identifier">to_a</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generic_clinic_location</span>
+  <span class="ruby-ivar">@generic_clinic_location</span> <span class="ruby-operator">||=</span>
+    <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_clinics</span>.<span class="ruby-identifier">first</span> <span class="ruby-operator">||</span>
+      <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(<span class="ruby-value">name:</span> <span class="ruby-string">&quot;Community clinic&quot;</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:generic_clinic</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">home_educated_school_location</span>
+  <span class="ruby-ivar">@home_educated_school_location</span> <span class="ruby-operator">||=</span>
+    <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_schools</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_HOME_EDUCATED</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(
+        <span class="ruby-value">name:</span> <span class="ruby-string">&quot;Home-educated&quot;</span>,
+        <span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_HOME_EDUCATED</span>,
+        <span class="ruby-value">type:</span> <span class="ruby-value">:generic_school</span>,
+        <span class="ruby-value">gias_phase:</span> <span class="ruby-string">&quot;not_applicable&quot;</span>
+      )
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unknown_school_location</span>
+  <span class="ruby-ivar">@unknown_school_location</span> <span class="ruby-operator">||=</span>
+    <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_schools</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_UNKNOWN</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(
+        <span class="ruby-value">name:</span> <span class="ruby-string">&quot;Unknown school&quot;</span>,
+        <span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_UNKNOWN</span>,
+        <span class="ruby-value">type:</span> <span class="ruby-value">:generic_school</span>,
+        <span class="ruby-value">gias_phase:</span> <span class="ruby-string">&quot;not_applicable&quot;</span>
+      )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-new" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-new" title="Link to this method">
+                <span class="method-name">new</span>
+                <span class="method-args">(team:, academic_year:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="new-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generic_location_factory.rb, line 10</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>)
+  <span class="ruby-ivar">@team</span> = <span class="ruby-identifier">team</span>
+  <span class="ruby-ivar">@academic_year</span> = <span class="ruby-identifier">academic_year</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
 
 
 
@@ -625,13 +789,13 @@
        </header>
 
 
-      <div id="method-i-perform" class="method-detail anchor-link ">
+      <div id="method-i-call" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-perform" title="Link to this method">
-                <span class="method-name">perform</span>
-                <span class="method-args">(session)</span>
+              <a href="#method-i-call" title="Link to this method">
+                <span class="method-name">call</span>
+                <span class="method-args">()</span>
               </a>
             </div>
 
@@ -643,32 +807,23 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="perform-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_school_session_reminders_job.rb, line 6</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>(<span class="ruby-identifier">session</span>)
-  <span class="ruby-identifier">date</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">false</span>)
-
-  <span class="ruby-identifier">patients</span> =
-    <span class="ruby-identifier">session</span>.<span class="ruby-identifier">patients</span>.<span class="ruby-identifier">includes_statuses</span>.<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>(
-      <span class="ruby-constant">SessionNotification</span>
-        .<span class="ruby-identifier">where</span>(<span class="ruby-value">session:</span>)
-        .<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;session_notifications.patient_id = patient_locations.patient_id&quot;</span>
-        )
-        .<span class="ruby-identifier">where</span>(<span class="ruby-value">session_date:</span> <span class="ruby-identifier">date</span>)
-        .<span class="ruby-identifier">arel</span>
-        .<span class="ruby-identifier">exists</span>
-    )
-
-  <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span><span class="ruby-operator">|</span>
-    <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">should_send_notification?</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>)
-
-    <span class="ruby-constant">SessionNotification</span>.<span class="ruby-identifier">create_and_send!</span>(
-      <span class="ruby-value">patient:</span>,
-      <span class="ruby-value">session:</span>,
-      <span class="ruby-value">session_date:</span> <span class="ruby-identifier">date</span>,
-      <span class="ruby-value">type:</span> <span class="ruby-value">:school_reminder</span>
-    )
+          <div class="method-source-code" id="call-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generic_location_factory.rb, line 15</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>
+  <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">locations</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">location</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">location</span>.<span class="ruby-identifier">attach_to_team!</span>(<span class="ruby-identifier">team</span>, <span class="ruby-value">academic_year:</span>)
+      <span class="ruby-identifier">location</span>.<span class="ruby-identifier">import_year_groups!</span>(
+        <span class="ruby-identifier">year_groups</span>,
+        <span class="ruby-value">academic_year:</span>,
+        <span class="ruby-value">source:</span> <span class="ruby-string">&quot;generic_location_factory&quot;</span>
+      )
+      <span class="ruby-identifier">location</span>.<span class="ruby-identifier">import_default_programme_year_groups!</span>(
+        <span class="ruby-identifier">programmes</span>,
+        <span class="ruby-value">academic_year:</span>
+      )
+      <span class="ruby-identifier">location</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -690,13 +845,13 @@
       </div>
 
 
-      <div id="method-i-should_send_notification-3F" class="method-detail anchor-link ">
+      <div id="method-i-generic_clinic_location" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-should_send_notification-3F" title="Link to this method">
-                <span class="method-name">should_send_notification?</span>
-                <span class="method-args">(patient:, session:)</span>
+              <a href="#method-i-generic_clinic_location" title="Link to this method">
+                <span class="method-name">generic_clinic_location</span>
+                <span class="method-args">()</span>
               </a>
             </div>
 
@@ -708,23 +863,224 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="should_send_notification-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_school_session_reminders_job.rb, line 33</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_send_notification?</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">send_notifications?</span>(<span class="ruby-value">team:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">team</span>)
+          <div class="method-source-code" id="generic_clinic_location-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generic_location_factory.rb, line 53</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generic_clinic_location</span>
+  <span class="ruby-ivar">@generic_clinic_location</span> <span class="ruby-operator">||=</span>
+    <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_clinics</span>.<span class="ruby-identifier">first</span> <span class="ruby-operator">||</span>
+      <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(<span class="ruby-value">name:</span> <span class="ruby-string">&quot;Community clinic&quot;</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:generic_clinic</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
 
-  <span class="ruby-identifier">programmes</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes_for</span>(<span class="ruby-value">patient:</span>)
-  <span class="ruby-identifier">academic_year</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
 
-  <span class="ruby-identifier">all_vaccinated</span> =
-    <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">all?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">vaccinated?</span>
-    <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">all_vaccinated</span>
+        <div class="method-description">
 
-  <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consent_given_and_safe_to_vaccinate?</span>(<span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>)
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-home_educated_school_location" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-home_educated_school_location" title="Link to this method">
+                <span class="method-name">home_educated_school_location</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="home_educated_school_location-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generic_location_factory.rb, line 59</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">home_educated_school_location</span>
+  <span class="ruby-ivar">@home_educated_school_location</span> <span class="ruby-operator">||=</span>
+    <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_schools</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_HOME_EDUCATED</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(
+        <span class="ruby-value">name:</span> <span class="ruby-string">&quot;Home-educated&quot;</span>,
+        <span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_HOME_EDUCATED</span>,
+        <span class="ruby-value">type:</span> <span class="ruby-value">:generic_school</span>,
+        <span class="ruby-value">gias_phase:</span> <span class="ruby-string">&quot;not_applicable&quot;</span>
+      )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-locations" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-locations" title="Link to this method">
+                <span class="method-name">locations</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="locations-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generic_location_factory.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">locations</span>
+  [
+    <span class="ruby-identifier">generic_clinic_location</span>,
+    <span class="ruby-identifier">home_educated_school_location</span>,
+    <span class="ruby-identifier">unknown_school_location</span>
+  ]
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-unknown_school_location" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-unknown_school_location" title="Link to this method">
+                <span class="method-name">unknown_school_location</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="unknown_school_location-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generic_location_factory.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unknown_school_location</span>
+  <span class="ruby-ivar">@unknown_school_location</span> <span class="ruby-operator">||=</span>
+    <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_schools</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_UNKNOWN</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(
+        <span class="ruby-value">name:</span> <span class="ruby-string">&quot;Unknown school&quot;</span>,
+        <span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_UNKNOWN</span>,
+        <span class="ruby-value">type:</span> <span class="ruby-value">:generic_school</span>,
+        <span class="ruby-value">gias_phase:</span> <span class="ruby-string">&quot;not_applicable&quot;</span>
+      )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-year_groups" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-year_groups" title="Link to this method">
+                <span class="method-name">year_groups</span>
+                <span class="method-args">(= Location::YearGroup::DEFAULT_VALUE_RANGE.to_a)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="year_groups-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generic_location_factory.rb, line 51</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span> = <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">YearGroup</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT_VALUE_RANGE</span>.<span class="ruby-identifier">to_a</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generic_clinic_location</span>
+    <span class="ruby-ivar">@generic_clinic_location</span> <span class="ruby-operator">||=</span>
+      <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_clinics</span>.<span class="ruby-identifier">first</span> <span class="ruby-operator">||</span>
+        <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(<span class="ruby-value">name:</span> <span class="ruby-string">&quot;Community clinic&quot;</span>, <span class="ruby-value">type:</span> <span class="ruby-value">:generic_clinic</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">home_educated_school_location</span>
+    <span class="ruby-ivar">@home_educated_school_location</span> <span class="ruby-operator">||=</span>
+      <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_schools</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_HOME_EDUCATED</span>) <span class="ruby-operator">||</span>
+        <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(
+          <span class="ruby-value">name:</span> <span class="ruby-string">&quot;Home-educated&quot;</span>,
+          <span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_HOME_EDUCATED</span>,
+          <span class="ruby-value">type:</span> <span class="ruby-value">:generic_school</span>,
+          <span class="ruby-value">gias_phase:</span> <span class="ruby-string">&quot;not_applicable&quot;</span>
+        )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unknown_school_location</span>
+    <span class="ruby-ivar">@unknown_school_location</span> <span class="ruby-operator">||=</span>
+      <span class="ruby-identifier">team</span>.<span class="ruby-identifier">generic_schools</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_UNKNOWN</span>) <span class="ruby-operator">||</span>
+        <span class="ruby-constant">Location</span>.<span class="ruby-identifier">create!</span>(
+          <span class="ruby-value">name:</span> <span class="ruby-string">&quot;Unknown school&quot;</span>,
+          <span class="ruby-value">urn:</span> <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">URN_UNKNOWN</span>,
+          <span class="ruby-value">type:</span> <span class="ruby-value">:generic_school</span>,
+          <span class="ruby-value">gias_phase:</span> <span class="ruby-string">&quot;not_applicable&quot;</span>
+        )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
