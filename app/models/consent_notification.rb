@@ -35,29 +35,13 @@ class ConsentNotification < ApplicationRecord
 
   belongs_to :patient
   belongs_to :session, optional: true
-  belongs_to :team_location, optional: true
+  belongs_to :team_location
 
-  scope :left_joins_session_team_location, -> { joins(<<-SQL) }
-    LEFT JOIN sessions
-    ON sessions.id = consent_notifications.session_id
-    LEFT JOIN team_locations AS session_team_locations
-    ON session_team_locations.id = sessions.team_location_id
-  SQL
+  has_one :team, through: :team_location
 
   scope :for_academic_year,
         ->(academic_year) do
-          joined_scope =
-            left_joins(:team_location).left_joins_session_team_location
-
-          joined_scope.where(
-            "session_team_locations.academic_year = ?",
-            academic_year
-          ).or(
-            joined_scope.where(
-              "team_locations.academic_year = ?",
-              academic_year
-            )
-          )
+          joins(:team_location).where(team_locations: { academic_year: })
         end
 
   enum :type,
@@ -66,9 +50,7 @@ class ConsentNotification < ApplicationRecord
 
   scope :reminder, -> { initial_reminder.or(subsequent_reminder) }
 
-  def team = (team_location || session).team
-
-  def academic_year = (team_location || session).academic_year
+  delegate :academic_year, to: :team_location
 
   def reminder? = initial_reminder? || subsequent_reminder?
 

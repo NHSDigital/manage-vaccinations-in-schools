@@ -31,6 +31,6 @@ describe ConsentNotification do
   describe "associations" do
     it { should belong_to(:patient) }
     it { should belong_to(:session).optional(true) }
-    it { should belong_to(:team_location).optional(true) }
+    it { should belong_to(:team_location) }
   end
 end
