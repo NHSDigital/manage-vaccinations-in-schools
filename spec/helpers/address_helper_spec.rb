@@ -3,7 +3,7 @@
 describe AddressHelper do
   let(:location) do
     create(
-      :school,
+      :gias_school,
       name: "School of Politics",
       address_line_1: "10 Downing Street",
       address_town: "London",

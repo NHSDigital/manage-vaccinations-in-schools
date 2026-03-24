@@ -39,10 +39,10 @@ describe ImmunisationImport do
   end
 
   before do
-    create(:school, urn: "110158", systm_one_code: "TT110158")
-    create(:school, urn: "120026")
-    create(:school, urn: "144012")
-    create(:school, urn: "100000")
+    create(:gias_school, urn: "110158", systm_one_code: "TT110158")
+    create(:gias_school, urn: "120026")
+    create(:gias_school, urn: "144012")
+    create(:gias_school, urn: "100000")
   end
 
   let(:programmes) { [Programme.flu] }
@@ -53,7 +53,7 @@ describe ImmunisationImport do
       create(:team, ods_code: "R1L", programmes:)
     end
   end
-  let(:school) { create(:school, urn: "123456") }
+  let(:school) { create(:gias_school, urn: "123456") }
 
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("immunisation_import/#{type}/#{file}") }

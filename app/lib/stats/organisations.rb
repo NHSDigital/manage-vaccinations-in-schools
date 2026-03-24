@@ -60,8 +60,8 @@ class Stats::Organisations
   def calculate_school_total(programme)
     Team
       .where(id: teams.pluck(:id))
-      .includes(:schools)
-      .flat_map(&:schools)
+      .includes(:gias_schools)
+      .flat_map(&:gias_schools)
       .uniq
       .count { |location| location.programmes.include?(programme) }
   end

@@ -154,7 +154,10 @@ class Session < ApplicationRecord
 
   before_create :set_slug
 
-  delegate :clinic?, :generic_clinic?, :school?, to: :location
+  delegate :clinic?, :generic_clinic?, to: :location
+
+  # TODO: school?
+  def school? = location.gias_school?
 
   def to_param = slug
 

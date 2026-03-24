@@ -41,7 +41,7 @@ describe PatientChangeset do
   end
 
   let(:team) { create(:team) }
-  let(:school) { create(:school, urn: "123456", team:) }
+  let(:school) { create(:gias_school, urn: "123456", team:) }
 
   let(:valid_data) do
     {
@@ -141,7 +141,7 @@ describe PatientChangeset do
 
     context "with school change" do
       before do
-        create(:patient, nhs_number: "9990000026", school: create(:school))
+        create(:patient, nhs_number: "9990000026", school: create(:gias_school))
       end
 
       it "creates school move record" do
@@ -157,11 +157,11 @@ describe PatientChangeset do
 
     let(:another_team) { create(:team, name: "Another Team") }
     let(:school_in_other_team) do
-      create(:school, name: "School in another team", team: another_team)
+      create(:gias_school, name: "School in another team", team: another_team)
     end
 
     context "when new location is a known school" do
-      let(:school) { create(:school) }
+      let(:school) { create(:gias_school) }
 
       before do
         create(:patient, nhs_number: "9990000026", school: school_in_other_team)

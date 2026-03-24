@@ -15,7 +15,7 @@ class Generate::CohortImports
   )
     @team = team
     @programmes = programmes.presence || team.programmes
-    @urns = urns || @team.schools.pluck(:urn)
+    @urns = urns || @team.gias_schools.pluck(:urn)
     @school_year_groups = school_year_groups
     @patient_count = patient_count
     @progress_bar = progress_bar

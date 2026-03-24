@@ -214,7 +214,7 @@ class Reports::SystmOneExporter
 
     if location&.systm_one_code.present?
       location.systm_one_code
-    elsif location&.school?
+    elsif location&.gias_school?
       location.urn
     elsif location
       location.ods_code

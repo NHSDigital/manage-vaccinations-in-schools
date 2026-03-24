@@ -6,10 +6,10 @@ describe TrainingOnboardingConfiguration do
   let(:ods_code) { "ABC" }
   let(:workgroup) { "abc" }
 
-  let!(:unattached_primary_school) { create(:school, :open, :primary) }
-  let!(:unattached_secondary_school) { create(:school, :open, :secondary) }
+  let!(:unattached_primary_school) { create(:gias_school, :open, :primary) }
+  let!(:unattached_secondary_school) { create(:gias_school, :open, :secondary) }
 
-  before { create(:school, :open, team: create(:team)) }
+  before { create(:gias_school, :open, team: create(:team)) }
 
   context "when cis2 is disabled", cis2: :disabled do
     context "when type is point_of_care" do

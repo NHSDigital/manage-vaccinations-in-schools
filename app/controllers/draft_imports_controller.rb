@@ -38,7 +38,7 @@ class DraftImportsController < ApplicationController
   end
 
   def set_location_options
-    @location_options = policy_scope(Location).school
+    @location_options = policy_scope(Location).gias_school
   end
 
   def set_year_group_options

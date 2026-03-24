@@ -87,7 +87,7 @@ class TrainingOnboardingConfiguration
   def schools
     scope =
       Location
-        .school
+        .gias_school
         .open
         .without_team(academic_year:)
         .order("RANDOM()")

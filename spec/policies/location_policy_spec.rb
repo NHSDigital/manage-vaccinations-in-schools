@@ -9,7 +9,7 @@ describe LocationPolicy do
   let(:national_reporting_user) do
     create(:nurse, teams: [national_reporting_team])
   end
-  let(:location) { create(:school) }
+  let(:location) { create(:gias_school) }
 
   permissions :index?, :show? do
     it { should permit(point_of_care_user, location) }

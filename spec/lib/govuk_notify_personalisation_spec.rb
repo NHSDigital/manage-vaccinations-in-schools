@@ -50,7 +50,7 @@ describe GovukNotifyPersonalisation do
       date_of_birth: Date.new(2013, 2, 1)
     )
   end
-  let(:location) { create(:school, name: "Hogwarts", subteam:) }
+  let(:location) { create(:gias_school, name: "Hogwarts", subteam:) }
   let(:session) do
     create(:session, location:, team:, programmes:, date: Date.new(2026, 1, 1))
   end
@@ -112,7 +112,7 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with a team location and no session" do
-    let(:location) { create(:school) }
+    let(:location) { create(:gias_school) }
     let(:team_location) { create(:team_location, team:, location:) }
     let(:session) { nil }
 
@@ -593,7 +593,7 @@ describe GovukNotifyPersonalisation do
 
     context "where the school is different" do
       let(:session) { nil }
-      let(:school) { create(:school, name: "Waterloo Road", team:) }
+      let(:school) { create(:gias_school, name: "Waterloo Road", team:) }
 
       let(:consent_form) do
         create(

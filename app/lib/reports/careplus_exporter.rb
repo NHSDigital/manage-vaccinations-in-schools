@@ -199,7 +199,7 @@ class Reports::CareplusExporter
               "",
               date.strftime("%d/%m/%Y"),
               records.first.performed_at.strftime("%H:%M"),
-              session.location.school? ? "SC" : "CL", # Venue Type
+              session.location.gias_school? ? "SC" : "CL", # Venue Type
               session.location.dfe_number || team.careplus_venue_code, # Venue Code
               team.careplus_staff_type,
               team.careplus_staff_code,

@@ -52,7 +52,8 @@ describe "Parental consent" do
   def given_an_mmr_programme_is_underway
     @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    location = create(:school, name: "Pilot School", programmes: [@programme])
+    location =
+      create(:gias_school, name: "Pilot School", programmes: [@programme])
     @session = create(:session, :scheduled, programmes: [@programme], location:)
     @child =
       create(

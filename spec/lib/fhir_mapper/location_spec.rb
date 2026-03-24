@@ -10,7 +10,7 @@ describe FHIRMapper::Location do
       subject(:identifier) { fhir_reference.identifier }
 
       context "location is a school" do
-        let(:location) { create(:school, urn: "654321") }
+        let(:location) { create(:gias_school, urn: "654321") }
 
         its(:system) do
           should eq "https://fhir.hl7.org.uk/Id/urn-school-number"

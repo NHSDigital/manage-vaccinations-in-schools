@@ -6,7 +6,7 @@ describe PDSCascadingSearchJob do
 
   let(:today) { Time.zone.local(2025, 9, 1, 12, 0, 0) }
   let(:programme) { Programme.hpv }
-  let(:school) { create(:school, urn: "123456", team:) }
+  let(:school) { create(:gias_school, urn: "123456", team:) }
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) do
     create(:session, team:, location: school, programmes: [programme])

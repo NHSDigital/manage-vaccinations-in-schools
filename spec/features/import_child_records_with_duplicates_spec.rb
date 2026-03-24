@@ -191,7 +191,7 @@ describe "Child record imports duplicates" do
   end
 
   def and_an_hpv_programme_is_underway
-    @school = create(:school, urn: "123456", team: @team)
+    @school = create(:gias_school, urn: "123456", team: @team)
 
     @session =
       create(:session, team: @team, location: @school, programmes: [@programme])

@@ -89,14 +89,14 @@ describe "mavis stats organisations" do
 
     school1 =
       create(
-        :school,
+        :gias_school,
         name: "Hogwarts",
         team: @team_a,
         programmes: [programme_flu]
       )
     school2 =
       create(
-        :school,
+        :gias_school,
         name: "East High",
         team: @team_b,
         programmes: [programme_hpv]

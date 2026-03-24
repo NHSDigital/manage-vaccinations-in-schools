@@ -74,7 +74,7 @@ describe "Parental consent manual matching" do
 
     @team = create(:team, :with_one_nurse, programmes:)
     @user = @team.users.first
-    @school = create(:school, name: "Pilot School", team: @team)
+    @school = create(:gias_school, name: "Pilot School", team: @team)
     @session = create(:session, location: @school, team: @team, programmes:)
     @consent_form =
       create(

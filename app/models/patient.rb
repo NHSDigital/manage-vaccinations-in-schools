@@ -811,7 +811,7 @@ class Patient < ApplicationRecord
       errors.add(:gp_practice, "must be a GP practice location type")
     end
 
-    if school && !(school.school? || school.generic_school?)
+    if school && !(school.gias_school? || school.generic_school?)
       errors.add(:school, "must be a school location type")
     end
   end

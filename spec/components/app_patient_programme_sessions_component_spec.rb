@@ -21,7 +21,12 @@ describe AppPatientProgrammeSessionsComponent do
     let(:programmes) { [Programme.hpv, Programme.mmr, Programme.flu] }
 
     let(:location) do
-      create(:school, name: "Waterloo Road", programmes:, academic_year: 2024)
+      create(
+        :gias_school,
+        name: "Waterloo Road",
+        programmes:,
+        academic_year: 2024
+      )
     end
     let(:session) do
       create(
@@ -53,7 +58,7 @@ describe AppPatientProgrammeSessionsComponent do
     context "with multiple sessions" do
       let(:other_location) do
         create(
-          :school,
+          :gias_school,
           name: "Paddington Road",
           programmes: other_programmes,
           academic_year: 2024

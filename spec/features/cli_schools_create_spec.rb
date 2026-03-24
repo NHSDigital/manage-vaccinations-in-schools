@@ -23,7 +23,7 @@ describe "mavis schools create" do
   end
 
   def then_the_school_is_created
-    location = Location.school.find_by(urn: "123456")
+    location = Location.gias_school.find_by(urn: "123456")
     expect(location).to be_open
     expect(location.name).to eq("MySchool")
     expect(location.name).to eq("MySchool")

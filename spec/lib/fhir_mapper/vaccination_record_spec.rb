@@ -7,7 +7,7 @@ describe FHIRMapper::VaccinationRecord do
   let(:organisation) { create(:organisation) }
   let(:team) { create(:team, organisation:, programmes: [programme]) }
   let(:programme) { Programme.hpv }
-  let(:school) { create(:school, urn: "100006") }
+  let(:school) { create(:gias_school, urn: "100006") }
   let(:session) do
     create(:session, location: school, programmes: [programme], team:)
   end

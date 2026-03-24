@@ -63,7 +63,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
   end
 
   def school_urn_row
-    return unless show_location && location.school?
+    return unless show_location && location.gias_school?
 
     {
       key: {

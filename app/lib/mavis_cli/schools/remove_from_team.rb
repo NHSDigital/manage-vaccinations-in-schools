@@ -40,7 +40,7 @@ module MavisCLI
 
         locations =
           urns.filter_map do |urn|
-            location = Location.school.find_by_urn_and_site(urn)
+            location = Location.gias_school.find_by_urn_and_site(urn)
 
             warn "Could not find school with URN #{urn}" if location.nil?
             location

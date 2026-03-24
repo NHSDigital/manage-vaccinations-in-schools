@@ -117,7 +117,9 @@ FactoryBot.define do
       session&.team_location || location.attach_to_team!(team, academic_year:)
     end
 
-    school { location.school? ? location : association(:school, team:) }
+    school do
+      location.gias_school? ? location : association(:gias_school, team:)
+    end
     school_confirmed { true }
 
     ethnic_group { ConsentForm.ethnic_backgrounds_by_group.keys.sample }

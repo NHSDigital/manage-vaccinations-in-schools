@@ -67,7 +67,7 @@ describe PatientsHelper do
     end
 
     context "with a school" do
-      let(:school) { create(:school, name: "Waterloo Road") }
+      let(:school) { create(:gias_school, name: "Waterloo Road") }
       let(:patient) { create(:patient, school:) }
 
       it { should eq("Waterloo Road") }

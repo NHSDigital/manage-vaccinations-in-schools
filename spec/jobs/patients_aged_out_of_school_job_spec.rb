@@ -7,7 +7,7 @@ describe PatientsAgedOutOfSchoolJob do
 
   let(:programme) { Programme.flu }
   let(:team) { create(:team, programmes: [programme]) }
-  let(:school) { create(:school, :secondary, team:) }
+  let(:school) { create(:gias_school, :secondary, team:) }
 
   # This date of birth corresponds to year 11 in 2024/25.
   let(:date_of_birth) { Date.new(2008, 1, 1) }

@@ -56,7 +56,7 @@ describe "mavis schools show" do
     team = create(:team, programme_types: %w[flu hpv])
     @school =
       create(
-        :school,
+        :gias_school,
         name: "Test School",
         urn: "123456",
         team:
@@ -94,7 +94,7 @@ describe "mavis schools show" do
 
   def and_a_site_with_the_same_urn_exists
     @site =
-      create(:school, name: "Test School Site B", urn: "123456", site: "B")
+      create(:gias_school, name: "Test School Site B", urn: "123456", site: "B")
   end
 
   def and_the_school_has_patients_across_academic_years
@@ -176,8 +176,8 @@ describe "mavis schools show" do
   end
 
   def given_a_school_with_sites_exists
-    @school = create(:school, name: "Test School", urn: "123456")
-    @site = create(:school, name: "Site B", urn: "123456", site: "B")
+    @school = create(:gias_school, name: "Test School", urn: "123456")
+    @site = create(:gias_school, name: "Site B", urn: "123456", site: "B")
   end
 
   def when_i_run_the_command

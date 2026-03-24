@@ -181,7 +181,7 @@ def write_vaccination_records_to_file(vaccination_records)
         if (school = vaccination_record.patient.school)
           school.name
         elsif !vaccination_record.patient.home_educated
-          vaccination_record.team.schools.all.sample.name
+          vaccination_record.team.gias_schools.all.sample.name
         end
 
       csv << [

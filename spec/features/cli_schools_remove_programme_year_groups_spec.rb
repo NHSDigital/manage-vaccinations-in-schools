@@ -45,7 +45,7 @@ describe "mavis schools remove-programme-year-group" do
   end
 
   def given_the_school_exists
-    @school = create(:school, urn: "123456")
+    @school = create(:gias_school, urn: "123456")
   end
 
   def and_the_programme_exists

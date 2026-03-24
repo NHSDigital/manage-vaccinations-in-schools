@@ -13,7 +13,7 @@ describe "MenACWY and Td/IPV vaccination" do
     programmes = [Programme.menacwy, Programme.td_ipv]
     team = create(:team, :with_one_admin, programmes:)
 
-    location = create(:school, team:)
+    location = create(:gias_school, team:)
 
     @session = create(:session, team:, programmes:, location:)
     @patient =

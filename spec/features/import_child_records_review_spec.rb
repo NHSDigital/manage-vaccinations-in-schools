@@ -29,7 +29,7 @@ describe "Import child records review" do
     @user = @team.users.first
 
     # Create a school in this team (children can be uploaded here)
-    create(:school, urn: "123456", team: @team)
+    create(:gias_school, urn: "123456", team: @team)
 
     sign_in @user
   end
@@ -40,7 +40,7 @@ describe "Import child records review" do
       create(:team, :with_one_nurse, programmes:, name: "Other Team")
     @other_school =
       create(
-        :school,
+        :gias_school,
         urn: "111222",
         name: "Other Team School",
         team: @other_team

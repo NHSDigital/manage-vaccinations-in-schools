@@ -8,7 +8,7 @@ describe AppProgrammeSessionTableComponent do
   let(:programme) { Programme.sample }
   let(:academic_year) { AcademicYear.current }
   let(:location) do
-    create(:school, name: "Waterloo Road", programmes: [programme])
+    create(:gias_school, name: "Waterloo Road", programmes: [programme])
   end
   let(:session) { create(:session, programmes: [programme], location:) }
   let(:sessions) do

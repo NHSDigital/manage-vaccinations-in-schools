@@ -89,13 +89,13 @@ describe GIAS do
     end
 
     it "updates existing schools" do
-      create(:school, urn: "100000", name: "Old Name")
+      create(:gias_school, urn: "100000", name: "Old Name")
       import
       expect(Location.find_by(urn: "100000").name).to eq("The Aldgate School")
     end
 
     it "updates sites" do
-      create(:school, urn: "100000", site: "A", name: "Site A")
+      create(:gias_school, urn: "100000", site: "A", name: "Site A")
       import
       site = Location.find_by(urn: "100000", site: "A")
       expect(site.status).to eq("closed") # closed, same as main school in CSV
@@ -108,7 +108,7 @@ describe GIAS do
     it "returns correct counts" do
       programme = Programme.hpv
       team = create(:team, ods_code: "A9A5A", programmes: [programme])
-      school = create(:school, urn: "100000", gias_year_groups: [1, 2, 3])
+      school = create(:gias_school, urn: "100000", gias_year_groups: [1, 2, 3])
       create(
         :session,
         location: school,

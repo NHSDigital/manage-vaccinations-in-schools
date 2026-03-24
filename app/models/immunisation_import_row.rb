@@ -352,7 +352,7 @@ class ImmunisationImportRow
     return unless location.nil?
 
     if is_school_setting? || (is_unknown_setting? && clinic_name.blank?)
-      school&.school? ? school.name : school_name&.to_s || "Unknown"
+      school&.gias_school? ? school.name : school_name&.to_s || "Unknown"
     else
       clinic&.name || clinic_name&.to_s || "Unknown"
     end
@@ -383,8 +383,8 @@ class ImmunisationImportRow
       elsif school_urn.to_s == Location::URN_UNKNOWN
         team.unknown_school
       elsif school_urn.present?
-        Location.school.find_by_urn_and_site(school_urn.to_s) ||
-          Location.school.find_by(systm_one_code: school_urn.to_s)
+        Location.gias_school.find_by_urn_and_site(school_urn.to_s) ||
+          Location.gias_school.find_by(systm_one_code: school_urn.to_s)
       end
   end
 
@@ -1173,8 +1173,8 @@ class ImmunisationImportRow
     school_urn_acceptable =
       school_urn.to_s.in?(
         [Location::URN_HOME_EDUCATED, Location::URN_UNKNOWN]
-      ) || Location.school.where_urn_and_site(school_urn.to_s).exists? ||
-        Location.school.exists?(systm_one_code: school_urn.to_s)
+      ) || Location.gias_school.where_urn_and_site(school_urn.to_s).exists? ||
+        Location.gias_school.exists?(systm_one_code: school_urn.to_s)
 
     unless school_urn_acceptable
       errors.add(

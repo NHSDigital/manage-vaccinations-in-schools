@@ -17,7 +17,7 @@ describe AppPatientVaccinationTableComponent do
   context "with a vaccination record" do
     let(:location) do
       create(
-        :school,
+        :gias_school,
         name: "Test School",
         address_line_1: "Waterloo Road",
         address_town: "London",

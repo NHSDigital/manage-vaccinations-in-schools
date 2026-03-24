@@ -94,7 +94,7 @@ describe "MMR vaccination" do
   def given_i_am_signed_in_with_mmr_programme
     @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @location = create(:school, team: @team)
+    @location = create(:gias_school, team: @team)
     @session =
       create(
         :session,

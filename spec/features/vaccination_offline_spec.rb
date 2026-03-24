@@ -107,7 +107,7 @@ describe "Offline vaccination" do
     programmes = [Programme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
-    school = clinic ? @team.unknown_school : create(:school, team: @team)
+    school = clinic ? @team.unknown_school : create(:gias_school, team: @team)
     previous_date = 1.month.ago.to_date
 
     if clinic
@@ -188,7 +188,7 @@ describe "Offline vaccination" do
     programmes = [Programme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
-    school = create(:school, team: @team)
+    school = create(:gias_school, team: @team)
     previous_date = 1.month.ago.to_date
 
     vaccine = programmes.first.vaccines.active.first
@@ -220,7 +220,7 @@ describe "Offline vaccination" do
     programmes = [Programme.flu]
 
     @team = create(:team, :with_one_nurse, programmes:, ods_code: "B0C4P")
-    school = create(:school, team: @team)
+    school = create(:gias_school, team: @team)
 
     vaccine = programmes.first.vaccines.active.first
     @batch = create(:batch, :not_expired, team: @team, vaccine:)

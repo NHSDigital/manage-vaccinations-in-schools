@@ -94,7 +94,7 @@ describe ImmunisationImportRow do
   end
 
   let!(:location) do
-    create(:school, urn: "123456", name: "Waterloo Road", programmes:)
+    create(:gias_school, urn: "123456", name: "Waterloo Road", programmes:)
   end
 
   let(:import_type) { "point_of_care" }

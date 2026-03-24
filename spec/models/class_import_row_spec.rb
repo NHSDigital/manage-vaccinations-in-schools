@@ -25,7 +25,7 @@ describe ClassImportRow do
   let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }
   let(:academic_year) { AcademicYear.pending }
-  let(:school) { create(:school, team:) }
+  let(:school) { create(:gias_school, team:) }
   let(:session) { create(:session, team:, programmes:, location: school) }
 
   let(:valid_data) do

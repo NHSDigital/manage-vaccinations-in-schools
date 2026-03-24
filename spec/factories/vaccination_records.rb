@@ -97,7 +97,8 @@ FactoryBot.define do
 
     patient do
       association :patient,
-                  school: session&.location&.school? ? session.location : nil
+                  school:
+                    session&.location&.gias_school? ? session.location : nil
     end
 
     delivery_site { "left_arm_upper_position" }

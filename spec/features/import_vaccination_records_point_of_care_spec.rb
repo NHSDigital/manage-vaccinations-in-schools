@@ -48,7 +48,7 @@ describe "Immunisation imports" do
     programme = Programme.hpv
     @team =
       create(:team, :with_one_nurse, ods_code: "R1L", programmes: [programme])
-    location = create(:school, team: @team)
+    location = create(:gias_school, team: @team)
     @session = create(:session, programmes: [programme], location:, team: @team)
   end
 
@@ -57,9 +57,9 @@ describe "Immunisation imports" do
   end
 
   def and_school_locations_exist
-    create(:school, urn: "110158")
-    create(:school, urn: "120026")
-    create(:school, urn: "144012")
+    create(:gias_school, urn: "110158")
+    create(:gias_school, urn: "120026")
+    create(:gias_school, urn: "144012")
   end
 
   def given_a_patient_exists

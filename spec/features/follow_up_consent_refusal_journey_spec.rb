@@ -75,7 +75,7 @@ describe "Follow-up parent journey" do
   def given_an_hpv_programme_is_underway
     @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    location = create(:school, name: "Pilot School", team: @team)
+    location = create(:gias_school, name: "Pilot School", team: @team)
     @session =
       create(
         :session,

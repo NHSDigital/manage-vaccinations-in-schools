@@ -66,7 +66,11 @@ describe SessionSearchForm do
     let(:programmes) { [Programme.sample] }
 
     let!(:session_to_include) do
-      create(:session, location: create(:school, name: "School"), programmes:)
+      create(
+        :session,
+        location: create(:gias_school, name: "School"),
+        programmes:
+      )
     end
 
     before do
@@ -83,12 +87,16 @@ describe SessionSearchForm do
   end
 
   context "when filtering on the type" do
-    let(:params) { { "type" => "school" } }
+    let(:params) { { "type" => "gias_school" } }
 
     let(:programmes) { [Programme.sample] }
 
     let!(:session_to_include) do
-      create(:session, location: create(:school, name: "School"), programmes:)
+      create(
+        :session,
+        location: create(:gias_school, name: "School"),
+        programmes:
+      )
     end
 
     before do

@@ -67,7 +67,7 @@ class DraftSchoolsController < ApplicationController
   def set_school_options
     @school_options =
       policy_scope(Location)
-        .school
+        .gias_school
         .joins(:team_locations)
         .where(team_locations: { academic_year: AcademicYear.pending })
         .distinct

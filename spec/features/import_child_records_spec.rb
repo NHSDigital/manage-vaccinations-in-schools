@@ -123,7 +123,7 @@ describe "Import child records" do
 
     @team = create(:team, :with_one_nurse, programmes:)
 
-    create(:school, urn: "123456", team: @team)
+    create(:gias_school, urn: "123456", team: @team)
     @user = @team.users.first
   end
 

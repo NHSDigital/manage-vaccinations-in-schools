@@ -79,7 +79,7 @@ describe "Triage" do
   def given_a_programme_with_a_running_session
     programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
-    @school = create(:school, team: @team)
+    @school = create(:gias_school, team: @team)
 
     @session = create(:session, team: @team, programmes:, location: @school)
   end
@@ -87,7 +87,7 @@ describe "Triage" do
   def given_a_programme_with_a_running_session_for_team(ods_code:)
     programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:, ods_code:)
-    @school = create(:school, team: @team)
+    @school = create(:gias_school, team: @team)
 
     @session = create(:session, team: @team, programmes:, location: @school)
   end

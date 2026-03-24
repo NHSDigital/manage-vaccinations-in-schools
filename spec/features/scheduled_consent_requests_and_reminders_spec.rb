@@ -82,7 +82,7 @@ describe "Scheduled consent requests and reminders" do
       Programme.td_ipv
     ]
     @team = create(:team, :with_one_nurse, programmes:)
-    @location = create(:school, team: @team)
+    @location = create(:gias_school, team: @team)
     @session =
       create(
         :session,

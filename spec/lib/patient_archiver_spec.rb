@@ -43,7 +43,12 @@ describe PatientArchiver do
 
   context "with a school move for a school in the same team" do
     let!(:school_move) do
-      create(:school_move, :to_school, patient:, school: create(:school, team:))
+      create(
+        :school_move,
+        :to_school,
+        patient:,
+        school: create(:gias_school, team:)
+      )
     end
 
     it "deletes the school move" do

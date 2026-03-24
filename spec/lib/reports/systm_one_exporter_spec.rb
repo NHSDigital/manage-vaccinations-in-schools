@@ -19,7 +19,7 @@ describe Reports::SystmOneExporter do
   let(:programme) { Programme.hpv }
   let(:academic_year) { AcademicYear.current }
   let(:team) { create(:team, ods_code: "ABC123", programmes: [programme]) }
-  let(:location) { create(:school) }
+  let(:location) { create(:gias_school) }
   let(:session) { create(:session, team:, programmes: [programme], location:) }
   let(:patient) { create(:patient) }
   let(:vaccination_record) do
@@ -176,7 +176,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "location has a SystmOne code" do
-      let(:location) { create(:school, systm_one_code: "A1") }
+      let(:location) { create(:gias_school, systm_one_code: "A1") }
 
       it { should eq("A1") }
     end

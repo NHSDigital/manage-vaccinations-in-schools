@@ -11,7 +11,7 @@ describe AppPatientSearchResultCardComponent do
       family_name: "Seldon",
       given_name: "Hari",
       nhs_number: "9000000009",
-      school: build(:school, name: "Streeling University")
+      school: build(:gias_school, name: "Streeling University")
     )
   end
 

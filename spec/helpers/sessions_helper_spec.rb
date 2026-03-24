@@ -133,7 +133,9 @@ describe SessionsHelper do
     end
 
     context "with a school location" do
-      let(:location) { create(:school, name: "Waterloo Road", programmes:) }
+      let(:location) do
+        create(:gias_school, name: "Waterloo Road", programmes:)
+      end
 
       context "when unscheduled" do
         let(:session) { create(:session, :unscheduled, programmes:, location:) }

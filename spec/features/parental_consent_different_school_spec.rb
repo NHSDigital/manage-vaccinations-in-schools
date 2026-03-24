@@ -27,8 +27,9 @@ describe "Parental consent" do
 
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    @original_location = create(:school, team: @team, name: "Original School")
-    @actual_location = create(:school, team: @team, name: "Actual School")
+    @original_location =
+      create(:gias_school, team: @team, name: "Original School")
+    @actual_location = create(:gias_school, team: @team, name: "Actual School")
 
     @session =
       create(

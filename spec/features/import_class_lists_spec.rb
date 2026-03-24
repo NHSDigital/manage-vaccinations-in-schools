@@ -78,7 +78,7 @@ describe "Import class lists" do
     programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
 
-    location = create(:school, name: "Waterloo Road", team: @team)
+    location = create(:gias_school, name: "Waterloo Road", team: @team)
 
     @user = @team.users.first
 

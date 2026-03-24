@@ -77,7 +77,8 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
       .map { |vaccine| FactoryBot.build(:batch, :not_expired, team:, vaccine:) }
   )
 
-  location = FactoryBot.create(:school, team:, gias_year_groups: year_groups)
+  location =
+    FactoryBot.create(:gias_school, team:, gias_year_groups: year_groups)
   date = completed ? 1.week.ago.to_date : Date.current
 
   academic_year = AcademicYear.current
@@ -218,7 +219,7 @@ def create_school_moves(team)
         :school_move,
         :to_school,
         patient:,
-        school: team.schools.sample
+        school: team.gias_schools.sample
       )
     end
   end

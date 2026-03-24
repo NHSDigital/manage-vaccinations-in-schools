@@ -60,7 +60,7 @@ describe PatientLocation do
       end
 
       context "in a session with the right year group for the programme but not the location" do
-        let(:location) { create(:school, :secondary) }
+        let(:location) { create(:gias_school, :secondary) }
         let(:session) { create(:session, location:, programmes:) }
         let(:patient) { create(:patient, year_group: 9) }
 

@@ -69,7 +69,7 @@ describe "Edit session programmes" do
 
     @team = create(:team, :with_one_nurse, programmes: @programmes)
 
-    @location = create(:school, team: @team, programmes: @programmes)
+    @location = create(:gias_school, team: @team, programmes: @programmes)
   end
 
   def and_an_hpv_session_already_exists

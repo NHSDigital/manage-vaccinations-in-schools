@@ -35,7 +35,7 @@ FactoryBot.define do
     source { SchoolMove.sources.keys.sample }
 
     trait :to_school do
-      school
+      school { association(:gias_school) }
     end
 
     trait :to_home_educated do

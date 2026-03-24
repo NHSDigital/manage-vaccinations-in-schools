@@ -32,7 +32,7 @@ FactoryBot.define do
     user
 
     home_educated { nil }
-    school
+    school { association(:gias_school) }
 
     trait :home_educated do
       home_educated { true }

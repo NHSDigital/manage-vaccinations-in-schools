@@ -62,7 +62,7 @@ describe NameValidator do
       let(:validator) do
         described_class.new(attributes: [:name], school_name: true)
       end
-      let(:record) { build(:school) }
+      let(:record) { build(:gias_school) }
 
       context "with valid school names" do
         context "with valid school names" do

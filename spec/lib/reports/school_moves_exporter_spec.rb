@@ -13,7 +13,7 @@ describe Reports::SchoolMovesExporter do
     let(:one_day_ago) { 1.day.ago }
     let(:three_days_ago) { 3.days.ago }
 
-    let(:school) { create(:school, :secondary, team:) }
+    let(:school) { create(:gias_school, :secondary, team:) }
 
     before do
       3.times do
@@ -52,8 +52,8 @@ describe Reports::SchoolMovesExporter do
     let(:rows) { CSV.parse(csv_data, headers: true) }
 
     context "with a standard school move" do
-      let(:old_school) { create(:school, :secondary, team:) }
-      let(:new_school) { create(:school, :secondary, team:) }
+      let(:old_school) { create(:gias_school, :secondary, team:) }
+      let(:new_school) { create(:gias_school, :secondary, team:) }
 
       before do
         patient = create(:patient, school: old_school, team:)
@@ -115,7 +115,7 @@ describe Reports::SchoolMovesExporter do
     context "when moving to a school with a SystmOne code" do
       before do
         session = create(:session, team:)
-        school = create(:school, systm_one_code: "ABC")
+        school = create(:gias_school, systm_one_code: "ABC")
         patient = create(:patient, school:, session:)
         create(:school_move_log_entry, :unknown_school, patient:)
       end
@@ -129,7 +129,7 @@ describe Reports::SchoolMovesExporter do
       before do
         session = create(:session, team:)
         patient = create(:patient, school: nil, session:)
-        new_school = create(:school, urn: "123456", team: session.team)
+        new_school = create(:gias_school, urn: "123456", team: session.team)
 
         create(:school_move_log_entry, :unknown_school, patient:)
         create(:school_move_log_entry, :home_educated, patient:)
@@ -147,8 +147,8 @@ describe Reports::SchoolMovesExporter do
       let(:team_a) { create(:team) }
       let(:team_b) { create(:team) }
 
-      let(:school_a) { create(:school, :secondary, team: team_a) }
-      let(:school_b) { create(:school, :secondary, team: team_b) }
+      let(:school_a) { create(:gias_school, :secondary, team: team_a) }
+      let(:school_b) { create(:gias_school, :secondary, team: team_b) }
 
       let(:session) { create(:session, team: team_b) }
       let(:patient) { create(:patient, session:) }

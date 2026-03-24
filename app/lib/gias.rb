@@ -66,7 +66,7 @@ module GIAS
           next if gias_establishment_number.blank?
 
           schools << Location.new(
-            type: :school,
+            type: "gias_school",
             urn: row["URN"],
             gias_local_authority_code: row["LA (code)"],
             gias_establishment_number:,
@@ -110,7 +110,7 @@ module GIAS
         existing:
           Set.new(
             Location
-              .school
+              .gias_school
               .joins(:sessions)
               .merge(Session.scheduled)
               .pluck(:urn)
@@ -131,12 +131,12 @@ module GIAS
         }
       }
 
-      existing_schools = Set.new(Location.school.pluck(:urn))
+      existing_schools = Set.new(Location.gias_school.pluck(:urn))
       team_schools =
         Set.new(
           TeamLocation
             .joins(:location)
-            .merge(Location.school)
+            .merge(Location.gias_school)
             .pluck(:"locations.urn")
         )
 
@@ -394,7 +394,7 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
       return unless urn.in? existing_schools
 
       new_year_groups = process_year_groups(row)
-      current_year_groups = Location.school.find_by(urn:).gias_year_groups
+      current_year_groups = Location.gias_school.find_by(urn:).gias_year_groups
 
       if new_year_groups != current_year_groups
         school_set[:year_group_changes][urn] = {
@@ -415,7 +415,7 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
     def format_successors_with_teams(successor_urns)
       annotated_successor_urns =
         successor_urns.map do |successor_urn|
-          locations = Location.school.where(urn: successor_urn)
+          locations = Location.gias_school.where(urn: successor_urn)
 
           if locations.count == 1
             teams = locations.sole.teams.uniq

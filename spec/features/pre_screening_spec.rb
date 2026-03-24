@@ -72,7 +72,7 @@ describe "Pre-screening" do
         :session,
         team:,
         programmes: [programme],
-        location: create(:school, team:)
+        location: create(:gias_school, team:)
       )
 
     @patient =

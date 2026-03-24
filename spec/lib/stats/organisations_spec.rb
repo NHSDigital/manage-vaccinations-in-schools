@@ -194,7 +194,7 @@ describe Stats::Organisations do
 
       school1 =
         create(
-          :school,
+          :gias_school,
           name: "Primary School",
           team: target_team,
           programmes: [programme_flu, programme_hpv]
@@ -209,7 +209,7 @@ describe Stats::Organisations do
 
       school2 =
         create(
-          :school,
+          :gias_school,
           name: "Secondary School",
           team: target_team2,
           programmes: [programme_flu]

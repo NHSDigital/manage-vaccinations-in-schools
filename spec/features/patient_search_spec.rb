@@ -53,7 +53,7 @@ describe "Patient search" do
     programmes = [Programme.hpv]
     team = create(:team, :with_one_nurse, programmes:)
 
-    location = create(:school, name: "Waterloo Road", team:)
+    location = create(:gias_school, name: "Waterloo Road", team:)
     @session = create(:session, location:, team:, programmes:)
 
     [

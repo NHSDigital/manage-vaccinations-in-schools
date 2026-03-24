@@ -12,7 +12,9 @@ class SchoolsController < ApplicationController
 
     locations =
       @form.apply(
-        policy_scope(Location).school.or(policy_scope(Location).generic_school)
+        policy_scope(Location).gias_school.or(
+          policy_scope(Location).generic_school
+        ) # TODO: school
       )
 
     @pagy, @locations = pagy(locations)

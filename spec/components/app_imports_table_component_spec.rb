@@ -11,7 +11,7 @@ describe AppImportsTableComponent do
 
   let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }
-  let(:school) { create(:school, team:, name: "Test School") }
+  let(:school) { create(:gias_school, team:, name: "Test School") }
   let(:session) { create(:session, programmes:, location: school) }
   let(:uploaded_files) { false }
   let(:mixnmatch_imports) do

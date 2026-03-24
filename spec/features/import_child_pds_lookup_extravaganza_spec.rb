@@ -117,7 +117,7 @@ describe "Import child records" do
   def and_an_hpv_programme_is_underway
     @school =
       create(
-        :school,
+        :gias_school,
         urn: "123456",
         name: "Waterloo Road",
         gias_year_groups: [7, 8, 9, 10],
@@ -165,7 +165,7 @@ describe "Import child records" do
         session: @session
       )
 
-    @different_school = create(:school, urn: "456789", team: @team)
+    @different_school = create(:gias_school, urn: "456789", team: @team)
     @different_school_session =
       create(
         :session,

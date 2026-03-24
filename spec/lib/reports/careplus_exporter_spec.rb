@@ -48,7 +48,7 @@ describe Reports::CareplusExporter do
     end
     let(:location) do
       create(
-        :school,
+        :gias_school,
         gias_local_authority_code: 123,
         gias_establishment_number: 456
       )
@@ -408,7 +408,7 @@ describe Reports::CareplusExporter do
   context "include_missing_nhs_number parameter" do
     let(:programme) { Programme.hpv }
     let(:team) { create(:team, programmes: [programme]) }
-    let(:location) { create(:school) }
+    let(:location) { create(:gias_school) }
     let(:session) do
       create(:session, team:, programmes: [programme], location:)
     end
@@ -484,7 +484,7 @@ describe Reports::CareplusExporter do
   context "include_gender parameter" do
     let(:programme) { Programme.hpv }
     let(:team) { create(:team, programmes: [programme]) }
-    let(:location) { create(:school) }
+    let(:location) { create(:gias_school) }
     let(:session) do
       create(:session, team:, programmes: [programme], location:)
     end
@@ -530,7 +530,7 @@ describe Reports::CareplusExporter do
     let(:programme) { Programme.hpv }
     let(:vaccine) { programme.vaccines.first }
     let(:team) { create(:team, programmes: [programme]) }
-    let(:location) { create(:school) }
+    let(:location) { create(:gias_school) }
     let(:session) do
       create(:session, team:, programmes: [programme], location:)
     end

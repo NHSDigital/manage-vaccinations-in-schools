@@ -103,7 +103,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       subject(:rows) { CSV.parse(call, headers: true) }
 
       context "a school session" do
-        let(:location) { create(:school, subteam:) }
+        let(:location) { create(:gias_school, subteam:) }
 
         it { should be_empty }
 

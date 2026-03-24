@@ -10,7 +10,7 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   let(:changesets) { [] }
 
   describe "table structure" do
-    let(:school) { create(:school, team:, name: "Test School") }
+    let(:school) { create(:gias_school, team:, name: "Test School") }
     let(:patient) { create(:patient, school:) }
     let(:changesets) do
       [create(:patient_changeset, import:, patient:, row_number: 1)]
@@ -28,8 +28,8 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   end
 
   describe "with school move to different school (same team)" do
-    let(:current_school) { create(:school, team:, name: "Current School") }
-    let(:destination_school) { create(:school, team:, name: "New School") }
+    let(:current_school) { create(:gias_school, team:, name: "Current School") }
+    let(:destination_school) { create(:gias_school, team:, name: "New School") }
     let(:patient) do
       create(
         :patient,
@@ -90,12 +90,12 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   describe "with inter-team school move" do
     let(:other_team) { create(:team, name: "Other Team") }
     let(:current_school) do
-      create(:school, name: "Current School").tap do |s|
+      create(:gias_school, name: "Current School").tap do |s|
         s.attach_to_team!(other_team, academic_year:)
       end
     end
     let(:destination_school) do
-      create(:school, name: "Destination School").tap do |s|
+      create(:gias_school, name: "Destination School").tap do |s|
         s.attach_to_team!(team, academic_year:)
       end
     end
@@ -127,7 +127,7 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   end
 
   describe "with move to home educated" do
-    let(:current_school) { create(:school, team:, name: "Current School") }
+    let(:current_school) { create(:gias_school, team:, name: "Current School") }
     let(:patient) { create(:patient, school: current_school) }
     let(:changesets) do
       [create(:patient_changeset, import:, patient:, row_number: 2)]
@@ -151,7 +151,7 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   end
 
   describe "with unknown destination school" do
-    let(:current_school) { create(:school, team:, name: "Current School") }
+    let(:current_school) { create(:gias_school, team:, name: "Current School") }
     let(:patient) { create(:patient, school: current_school) }
     let(:changesets) do
       [create(:patient_changeset, import:, patient:, row_number: 1)]
@@ -171,7 +171,7 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   end
 
   describe "with changeset not from file (no row_number)" do
-    let(:school) { create(:school, team:) }
+    let(:school) { create(:gias_school, team:) }
     let(:patient) { create(:patient, school:) }
     let(:changesets) do
       [create(:patient_changeset, import:, patient:, row_number: nil)]
@@ -197,7 +197,7 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   end
 
   describe "with patient without NHS number" do
-    let(:school) { create(:school, team:) }
+    let(:school) { create(:gias_school, team:) }
     let(:patient) { create(:patient, school:, nhs_number: nil) }
     let(:changesets) do
       [create(:patient_changeset, import:, patient:, row_number: 1)]
@@ -217,7 +217,7 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   end
 
   describe "with patient without school" do
-    let(:destination_school) { create(:school, team:, name: "New School") }
+    let(:destination_school) { create(:gias_school, team:, name: "New School") }
     let(:patient) { create(:patient, school: nil) }
     let(:changesets) do
       [create(:patient_changeset, import:, patient:, row_number: 1)]
@@ -241,8 +241,8 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   end
 
   describe "with multiple changesets" do
-    let(:school_a) { create(:school, team:, name: "School A") }
-    let(:school_b) { create(:school, team:, name: "School B") }
+    let(:school_a) { create(:gias_school, team:, name: "School A") }
+    let(:school_b) { create(:gias_school, team:, name: "School B") }
     let(:patient_a) do
       create(
         :patient,
@@ -311,12 +311,12 @@ describe AppImportReviewSchoolMovesSummaryComponent do
   describe "school with multiple teams" do
     let(:team2) { create(:team, name: "Team 2") }
     let(:current_school) do
-      create(:school, name: "Multi-Team School").tap do |s|
+      create(:gias_school, name: "Multi-Team School").tap do |s|
         s.attach_to_team!(team, academic_year:)
       end
     end
     let(:destination_school) do
-      create(:school, name: "Destination School").tap do |s|
+      create(:gias_school, name: "Destination School").tap do |s|
         s.attach_to_team!(team2, academic_year:)
       end
     end

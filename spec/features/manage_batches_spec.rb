@@ -30,7 +30,7 @@ describe "Manage batches" do
   end
 
   def and_there_is_a_vaccination_session_today_with_one_patient_safe_to_vaccinate
-    location = create(:school, programmes: @programmes)
+    location = create(:gias_school, programmes: @programmes)
     session = create(:session, :today, programmes: @programmes, location:)
 
     create(

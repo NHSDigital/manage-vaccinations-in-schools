@@ -9,7 +9,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
     let(:team) { create(:team) }
     let(:gias_year_groups) { (0..11).to_a }
     let(:location) { school }
-    let(:school) { create(:school, team:, programmes:) }
+    let(:school) { create(:gias_school, team:, programmes:) }
     let(:clinic) { create(:generic_clinic, team:, programmes:) }
     let(:days_before_consent_reminders) { 7 }
     let(:session) do
@@ -211,7 +211,9 @@ describe EnqueueVaccinationsSearchInNHSJob do
         allow(SearchVaccinationRecordsInNHSJob).to receive(:perform_bulk)
       end
 
-      let(:school) { create(:school, team:, programmes:, gias_year_groups:) }
+      let(:school) do
+        create(:gias_school, team:, programmes:, gias_year_groups:)
+      end
       let(:location) { school }
       let(:session) { create(:session, programmes:, team:, location:) }
 
@@ -469,7 +471,9 @@ describe EnqueueVaccinationsSearchInNHSJob do
         patient
       end
 
-      let(:school) { create(:school, team:, programmes:, gias_year_groups:) }
+      let(:school) do
+        create(:gias_school, team:, programmes:, gias_year_groups:)
+      end
       let(:session) do
         create(
           :session,

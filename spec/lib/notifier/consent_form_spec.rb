@@ -115,7 +115,7 @@ describe Notifier::ConsentForm do
           :consent_form,
           team:,
           school_confirmed: false,
-          school: create(:school, team:),
+          school: create(:gias_school, team:),
           session: session
         )
       end

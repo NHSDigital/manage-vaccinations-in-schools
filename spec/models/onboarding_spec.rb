@@ -9,13 +9,13 @@ describe Onboarding do
 
   let!(:programmes) { [Programme.hpv] }
   # rubocop:disable RSpec/IndexedLet
-  let!(:school1) { create(:school, :secondary, :open, urn: "123456") }
-  let!(:school2) { create(:school, :secondary, :open, urn: "234567") }
-  let!(:school3) { create(:school, :secondary, :open, urn: "345678") }
-  let!(:school4) { create(:school, :secondary, :open, urn: "456789") }
+  let!(:school1) { create(:gias_school, :secondary, :open, urn: "123456") }
+  let!(:school2) { create(:gias_school, :secondary, :open, urn: "234567") }
+  let!(:school3) { create(:gias_school, :secondary, :open, urn: "345678") }
+  let!(:school4) { create(:gias_school, :secondary, :open, urn: "456789") }
   # rubocop:enable RSpec/IndexedLet
 
-  before { create(:school, :secondary, :closed, urn: "567890") }
+  before { create(:gias_school, :secondary, :closed, urn: "567890") }
 
   context "with a valid configuration file for a point of care team" do
     let(:filename) { "onboarding/point_of_care_valid.yaml" }
@@ -42,13 +42,15 @@ describe Onboarding do
       expect(generic_clinic.year_groups.count).to eq(19)
       expect(generic_clinic.location_programme_year_groups.count).to eq(4)
 
-      subteam1 = team.subteams.includes(:schools).find_by!(name: "Subteam 1")
+      subteam1 =
+        team.subteams.includes(:gias_schools).find_by!(name: "Subteam 1")
       expect(subteam1.email).to eq("subteam-1@trust.nhs.uk")
       expect(subteam1.phone).to eq("07700 900816")
       expect(subteam1.phone_instructions).to eq("option 9")
       expect(subteam1.reply_to_id).to eq("24af66c3-d6bd-4b9f-8067-3844f49e08d0")
 
-      subteam2 = team.subteams.includes(:schools).find_by!(name: "Subteam 2")
+      subteam2 =
+        team.subteams.includes(:gias_schools).find_by!(name: "Subteam 2")
       expect(subteam2.email).to eq("subteam-2@trust.nhs.uk")
       expect(subteam2.phone).to eq("07700 900817")
       expect(subteam2.reply_to_id).to be_nil
@@ -56,8 +58,8 @@ describe Onboarding do
       school2_sites = Location.where(urn: school2.urn).where.not(site: nil)
       school4_sites = Location.where(urn: school4.urn).where.not(site: nil)
 
-      expect(subteam1.schools).to contain_exactly(school1, *school2_sites)
-      expect(subteam2.schools).to contain_exactly(school3, *school4_sites)
+      expect(subteam1.gias_schools).to contain_exactly(school1, *school2_sites)
+      expect(subteam2.gias_schools).to contain_exactly(school3, *school4_sites)
 
       expect(school1.location_programme_year_groups.count).to eq(4)
       expect(school2_sites.first.location_programme_year_groups.count).to eq(4)
@@ -104,7 +106,7 @@ describe Onboarding do
 
       expect(team.subteams.count).to eq(0)
 
-      expect(team.schools.count).to eq(0)
+      expect(team.gias_schools.count).to eq(0)
     end
   end
 
@@ -114,17 +116,17 @@ describe Onboarding do
     let(:team) { create(:team, name: "Existing Team") }
 
     before do
-      create(:school, :secondary, :open, urn: "111111", team:)
-      create(:school, :secondary, :open, urn: "555555", team:)
+      create(:gias_school, :secondary, :open, urn: "111111", team:)
+      create(:gias_school, :secondary, :open, urn: "555555", team:)
       create(
-        :school,
+        :gias_school,
         :secondary,
         :open,
         urn: "222222",
         name: "School with no site"
       )
       create(
-        :school,
+        :gias_school,
         :secondary,
         :open,
         urn: "222222",
@@ -133,7 +135,7 @@ describe Onboarding do
         team:
       )
       create(
-        :school,
+        :gias_school,
         :secondary,
         :open,
         urn: "222222",

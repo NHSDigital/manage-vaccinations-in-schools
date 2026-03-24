@@ -89,7 +89,7 @@ describe TeamMerger do
 
     context "with team_locations for the same location but different subteams" do
       before do
-        location = create(:school, :secondary)
+        location = create(:gias_school, :secondary)
         sub_a = create(:subteam, team: team_a, name: "Sub A")
         sub_b = create(:subteam, team: team_b, name: "Sub B")
         year = AcademicYear.current
@@ -387,7 +387,7 @@ describe TeamMerger do
       end
 
       context "team locations" do
-        let(:location) { create(:school, :secondary) }
+        let(:location) { create(:gias_school, :secondary) }
 
         context "single assignment" do
           let!(:tl) do

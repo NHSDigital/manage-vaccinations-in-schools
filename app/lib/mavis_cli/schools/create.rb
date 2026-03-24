@@ -63,7 +63,7 @@ module MavisCLI
             site:,
             status:,
             systm_one_code:,
-            type: "school",
+            type: "gias_school",
             url:,
             urn:
           )

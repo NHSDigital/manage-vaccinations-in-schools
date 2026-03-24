@@ -32,7 +32,7 @@ describe "Manual consent reminders" do
     @team = create(:team, :with_one_nurse, programmes:)
     @user = @team.users.first
 
-    location = create(:school, team: @team)
+    location = create(:gias_school, team: @team)
 
     @session =
       create(
@@ -79,7 +79,7 @@ describe "Manual consent reminders" do
     @team = create(:team, :with_one_nurse, programmes:)
     @user = @team.users.first
 
-    location = create(:school, team: @team)
+    location = create(:gias_school, team: @team)
 
     @session =
       create(

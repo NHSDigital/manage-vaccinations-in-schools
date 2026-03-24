@@ -69,7 +69,7 @@ class DraftSessionsController < ApplicationController
   def set_schools
     @schools =
       policy_scope(Location)
-        .school
+        .gias_school
         .joins(:team_locations)
         .where(
           team_locations: {

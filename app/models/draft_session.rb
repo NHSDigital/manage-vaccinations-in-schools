@@ -128,7 +128,7 @@ class DraftSession
 
   delegate :id, to: :team_location, prefix: true
 
-  def school? = location&.school?
+  def school? = location&.gias_school?
 
   def generic_clinic? = location&.generic_clinic?
 
@@ -329,7 +329,7 @@ class DraftSession
     LocationPolicy::Scope
       .new(@current_user, Location)
       .resolve
-      .school
+      .gias_school
       .joins(:team_locations)
       .where(team_locations: { team:, academic_year: })
       .pluck(:"locations.id")

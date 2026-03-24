@@ -565,7 +565,7 @@ describe Session do
       )
     end
 
-    let(:location) { create(:school, programmes:) }
+    let(:location) { create(:gias_school, programmes:) }
 
     context "when session has both programmes" do
       let(:session) { create(:session, location:, programmes: []) }

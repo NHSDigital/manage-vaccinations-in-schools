@@ -133,25 +133,8 @@ FactoryBot.define do
       end
     end
 
-    factory :gp_practice do
-      type { "gp_practice" }
-      name { "#{Faker::University.name} Practice" }
-      with_address
-
-      sequence(:ods_code, 100) { "GP#{it}" }
-
-      after(:create) do |location, evaluator|
-        if (team = evaluator.team)
-          academic_year = evaluator.academic_year
-          subteam = evaluator.subteam
-
-          team.team_locations.create!(location:, academic_year:, subteam:)
-        end
-      end
-    end
-
-    factory :school do
-      type { "school" }
+    factory :gias_school do
+      type { "gias_school" }
       name { Faker::Educator.primary_school }
       with_address
 
@@ -202,6 +185,23 @@ FactoryBot.define do
           evaluator.programmes,
           academic_year:
         )
+      end
+    end
+
+    factory :gp_practice do
+      type { "gp_practice" }
+      name { "#{Faker::University.name} Practice" }
+      with_address
+
+      sequence(:ods_code, 100) { "GP#{it}" }
+
+      after(:create) do |location, evaluator|
+        if (team = evaluator.team)
+          academic_year = evaluator.academic_year
+          subteam = evaluator.subteam
+
+          team.team_locations.create!(location:, academic_year:, subteam:)
+        end
       end
     end
   end

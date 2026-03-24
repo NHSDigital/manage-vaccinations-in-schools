@@ -17,7 +17,7 @@ module MavisCLI
       def call(urn:, programme_type:, year_groups:, **)
         MavisCLI.load_rails
 
-        location = Location.school.find_by_urn_and_site(urn)
+        location = Location.gias_school.find_by_urn_and_site(urn)
 
         if location.nil?
           warn "Could not find school."

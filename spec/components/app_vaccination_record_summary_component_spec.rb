@@ -8,7 +8,7 @@ describe AppVaccinationRecordSummaryComponent do
   let(:current_user) { create(:user) }
   let(:performed_at) { Time.zone.local(2024, 9, 6, 12) }
   let(:outcome) { "administered" }
-  let(:location) { create(:school, name: "Hogwarts") }
+  let(:location) { create(:gias_school, name: "Hogwarts") }
   let(:programme) { Programme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) { create(:session, programmes: [programme], location:, team:) }

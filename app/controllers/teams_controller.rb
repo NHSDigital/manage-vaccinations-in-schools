@@ -29,7 +29,7 @@ class TeamsController < ApplicationController
   def set_schools
     @schools =
       @team
-        .schools
+        .gias_schools # TODO: schools
         .joins(:team_locations)
         .where(team_locations: { academic_year: AcademicYear.pending })
         .distinct

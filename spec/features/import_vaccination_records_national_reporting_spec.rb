@@ -100,7 +100,7 @@ describe("National reporting immunisation imports") do
         ods_code: "R1L",
         national_reporting_cut_off_date:
       )
-    @school = create(:school, team: @team, urn: 100_000)
+    @school = create(:gias_school, team: @team, urn: 100_000)
   end
 
   def given_i_am_signed_in_as_a_national_reporting_user

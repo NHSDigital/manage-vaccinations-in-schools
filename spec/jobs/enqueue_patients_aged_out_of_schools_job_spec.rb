@@ -3,9 +3,9 @@
 describe EnqueuePatientsAgedOutOfSchoolsJob do
   subject(:perform_now) { described_class.perform_now }
 
-  let!(:school_with_team) { create(:school, team: create(:team)) }
+  let!(:school_with_team) { create(:gias_school, team: create(:team)) }
 
-  before { create(:school) }
+  before { create(:gias_school) }
 
   it "queues jobs for the schools with teams" do
     expect { perform_now }.to enqueue_sidekiq_job(

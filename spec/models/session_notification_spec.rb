@@ -46,7 +46,7 @@ describe SessionNotification do
     let(:programmes) { [programme] }
     let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
-    let(:location) { create(:school, team:) }
+    let(:location) { create(:gias_school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
     let(:session_date) { session.dates.min }
     let(:current_user) { create(:user) }

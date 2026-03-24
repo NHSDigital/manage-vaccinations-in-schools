@@ -9,7 +9,7 @@ describe "Notify email templates: vaccination_administered", type: :view do
   let(:programme) { nil }
 
   let(:team) { create(:team, :with_one_nurse, programmes: [programme]) }
-  let(:location) { create(:school, team:, programmes: [programme]) }
+  let(:location) { create(:gias_school, team:, programmes: [programme]) }
   let(:session) do
     create(
       :session,

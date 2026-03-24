@@ -127,7 +127,8 @@ describe "Class list imports duplicates" do
   def and_an_hpv_programme_is_underway
     programme = Programme.hpv
 
-    @location = create(:school, :secondary, name: "Waterloo Road", team: @team)
+    @location =
+      create(:gias_school, :secondary, name: "Waterloo Road", team: @team)
     @session =
       create(
         :session,

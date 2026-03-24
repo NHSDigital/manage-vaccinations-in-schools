@@ -10,8 +10,8 @@ describe "schools move-patients" do
   let(:team) { create(:team) }
   let(:subteam) { create(:subteam, team:) }
   let(:other_subteam) { create(:subteam, team:) }
-  let(:source_school) { create(:school, team:, subteam:) }
-  let(:target_school) { create(:school, team:) }
+  let(:source_school) { create(:gias_school, team:, subteam:) }
+  let(:target_school) { create(:gias_school, team:) }
   let(:programmes) { [Programme.hpv] }
   let(:location_programme_year_group) do
     create(
@@ -26,7 +26,7 @@ describe "schools move-patients" do
   end
   let!(:school_move) { create(:school_move, patient:, school: source_school) }
   let!(:consent_form) { create(:consent_form, school: source_school, session:) }
-  let(:other_org_school) { create(:school, subteam: other_subteam) }
+  let(:other_org_school) { create(:gias_school, subteam: other_subteam) }
 
   let(:source_urn) { source_school.urn.to_s }
   let(:target_urn) { target_school.urn.to_s }

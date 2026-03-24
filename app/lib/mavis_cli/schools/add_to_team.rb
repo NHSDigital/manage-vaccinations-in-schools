@@ -83,7 +83,7 @@ module MavisCLI
         valid = true
 
         urns.each do |urn|
-          location = Location.school.find_by_urn_and_site(urn)
+          location = Location.gias_school.find_by_urn_and_site(urn)
 
           if location.nil?
             warn "Could not find school with URN #{urn}."
@@ -93,7 +93,7 @@ module MavisCLI
 
           schools << location
 
-          all_site_locations = Location.school.where(urn: location.urn)
+          all_site_locations = Location.gias_school.where(urn: location.urn)
 
           # Skip if no sites exist
           next if all_site_locations.count == 1

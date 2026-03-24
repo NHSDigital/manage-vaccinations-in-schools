@@ -45,7 +45,8 @@ module FHIRMapper
         sourced_from_service? || sourced_from_national_reporting?
       immunisation.manufacturer = vaccine.fhir_manufacturer_reference
 
-      immunisation.location = (location || ::Location.school.new).fhir_reference
+      immunisation.location =
+        (location || ::Location.gias_school.new).fhir_reference
       immunisation.lotNumber = batch_number
       immunisation.expirationDate = batch_expiry.to_s
       immunisation.site = fhir_site

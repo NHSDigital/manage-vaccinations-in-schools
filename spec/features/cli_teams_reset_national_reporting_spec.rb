@@ -187,7 +187,7 @@ describe "mavis teams reset-national-reporting" do
   end
 
   def and_i_upload_some_vaccination_records
-    create(:school, team: @national_reporting_team, urn: 100_000)
+    create(:gias_school, team: @national_reporting_team, urn: 100_000)
 
     @user = @national_reporting_team.users.first
     sign_in @user

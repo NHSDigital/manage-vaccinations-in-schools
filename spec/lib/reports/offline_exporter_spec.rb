@@ -53,7 +53,7 @@ describe Reports::OfflineExporter do
         )
       end
 
-      let(:location) { create(:school, subteam:) }
+      let(:location) { create(:gias_school, subteam:) }
 
       it { should_not be_blank }
 
@@ -758,7 +758,7 @@ describe Reports::OfflineExporter do
       end
 
       context "a school session" do
-        let(:location) { create(:school, subteam:) }
+        let(:location) { create(:gias_school, subteam:) }
 
         it { should_not be_blank }
 
@@ -1631,7 +1631,8 @@ describe Reports::OfflineExporter do
               create(
                 :patient,
                 year_group:,
-                school: create(:school, urn: "123456", name: "Waterloo Road")
+                school:
+                  create(:gias_school, urn: "123456", name: "Waterloo Road")
               )
             end
             let(:batch_number) { build(:batch).number }

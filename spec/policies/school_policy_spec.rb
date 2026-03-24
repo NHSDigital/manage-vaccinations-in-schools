@@ -9,7 +9,7 @@ describe SchoolPolicy do
   let(:national_reporting_user) do
     create(:nurse, teams: [national_reporting_team])
   end
-  let(:location) { create(:school) }
+  let(:location) { create(:gias_school) }
 
   permissions :index?, :create?, :edit?, :new?, :show?, :update? do
     it { should permit(point_of_care_user, location) }

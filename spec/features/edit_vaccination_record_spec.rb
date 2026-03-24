@@ -486,7 +486,7 @@ describe "Edit vaccination record" do
     @replacement_batch =
       create(:batch, :not_expired, team: @team, vaccine: @vaccine)
 
-    location = create(:school, team: @team)
+    location = create(:gias_school, team: @team)
 
     @session =
       create(
@@ -532,7 +532,7 @@ describe "Edit vaccination record" do
         year_group: 8
       )
 
-    @school = create(:school, name: "A New School", status: "open")
+    @school = create(:gias_school, name: "A New School", status: "open")
 
     @vaccine = @programme.vaccines.first
     @new_vaccine = @programme.vaccines.second
@@ -1093,7 +1093,7 @@ describe "Edit vaccination record" do
   end
 
   def and_a_vaccination_record_with_a_session_exists
-    location = create(:school, urn: 100_001)
+    location = create(:gias_school, urn: 100_001)
 
     @session = create(:session, :completed, programmes: [@programme], location:)
 

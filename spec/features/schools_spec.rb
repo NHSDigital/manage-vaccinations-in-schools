@@ -52,8 +52,8 @@ describe "Schools" do
 
     @team = create(:team, programmes:)
 
-    @primary_school = create(:school, :primary, team: @team)
-    @secondary_school = create(:school, :secondary, team: @team)
+    @primary_school = create(:gias_school, :primary, team: @team)
+    @secondary_school = create(:gias_school, :secondary, team: @team)
 
     @primary_session =
       create(:session, :yesterday, location: @primary_school, team: @team)

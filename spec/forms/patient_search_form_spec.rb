@@ -68,7 +68,7 @@ describe PatientSearchForm do
     context "filtering on aged out of programmes" do
       let(:programmes) { [Programme.flu] }
       let(:location) do
-        create(:school, programmes:, gias_year_groups: [11, 12])
+        create(:gias_school, programmes:, gias_year_groups: [11, 12])
       end
       let(:session_for_patients) { create(:session, location:, programmes:) }
 
@@ -563,7 +563,7 @@ describe PatientSearchForm do
           :school_move,
           :to_school,
           patient:,
-          school: create(:school, subteam:)
+          school: create(:gias_school, subteam:)
         )
       end
 

@@ -5,7 +5,7 @@ class EnqueueSchoolConsentRequestsJob < ApplicationJob
 
   def perform
     sessions =
-      Session.send_consent_requests.joins(:location).merge(Location.school)
+      Session.send_consent_requests.joins(:location).merge(Location.gias_school)
 
     sessions.find_each do |session|
       SendSchoolConsentRequestsJob.perform_later(session)

@@ -307,7 +307,7 @@ class DraftVaccinationRecord
   def location_is_school
     return if location_id.blank?
 
-    unless location&.school?
+    unless location&.gias_school?
       errors.add(:location_id, "The location must be a school")
     end
   end
