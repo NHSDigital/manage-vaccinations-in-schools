@@ -69,12 +69,12 @@
           </ul>
           <% if app_version %>
             <p class="nhsuk-body-s nhsuk-u-secondary-text-colour">
-              <code><%= app_version %></code>
+              <%= app_version %>
             </p>
           <% end %>
           <% if current_user.present? %>
             <p class="nhsuk-body-s app-u-no-js-visible">
-              <strong>JavaScript is not available.</strong>
+              <strong>JavaScript is not available</strong>
             </p>
           <% end %>
           <p class="nhsuk-body-s">&copy; NHS England</p>
