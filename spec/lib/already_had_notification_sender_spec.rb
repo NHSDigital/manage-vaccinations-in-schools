@@ -209,6 +209,23 @@ describe AlreadyHadNotificationSender do
             end
           end
 
+          context "with consents from a previous academic year" do
+            before do
+              first_consent.update!(academic_year: AcademicYear.current - 1)
+            end
+
+            it "ignores older consents" do
+              call
+
+              expect(EmailDeliveryJob).not_to have_been_enqueued.with(
+                *first_parent_job_args
+              )
+              expect(EmailDeliveryJob).to have_been_enqueued.with(
+                *second_parent_job_args
+              )
+            end
+          end
+
           context "with refused consents" do
             before do
               first_consent.update!(
