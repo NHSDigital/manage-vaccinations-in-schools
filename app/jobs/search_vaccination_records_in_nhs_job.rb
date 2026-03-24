@@ -3,6 +3,8 @@
 class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   sidekiq_options queue: :immunisations_api_search
 
+  ACADEMIC_YEAR_2025_CUTOFF_DATE = 2025.to_academic_year_date_range.first.freeze
+
   attr_reader :patient, :programmes
 
   def perform(patient_id)
@@ -59,6 +61,15 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     end
   end
 
+  def reject_pre_cutoff_records(vaccination_records)
+    vaccination_records.reject do |vaccination_record|
+      Flipper.enabled?(
+        :imms_api_ignore_records_prior_to_2025_academic_year,
+        vaccination_record.programme
+      ) && vaccination_record.performed_at_date < ACADEMIC_YEAR_2025_CUTOFF_DATE
+    end
+  end
+
   def incoming_vaccination_records
     @incoming_vaccination_records ||=
       if patient.nhs_number.nil?
@@ -71,6 +82,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
           .then { convert_to_vaccination_records(it) }
           .then { deduplicate_vaccination_records(it) }
           .then { select_programme_feature_flagged_records(it) }
+          .then { reject_pre_cutoff_records(it) }
       end
   end
 

@@ -1,0 +1,153 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?-immunization.target=FLU,HPV,MENACWY,3IN1,MMR,MMRV\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "https://api.service.nhs.uk/immunisation-fhir-api/Immunization/4e7f3c91-a14d-4139-bbcf-859e998d2028",
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "4e7f3c91-a14d-4139-bbcf-859e998d2028",
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "884861000000100",
+                  "display": "Administration of first intranasal seasonal influenza vaccination"
+                }
+              ]
+            }
+          }
+        ],
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://supplierABC/identifiers/vacc",
+            "value": "71f538d8-1171-4204-aee4-17ff0b0ba0b0"
+          }
+        ],
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "43208811000001106",
+              "display": "Fluenz (trivalent) vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) (product)"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "urn:uuid:e06dbb8d-ef9b-454f-9c5f-fde8460a0b6a",
+          "type": "Patient",
+          "identifier": {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9449308357"
+          }
+        },
+        "occurrenceDateTime": "2025-09-01T00:00:00+01:00",
+        "recorded": "2025-09-01T00:00:02.000000+01:00",
+        "primarySource": true,
+        "location": {
+          "identifier": {
+            "system": "https://fhir.hl7.org.uk/Id/urn-school-number",
+            "value": "100001"
+          }
+        },
+        "manufacturer": {
+          "display": "AstraZeneca"
+        },
+        "lotNumber": "BU5086",
+        "expirationDate": "2025-09-30",
+        "site": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "279549004",
+              "display": "Nasal cavity structure"
+            }
+          ]
+        },
+        "route": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "46713006",
+              "display": "Nasal"
+            }
+          ]
+        },
+        "doseQuantity": {
+          "value": 0.2,
+          "unit": "ml",
+          "system": "http://snomed.info/sct",
+          "code": "258773002"
+        },
+        "performer": [
+          {
+            "actor": {
+              "type": "Organization",
+              "identifier": {
+                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                "value": "R1L"
+              }
+            }
+          }
+        ],
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "723620004"
+              }
+            ]
+          }
+        ],
+        "protocolApplied": [
+          {
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "6142004",
+                    "display": "Influenza"
+                  }
+                ]
+              }
+            ],
+            "doseNumberPositiveInt": 1
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e06dbb8d-ef9b-454f-9c5f-fde8460a0b6a",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "9449308357",
+        "identifier": [
+          {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9449308357"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    }
+  ],
+  "total": 1
+}

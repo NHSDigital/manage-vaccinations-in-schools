@@ -728,6 +728,76 @@ describe SearchVaccinationRecordsInNHSJob do
       include_examples "calls StatusUpdater"
     end
 
+    context "with the :imms_api_ignore_records_prior_to_2025_academic_year flag" do
+      context "when enabled for the programme" do
+        before do
+          Flipper.enable(
+            :imms_api_ignore_records_prior_to_2025_academic_year,
+            Programme.flu
+          )
+        end
+
+        it "does not import pre-cutoff records" do
+          expect { perform }.not_to(
+            change { patient.vaccination_records.count }
+          )
+        end
+
+        include_examples "sends discovery comms if required n times", 0
+
+        context "when a record falls on the cutoff date" do
+          let(:body) do
+            file_fixture(
+              "fhir/search_response_1_result_in_academic_year_2025.json"
+            ).read
+          end
+
+          it "imports the record" do
+            expect { perform }.to change {
+              patient.vaccination_records.count
+            }.by(1)
+          end
+
+          include_examples "sends discovery comms if required n times", 1
+          include_examples "calls StatusUpdater"
+        end
+
+        context "when pre-cutoff records were already imported" do
+          let(:existing_bundle) do
+            FHIR.from_contents(
+              file_fixture("fhir/search_response_2_results.json").read
+            )
+          end
+
+          it "removes the pre-cutoff records on the next search run" do
+            expect { perform }.to change {
+              patient.vaccination_records.count
+            }.by(-2)
+          end
+
+          include_examples "calls StatusUpdater"
+        end
+      end
+
+      context "when enabled for a different programme" do
+        before do
+          Flipper.enable(
+            :imms_api_ignore_records_prior_to_2025_academic_year,
+            Programme.mmr
+          )
+        end
+
+        it "still imports the records" do
+          expect { perform }.to change { patient.vaccination_records.count }.by(
+            2
+          )
+        end
+
+        include_examples "sends discovery comms if required n times", 2
+        include_examples "calls StatusUpdater"
+      end
+    end
+
     context "with a non-api record already on the patient" do
       let!(:vaccination_record) do
         create(:vaccination_record, patient:, programme:)

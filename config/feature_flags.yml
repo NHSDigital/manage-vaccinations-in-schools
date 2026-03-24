@@ -12,6 +12,10 @@ imms_api_enqueue_session_searches: |
   Enables enqueueing of vaccination searches for upcoming sessions in the
   EnqueueVaccinationsSearchInNHSJob.
 
+imms_api_ignore_records_prior_to_2025_academic_year: |
+  Per-programme flag. When enabled for a programme, prevents vaccination records
+  dated before 1st September 2025 from being imported.
+
 imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
 imms_api_search_job:
