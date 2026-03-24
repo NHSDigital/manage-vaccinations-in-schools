@@ -22,13 +22,7 @@ describe "Child record imports twins" do
 
   def given_i_am_signed_in
     @programme = Programme.hpv
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: [@programme]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     sign_in @team.users.first
   end

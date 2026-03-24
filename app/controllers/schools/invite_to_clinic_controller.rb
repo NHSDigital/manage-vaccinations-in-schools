@@ -45,7 +45,7 @@ class Schools::InviteToClinicController < Schools::BaseController
   private
 
   def check_can_send_clinic_invitations
-    render status: :not_found unless @location.generic_clinic?
+    render status: :not_found unless @location.generic_school?
   end
 
   def set_back_link_path
@@ -70,7 +70,7 @@ class Schools::InviteToClinicController < Schools::BaseController
             academic_year: @academic_year
           }
         )
-        .where(school_id: @location.school_id)
+        .where(school: @location)
         .not_archived(team: current_team)
         .includes_statuses
         .has_programme_status(

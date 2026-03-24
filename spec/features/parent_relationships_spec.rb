@@ -20,7 +20,7 @@ describe "Parent relationships" do
 
   def given_a_patient_with_a_parent_exists
     programmes = [Programme.sample]
-    team = create(:team, :with_generic_clinic, programmes:)
+    team = create(:team, programmes:)
     @nurse = create(:nurse, team:)
 
     session = create(:session, team:, programmes:)

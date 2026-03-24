@@ -33,13 +33,7 @@ describe "View children" do
   def given_my_team_exists
     @hpv = Programme.hpv
     @flu = Programme.flu
-    @team =
-      create(
-        :team,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [@hpv, @flu]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@hpv, @flu])
   end
 
   def given_patients_exist

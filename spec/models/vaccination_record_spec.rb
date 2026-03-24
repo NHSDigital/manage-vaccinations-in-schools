@@ -134,9 +134,7 @@ describe VaccinationRecord do
       end
 
       let(:programme) { Programme.sample }
-      let(:team) do
-        create(:team, :with_generic_clinic, programmes: [programme])
-      end
+      let(:team) { create(:team, programmes: [programme]) }
       let(:session) do
         create(
           :session,

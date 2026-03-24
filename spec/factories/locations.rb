@@ -9,7 +9,6 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
-#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer
@@ -29,7 +28,7 @@
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
-#  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
+#  index_locations_on_urn             (urn) UNIQUE WHERE ((type = 0) AND (site IS NULL))
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
 
@@ -73,9 +72,8 @@ FactoryBot.define do
     end
 
     factory :generic_clinic do
-      type { :generic_clinic }
+      type { "generic_clinic" }
       name { "Community clinic" }
-      alternative_name { "No known school (including home-schooled children)" }
 
       after(:create) do |location, evaluator|
         academic_year = evaluator.academic_year
@@ -90,7 +88,43 @@ FactoryBot.define do
         location.import_year_groups!(
           year_groups,
           academic_year:,
-          source: "generic_clinic_factory"
+          source: "generic_location_factory"
+        )
+        location.import_default_programme_year_groups!(
+          evaluator.programmes,
+          academic_year:
+        )
+      end
+    end
+
+    factory :generic_school do
+      type { "generic_school" }
+      gias_phase { "not_applicable" }
+
+      trait :unknown do
+        name { "Unknown school" }
+        urn { Location::URN_UNKNOWN }
+      end
+
+      trait :home_educated do
+        name { "Home-educated" }
+        urn { Location::URN_HOME_EDUCATED }
+      end
+
+      after(:create) do |location, evaluator|
+        academic_year = evaluator.academic_year
+        subteam = evaluator.subteam
+
+        if (team = evaluator.team)
+          team.team_locations.create!(location:, academic_year:, subteam:)
+        end
+
+        year_groups = Location::YearGroup::DEFAULT_VALUE_RANGE.to_a
+
+        location.import_year_groups!(
+          year_groups,
+          academic_year:,
+          source: "generic_location_factory"
         )
         location.import_default_programme_year_groups!(
           evaluator.programmes,
@@ -100,7 +134,7 @@ FactoryBot.define do
     end
 
     factory :gp_practice do
-      type { :gp_practice }
+      type { "gp_practice" }
       name { "#{Faker::University.name} Practice" }
       with_address
 
@@ -117,7 +151,7 @@ FactoryBot.define do
     end
 
     factory :school do
-      type { :school }
+      type { "school" }
       name { Faker::Educator.primary_school }
       with_address
 

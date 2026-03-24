@@ -52,7 +52,7 @@ module PatientsHelper
     if (school = patient.school).present?
       school.name
     elsif patient.home_educated
-      "Home-schooled"
+      "Home-educated"
     else
       "Unknown school"
     end

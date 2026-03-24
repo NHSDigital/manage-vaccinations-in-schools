@@ -205,13 +205,7 @@ describe "Manage children" do
   def given_my_team_exists
     @flu = Programme.flu
     @hpv = Programme.hpv
-    @team =
-      create(
-        :team,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [@flu, @hpv]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@flu, @hpv])
   end
 
   def given_patients_exist
@@ -460,7 +454,7 @@ describe "Manage children" do
   end
 
   def when_i_choose_home_schooled
-    select "Home-schooled", from: "What school does the child go to?"
+    select "Home-educated", from: "What school does the child go to?"
     click_on "Continue"
   end
 
@@ -516,10 +510,8 @@ describe "Manage children" do
   end
 
   def and_i_see_the_child_is_home_schooled
-    expect(page).to have_content("Home-schooled")
-    expect(@patient.reload.home_educated).to be true
-    expect(@patient.school).to be_nil
-    expect(@patient.home_educated).to be true
+    expect(page).to have_content("Home-educated")
+    expect(@patient.reload.school).to eq(@team.home_educated_school)
   end
 
   def and_the_important_notice_is_dismissed

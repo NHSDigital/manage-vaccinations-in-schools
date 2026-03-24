@@ -21,13 +21,9 @@ class AppLocationCardComponent < ViewComponent::Base
 
   delegate :govuk_summary_list, to: :helpers
 
-  def link_to
-    school_patients_path(
-      location.generic_clinic? ? Location::URN_UNKNOWN : location
-    )
-  end
+  def link_to = school_patients_path(location)
 
-  def heading = location.school_name
+  def heading = location.name
 
   def rows
     [

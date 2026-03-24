@@ -9,16 +9,10 @@ class Schools::BaseController < ApplicationController
   private
 
   def set_location
-    urn_and_site = params[:school_urn_and_site]
-
     @location =
-      if urn_and_site.in?([Location::URN_UNKNOWN, Location::URN_HOME_EDUCATED])
-        policy_scope(Location).generic_clinic.sole
-      else
-        policy_scope(Location).school.find_by_urn_and_site!(
-          params[:school_urn_and_site]
-        )
-      end
+      policy_scope(Location).where(
+        type: %w[school generic_school]
+      ).find_by_urn_and_site!(params[:school_urn_and_site])
 
     authorize @location, policy_class: SchoolPolicy
   end

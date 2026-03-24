@@ -10,18 +10,14 @@ describe AppLocationCardComponent do
   let(:today) { Date.new(2025, 7, 1) }
 
   context "with a generic clinic" do
-    let(:location) { create(:generic_clinic, team: create(:team)) }
-
-    it do
-      expect(rendered).to have_text(
-        "No known school (including home-schooled children)"
-      )
+    let(:location) do
+      create(:generic_school, :home_educated, team: create(:team))
     end
 
+    it { should have_text("Home-educated") }
     it { should have_text("Children100 children") }
-
-    it { should_not have_text("URN") }
-    it { should_not have_text("Phase") }
+    it { should have_text("URN999999") }
+    it { should have_text("PhaseOther / Unknown") }
     it { should_not have_text("Address") }
   end
 

@@ -110,7 +110,7 @@ describe "School sessions" do
 
     programmes = [@programme, @other_programme]
 
-    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
     @location = create(:school, :secondary, team: @team, programmes:)
 
     @parent = create(:parent)
@@ -461,14 +461,7 @@ describe "School sessions" do
 
     programmes = [@programme, @other_programme]
 
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes:,
-        ods_code:
-      )
+    @team = create(:team, :with_one_nurse, programmes:, ods_code:)
     @location = create(:school, :secondary, team: @team, programmes:)
 
     @parent = create(:parent)

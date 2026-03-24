@@ -9,7 +9,6 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
-#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer
@@ -29,7 +28,7 @@
 #
 #  index_locations_on_ods_code        (ods_code) UNIQUE
 #  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
-#  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
+#  index_locations_on_urn             (urn) UNIQUE WHERE ((type = 0) AND (site IS NULL))
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
 
@@ -91,12 +90,6 @@ describe Location do
 
       context "with an exact match on the name" do
         let(:query) { "Community clinic" }
-
-        it { should contain_exactly(clinic) }
-      end
-
-      context "with a partial match on the alternative name" do
-        let(:query) { "No known school" }
 
         it { should contain_exactly(clinic) }
       end
@@ -191,6 +184,12 @@ describe Location do
     end
   end
 
+  describe "normalisations" do
+    it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
+    it { should normalize(:ods_code).from(" r1a ").to("R1A") }
+    it { should normalize(:urn).from(" 123 ").to("123") }
+  end
+
   describe "validations" do
     it { should validate_presence_of(:name) }
 
@@ -198,23 +197,17 @@ describe Location do
       subject(:location) { build(:community_clinic, team:) }
 
       let(:team) { create(:team) }
+      let(:team_ods_code) { team.organisation.ods_code }
 
-      it { should_not validate_presence_of(:gias_establishment_number) }
-      it { should_not validate_presence_of(:gias_local_authority_code) }
-      it { should_not validate_presence_of(:gias_phase) }
-
+      it { should validate_absence_of(:gias_establishment_number) }
+      it { should validate_absence_of(:gias_local_authority_code) }
+      it { should validate_absence_of(:gias_phase) }
+      it { should_not validate_absence_of(:ods_code) }
       it { should_not validate_presence_of(:ods_code) }
+      it { should validate_exclusion_of(:ods_code).in_array([team_ods_code]) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
-
-      it do
-        expect(location).to validate_exclusion_of(:ods_code).in_array(
-          [team.organisation.ods_code]
-        )
-      end
-
-      it { should_not validate_presence_of(:urn) }
-      it { should validate_uniqueness_of(:urn) }
-      it { should validate_uniqueness_of(:site).scoped_to(:urn) }
+      it { should validate_absence_of(:urn) }
+      it { should validate_absence_of(:site) }
     end
 
     context "with a generic clinic" do
@@ -222,28 +215,34 @@ describe Location do
 
       let(:team) { create(:team) }
 
-      it { should_not validate_presence_of(:gias_establishment_number) }
-      it { should_not validate_presence_of(:gias_local_authority_code) }
-      it { should_not validate_presence_of(:gias_phase) }
-
+      it { should validate_absence_of(:gias_establishment_number) }
+      it { should validate_absence_of(:gias_local_authority_code) }
+      it { should validate_absence_of(:gias_phase) }
       it { should validate_absence_of(:ods_code) }
+      it { should validate_absence_of(:urn) }
+      it { should validate_absence_of(:site) }
+    end
 
-      it { should_not validate_presence_of(:urn) }
-      it { should validate_uniqueness_of(:urn) }
+    context "with a generic school" do
+      subject(:location) { build(:generic_school) }
+
+      it { should validate_absence_of(:gias_establishment_number) }
+      it { should validate_absence_of(:gias_local_authority_code) }
+      it { should validate_absence_of(:ods_code) }
+      it { should validate_inclusion_of(:urn).in_array(%w[888888 999999]) }
+      it { should validate_absence_of(:site) }
     end
 
     context "with a GP practice" do
       subject(:location) { build(:gp_practice, ods_code: "abc") }
 
-      it { should_not validate_presence_of(:gias_establishment_number) }
-      it { should_not validate_presence_of(:gias_local_authority_code) }
-      it { should_not validate_presence_of(:gias_phase) }
-
+      it { should validate_absence_of(:gias_establishment_number) }
+      it { should validate_absence_of(:gias_local_authority_code) }
+      it { should validate_absence_of(:gias_phase) }
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
-
-      it { should_not validate_presence_of(:urn) }
-      it { should validate_uniqueness_of(:urn) }
+      it { should validate_absence_of(:urn) }
+      it { should validate_absence_of(:site) }
     end
 
     context "with a school" do
@@ -251,19 +250,13 @@ describe Location do
 
       it { should validate_presence_of(:gias_establishment_number) }
       it { should validate_presence_of(:gias_local_authority_code) }
-      it { should validate_presence_of(:gias_phase) }
-
-      it { should_not validate_presence_of(:ods_code) }
-      it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
-
+      it { should validate_absence_of(:ods_code) }
+      it { should_not validate_absence_of(:site) }
+      it { should_not validate_presence_of(:site) }
       it { should validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
     end
   end
-
-  it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
-  it { should normalize(:ods_code).from(" r1a ").to("R1A") }
-  it { should normalize(:urn).from(" 123 ").to("123") }
 
   describe "#to_param" do
     subject { location.to_param }

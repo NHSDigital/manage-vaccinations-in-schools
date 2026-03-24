@@ -48,7 +48,7 @@ describe API::Testing::TeamsController do
       end
 
       it "deletes all locations" do
-        expect { call }.to(change(Location, :count).by(-2))
+        expect { call }.to change(Location.school, :count).by(-2)
 
         expect { Location.find(base_location.id) }.to raise_error(
           ActiveRecord::RecordNotFound

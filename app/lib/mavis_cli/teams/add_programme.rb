@@ -37,7 +37,7 @@ module MavisCLI
         ActiveRecord::Base.transaction do
           team.update!(programme_types:)
 
-          GenericClinicFactory.call(team: team.reload, academic_year:)
+          GenericLocationFactory.call(team: team.reload, academic_year:)
 
           team.locations.find_each do |location|
             location.import_default_programme_year_groups!(

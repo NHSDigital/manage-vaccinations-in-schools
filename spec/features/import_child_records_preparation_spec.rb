@@ -149,25 +149,27 @@ describe "Import child records" do
   def and_the_app_is_setup
     programmes = [Programme.hpv, Programme.menacwy, Programme.td_ipv]
 
-    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
     @school = create(:school, urn: "123456", team: @team)
-    @generic_clinic = @team.generic_clinic
     @user = @team.users.first
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|
       @school.attach_to_team!(@team, academic_year:)
-      @generic_clinic.attach_to_team!(@team, academic_year:)
       @school.import_year_groups_from_gias!(academic_year:)
       @school.import_default_programme_year_groups!(programmes, academic_year:)
-      @generic_clinic.import_year_groups!(
-        Location::YearGroup::DEFAULT_VALUE_RANGE,
-        academic_year:,
-        source: "generic_clinic_factory"
-      )
-      @generic_clinic.import_default_programme_year_groups!(
-        programmes,
-        academic_year:
-      )
+
+      [*@team.generic_clinics, *@team.generic_schools].each do |location|
+        location.attach_to_team!(@team, academic_year:)
+        location.import_year_groups!(
+          Location::YearGroup::DEFAULT_VALUE_RANGE,
+          academic_year:,
+          source: "generic_location_factory"
+        )
+        location.import_default_programme_year_groups!(
+          programmes,
+          academic_year:
+        )
+      end
     end
   end
 

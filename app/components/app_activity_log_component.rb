@@ -429,13 +429,14 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def session_events
-    patient_locations.map do |patient_location|
-      [
-        {
-          title: "Added to the session at #{patient_location.location.name}",
-          at: patient_location.created_at
-        }
-      ]
+    patient_locations.filter_map do |patient_location|
+      location = patient_location.location
+      next if location.generic_school?
+
+      {
+        title: "Added to the session at #{location.name}",
+        at: patient_location.created_at
+      }
     end
   end
 

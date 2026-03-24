@@ -50,7 +50,7 @@ describe "Schools" do
   def given_a_team_exists_with_a_few_schools
     programmes = [Programme.flu, Programme.hpv]
 
-    @team = create(:team, :with_generic_clinic, programmes:)
+    @team = create(:team, programmes:)
 
     @primary_school = create(:school, :primary, team: @team)
     @secondary_school = create(:school, :secondary, team: @team)
@@ -102,7 +102,7 @@ describe "Schools" do
   end
 
   def and_i_can_see_the_unknown_school
-    expect(page).to have_content("No known school")
+    expect(page).to have_content("Unknown school")
   end
 
   def when_i_filter_on_primary_schools
@@ -155,18 +155,18 @@ describe "Schools" do
 
   def given_a_team_with_no_known_school_children
     programmes = [Programme.hpv]
-    @team = create(:team, :with_generic_clinic, programmes:)
-    @generic_clinic = @team.generic_clinic
+    @team = create(:team, programmes:)
 
     @patients =
       10.times.map do
         create(
           :patient,
           :consent_no_response,
-          school: nil,
+          team: @team,
+          school: @team.unknown_school,
           parents: [build(:parent)],
           programmes:,
-          location: @generic_clinic,
+          location: @team.unknown_school,
           academic_year: AcademicYear.pending
         )
       end
@@ -177,10 +177,11 @@ describe "Schools" do
     create(
       :patient,
       :consent_no_response,
-      school: nil,
+      team: @team,
+      school: @team.unknown_school,
       parents: [],
       programmes:,
-      location: @generic_clinic,
+      location: @team.unknown_school,
       academic_year: AcademicYear.pending
     )
 
@@ -188,10 +189,11 @@ describe "Schools" do
     create(
       :patient,
       :consent_refused,
-      school: nil,
+      team: @team,
+      school: @team.unknown_school,
       parents: [build(:parent)],
       programmes:,
-      location: @generic_clinic,
+      location: @team.unknown_school,
       academic_year: AcademicYear.pending
     )
 
@@ -199,10 +201,11 @@ describe "Schools" do
     create(
       :patient,
       :consent_conflicting,
-      school: nil,
+      team: @team,
+      school: @team.unknown_school,
       parents: [build(:parent)],
       programmes:,
-      location: @generic_clinic,
+      location: @team.unknown_school,
       academic_year: AcademicYear.pending
     )
 
@@ -211,12 +214,12 @@ describe "Schools" do
       :patient,
       :consent_no_response,
       :archived,
-      school: nil,
+      team: @team,
+      school: @team.unknown_school,
       parents: [build(:parent)],
       programmes:,
-      location: @generic_clinic,
-      academic_year: AcademicYear.pending,
-      team: @team
+      location: @team.unknown_school,
+      academic_year: AcademicYear.pending
     )
 
     @nurse = create(:nurse, team: @team)
@@ -227,7 +230,7 @@ describe "Schools" do
   end
 
   def and_i_click_on_no_known_school
-    click_on "No known school"
+    click_on "Unknown school"
   end
 
   def then_i_see_the_send_invitations_button

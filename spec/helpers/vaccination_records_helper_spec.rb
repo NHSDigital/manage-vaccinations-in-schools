@@ -6,7 +6,7 @@ describe VaccinationRecordsHelper do
       helper.already_vaccinated_link_label(session:, patient:, programme:)
     end
 
-    let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
+    let(:team) { create(:team, programmes: [programme]) }
     let(:session) { create(:session, :today, team:, programmes: [programme]) }
     let(:patient) { build(:patient, id: 123) }
 

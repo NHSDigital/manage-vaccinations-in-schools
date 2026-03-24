@@ -81,7 +81,7 @@ describe "Scheduled consent requests and reminders" do
       Programme.menacwy,
       Programme.td_ipv
     ]
-    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
     @location = create(:school, team: @team)
     @session =
       create(

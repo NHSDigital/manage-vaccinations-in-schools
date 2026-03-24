@@ -35,7 +35,7 @@ describe "Tallying" do
     @hpv_programme = Programme.hpv
 
     programmes = [@hpv_programme, @flu_programme]
-    team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    team = create(:team, :with_one_nurse, programmes:)
     @user = team.users.first
 
     @session =

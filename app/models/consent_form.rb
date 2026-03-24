@@ -510,13 +510,13 @@ class ConsentForm < ApplicationRecord
     ActiveRecord::Base.transaction do
       notify_log_entries.update_all(patient_id: patient.id)
 
-      school_changed =
-        patient.school != school || patient.home_educated != home_educated
-
+      school_changed = patient.school_id != school_for_school_move.id
       if school_changed && !patient.deceased? && !patient.invalidated?
-        school_move = SchoolMove.find_or_initialize_by(patient:)
-        school_move.assign_from(school:, home_educated:, team:)
-        school_move.update!(academic_year:, source: :parental_consent_form)
+        SchoolMove.find_or_initialize_by(patient:).update!(
+          school: school_for_school_move,
+          academic_year:,
+          source: :parental_consent_form
+        )
       end
 
       Consent.from_consent_form!(self, patient:, current_user:).each(
@@ -544,6 +544,10 @@ class ConsentForm < ApplicationRecord
 
   def home_educated_changed?
     education_setting_changed?
+  end
+
+  def school_for_school_move
+    school || (home_educated ? team.home_educated_school : team.unknown_school)
   end
 
   def reason_for_refusal
@@ -724,9 +728,7 @@ class ConsentForm < ApplicationRecord
     end
   end
 
-  def via_self_consent?
-    false
-  end
+  def via_self_consent? = false
 
   def health_answers_valid?
     if health_question_number.present?
@@ -745,13 +747,9 @@ class ConsentForm < ApplicationRecord
     true
   end
 
-  def location_is_school?
-    location.school?
-  end
+  def location_is_school? = location.school?
 
-  def location_is_clinic?
-    location.clinic?
-  end
+  def location_is_clinic? = location.clinic?
 
   def choose_school?
     location_is_clinic? ? education_setting_school? : !school_confirmed

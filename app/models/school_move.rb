@@ -29,7 +29,6 @@
 #
 class SchoolMove < ApplicationRecord
   include Schoolable
-  include SchoolMovesHelper
 
   audited associated_with: :patient
 
@@ -68,14 +67,6 @@ class SchoolMove < ApplicationRecord
             absence: {
               unless: -> { school.nil? }
             }
-
-  def assign_from(school:, home_educated:, team:)
-    if school
-      assign_attributes(school:, home_educated: nil, team: nil)
-    else
-      assign_attributes(school: nil, home_educated:, team:)
-    end
-  end
 
   def confirm!(user: nil)
     ActiveRecord::Base.transaction do
@@ -120,8 +111,20 @@ class SchoolMove < ApplicationRecord
 
   private
 
+  # TODO: Remove these once we've dropped the `team_id` and `home_educated`
+  #  columns.
+  def destination_school
+    @destination_school ||=
+      school ||
+        (home_educated ? team.home_educated_school : team.unknown_school)
+  end
+
+  def destination_teams
+    @destination_teams ||= school_id.present? ? school_teams : [team]
+  end
+
   def update_patient!
-    patient.update!(home_educated:, school:)
+    patient.update!(home_educated: nil, school: destination_school)
   end
 
   def update_archive_reasons!(user:)
@@ -145,14 +148,26 @@ class SchoolMove < ApplicationRecord
   end
 
   def update_locations!
-    location = school || team.generic_clinic
-
     patient_locations = []
+
+    location = destination_school
+
+    # TODO: Remove this once we add patients to clinics individually.
+    #  This is stop patients being taken out of the generic clinic when we add
+    #  them to the unknown or home-educated school location.
+    source_locations =
+      (
+        if location.generic_school?
+          ([location] + destination_teams.map(&:generic_clinic))
+        else
+          [location]
+        end
+      )
 
     patient
       .patient_locations
       .where("academic_year >= ?", academic_year)
-      .where.not(location:)
+      .where.not(location: source_locations)
       .find_each do |patient_location|
         end_date = Date.yesterday
 
@@ -184,6 +199,33 @@ class SchoolMove < ApplicationRecord
         patient_locations << patient_location
       end
 
+    # TODO: Remove this once we add patients to clinics individually.
+    if location.generic_school?
+      destination_teams.each do |destination_team|
+        PatientLocation
+          .find_or_initialize_by(
+            patient:,
+            location: destination_team.generic_clinic,
+            academic_year:
+          )
+          .tap do |patient_location|
+            patient_location.end_date = nil
+
+            # We only want to change the date if this is a new patient location
+            #  for this patient, or if the existing patient location already has
+            #  a start date. This is because if there's an existing patient
+            #  location without a start date, changing the date will take the
+            #  patient out of existing sessions.
+            if patient_location.new_record? ||
+                 patient_location.begin_date&.past?
+              patient_location.begin_date = Date.current
+            end
+
+            patient_locations << patient_location
+          end
+      end
+    end
+
     PatientLocation.import!(
       patient_locations,
       on_duplicate_key_update: {
@@ -195,11 +237,9 @@ class SchoolMove < ApplicationRecord
 
   def create_log_entry!(user:)
     SchoolMoveLogEntry.create!(
-      home_educated:,
       patient:,
-      school:,
-      user:,
-      team_id:
+      school_id: destination_school.id,
+      user:
     )
   end
 

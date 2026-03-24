@@ -20,7 +20,7 @@ describe "Community clinic vaccination session" do
   end
 
   def and_a_patient_is_ready_for_vaccination_in_a_community_clinic
-    location = create(:generic_clinic, team: @team)
+    location = @team.generic_clinic
     @session =
       create(:session, team: @team, programmes: [@programme], location:)
     @patient =

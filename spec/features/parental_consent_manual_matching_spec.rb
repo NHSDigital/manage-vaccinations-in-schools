@@ -72,7 +72,7 @@ describe "Parental consent manual matching" do
   def given_the_app_is_setup
     programmes = [Programme.hpv]
 
-    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
     @user = @team.users.first
     @school = create(:school, name: "Pilot School", team: @team)
     @session = create(:session, location: @school, team: @team, programmes:)

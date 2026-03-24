@@ -35,8 +35,6 @@
                      selected: school.id == @patient.school_id,
                      data: { hint: format_address_single_line(school) } %>
     <% end %>
-    <%= tag.option "Home-schooled", value: "home_schooled" %>
-    <%= tag.option "Unknown school", value: "unknown" %>
   <% end %>
 
   <%= f.govuk_submit "Continue" %>

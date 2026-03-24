@@ -4,7 +4,7 @@ describe CommitPatientChangesetsJob do
   subject(:perform_job) { described_class.new.perform(changesets.pluck(:id)) }
 
   let(:programmes) { [Programme.hpv] }
-  let(:team) { create(:team, :with_generic_clinic, programmes:) }
+  let(:team) { create(:team, programmes:) }
   let(:location) { create(:school, team:) }
   let(:session) { create(:session, location:, programmes:, team:) }
 
@@ -443,9 +443,8 @@ describe CommitPatientChangesetsJob do
           existing_patient.reload.school_moves.count
         }.by(1)
 
-        school_move = existing_patient.school_moves.first
-        expect(school_move.school).to be_nil
-        expect(school_move.home_educated).to be(false)
+        school_move = existing_patient.school_moves.includes(:school).first
+        expect(school_move.school).to eq(team.unknown_school)
       end
 
       it "doesn't propose a move if patient already has a proposed move" do

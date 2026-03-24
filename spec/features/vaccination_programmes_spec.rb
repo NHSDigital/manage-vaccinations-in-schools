@@ -47,13 +47,7 @@ describe "Vaccination programmes table" do
       @td_ipv_programme = Programme.td_ipv
     ]
 
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: @programmes
-      )
+    @team = create(:team, :with_one_nurse, programmes: @programmes)
   end
 
   def given_patients_exist_in_year_eleven

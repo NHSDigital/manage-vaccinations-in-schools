@@ -58,7 +58,6 @@ describe "National reporting team homepage and navigation" do
         :team,
         :national_reporting,
         :with_one_admin,
-        :with_generic_clinic,
         programmes: [Programme.flu, Programme.hpv],
         ods_code: "XX99"
       )

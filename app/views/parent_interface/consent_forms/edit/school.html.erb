@@ -24,7 +24,7 @@
                      selected: school.id == @consent_form.school_id,
                      data: { hint: school.address_parts.join(", ") } %>
     <% end %>
-    <%= tag.option("Home-schooled",
+    <%= tag.option("Home-educated",
                    value: ParentInterface::ConsentForms::EditController::HOME_EDUCATED_SCHOOL_ID,
                    selected: @consent_form.education_setting_home?) %>
   <% end %>

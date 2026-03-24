@@ -31,14 +31,7 @@ describe Reports::OfflineSessionExporter do
 
   shared_examples "generates a report" do
     let(:organisation) { create(:organisation) }
-    let(:team) do
-      create(
-        :team,
-        :with_generic_clinic,
-        organisation:,
-        programmes: [programme]
-      )
-    end
+    let(:team) { create(:team, organisation:, programmes: [programme]) }
     let(:user) { create(:user, email: "nurse@example.com", team:) }
     let(:subteam) { create(:subteam, team:) }
     let(:session) do

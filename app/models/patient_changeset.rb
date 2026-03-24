@@ -137,7 +137,6 @@ class PatientChangeset < ApplicationRecord
         upload: {
           child: row.import_attributes,
           academic_year: row.academic_year,
-          home_educated: row.home_educated,
           # TODO: This should gotten from the import, but it does not provide.
           #       Maybe one day.
           school_move_source: row.school_move_source,
@@ -278,20 +277,36 @@ class PatientChangeset < ApplicationRecord
     @school_move ||=
       begin
         return if patient.deceased?
+
         if import_type == "CohortImport" &&
              school_move_to_unknown_school_from_another_team?
           return
         end
+
         if patient.new_record? || patient.school != school ||
              patient.home_educated != home_educated ||
              patient.not_in_team?(team:, academic_year:) ||
              patient.archived?(team:) || patient.school_moves.any?
-          school_move = patient.school_moves.first || SchoolMove.new(patient:)
-          school_move.assign_from(school:, home_educated:, team:)
+          school_move =
+            patient.school_moves.includes(:school_teams).first ||
+              SchoolMove.new(patient:)
           school_move.assign_attributes(
+            # TODO: Simplify this once we no longer have changesets with
+            #  `school_id` set to `nil`.
+            school:
+              school ||
+                (
+                  if home_educated
+                    team.home_educated_school
+                  else
+                    team.unknown_school
+                  end
+                ),
             academic_year:,
             source: school_move_source
           )
+          # TODO: Figure out why this is necessary.
+          school_move.strict_loading!(false)
           school_move
         end
       end
@@ -300,9 +315,13 @@ class PatientChangeset < ApplicationRecord
   def school_move_to_unknown_school_from_another_team?
     return false unless patient.persisted?
 
-    moving_to_unknown_school =
-      (patient.school.present? || patient.home_educated?) &&
-        !(school.present? || home_educated)
+    from_known_school =
+      patient.home_educated ||
+        (patient.school && patient.school&.urn != Location::URN_UNKNOWN)
+    to_known_school =
+      home_educated || (school && school&.urn != Location::URN_UNKNOWN)
+
+    moving_to_unknown_school = from_known_school && !to_known_school
 
     from_another_team = !patient.teams_via_patient_locations.include?(team)
 

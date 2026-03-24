@@ -1,15 +1,15 @@
-<%= h1 @location.school_name, class: "nhsuk-u-margin-bottom-2" %>
+<%= h1 @location.name, class: "nhsuk-u-margin-bottom-2" %>
 
 <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
   <%= format_address_single_line(@location) %>
 </p>
 
-<% unless @location.generic_clinic? %>
+<% unless @location.generic_school? %>
   <%= render AppSecondaryNavigationComponent.new do |nav|
         nav.with_item(
-          href: school_patients_path(@location.generic_clinic? ? Location::URN_UNKNOWN : @location),
+          href: school_patients_path(@location),
           text: t("schools.patients.title"),
-          selected: request.path == school_patients_path(@location.generic_clinic? ? Location::URN_UNKNOWN : @location),
+          selected: request.path == school_patients_path(@location),
         )
       
         nav.with_item(

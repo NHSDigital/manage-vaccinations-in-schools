@@ -127,7 +127,7 @@ describe "Import class lists" do
         name: "Liverpool Road",
         gias_year_groups: [7, 8, 9, 10]
       )
-    @clinic = create(:generic_clinic, team: @team)
+    @clinic = @team.generic_clinic
 
     @session =
       create(:session, team: @team, location: @school, programmes: [@programme])
@@ -486,8 +486,8 @@ describe "Import class lists" do
   def and_a_school_move_for_john_is_created
     john = Patient.find_by(given_name: "John", family_name: "Smith")
     expect(john.school_moves.count).to eq(1)
-    school_move = john.school_moves.first
-    expect(school_move.school_id).to be_nil
+    school_move = john.school_moves.includes(:school).first
+    expect(school_move.school).to eq(@team.unknown_school)
   end
 
   def and_no_school_move_for_rachel_is_created
@@ -507,8 +507,8 @@ describe "Import class lists" do
   def and_a_school_move_for_rachel_is_created
     rachel = Patient.find_by(given_name: "Rachel", family_name: "Adams")
     expect(rachel.school_moves.count).to eq(1)
-    school_move = rachel.school_moves.first
-    expect(school_move.school_id).to be_nil
+    school_move = rachel.school_moves.includes(:school).first
+    expect(school_move.school).to eq(@team.unknown_school)
   end
 
   def and_school_moves_for_all_ignored_records_are_created
@@ -518,15 +518,17 @@ describe "Import class lists" do
 
     [calvin, michael, ralphie].each do |patient|
       expect(patient.school_moves.count).to eq(1)
-      expect(patient.school_moves.first.school_id).to be_nil
+      expect(patient.school_moves.includes(:school).first.school).to eq(
+        @team.unknown_school
+      )
     end
   end
 
   def then_the_school_move_out_is_created
     john = Patient.find_by(given_name: "John", family_name: "Smith")
     expect(john.school_moves.count).to eq(1)
-    school_move = john.school_moves.first
-    expect(school_move.school_id).to be_nil
+    school_move = john.school_moves.includes(:school).first
+    expect(school_move.school).to eq(@team.unknown_school)
   end
 
   def when_i_go_back_to_re_review

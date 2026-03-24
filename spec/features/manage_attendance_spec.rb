@@ -88,13 +88,7 @@ describe "Manage attendance" do
 
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programmes = [Programme.hpv]
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: @programmes
-      )
+    @team = create(:team, :with_one_nurse, programmes: @programmes)
   end
 
   def and_there_is_a_vaccination_session_today

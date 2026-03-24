@@ -46,13 +46,7 @@ describe "Clinic sessions" do
 
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = Programme.hpv
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: [@programme]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     @parent = create(:parent)
 

@@ -12,7 +12,7 @@ class SchoolsController < ApplicationController
 
     locations =
       @form.apply(
-        policy_scope(Location).school.or(policy_scope(Location).generic_clinic)
+        policy_scope(Location).school.or(policy_scope(Location).generic_school)
       )
 
     @pagy, @locations = pagy(locations)
@@ -26,6 +26,7 @@ class SchoolsController < ApplicationController
             academic_year: AcademicYear.pending
           }
         )
+        .not_archived(team: current_team)
         .distinct
         .group(:school_id)
         .count

@@ -636,12 +636,6 @@ describe Patient do
   end
 
   describe "validations" do
-    context "when home educated" do
-      subject(:patient) { build(:patient, :home_educated) }
-
-      it { should validate_absence_of(:school) }
-    end
-
     context "with an invalid GP practice" do
       subject(:patient) { build(:patient, gp_practice: create(:school)) }
 

@@ -106,19 +106,11 @@ class ConsentFormsController < ApplicationController
 
       academic_year = @consent_form.academic_year
 
-      school_move =
-        if (school = @consent_form.school)
-          SchoolMove.new(academic_year:, patient:, school:)
-        else
-          SchoolMove.new(
-            academic_year:,
-            patient:,
-            home_educated: @consent_form.home_educated,
-            team: @consent_form.team
-          )
-        end
-
-      school_move.confirm!(user: current_user)
+      SchoolMove.new(
+        academic_year:,
+        patient:,
+        school: @consent_form.school_for_school_move
+      ).confirm!(user: current_user)
 
       @consent_form.match_with_patient!(patient, current_user:)
 

@@ -2,7 +2,7 @@
 
 describe SchoolMoveForm do
   let(:user) { create(:user, team:) }
-  let(:team) { create(:team, :with_generic_clinic) }
+  let(:team) { create(:team) }
   let(:school_move) { create(:school_move, :to_home_educated, team:) }
 
   describe "#save" do

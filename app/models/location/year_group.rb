@@ -32,7 +32,7 @@ class Location::YearGroup < ApplicationRecord
            dependent: :destroy
 
   enum :source,
-       { gias: 0, generic_clinic_factory: 1, cli: 2, manual: 3 },
+       { gias: 0, generic_location_factory: 1, cli: 2, manual: 3 },
        validate: true
 
   DEFAULT_VALUE_RANGE = (-3..15)

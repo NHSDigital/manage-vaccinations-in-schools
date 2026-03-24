@@ -88,10 +88,9 @@ class ClassImport < PatientImport
       unknown_patients.map do |patient|
         SchoolMove.new(
           academic_year:,
-          home_educated: false,
+          school: team.unknown_school,
           patient:,
-          source: "class_list_import",
-          team:
+          source: "class_list_import"
         )
       end
 

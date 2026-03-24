@@ -6,7 +6,7 @@ class Patients::EditController < Patients::BaseController
                 only: %i[update_nhs_number update_nhs_number_merge]
   before_action :set_existing_patient,
                 only: %i[update_nhs_number update_nhs_number_merge]
-  before_action :set_eligible_schools, only: :edit_school
+  before_action :set_eligible_schools, only: %i[edit_school update_school]
 
   def edit_nhs_number
     render :nhs_number
@@ -76,16 +76,8 @@ class Patients::EditController < Patients::BaseController
   end
 
   def update_school
-    if school_id == "home_schooled"
-      @patient.home_educated = true
-      @patient.school_id = nil
-    elsif school_id == "unknown"
-      @patient.home_educated = false
-      @patient.school_id = nil
-    else
-      @patient.home_educated = nil
-      @patient.school_id = school_id.presence
-    end
+    @patient.home_educated = nil
+    @patient.school_id = school_id
 
     redirect_to edit_patient_path(@patient) and return unless @patient.changed?
 
@@ -93,9 +85,7 @@ class Patients::EditController < Patients::BaseController
       SchoolMove.new(
         academic_year: AcademicYear.current,
         patient: @patient,
-        school: @patient.school,
-        home_educated: @patient.home_educated,
-        team: current_team
+        school: @patient.school
       ).confirm!(user: current_user)
 
       redirect_to edit_patient_path(@patient)
@@ -143,7 +133,8 @@ class Patients::EditController < Patients::BaseController
     year_group = @patient.birth_academic_year.to_year_group
     @eligible_schools =
       current_team
-        .schools
+        .locations
+        .where(type: %w[school generic_school])
         .joins(:location_year_groups)
         .where(location_year_groups: { value: year_group })
         .distinct

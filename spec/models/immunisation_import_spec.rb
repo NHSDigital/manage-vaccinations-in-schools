@@ -50,7 +50,7 @@ describe ImmunisationImport do
     if type == "national_reporting"
       create(:team, :national_reporting)
     else
-      create(:team, :with_generic_clinic, ods_code: "R1L", programmes:)
+      create(:team, ods_code: "R1L", programmes:)
     end
   end
   let(:school) { create(:school, urn: "123456") }

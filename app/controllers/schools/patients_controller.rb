@@ -16,7 +16,7 @@ class Schools::PatientsController < Schools::BaseController
             academic_year: @academic_year
           }
         )
-        .where(school_id: @location.school_id)
+        .where(school: @location)
         .includes_statuses
         .includes(:clinic_notifications)
 

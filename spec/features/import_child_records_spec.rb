@@ -121,7 +121,7 @@ describe "Import child records" do
   def given_the_app_is_setup
     programmes = [Programme.hpv, Programme.menacwy, Programme.td_ipv]
 
-    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
 
     create(:school, urn: "123456", team: @team)
     @user = @team.users.first

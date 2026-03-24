@@ -6,7 +6,7 @@ describe PatientsAgedOutOfSchoolJob do
   around { |example| travel_to(today) { example.run } }
 
   let(:programme) { Programme.flu }
-  let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
+  let(:team) { create(:team, programmes: [programme]) }
   let(:school) { create(:school, :secondary, team:) }
 
   # This date of birth corresponds to year 11 in 2024/25.
@@ -46,17 +46,21 @@ describe PatientsAgedOutOfSchoolJob do
 
       school_move_log_entry = SchoolMoveLogEntry.first
       expect(school_move_log_entry.patient).to eq(patient)
-      expect(school_move_log_entry.school).to be_nil
-      expect(school_move_log_entry.home_educated).to be(false)
+      expect(school_move_log_entry.school).to eq(team.unknown_school)
     end
 
     it "moves the patient to unknown school" do
-      expect { perform }.to change { patient.reload.school }.to(nil)
+      expect { perform }.to change { patient.reload.school }.to(
+        team.unknown_school
+      )
     end
 
     it "adds the patient to the clinic session" do
-      expect { perform }.to change { patient.locations.count }.by(1)
-      expect(patient.locations).to include(team.generic_clinic)
+      expect { perform }.to change { patient.locations.count }.by(2)
+      expect(patient.locations).to include(
+        team.unknown_school,
+        team.generic_clinic
+      )
     end
   end
 end

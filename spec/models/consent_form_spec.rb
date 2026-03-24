@@ -684,7 +684,7 @@ describe ConsentForm do
     let(:team) { create(:team, programmes:) }
 
     let!(:school) { create(:school, team:) }
-    let!(:generic_clinic) { create(:generic_clinic, team:) }
+    let!(:generic_clinic) { team.generic_clinic }
 
     let!(:generic_clinic_session) do
       create(:session, location: generic_clinic, team:, programmes:)
@@ -1077,9 +1077,8 @@ describe ConsentForm do
           :count
         ).by(1)
 
-        school_move = patient.school_moves.first
-        expect(school_move.school).to be_nil
-        expect(school_move.home_educated).to be(true)
+        school_move = patient.school_moves.includes(:school).first
+        expect(school_move.school).to eq(team.home_educated_school)
       end
     end
   end

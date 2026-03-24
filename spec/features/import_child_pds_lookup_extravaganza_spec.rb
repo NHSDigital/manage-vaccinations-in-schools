@@ -123,7 +123,7 @@ describe "Import child records" do
         gias_year_groups: [7, 8, 9, 10],
         team: @team
       )
-    @clinic = create(:generic_clinic, team: @team)
+    @clinic = @team.generic_clinic
 
     @session =
       create(:session, team: @team, location: @school, programmes: [@programme])
@@ -737,8 +737,7 @@ describe "Import child records" do
     emma = Patient.find_by(given_name: "Emma")
     emma_move = SchoolMoveLogEntry.find_by(patient: emma)
     expect(emma_move).to be_present
-    expect(emma_move.home_educated).to be true
-    expect(emma_move.school).to be_nil
+    expect(emma_move.school).to eq(@team.home_educated_school)
 
     catherine =
       Patient.find_by(given_name: "Catherine", family_name: "Williams")
@@ -750,7 +749,7 @@ describe "Import child records" do
 
     lea = Patient.find_by(given_name: "Lea", family_name: "Smith")
     lea_move = SchoolMoveLogEntry.find_by(patient: lea)
-    expect(lea_move.school_id).to be_nil
+    expect(lea_move.school).to eq(@team.unknown_school)
   end
 
   def and_all_parent_relationships_are_established

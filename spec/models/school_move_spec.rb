@@ -54,7 +54,8 @@ describe SchoolMove do
     let(:today) { nil }
     let(:user) { create(:user) }
     let(:programmes) { [Programme.sample] }
-    let(:team) { create(:team, :with_generic_clinic, programmes:) }
+    let(:team) { create(:team, programmes:) }
+
     let(:generic_clinic_session) do
       create(
         :session,
@@ -74,11 +75,19 @@ describe SchoolMove do
           :count
         ).by(1)
 
-        expect(SchoolMoveLogEntry.last).to have_attributes(
-          school: school_move.school,
-          home_educated: school_move.home_educated,
-          user:
-        )
+        # TODO: Remove this once `team_id` and `home_educated` columns have
+        #  been dropped.
+        school =
+          school_move.school ||
+            (
+              if school_move.home_educated
+                school_move.team.home_educated_school
+              else
+                school_move.team.unknown_school
+              end
+            )
+
+        expect(SchoolMoveLogEntry.last).to have_attributes(school:, user:)
       end
     end
 
@@ -91,8 +100,10 @@ describe SchoolMove do
 
     shared_examples "sets the patient to home-schooled" do
       it "sets the patient to home-schooled" do
-        expect { confirm! }.to change(patient, :home_educated).to(true)
-        expect(patient.school).to be_nil
+        expect { confirm! }.to change(patient, :school).to(
+          school_move.team.home_educated_school
+        )
+        expect(patient.home_educated).to be_nil
       end
     end
 
@@ -373,7 +384,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:school) { create(:school, team: new_team) }
           let(:new_sessions) do
             create_list(
@@ -399,7 +410,7 @@ describe SchoolMove do
             create(:school_move, :to_home_educated, team: new_team, patient:)
           end
 
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:generic_clinic_session) do
             create(
               :session,
@@ -475,7 +486,7 @@ describe SchoolMove do
           end
 
           it "keeps the patient as home-schooled" do
-            expect { confirm! }.not_to(change { patient.reload.home_educated })
+            expect { confirm! }.not_to(change { patient.reload.school_id })
           end
 
           include_examples "creates a log entry"
@@ -488,7 +499,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:school) { create(:school, team: new_team) }
           let(:new_sessions) do
             create_list(
@@ -527,7 +538,7 @@ describe SchoolMove do
                 )
             )
           end
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:generic_clinic_session) do
             create(
               :session,
@@ -615,7 +626,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:school) { create(:school, team: new_team) }
           let(:new_sessions) do
             create_list(
@@ -654,7 +665,7 @@ describe SchoolMove do
                 )
             )
           end
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:generic_clinic_session) do
             create(
               :session,

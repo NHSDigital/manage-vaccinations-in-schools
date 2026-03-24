@@ -473,7 +473,6 @@ describe "Edit vaccination record" do
     @team =
       create(
         :team,
-        :with_generic_clinic,
         :with_one_nurse,
         ods_code: "R1L",
         programmes: [@programme, @other_programme]

@@ -10,7 +10,7 @@ describe AppVaccinationsSummaryTableComponent do
   let(:hpv_programme) { Programme.hpv }
   let(:programmes) { [hpv_programme] }
   let(:session) { create(:session, :today, programmes:, team:) }
-  let(:team) { create(:team, :with_generic_clinic, programmes:) }
+  let(:team) { create(:team, programmes:) }
 
   let(:component) do
     described_class.new(current_user:, session:, request_session:)

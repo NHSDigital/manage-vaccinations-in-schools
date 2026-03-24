@@ -76,7 +76,7 @@ describe PatientsHelper do
     context "when home educated" do
       let(:patient) { create(:patient, :home_educated) }
 
-      it { should eq("Home-schooled") }
+      it { should eq("Home-educated") }
     end
   end
 

@@ -135,11 +135,10 @@ describe "Import class lists - Moving patients" do
   def given_an_hpv_programme_is_underway
     programmes = [Programme.hpv]
 
-    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
     @user = @team.users.first
 
-    @second_team =
-      create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    @second_team = create(:team, :with_one_nurse, programmes:)
     @second_user = @second_team.users.first
 
     location = create(:school, :secondary, name: "Waterloo Road", team: @team)

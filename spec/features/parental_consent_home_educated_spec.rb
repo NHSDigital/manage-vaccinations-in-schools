@@ -22,13 +22,7 @@ describe "Parental consent" do
 
   def given_an_hpv_programme_is_underway
     @programme = Programme.hpv
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: [@programme]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:school, team: @team, name: "Pilot School")
     @session =
       create(
@@ -79,7 +73,7 @@ describe "Parental consent" do
   end
 
   def when_i_choose_home_schooled
-    select "Home-schooled"
+    select "Home-educated"
     click_on "Continue"
   end
 
@@ -124,6 +118,6 @@ describe "Parental consent" do
     expect(page).to have_content(
       "Child’s name#{@child.full_name(context: :parents)}"
     )
-    expect(page).to have_content("SchoolHome-schooled")
+    expect(page).to have_content("SchoolHome-educated")
   end
 end

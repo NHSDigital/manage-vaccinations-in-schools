@@ -12,15 +12,7 @@ describe API::Testing::TeamsController do
   describe "DELETE" do
     let(:programmes) { [Programme.hpv] }
 
-    let(:team) do
-      create(
-        :team,
-        :with_generic_clinic,
-        ods_code: "R1L",
-        workgroup: "r1l",
-        programmes:
-      )
-    end
+    let(:team) { create(:team, ods_code: "R1L", workgroup: "r1l", programmes:) }
 
     let(:cohort_import) do
       create(
@@ -93,7 +85,7 @@ describe API::Testing::TeamsController do
             .and(change(NotifyLogEntry, :count).by(-13))
             .and(change(Parent, :count).by(-14))
             .and(change(Patient, :count).by(-13))
-            .and(change(PatientLocation, :count).by(-3))
+            .and(change(PatientLocation, :count).by(-4))
             .and(change(VaccinationRecord, :count).by(-11))
         )
       end
@@ -116,7 +108,7 @@ describe API::Testing::TeamsController do
             .and(change(NotifyLogEntry, :count).by(-13))
             .and(change(Parent, :count).by(-14))
             .and(change(Patient, :count).by(-13))
-            .and(change(PatientLocation, :count).by(-3))
+            .and(change(PatientLocation, :count).by(-4))
             .and(change(VaccinationRecord, :count).by(-11))
         )
       end

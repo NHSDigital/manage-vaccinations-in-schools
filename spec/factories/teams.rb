@@ -89,16 +89,14 @@ FactoryBot.define do
       users { [create(:user, :healthcare_assistant, team: instance)] }
     end
 
-    trait :with_generic_clinic do
-      after(:create) do |team|
-        GenericClinicFactory.call(team:, academic_year: AcademicYear.pending)
-      end
-    end
-
     trait :with_careplus_enabled do
       careplus_staff_code { "LW5PM" }
       careplus_staff_type { "IN" }
       careplus_venue_code { identifier.to_s }
+    end
+
+    after(:create) do |team|
+      GenericLocationFactory.call(team:, academic_year: AcademicYear.pending)
     end
   end
 end

@@ -138,7 +138,7 @@
         school = if @consent_form.education_setting_school?
             @consent_form.school.name
           elsif @consent_form.education_setting_home?
-            "Home-schooled"
+            "Home-educated"
           else
             "Not in education"
           end

@@ -106,7 +106,7 @@ describe "Offline vaccination" do
   def given_an_hpv_programme_is_underway(clinic: false)
     programmes = [Programme.hpv]
 
-    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
     school = create(:school, team: @team)
     previous_date = 1.month.ago.to_date
 
@@ -185,7 +185,7 @@ describe "Offline vaccination" do
   def given_an_hpv_programme_is_underway_with_a_single_patient
     programmes = [Programme.hpv]
 
-    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
     school = create(:school, team: @team)
     previous_date = 1.month.ago.to_date
 
@@ -217,14 +217,7 @@ describe "Offline vaccination" do
   def given_a_flu_programme_is_underway_with_a_single_patient
     programmes = [Programme.flu]
 
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes:,
-        ods_code: "B0C4P"
-      )
+    @team = create(:team, :with_one_nurse, programmes:, ods_code: "B0C4P")
     school = create(:school, team: @team)
 
     vaccine = programmes.first.vaccines.active.first

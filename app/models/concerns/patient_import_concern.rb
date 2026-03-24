@@ -141,7 +141,8 @@ module PatientImportConcern
   private
 
   def patient_has_no_education_location_yet?(patient:)
-    patient.school.nil? && !patient.home_educated
+    patient.school&.urn == Location::URN_UNKNOWN ||
+      (patient.school.nil? && !patient.home_educated)
   end
 
   def school_move_does_not_move_patient?(school_move:, patient:)

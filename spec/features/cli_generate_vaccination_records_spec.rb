@@ -32,7 +32,7 @@ describe "mavis generate vaccination-records" do
         :session,
         team: @team,
         programmes: [@programme],
-        location: create(:generic_clinic, team: @team)
+        location: @team.generic_clinic
       )
     @session2 = create(:session, team: @team, programmes: [@programme])
     @session3 = create(:session, team: @team, programmes: [@programme])

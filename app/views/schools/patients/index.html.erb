@@ -5,20 +5,20 @@
                                         ]) %>
 <% end %>
 
-<% content_for :page_title, "#{t("schools.patients.title")} – #{@location.school_name}" %>
+<% content_for :page_title, "#{t("schools.patients.title")} – #{@location.name}" %>
 <%= render "schools/header" %>
 
 <% if @location.school? %>
   <%= govuk_button_link_to "Import class lists", new_school_import_path(@location), secondary: true %>
-<% elsif @location.generic_clinic? %>
-  <%= govuk_button_link_to "Send clinic invitations", edit_school_invite_to_clinic_path(Location::URN_UNKNOWN), secondary: true %>
+<% elsif @location.generic_school? %>
+  <%= govuk_button_link_to "Send clinic invitations", edit_school_invite_to_clinic_path(@location), secondary: true %>
 <% end %>
 
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">
     <%= render AppPatientSearchFormComponent.new(
           @form,
-          url: school_patients_path(@location.generic_clinic? ? Location::URN_UNKNOWN : @location),
+          url: school_patients_path(@location),
           current_team:,
           programmes: current_team.programmes,
           programme_statuses: @programme_statuses,

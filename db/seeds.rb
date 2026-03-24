@@ -26,7 +26,6 @@ def create_team(ods_code:, workgroup: nil, type: :point_of_care)
   Team.find_by(workgroup:) ||
     FactoryBot.create(
       :team,
-      :with_generic_clinic,
       :with_careplus_enabled,
       ods_code:,
       programmes: Programme.all,
@@ -63,19 +62,7 @@ def create_user(role, team:, email: nil, uid: nil)
   end
 end
 
-def attach_sample_of_schools_to(team)
-  Location
-    .school
-    .where
-    .missing(:team_locations)
-    .order("RANDOM()")
-    .limit(50)
-    .find_each do |location|
-      location.attach_to_team!(team, academic_year: AcademicYear.current)
-    end
-end
-
-def create_community_clinics_for(team)
+def create_community_clinics(team)
   FactoryBot.create_list(:community_clinic, 5, team:)
 end
 
@@ -190,9 +177,9 @@ def setup_clinic(team)
   FactoryBot.create_list(:patient, 10, session: clinic_session)
 end
 
-def create_patients(team)
-  team.schools.each do |school|
-    FactoryBot.create_list(:patient, 4, team:, school:)
+def create_home_educated_or_unknown_school_patients(team)
+  team.generic_schools.each do |school|
+    FactoryBot.create_list(:patient, 3, school:, location: school)
   end
 end
 
@@ -294,14 +281,16 @@ def create_nurse_joy_team
   create_user(:healthcare_assistant, team:, email: "hca@example.com")
   create_user(:prescriber, team:, email: "prescriber@example.com")
 
-  attach_sample_of_schools_to(team)
-  create_community_clinics_for(team)
-
-  Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
-  setup_clinic(team)
-  create_patients(team)
-  create_imports(user, team)
-  create_school_moves(team)
+  Audited
+    .audit_class
+    .as_user(user) do
+      create_community_clinics(team)
+      create_team_sessions(user, team)
+      setup_clinic(team)
+      create_home_educated_or_unknown_school_patients(team)
+      create_imports(user, team)
+      create_school_moves(team)
+    end
 end
 
 def create_upload_patients_and_vaccination_records(user)
@@ -345,14 +334,16 @@ def create_a9a5a_team
   team = create_team(ods_code: "A9A5A")
   user = create_user(:nurse, team:, uid: "555057896106")
 
-  attach_sample_of_schools_to(team)
-  create_community_clinics_for(team)
-
-  Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
-  setup_clinic(team)
-  create_patients(team)
-  create_imports(user, team)
-  create_school_moves(team)
+  Audited
+    .audit_class
+    .as_user(user) do
+      create_community_clinics(team)
+      create_team_sessions(user, team)
+      setup_clinic(team)
+      create_home_educated_or_unknown_school_patients(team)
+      create_imports(user, team)
+      create_school_moves(team)
+    end
 end
 
 def create_support_team

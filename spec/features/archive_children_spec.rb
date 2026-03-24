@@ -117,7 +117,7 @@ describe "Archive children" do
     hpv = Programme.hpv
     flu = Programme.flu
     programmes = [hpv, flu]
-    @team = create(:team, :with_generic_clinic, programmes:)
+    @team = create(:team, programmes:)
 
     @session = create(:session, team: @team, programmes: [flu])
   end

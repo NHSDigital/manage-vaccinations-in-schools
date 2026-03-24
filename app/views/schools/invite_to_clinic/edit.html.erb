@@ -3,20 +3,20 @@
 <% end %>
 
 <%= h1 "Invite parents to book a clinic appointment" do %>
-  <span class="nhsuk-caption-l"><%= @location.alternative_name %></span>
+  <span class="nhsuk-caption-l"><%= @location.name %></span>
   Invite parents to book a clinic appointment
 <% end %>
 
 <% if @invitations_count_by_programme_type.values.all?(&:zero?) %>
   <p>You do not need to send any clinic invitations. The parents of any children who were not vaccinated have already received clinic invitations.</p>
 
-  <p><%= link_to "Return to school", school_patients_path(Location::URN_UNKNOWN) %></p>
+  <p><%= link_to "Return to school", school_patients_path(@location) %></p>
 <% else %>
   <p><%= I18n.t("children_be", count: @patients_to_invite.count) %> due a vaccination for at least 1 programme.</p>
 
   <p>You can now send clinic booking invitations to their parents.</p>
 
-  <%= form_with model: @form, url: school_invite_to_clinic_path(Location::URN_UNKNOWN), method: :put do |f| %>
+  <%= form_with model: @form, url: school_invite_to_clinic_path(@location), method: :put do |f| %>
     <%= f.govuk_check_boxes_fieldset :programme_types, legend: nil do %>
       <% current_team.programmes.each do |programme| %>
         <% if (count = @invitations_count_by_programme_type[programme]) > 0 %>

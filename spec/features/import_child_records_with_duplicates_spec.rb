@@ -148,13 +148,7 @@ describe "Child record imports duplicates" do
 
   def given_i_am_signed_in
     @programme = Programme.hpv
-    @team =
-      create(
-        :team,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [@programme]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     sign_in @team.users.first
   end
 

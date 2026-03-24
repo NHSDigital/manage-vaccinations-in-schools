@@ -78,7 +78,7 @@ describe "MMRV vaccination" do
   end
 
   def and_a_patient_has_consented_for_mmrv
-    location = create(:generic_clinic, team: @team)
+    location = @team.generic_clinic
     @session =
       create(:session, team: @team, programmes: [@programme], location:)
     @parent = create(:parent)
@@ -101,7 +101,7 @@ describe "MMRV vaccination" do
   end
 
   def and_a_patient_exists
-    location = create(:generic_clinic, team: @team)
+    location = @team.generic_clinic
     @session =
       create(:session, team: @team, programmes: [@programme], location:)
     @parent = create(:parent)

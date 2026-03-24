@@ -35,7 +35,7 @@ describe "Access log" do
 
   def given_i_am_signed_in
     programmes = [Programme.hpv]
-    team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    team = create(:team, :with_one_nurse, programmes:)
 
     @user = team.users.first
 

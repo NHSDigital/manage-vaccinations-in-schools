@@ -57,9 +57,7 @@ describe DraftSession do
     subject { draft_session.can_change_year_groups? }
 
     context "when creating a clinic session" do
-      let(:location) do
-        create(:generic_clinic, team:, programmes: existing_programmes)
-      end
+      let(:location) { team.generic_clinic }
 
       let(:attributes) { { editing_id: nil } }
 

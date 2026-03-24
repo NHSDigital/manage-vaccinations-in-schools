@@ -169,8 +169,9 @@ FactoryBot.define do
     end
 
     trait :home_educated do
-      school { nil }
-      home_educated { true }
+      team { session&.team || create(:team, programmes:) }
+      school { team.home_educated_school }
+      home_educated { nil }
 
       after(:create) do |patient, evaluator|
         clinic = create(:generic_clinic, team: evaluator.team)
