@@ -11,7 +11,7 @@
 #  patient_id       :bigint           not null
 #  sent_by_user_id  :bigint
 #  session_id       :bigint
-#  team_location_id :bigint
+#  team_location_id :bigint           not null
 #
 # Indexes
 #

@@ -295,7 +295,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.bigint "sent_by_user_id"
     t.bigint "session_id"
-    t.bigint "team_location_id"
+    t.bigint "team_location_id", null: false
     t.integer "type", null: false
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
     t.index ["programme_types"], name: "index_consent_notifications_on_programme_types", using: :gin
