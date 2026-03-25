@@ -129,6 +129,7 @@ describe "Manage children" do
 
     when_i_click_on_send_consent_request
     then_i_see_a_consent_request_sent_banner
+    and_a_clinic_consent_request_is_sent
 
     when_i_click_on_record_new_vaccination
     then_i_see_the_community_clinic_session
@@ -645,6 +646,11 @@ describe "Manage children" do
 
   def then_i_see_a_consent_request_sent_banner
     expect(page).to have_content("Consent request sent.")
+  end
+
+  def and_a_clinic_consent_request_is_sent
+    expect_email_to(@patient.parents.first.email, :consent_clinic_request)
+    expect_sms_to(@patient.parents.first.phone, :consent_clinic_request)
   end
 
   def when_i_click_on_record_new_vaccination

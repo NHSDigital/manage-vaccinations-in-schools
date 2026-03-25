@@ -78,7 +78,7 @@ class Patients::ProgrammesController < Patients::BaseController
     team_location =
       TeamLocation.find_by!(
         team: current_team,
-        location: @patient.school,
+        location: current_team.generic_clinic,
         academic_year: @academic_year
       )
 
