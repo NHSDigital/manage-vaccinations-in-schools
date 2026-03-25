@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SyncableToNHSImmunisationsAPI do
+describe VaccinationRecord::NHSImmunisationsAPISync do
   let(:vaccination_record) do
     build(:vaccination_record, outcome:, programme:, session:)
   end
