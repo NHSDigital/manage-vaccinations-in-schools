@@ -1,16 +1,20 @@
 FROM ruby:4.0.1
 
-# Install system dependencies required to build native gems and run the app
+# Install system dependencies required to build native gems and run the app.
+# Matches the packages in the production Dockerfile (Dockerfile) to keep
+# dev and prod environments as close as possible.
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
       build-essential \
       curl \
       git \
+      jq \
       libicu-dev \
       libjemalloc2 \
       libpq-dev \
       libvips \
       libyaml-dev \
+      node-gyp \
       pkg-config \
       postgresql-client \
       python-is-python3 \
@@ -18,13 +22,14 @@ RUN apt-get update -qq && \
       zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js 22.x via NodeSource
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Yarn 1.22.19
-RUN npm install -g yarn@1.22.19
+# Install Node.js at the exact version used in production (see .node-version)
+ARG NODE_VERSION=22.15.0
+ARG YARN_VERSION=1.22.19
+ENV PATH=/usr/local/node/bin:$PATH
+RUN curl -sL --ssl https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    npm install --ignore-scripts -g yarn@"$YARN_VERSION" && \
+    rm -rf /tmp/node-build-master
 
 # Install foreman for running the Procfile
 RUN gem install foreman
