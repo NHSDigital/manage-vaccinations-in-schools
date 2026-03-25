@@ -100,32 +100,44 @@ To run the project locally:
 bin/setup
 ```
 
-#### Dev Container (Docker-based, no local installs required)
+#### Docker Compose (Docker-based, no local installs required)
 
 If you prefer not to install Ruby, Node, PostgreSQL and Redis on your host
-machine, a [Dev Container](https://containers.dev/) configuration is included
-in `.devcontainer/`. It requires only [Docker](https://www.docker.com/) and
-[VS Code](https://code.visualstudio.com/) with the
-[Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+machine, you can use Docker Compose. It requires only
+[Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/).
 
-Open the repository in VS Code and choose **Reopen in Container** when
-prompted (or run the **Dev Containers: Reopen in Container** command). VS Code
-will:
-
-1. Build the dev container image (Ruby 4, Node 22, system libraries)
-2. Start PostgreSQL 17 and Redis 8 as Docker Compose sidecar services
-3. Run `bin/setup --skip-server` to install gems, JS packages and prepare the
-   database
-
-Once inside the container, start the development server with:
+**First run:**
 
 ```shell
-foreman start -f Procfile.devcontainer
+# Start the services (app, PostgreSQL, Redis)
+docker compose up -d
+
+# Enter the app container and run setup
+docker compose exec app bin/setup --skip-server
+
+# Optionally seed the database
+docker compose exec app bin/rails db:seed
+```
+
+**Subsequent runs:**
+
+```shell
+# Start the services
+docker compose up -d
+
+# Enter the app container and start the dev server
+docker compose exec app foreman start -f Procfile.dev
 ```
 
 The Rails server is available at <http://localhost:4000>. PostgreSQL and Redis
 are exposed on their default ports (5432 / 6379) so you can connect from host
 tools if needed.
+
+To stop all services:
+
+```shell
+docker compose down
+```
 
 > **Note:** The first build downloads ~1 GB of images and compiles native gems,
 > which can take several minutes. Subsequent starts are fast because gem and

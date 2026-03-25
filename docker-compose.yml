@@ -1,31 +1,28 @@
 services:
   app:
     build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
+      context: .
+      dockerfile: compose.Dockerfile
     volumes:
       # Mount the workspace into the container
-      - ..:/workspaces/manage-vaccinations-in-schools:cached
+      - .:/workspaces/manage-vaccinations-in-schools:cached
       # Persist the installed gem bundle across rebuilds
       - bundle:/usr/local/bundle
-    # Keep the container alive; the dev server is started manually via
-    # `foreman start -f Procfile.devcontainer` (or `bin/dev -f Procfile.devcontainer`)
-    command: sleep infinity
+    # Keep the container alive; the dev server is started manually
+    command: tail -f /dev/null
     depends_on:
       - postgres
       - redis
+    ports:
+      - "4000:4000"
     environment:
-      # Rails
       RAILS_ENV: development
-      # A placeholder secret key base suitable for local development only.
-      # Replace with a real value (e.g. `rails secret`) if you need persistent
-      # signed cookies across container restarts.
-      SECRET_KEY_BASE: devcontainer_local_development_only_do_not_use_in_production
-      # PostgreSQL — points at the `postgres` compose service
+      SECRET_KEY_BASE: dev_local_only_do_not_use_in_production
+      # PostgreSQL service connection
       DATABASE_HOST: postgres
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
-      # Redis — points at the `redis` compose service
+      # Redis service connection
       REDIS_URL: redis://redis:6379/0
       SIDEKIQ_REDIS_URL: redis://redis:6379/0
 
