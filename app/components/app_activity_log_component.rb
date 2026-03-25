@@ -167,6 +167,7 @@ class AppActivityLogComponent < ViewComponent::Base
         .with_discarded
         .includes(:performed_by_user, :vaccine)
         .then { |scope| programme_type ? scope.where(programme_type:) : scope }
+        .then { VaccinationRecord.dedup_nhs_api_records_by_primary_source(it) }
   end
 
   attr_reader :archive_reasons,

@@ -25,6 +25,7 @@ class AppPatientProgrammeVaccinationCardComponent < ViewComponent::Base
       .includes(:location)
       .order_by_performed_at
       .select { it.show_in_academic_year?(academic_year) }
+      .then { VaccinationRecord.dedup_nhs_api_records_by_primary_source(it) }
   end
 
   def formatted_age_when(vaccination_record)

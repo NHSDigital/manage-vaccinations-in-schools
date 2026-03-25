@@ -8,6 +8,427 @@ describe SyncableToNHSImmunisationsAPI do
   let(:programme) { Programme.flu }
   let(:session) { create(:session, programmes: [programme]) }
 
+  describe ".dedup_nhs_api_records_by_primary_source" do
+    subject(:deduplicate) do
+      VaccinationRecord.dedup_nhs_api_records_by_primary_source(records)
+    end
+
+    let(:performed_at) { Time.zone.local(2025, 10, 10) }
+
+    let(:vaccination_record_api_primary) do
+      build(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        programme:,
+        nhs_immunisations_api_primary_source: true,
+        performed_at:
+      )
+    end
+
+    let(:vaccination_record_api_non_primary) do
+      build(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        programme:,
+        nhs_immunisations_api_primary_source: false,
+        performed_at:
+      )
+    end
+
+    let(:vaccination_record_service) do
+      build(:vaccination_record, session:, programme:, performed_at:)
+    end
+
+    context "with an empty list" do
+      let(:records) { [] }
+
+      it "returns an empty array" do
+        expect(deduplicate).to eq([])
+      end
+    end
+
+    context "with a single primary source record" do
+      let(:records) { [vaccination_record_api_primary] }
+
+      it "returns that record" do
+        expect(deduplicate).to contain_exactly(vaccination_record_api_primary)
+      end
+    end
+
+    context "with a single non-primary source record" do
+      let(:records) { [vaccination_record_api_non_primary] }
+
+      it "returns that record" do
+        expect(deduplicate).to contain_exactly(
+          vaccination_record_api_non_primary
+        )
+      end
+    end
+
+    context "with a single service record (no nhs_immunisations_api_primary_source)" do
+      let(:records) { [vaccination_record_service] }
+
+      it "returns that record" do
+        expect(deduplicate).to contain_exactly(vaccination_record_service)
+      end
+    end
+
+    context "with one primary source and one non-primary source, same programme and date" do
+      let(:records) do
+        [vaccination_record_api_primary, vaccination_record_api_non_primary]
+      end
+
+      it "returns only the primary source record" do
+        expect(deduplicate).to contain_exactly(vaccination_record_api_primary)
+      end
+    end
+
+    context "with the non-primary appearing before the primary in the list" do
+      let(:records) do
+        [vaccination_record_api_non_primary, vaccination_record_api_primary]
+      end
+
+      it "returns only the primary source record regardless of order" do
+        expect(deduplicate).to contain_exactly(vaccination_record_api_primary)
+      end
+    end
+
+    context "with two primary source records, same programme and date" do
+      let(:vaccination_record_api_primary_b) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: true,
+          performed_at:
+        )
+      end
+      let(:records) do
+        [vaccination_record_api_primary, vaccination_record_api_primary_b]
+      end
+
+      it "returns both primary source records" do
+        expect(deduplicate).to contain_exactly(
+          vaccination_record_api_primary,
+          vaccination_record_api_primary_b
+        )
+      end
+    end
+
+    context "with two non-primary source records, same programme and date" do
+      let(:vaccination_record_api_non_primary_b) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: false,
+          performed_at:
+        )
+      end
+      let(:records) do
+        [
+          vaccination_record_api_non_primary,
+          vaccination_record_api_non_primary_b
+        ]
+      end
+
+      it "returns both records (no primary source to prefer)" do
+        expect(deduplicate).to contain_exactly(
+          vaccination_record_api_non_primary,
+          vaccination_record_api_non_primary_b
+        )
+      end
+    end
+
+    context "with three records: one primary and two non-primary, same programme and date" do
+      let(:vaccination_record_api_non_primary_b) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: false,
+          performed_at:
+        )
+      end
+      let(:records) do
+        [
+          vaccination_record_api_primary,
+          vaccination_record_api_non_primary,
+          vaccination_record_api_non_primary_b
+        ]
+      end
+
+      it "returns only the primary source record" do
+        expect(deduplicate).to contain_exactly(vaccination_record_api_primary)
+      end
+    end
+
+    context "with three records: two primary and one non-primary, same programme and date" do
+      let(:vaccination_record_api_primary_b) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: true,
+          performed_at:
+        )
+      end
+      let(:records) do
+        [
+          vaccination_record_api_primary,
+          vaccination_record_api_primary_b,
+          vaccination_record_api_non_primary
+        ]
+      end
+
+      it "returns both primary source records and discards the non-primary" do
+        expect(deduplicate).to contain_exactly(
+          vaccination_record_api_primary,
+          vaccination_record_api_primary_b
+        )
+      end
+    end
+
+    context "with records for different dates, same programme" do
+      let(:vaccination_record_api_non_primary_next_day) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: false,
+          performed_at: performed_at + 1.day
+        )
+      end
+      let(:records) do
+        [
+          vaccination_record_api_primary,
+          vaccination_record_api_non_primary_next_day
+        ]
+      end
+
+      it "returns both records" do
+        expect(deduplicate).to contain_exactly(
+          vaccination_record_api_primary,
+          vaccination_record_api_non_primary_next_day
+        )
+      end
+    end
+
+    context "with records for different dates, where each date has a primary/non-primary pair" do
+      let(:vaccination_record_api_primary_next_day) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: true,
+          performed_at: performed_at + 1.day
+        )
+      end
+      let(:vaccination_record_api_non_primary_next_day) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: false,
+          performed_at: performed_at + 1.day
+        )
+      end
+      let(:records) do
+        [
+          vaccination_record_api_primary,
+          vaccination_record_api_non_primary,
+          vaccination_record_api_primary_next_day,
+          vaccination_record_api_non_primary_next_day
+        ]
+      end
+
+      it "deduplicates each date group independently, returning one record per date" do
+        expect(deduplicate).to contain_exactly(
+          vaccination_record_api_primary,
+          vaccination_record_api_primary_next_day
+        )
+      end
+    end
+
+    context "with records for the same date but different programmes" do
+      let(:programme) { Programme.flu }
+      let(:vaccination_record_api_non_primary_hpv) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme: Programme.hpv,
+          nhs_immunisations_api_primary_source: false,
+          performed_at:
+        )
+      end
+      let(:records) do
+        [vaccination_record_api_primary, vaccination_record_api_non_primary_hpv]
+      end
+
+      it "returns both records" do
+        expect(deduplicate).to contain_exactly(
+          vaccination_record_api_primary,
+          vaccination_record_api_non_primary_hpv
+        )
+      end
+    end
+
+    context "with duplicates across multiple programmes" do
+      let(:programme) { Programme.flu }
+      let(:vaccination_record_api_primary_hpv) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme: Programme.hpv,
+          nhs_immunisations_api_primary_source: true,
+          performed_at:
+        )
+      end
+      let(:vaccination_record_api_non_primary_hpv) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme: Programme.hpv,
+          nhs_immunisations_api_primary_source: false,
+          performed_at:
+        )
+      end
+      let(:records) do
+        [
+          vaccination_record_api_primary,
+          vaccination_record_api_non_primary,
+          vaccination_record_api_primary_hpv,
+          vaccination_record_api_non_primary_hpv
+        ]
+      end
+
+      it "deduplicates each programme group independently" do
+        expect(deduplicate).to contain_exactly(
+          vaccination_record_api_primary,
+          vaccination_record_api_primary_hpv
+        )
+      end
+    end
+
+    context "with records performed at different times on the same date" do
+      let(:vaccination_record_api_primary) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: true,
+          performed_at: Time.zone.local(2025, 10, 10, 9, 0, 0)
+        )
+      end
+      let(:vaccination_record_api_non_primary) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          nhs_immunisations_api_primary_source: false,
+          performed_at: Time.zone.local(2025, 10, 10, 14, 30, 0)
+        )
+      end
+      let(:records) do
+        [vaccination_record_api_primary, vaccination_record_api_non_primary]
+      end
+
+      it "treats them as the same date group and returns only the primary source" do
+        expect(deduplicate).to contain_exactly(vaccination_record_api_primary)
+      end
+    end
+
+    context "with a mix of API records and service records" do
+      context "when a service record and a primary source API record share the same programme and date" do
+        let(:records) do
+          [vaccination_record_service, vaccination_record_api_primary]
+        end
+
+        it "returns both records (non-API records are never discarded)" do
+          expect(deduplicate).to contain_exactly(
+            vaccination_record_service,
+            vaccination_record_api_primary
+          )
+        end
+      end
+
+      context "when a service record, a primary API record and a non-primary API record share the same prog and date" do
+        let(:records) do
+          [
+            vaccination_record_service,
+            vaccination_record_api_primary,
+            vaccination_record_api_non_primary
+          ]
+        end
+
+        it "returns the service record and the primary source API record, discarding only the non-primary API record" do
+          expect(deduplicate).to contain_exactly(
+            vaccination_record_service,
+            vaccination_record_api_primary
+          )
+        end
+      end
+
+      context "when a service record and a non-primary source API record share the same programme and date" do
+        let(:records) do
+          [vaccination_record_service, vaccination_record_api_non_primary]
+        end
+
+        it "returns both records (no primary source API record present)" do
+          expect(deduplicate).to contain_exactly(
+            vaccination_record_service,
+            vaccination_record_api_non_primary
+          )
+        end
+      end
+
+      context "when a service record sits alongside an unrelated API record for a different date" do
+        let(:vaccination_record_api_primary_next_day) do
+          build(
+            :vaccination_record,
+            :sourced_from_nhs_immunisations_api,
+            programme:,
+            nhs_immunisations_api_primary_source: true,
+            performed_at: performed_at + 1.day
+          )
+        end
+        let(:records) do
+          [vaccination_record_service, vaccination_record_api_primary_next_day]
+        end
+
+        it "returns both records untouched" do
+          expect(deduplicate).to contain_exactly(
+            vaccination_record_service,
+            vaccination_record_api_primary_next_day
+          )
+        end
+      end
+
+      context "when a service record sits alongside an unrelated API record for a different programme" do
+        let(:programme) { Programme.flu }
+        let(:vaccination_record_api_non_primary_hpv) do
+          build(
+            :vaccination_record,
+            :sourced_from_nhs_immunisations_api,
+            programme: Programme.hpv,
+            nhs_immunisations_api_primary_source: false,
+            performed_at:
+          )
+        end
+        let(:records) do
+          [vaccination_record_service, vaccination_record_api_non_primary_hpv]
+        end
+
+        it "returns both records untouched" do
+          expect(deduplicate).to contain_exactly(
+            vaccination_record_service,
+            vaccination_record_api_non_primary_hpv
+          )
+        end
+      end
+    end
+  end
+
   describe "#sync_to_nhs_immunisations_api!" do
     before { Flipper.enable(:imms_api_sync_job, programme) }
 

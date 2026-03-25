@@ -44,6 +44,21 @@ module SyncableToNHSImmunisationsAPI
     after_commit :queue_sync_to_nhs_immunisations_api
   end
 
+  class_methods do
+    def dedup_nhs_api_records_by_primary_source(records)
+      records
+        .group_by { [it.performed_at_date, it.programme_type] }
+        .flat_map do |_key, group|
+          api_records, other_records =
+            group.partition(&:sourced_from_nhs_immunisations_api?)
+          primary_source_records =
+            api_records.select(&:nhs_immunisations_api_primary_source)
+
+          other_records + (primary_source_records.presence || api_records)
+        end
+    end
+  end
+
   def correct_source_for_nhs_immunisations_api?
     sourced_from_service? ||
       (

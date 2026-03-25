@@ -96,4 +96,33 @@ describe AppPatientProgrammeVaccinationCardComponent do
       it { should_not have_css(".nhsuk-table", text: "Recorded in Mavis") }
     end
   end
+
+  context "with a primary and a non-primary source NHS API record for the same programme and date" do
+    let(:academic_year) { 2024 }
+    let(:programme) { Programme.flu }
+    let(:performed_at) { Time.zone.local(2025, 1, 15) }
+
+    before do
+      create(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        patient:,
+        programme:,
+        nhs_immunisations_api_primary_source: true,
+        performed_at:
+      )
+      create(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        patient:,
+        programme:,
+        nhs_immunisations_api_primary_source: false,
+        performed_at:
+      )
+    end
+
+    it "shows only the primary source record" do
+      expect(rendered).to have_css("tbody tr", count: 1)
+    end
+  end
 end
