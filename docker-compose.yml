@@ -8,8 +8,7 @@ services:
       - .:/rails:cached
       # Persist the installed gem bundle across rebuilds
       - bundle:/usr/local/bundle
-    # Keep the container alive; the dev server is started manually
-    command: tail -f /dev/null
+    command: foreman start -f Procfile.compose
     depends_on:
       - postgres
       - redis

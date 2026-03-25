@@ -43,7 +43,7 @@ ENV RAILS_ENV="development" \
 # (mirrors the final stage in Dockerfile)
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    mkdir -p /usr/local/bundle && \
+    mkdir -p db log storage tmp /usr/local/bundle && \
     chown -R rails:rails db log storage tmp /usr/local/bundle
 
 USER 1000:1000

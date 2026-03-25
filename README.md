@@ -122,11 +122,8 @@ docker compose exec app bin/rails db:seed
 **Subsequent runs:**
 
 ```shell
-# Start the services
+# Start the services (dev server starts automatically)
 docker compose up -d
-
-# Enter the app container and start the dev server
-docker compose exec app foreman start -f Procfile.dev
 ```
 
 The Rails server is available at <http://localhost:4000>. PostgreSQL and Redis
