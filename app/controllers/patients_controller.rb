@@ -96,13 +96,7 @@ class PatientsController < ApplicationController
         []
       else
         Patient::ProgrammeStatus.statuses.keys -
-          %w[
-            not_eligible
-            needs_consent_request_not_scheduled
-            needs_consent_request_scheduled
-            needs_consent_request_failed
-            needs_consent_follow_up_requested
-          ]
+          %w[not_eligible needs_consent_follow_up_requested]
       end
   end
 

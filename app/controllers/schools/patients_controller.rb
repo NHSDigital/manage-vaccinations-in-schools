@@ -54,12 +54,6 @@ class Schools::PatientsController < Schools::BaseController
   def set_programme_statuses
     @programme_statuses =
       Patient::ProgrammeStatus.statuses.keys -
-        %w[
-          not_eligible
-          needs_consent_request_not_scheduled
-          needs_consent_request_scheduled
-          needs_consent_request_failed
-          needs_consent_follow_up_requested
-        ]
+        %w[not_eligible needs_consent_follow_up_requested]
   end
 end

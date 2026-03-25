@@ -38,7 +38,18 @@ class Patient::ProgrammeStatus < ApplicationRecord
   belongs_to :location, optional: true
 
   has_many :patient_locations,
-           -> { includes(location: :location_programme_year_groups) },
+           -> do
+             includes(
+               location: [
+                 :location_programme_year_groups,
+                 {
+                   team_locations: {
+                     sessions: :session_programme_year_groups
+                   }
+                 }
+               ]
+             )
+           end,
            through: :patient
 
   has_many :consents,
@@ -63,6 +74,16 @@ class Patient::ProgrammeStatus < ApplicationRecord
           through: :patient,
           source: :attendance_records
 
+  has_many :parents, -> { contactable }, through: :patient
+
+  has_many :consent_notifications,
+           -> { request.includes(session: :team_location) },
+           through: :patient
+
+  has_many :notify_log_entries,
+           -> { consent_request.includes(:notify_log_entry_programmes) },
+           through: :patient
+
   GROUPS = %w[
     not_eligible
     needs_consent
@@ -80,7 +101,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
     "needs_consent_request_scheduled" => 11,
     "needs_consent_request_failed" => 12,
     "needs_consent_no_response" => 13,
-    "needs_consent_follow_up_requested" => 14
+    "needs_consent_follow_up_requested" => 14,
+    "needs_consent_no_contact_details" => 15
   }.freeze
 
   HAS_REFUSAL_STATUSES = {
@@ -188,7 +210,10 @@ class Patient::ProgrammeStatus < ApplicationRecord
         consents:,
         triages:,
         attendance_record:,
-        vaccination_records:
+        vaccination_records:,
+        parents:,
+        consent_notifications:,
+        notify_log_entries:
       )
   end
 end

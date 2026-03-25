@@ -141,4 +141,13 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
   def invalidate_params
     params.expect(consent: :notes).merge(invalidated_at: Time.current)
   end
+
+  def consent_request_needed?
+    programme_status =
+      @patient.programme_status(@programme, academic_year: @academic_year)
+
+    programme_status.needs_consent_no_response? ||
+      programme_status.needs_consent_request_scheduled? ||
+      programme_status.needs_consent_request_not_scheduled?
+  end
 end

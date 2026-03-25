@@ -8,19 +8,41 @@ describe StatusGenerator::Programme do
       patient:,
       patient_locations:
         patient.patient_locations.includes(
-          location: :location_programme_year_groups
+          location: [
+            :location_programme_year_groups,
+            { team_locations: { sessions: :session_programme_year_groups } }
+          ]
         ),
       consents: patient.consents,
       triages: patient.triages,
       attendance_record: patient.attendance_records.first,
-      vaccination_records: patient.vaccination_records.order_by_performed_at
+      vaccination_records: patient.vaccination_records.order_by_performed_at,
+      parents: patient.parents.contactable,
+      consent_notifications:
+        patient.consent_notifications.includes(session: :team_location),
+      notify_log_entries:
+        patient.notify_log_entries.includes(:notify_log_entry_programmes)
     )
   end
 
   let(:programme) { Programme.sample }
-  let(:session) { create(:session, programmes: [programme]) }
-  let(:patient) { create(:patient, session:) }
+  let(:session) do
+    create(:session, programmes: [programme], send_consent_requests_at:)
+  end
+  let(:patient) { create(:patient, session:, parents:) }
+  let(:parents) { [create(:parent)] }
   let(:location) { create(:school) }
+  let(:send_consent_requests_at) { nil }
+
+  before do
+    create(
+      :consent_notification,
+      :request,
+      patient:,
+      session:,
+      programmes: [programme]
+    )
+  end
 
   context "when already vaccinated" do
     let(:programme) { Programme.hpv }
@@ -367,6 +389,62 @@ describe StatusGenerator::Programme do
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
+
+    context "when the latest consent request delivery has failed" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :permanent_failure,
+          :consent_request,
+          patient:,
+          programme_types: [programme.type]
+        )
+      end
+
+      its(:status) { should be(:needs_consent_request_failed) }
+    end
+
+    context "when a consent request is scheduled for a future session" do
+      let(:send_consent_requests_at) { Date.tomorrow }
+
+      before { ConsentNotification.delete_all }
+
+      its(:status) { should be(:needs_consent_request_scheduled) }
+    end
+
+    context "when a consent requests are not scheduled to go out in the future" do
+      let(:send_consent_requests_at) { nil }
+
+      before { ConsentNotification.delete_all }
+
+      its(:status) { should be(:needs_consent_request_not_scheduled) }
+    end
+
+    context "when there is a future session for a different programme" do
+      before do
+        create(
+          :session,
+          programmes: [Programme.hpv],
+          team_location: session.team_location,
+          send_consent_requests_at: Date.tomorrow
+        )
+      end
+
+      its(:status) { should be(:needs_consent_no_response) }
+    end
+
+    context "when there are no contact details for parents and no consent request has been sent" do
+      let(:parents) { [create(:parent, :non_contactable)] }
+
+      its(:status) { should be(:needs_consent_no_contact_details) }
+    end
+
+    context "when there are no parent relationships and no consent request has been sent" do
+      let(:parents) { [] }
+
+      its(:status) { should be(:needs_consent_no_contact_details) }
+    end
 
     context "with a multi-dose programme" do
       let(:programme) { Programme.mmr }
