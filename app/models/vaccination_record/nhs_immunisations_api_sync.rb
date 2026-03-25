@@ -3,6 +3,34 @@
 module VaccinationRecord::NHSImmunisationsAPISync
   extend ActiveSupport::Concern
 
+  # Fields whose changes trigger a sync. Keep in sync with:
+  #   - FHIRMapper::VaccinationRecord#fhir_record (fields that affect the FHIR payload)
+  #   - #should_be_in_nhs_immunisations_api? (fields that affect eligibility)
+  SYNCED_FIELDS = %w[
+    uuid
+    source
+    outcome
+    performed_at_date
+    performed_at_time
+    created_at
+    batch_number
+    batch_expiry
+    delivery_site
+    delivery_method
+    performed_ods_code
+    dose_sequence
+    programme_type
+    full_dose
+    vaccine_id
+    patient_id
+    location_id
+    performed_by_user_id
+    performed_by_given_name
+    performed_by_family_name
+    discarded_at
+    notify_parents
+  ].freeze
+
   included do
     scope :with_correct_source_for_nhs_immunisations_api,
           -> do
@@ -74,10 +102,7 @@ module VaccinationRecord::NHSImmunisationsAPISync
   end
 
   def changes_need_to_be_synced_to_nhs_immunisations_api?
-    changes.present? && !nhs_immunisations_api_etag_changed? &&
-      !nhs_immunisations_api_sync_pending_at_changed? &&
-      !nhs_immunisations_api_synced_at_changed? &&
-      !nhs_immunisations_api_id_changed?
+    (changes.keys & SYNCED_FIELDS).any?
   end
 
   def touch_nhs_immunisations_api_sync_pending_at
