@@ -4,14 +4,15 @@
 # This class either finds or creates a suitable community clinic session for
 # the team, academic year, and programme type.
 #
-# It's used when recording a vaccination for a patient outside of the context
-# of a school and therefore we need a clinic session to record the vaccination
+# It's used when recording a vaccination for a patient outside the context of
+# a school, and therefore we need a clinic session to record the vaccination
 # from.
 class ClinicSessionFactory
-  def initialize(team:, academic_year:, programme_type:)
+  def initialize(team:, academic_year:, programme_type:, date: nil)
     @team = team
     @academic_year = academic_year
     @programme_type = programme_type
+    @date = date || Date.current
   end
 
   def call
@@ -39,9 +40,7 @@ class ClinicSessionFactory
 
   private
 
-  attr_reader :team, :academic_year, :programme_type
-
-  def date = Date.current
+  attr_reader :team, :academic_year, :programme_type, :date
 
   def team_location
     @team_location ||=
