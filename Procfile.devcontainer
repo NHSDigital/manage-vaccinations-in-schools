@@ -1,4 +1,0 @@
-web: bin/falcon serve -b http://localhost:4000
-sidekiq: bin/sidekiq
-css: yarn build:css --watch
-js: yarn build --watch
