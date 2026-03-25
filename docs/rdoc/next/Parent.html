@@ -679,7 +679,7 @@ updated_at                   :datetime         not null</pre>
             </details>
           </div>
           <div class="method-source-code" id="match_existing-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 67</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 70</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">match_existing</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">email:</span>, <span class="ruby-value">phone:</span>, <span class="ruby-value">full_name:</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">email</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">parent</span> = <span class="ruby-constant">Parent</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">email:</span>))
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">parent</span>
@@ -749,7 +749,7 @@ updated_at                   :datetime         not null</pre>
             </details>
           </div>
           <div class="method-source-code" id="contact_label-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 93</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">contact_label</span>
   [<span class="ruby-identifier">email</span>, <span class="ruby-identifier">phone</span>].<span class="ruby-identifier">compact_blank</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot; / &quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -791,7 +791,7 @@ updated_at                   :datetime         not null</pre>
             </details>
           </div>
           <div class="method-source-code" id="contact_method_description-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 97</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 100</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">contact_method_description</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">contact_method_other?</span>
     <span class="ruby-node">&quot;Other – #{contact_method_other_details}&quot;</span>
@@ -837,7 +837,7 @@ updated_at                   :datetime         not null</pre>
             </details>
           </div>
           <div class="method-source-code" id="contactable-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 85</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">contactable?</span>
   <span class="ruby-identifier">email</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">phone</span>.<span class="ruby-identifier">present?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -879,7 +879,7 @@ updated_at                   :datetime         not null</pre>
             </details>
           </div>
           <div class="method-source-code" id="email_delivery_status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 105</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 108</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">email_delivery_status</span>
   <span class="ruby-identifier">most_recent_notify_log_entry</span>(<span class="ruby-value">:email</span>, <span class="ruby-value">recipient:</span> <span class="ruby-identifier">email</span>)&amp;.<span class="ruby-identifier">delivery_status</span>
 <span class="ruby-keyword">end</span></pre>
@@ -921,7 +921,7 @@ updated_at                   :datetime         not null</pre>
             </details>
           </div>
           <div class="method-source-code" id="label-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 89</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">label</span>
   <span class="ruby-identifier">full_name</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;Parent or guardian (name unknown)&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -963,7 +963,7 @@ updated_at                   :datetime         not null</pre>
             </details>
           </div>
           <div class="method-source-code" id="sms_delivery_status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 109</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/parent.rb, line 112</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sms_delivery_status</span>
   <span class="ruby-identifier">most_recent_notify_log_entry</span>(<span class="ruby-value">:sms</span>, <span class="ruby-value">recipient:</span> <span class="ruby-identifier">phone</span>)&amp;.<span class="ruby-identifier">delivery_status</span>
 <span class="ruby-keyword">end</span></pre>
