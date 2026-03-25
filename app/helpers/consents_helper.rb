@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ConsentsHelper
-  ConsentRefusalOption = Struct.new(:value, :label, :divider)
+  ConsentRefusalOption = Struct.new(:value, :label, :hint, :divider)
 
   def consent_refusal_reasons(consent)
     reasons = %w[
@@ -16,10 +16,19 @@ module ConsentsHelper
       reasons.insert(0, "contains_gelatine")
     end
 
+    if consent.respond_to?(:location) && consent.location&.school?
+      reasons.insert(-2, "do_not_want_vaccination_at_school")
+    end
+
     reasons.map do |value|
       label = refusal_reason_label(consent, value)
+      hint =
+        I18n.t(
+          "activerecord.attributes.consent.reason_for_refusal_hints.#{value}",
+          default: nil
+        )
 
-      ConsentRefusalOption.new(value:, label:, divider: value == "other")
+      ConsentRefusalOption.new(value:, label:, hint:, divider: value == "other")
     end
   end
 

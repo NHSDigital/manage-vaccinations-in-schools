@@ -17,6 +17,7 @@
 
       <%= f.govuk_radio_button :reason_for_refusal, refusal_reason.value,
                                label: { text: refusal_reason.label },
+                               hint: { text: refusal_reason.hint },
                                link_errors: index.zero? %>
     <% end %>
   <% end %>
