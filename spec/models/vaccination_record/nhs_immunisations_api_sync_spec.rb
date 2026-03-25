@@ -421,4 +421,90 @@ describe VaccinationRecord::NHSImmunisationsAPISync do
       end
     end
   end
+
+  describe "#should_be_in_nhs_immunisations_api?" do
+    subject { vaccination_record.should_be_in_nhs_immunisations_api? }
+
+    let(:patient) { create(:patient, session:) }
+    let(:notify_parents) { true }
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        outcome:,
+        programme:,
+        session:,
+        patient:,
+        notify_parents:
+      )
+    end
+
+    before { Flipper.enable(:imms_api_sync_job, programme) }
+
+    context "when all conditions are met" do
+      it { should be true }
+    end
+
+    context "when the vaccination record has been discarded" do
+      before { vaccination_record.discard! }
+
+      it { should be false }
+    end
+
+    context "when the vaccination record doesn't have the correct source" do
+      before do
+        allow(vaccination_record).to receive(
+          :correct_source_for_nhs_immunisations_api?
+        ).and_return(false)
+      end
+
+      it { should be false }
+    end
+
+    VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
+      next if outcome == "administered"
+
+      context "the vaccination record outcome is #{outcome}" do
+        let(:vaccination_record) do
+          create(:vaccination_record, outcome:, programme:, session:, patient:)
+        end
+
+        it { should be false }
+      end
+    end
+
+    context "when the patient has no NHS number" do
+      before { patient.update(nhs_number: nil) }
+
+      it { should be true }
+    end
+
+    context "when the patient has requested that their parents aren't notified" do
+      let(:notify_parents) { false }
+
+      it { should be false }
+    end
+
+    context "when notify_parents is not set" do
+      let(:notify_parents) { nil }
+
+      it { should be true }
+    end
+
+    context "when the patient is invalidated" do
+      before { patient.update(invalidated_at: Time.current) }
+
+      it { should be false }
+    end
+
+    context "when the programme type is not enabled in the feature flag" do
+      let(:programme) { Programme.menacwy }
+
+      before do
+        Flipper.disable(:imms_api_sync_job)
+        Flipper.enable(:imms_api_sync_job, Programme.hpv)
+      end
+
+      it { should be false }
+    end
+  end
 end

@@ -661,100 +661,6 @@ describe NHS::ImmunisationsAPI do
     end
   end
 
-  describe "should_be_in_immunisations_api?" do
-    subject(:should_be_in_immunisations_api) do
-      described_class.should_be_in_immunisations_api?(vaccination_record)
-    end
-
-    context "when all conditions are met" do
-      it { should be true }
-    end
-
-    context "when the vaccination record has been discarded" do
-      before { vaccination_record.discard! }
-
-      it { should be false }
-    end
-
-    context "when the vaccination record doesn't have the correct source" do
-      before do
-        allow(vaccination_record).to receive(
-          :correct_source_for_nhs_immunisations_api?
-        ).and_return(false)
-      end
-
-      it { should be false }
-    end
-
-    VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
-      next if outcome == "administered"
-
-      context "the vaccination record outcome is #{outcome}" do
-        let(:vaccination_record) do
-          create(
-            :vaccination_record,
-            outcome:,
-            patient:,
-            nhs_immunisations_api_synced_at:,
-            nhs_immunisations_api_id:,
-            nhs_immunisations_api_primary_source:,
-            nhs_immunisations_api_etag:,
-            nhs_immunisations_api_sync_pending_at:
-          )
-        end
-
-        it { should be false }
-      end
-    end
-
-    context "when the patient has no NHS number" do
-      before { patient.update(nhs_number: nil) }
-
-      it { should be true }
-    end
-
-    context "when the patient has requested that their parents aren't notified" do
-      before do
-        create(
-          :consent,
-          :given,
-          :self_consent,
-          patient:,
-          programme:,
-          notify_parents_on_vaccination: false
-        )
-      end
-
-      let(:notify_parents) { false }
-
-      it { should be false }
-    end
-
-    context "when notify_parents is not set" do
-      let(:notify_parents) { nil }
-
-      it { should be true }
-    end
-
-    context "when the patient is invalidated" do
-      before { patient.update(invalidated_at: Time.current) }
-
-      it { should be false }
-    end
-
-    context "when the programme type is not enabled in the feature flag" do
-      let(:programme) { Programme.menacwy }
-      let(:vaccine) { programme.vaccines.first }
-
-      before do
-        Flipper.disable(:imms_api_sync_job)
-        Flipper.enable(:imms_api_sync_job, Programme.hpv)
-      end
-
-      it { should be false }
-    end
-  end
-
   describe "next_sync_action" do
     subject(:next_sync_action) do
       described_class.send(:next_sync_action, vaccination_record)
@@ -791,10 +697,14 @@ describe NHS::ImmunisationsAPI do
     end
 
     context "the vaccination record is already in-sync" do
-      let(:nhs_immunisations_api_synced_at) { 1.second.ago }
-      let(:nhs_immunisations_api_id) { Random.uuid }
-      let(:nhs_immunisations_api_primary_source) { true }
-      let(:nhs_immunisations_api_sync_pending_at) { 2.seconds.ago }
+      before do
+        vaccination_record.update_columns(
+          nhs_immunisations_api_synced_at: 1.second.ago,
+          nhs_immunisations_api_id: Random.uuid,
+          nhs_immunisations_api_primary_source: true,
+          nhs_immunisations_api_sync_pending_at: 2.seconds.ago
+        )
+      end
 
       it { should be_nil }
     end

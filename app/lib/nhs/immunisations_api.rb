@@ -258,15 +258,6 @@ module NHS::ImmunisationsAPI
       end
     end
 
-    def should_be_in_immunisations_api?(vaccination_record)
-      vaccination_record.kept? &&
-        vaccination_record.correct_source_for_nhs_immunisations_api? &&
-        vaccination_record.administered? &&
-        Flipper.enabled?(:imms_api_sync_job, vaccination_record.programme) &&
-        vaccination_record.notify_parents != false &&
-        vaccination_record.patient.not_invalidated?
-    end
-
     def should_perform_search_for_patient?(patient)
       patient.teams.any?(&:has_point_of_care_access?)
     end
@@ -355,7 +346,8 @@ module NHS::ImmunisationsAPI
                 " nhs_immunisations_api_sync_pending_at is nil"
       end
 
-      should_be_recorded = should_be_in_immunisations_api?(vaccination_record)
+      should_be_recorded =
+        vaccination_record.should_be_in_nhs_immunisations_api?
       is_recorded = is_recorded_in_immunisations_api?(vaccination_record)
 
       if is_recorded

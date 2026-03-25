@@ -82,11 +82,11 @@ class VaccinationRecord < ApplicationRecord
   include Confirmable
   include Discard::Model
   include HasDoseVolume
+  include NHSImmunisationsAPISync
   include Notable
   include PendingChangesConcern
   include PerformableAtDateAndTime
   include PerformableBy
-  include NHSImmunisationsAPISync
 
   audited associated_with: :patient
 
