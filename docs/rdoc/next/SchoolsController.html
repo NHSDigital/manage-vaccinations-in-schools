@@ -675,16 +675,14 @@
 
   <span class="ruby-ivar">@pagy</span>, <span class="ruby-ivar">@locations</span> = <span class="ruby-identifier">pagy</span>(<span class="ruby-identifier">locations</span>)
 
+  <span class="ruby-identifier">academic_year</span> = <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>
+
   <span class="ruby-ivar">@patient_count_by_school_id</span> =
     <span class="ruby-constant">Patient</span>
       .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient_locations</span>)
-      .<span class="ruby-identifier">where</span>(
-        <span class="ruby-value">patient_locations:</span> {
-          <span class="ruby-value">location:</span> <span class="ruby-ivar">@locations</span>,
-          <span class="ruby-value">academic_year:</span> <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>
-        }
-      )
+      .<span class="ruby-identifier">where</span>(<span class="ruby-value">patient_locations:</span> { <span class="ruby-value">location:</span> <span class="ruby-ivar">@locations</span>, <span class="ruby-value">academic_year:</span> })
       .<span class="ruby-identifier">not_archived</span>(<span class="ruby-value">team:</span> <span class="ruby-identifier">current_team</span>)
+      .<span class="ruby-identifier">appear_in_programmes</span>(<span class="ruby-identifier">current_team</span>.<span class="ruby-identifier">programmes</span>, <span class="ruby-value">academic_year:</span>)
       .<span class="ruby-identifier">distinct</span>
       .<span class="ruby-identifier">group</span>(<span class="ruby-value">:school_id</span>)
       .<span class="ruby-identifier">count</span>
