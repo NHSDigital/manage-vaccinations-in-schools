@@ -53,7 +53,7 @@
 
   <% if can_record_new_vaccination? %>
     <div class="nhsuk-button-group">
-      <%= govuk_button_to "Record a new #{programme.name_in_sentence} vaccination",
+      <%= govuk_button_to "Record a vaccination in clinic",
                           record_new_vaccination_patient_programme_path(patient, programme),
                           secondary: true %>
     </div>

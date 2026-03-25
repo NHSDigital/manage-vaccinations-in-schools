@@ -96,7 +96,7 @@ describe "Clinic sessions" do
 
   def and_i_record_a_new_vaccination
     within(".app-secondary-navigation") { click_on "HPV" }
-    click_on "Record a new HPV vaccination"
+    click_on "Record a vaccination in clinic"
   end
 
   def then_i_see_the_community_clinic_session

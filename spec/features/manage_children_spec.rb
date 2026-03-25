@@ -654,7 +654,7 @@ describe "Manage children" do
   end
 
   def when_i_click_on_record_new_vaccination
-    click_on "Record a new flu vaccination"
+    click_on "Record a vaccination in clinic"
   end
 
   def then_i_see_the_community_clinic_session
