@@ -437,7 +437,7 @@ class ConsentForm < ApplicationRecord
     # unable to match the consent form to a child, we consider the session
     # and therefore the dates to not be accurate enough to display.
 
-    original_session_is_accurate? || matched?
+    original_session_is_accurate? || (session.present? && matched?)
   end
 
   def programmes = consent_form_programmes.map(&:programme)
