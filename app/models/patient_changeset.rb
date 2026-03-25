@@ -290,9 +290,12 @@ class PatientChangeset < ApplicationRecord
           school_move =
             patient.school_moves.includes(:school_teams).first ||
               SchoolMove.new(patient:)
+
+          # TODO: Simplify this once we no longer have changesets with
+          #  `school_id` set to `nil`.
           school_move.assign_attributes(
-            # TODO: Simplify this once we no longer have changesets with
-            #  `school_id` set to `nil`.
+            academic_year:,
+            home_educated: nil,
             school:
               school ||
                 (
@@ -302,9 +305,10 @@ class PatientChangeset < ApplicationRecord
                     team.unknown_school
                   end
                 ),
-            academic_year:,
+            team_id: nil,
             source: school_move_source
           )
+
           # TODO: Figure out why this is necessary.
           school_move.strict_loading!(false)
           school_move
