@@ -57,7 +57,7 @@ en:
         needs_consent_request_failed: Needs consent
         needs_consent_request_not_scheduled: Needs consent
         needs_consent_request_scheduled: Needs consent
-        needs_consent_no_contact_details: No contact details
+        needs_consent_no_contact_details: Needs consent
         needs_triage: Needs triage
         not_eligible: Not eligible
         vaccinated: Vaccinated
