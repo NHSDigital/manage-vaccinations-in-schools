@@ -799,10 +799,8 @@ describe GovukNotifyPersonalisation do
   context "with vaccine side effects" do
     before do
       Vaccine
-        .active
         .for_programme(hpv_programme)
-        .first
-        .update!(side_effects: %w[swelling unwell])
+        .each { it.update!(side_effects: %w[swelling unwell]) }
     end
 
     it { should have_attributes(vaccine_side_effects: "") }

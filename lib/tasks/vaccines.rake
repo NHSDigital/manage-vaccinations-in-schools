@@ -29,7 +29,7 @@ namespace :vaccines do
       vaccine.snomed_product_term = data["snomed_product_term"]
       vaccine.upload_name = data["upload_name"]
 
-      vaccine.side_effects = side_effects_for(programme_type, data["method"])
+      vaccine.side_effects = data.fetch("side_effects")
 
       vaccine.save!
 
@@ -82,64 +82,6 @@ namespace :vaccines do
     else
       puts "All vaccine health question chains are correctly linked"
     end
-  end
-end
-
-def side_effects_for(programme_type, method)
-  case programme_type
-  when "flu"
-    if method == "nasal"
-      %w[runny_blocked_nose headache tiredness loss_of_appetite]
-    else
-      %w[
-        swelling
-        headache
-        high_temperature
-        feeling_sick
-        irritable
-        drowsy
-        loss_of_appetite
-        unwell
-      ]
-    end
-  when "hpv"
-    %w[
-      swelling
-      headache
-      high_temperature
-      feeling_sick
-      irritable
-      drowsy
-      loss_of_appetite
-      unwell
-    ]
-  when "menacwy"
-    %w[
-      drowsy
-      feeling_sick
-      headache
-      high_temperature
-      irritable
-      loss_of_appetite
-      rash
-      swelling
-      unwell
-    ]
-  when "mmr"
-    %w[swollen_glands raised_blotchy_rash]
-  when "td_ipv"
-    %w[
-      drowsy
-      feeling_sick
-      headache
-      high_temperature
-      irritable
-      loss_of_appetite
-      swelling
-      unwell
-    ]
-  else
-    raise UnsupportedProgrammeType, programme_type
   end
 end
 

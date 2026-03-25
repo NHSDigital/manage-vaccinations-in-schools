@@ -194,6 +194,7 @@ FactoryBot.define do
         disease_types { data["disease_types"] }
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
+        side_effects { data.fetch("side_effects") }
         upload_name { data["upload_name"] }
         nivs_name { data["nivs_name"] }
         snomed_product_code { data["snomed_product_code"] }

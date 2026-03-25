@@ -10,6 +10,15 @@ cell_based_trivalent:
   nivs_name: Seqirus Cell-Based Trivalent IIVc
   dose_volume_ml: 0.5
   disease_types: [influenza]
+  side_effects:
+    - swelling
+    - headache
+    - high_temperature
+    - feeling_sick
+    - irritable
+    - drowsy
+    - loss_of_appetite
+    - unwell
   snomed_product_code: 43207411000001105
   snomed_product_term:
     Cell-based trivalent influenza vaccine (surface antigen, inactivated) suspension for injection
@@ -25,6 +34,7 @@ fluenz:
   nivs_name: AstraZeneca Fluenz LAIV
   dose_volume_ml: 0.2
   disease_types: [influenza]
+  side_effects: [runny_blocked_nose, headache, tiredness, loss_of_appetite]
   snomed_product_code: 43208811000001106
   snomed_product_term:
     Fluenz (trivalent) vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) (product)
@@ -38,6 +48,15 @@ vaxigrip:
   upload_name: Sanofi Vaxigrip
   dose_volume_ml: 0.5
   disease_types: [influenza]
+  side_effects:
+    - swelling
+    - headache
+    - high_temperature
+    - feeling_sick
+    - irritable
+    - drowsy
+    - loss_of_appetite
+    - unwell
   snomed_product_code: 45175511000001104
   snomed_product_term:
     Vaxigrip Trivalent influenza vaccine (split virion, inactivated) suspension for injection 0.5ml
@@ -53,6 +72,15 @@ viatris:
   nivs_name: Viatris Quadrivalent Influvac sub - unit Tetra - QIVe
   dose_volume_ml: 0.5
   disease_types: [influenza]
+  side_effects:
+    - swelling
+    - headache
+    - high_temperature
+    - feeling_sick
+    - irritable
+    - drowsy
+    - loss_of_appetite
+    - unwell
   snomed_product_code: 45354911000001100
   snomed_product_term:
     Influenza TIV MYL vaccine suspension for injection 0.5ml pre-filled syringes (Viatris UK
@@ -71,6 +99,15 @@ cervarix:
   nivs_name: Cervarix
   dose_volume_ml: 0.5
   disease_types: [human_papillomavirus]
+  side_effects:
+    - swelling
+    - headache
+    - high_temperature
+    - feeling_sick
+    - irritable
+    - drowsy
+    - loss_of_appetite
+    - unwell
   snomed_product_code: 12238911000001100
   snomed_product_term:
     Cervarix vaccine suspension for injection 0.5ml pre-filled syringes (GlaxoSmithKline) (product)
@@ -86,6 +123,15 @@ gardasil:
   nivs_name: Gardasil
   dose_volume_ml: 0.5
   disease_types: [human_papillomavirus]
+  side_effects:
+    - swelling
+    - headache
+    - high_temperature
+    - feeling_sick
+    - irritable
+    - drowsy
+    - loss_of_appetite
+    - unwell
   snomed_product_code: 10880211000001104
   snomed_product_term:
     Gardasil vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK)
@@ -101,6 +147,15 @@ gardasil_9:
   nivs_name: Gardasil9
   dose_volume_ml: 0.5
   disease_types: [human_papillomavirus]
+  side_effects:
+    - swelling
+    - headache
+    - high_temperature
+    - feeling_sick
+    - irritable
+    - drowsy
+    - loss_of_appetite
+    - unwell
   snomed_product_code: 33493111000001108
   snomed_product_term:
     Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK)
@@ -117,6 +172,16 @@ menquadfi:
   upload_name: MenQuadfi
   dose_volume_ml: 0.5
   disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
+  side_effects:
+    - drowsy
+    - feeling_sick
+    - headache
+    - high_temperature
+    - irritable
+    - loss_of_appetite
+    - rash
+    - swelling
+    - unwell
   snomed_product_code: 39779611000001104
   snomed_product_term: MenQuadfi vaccine solution for injection 0.5ml vials (Sanofi) (product)
 
@@ -129,6 +194,16 @@ menveo:
   upload_name: Menveo
   dose_volume_ml: 0.5
   disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
+  side_effects:
+    - drowsy
+    - feeling_sick
+    - headache
+    - high_temperature
+    - irritable
+    - loss_of_appetite
+    - rash
+    - swelling
+    - unwell
   snomed_product_code: 17188711000001105
   snomed_product_term:
     Menveo vaccine powder and solvent for solution for injection 0.5ml vials (Novartis Vaccines and
@@ -143,6 +218,16 @@ nimenrix:
   upload_name: Nimenrix
   dose_volume_ml: 0.5
   disease_types: [meningitis_a, meningitis_c, meningitis_w, meningitis_y]
+  side_effects:
+    - drowsy
+    - feeling_sick
+    - headache
+    - high_temperature
+    - irritable
+    - loss_of_appetite
+    - rash
+    - swelling
+    - unwell
   snomed_product_code: 20517811000001104
   snomed_product_term:
     Nimenrix vaccine powder and solvent for solution for injection 0.5ml pre-filled syringes
@@ -159,6 +244,7 @@ priorix:
   upload_name: Priorix
   dose_volume_ml: 0.5
   disease_types: [measles, mumps, rubella]
+  side_effects: [swollen_glands, raised_blotchy_rash]
   snomed_product_code: 34925111000001104
   snomed_product_term:
     Priorix vaccine powder and solvent for solution for injection 0.5ml pre-filled syringes
@@ -173,6 +259,7 @@ vaxpro:
   upload_name: VaxPro
   dose_volume_ml: 0.5
   disease_types: [measles, mumps, rubella]
+  side_effects: [swollen_glands, raised_blotchy_rash]
   snomed_product_code: 13968211000001108
   snomed_product_term:
     M-M-RVAXPRO vaccine powder and solvent for suspension for injection 0.5ml pre-filled syringes
@@ -189,6 +276,7 @@ pro_quad:
   upload_name: ProQuad
   dose_volume_ml: 0.5
   disease_types: [measles, mumps, rubella, varicella]
+  side_effects: [swollen_glands, raised_blotchy_rash]
   snomed_product_code: 45480711000001107
   snomed_product_term:
     ProQuad vaccine powder and solvent for suspension for injection 0.5ml pre-filled syringes (Merck
@@ -203,6 +291,7 @@ priorix_tetra:
   upload_name: Priorix-Tetra
   dose_volume_ml: 0.5
   disease_types: [measles, mumps, rubella, varicella]
+  side_effects: [swollen_glands, raised_blotchy_rash]
   snomed_product_code: 45525711000001102
   snomed_product_term:
     Priorix Tetra vaccine powder and solvent for solution for injection 0.5ml pre-filled syringes
@@ -219,6 +308,15 @@ revaxis:
   upload_name: Revaxis
   dose_volume_ml: 0.5
   disease_types: [tetanus, diphtheria, polio]
+  side_effects:
+    - drowsy
+    - feeling_sick
+    - headache
+    - high_temperature
+    - irritable
+    - loss_of_appetite
+    - swelling
+    - unwell
   snomed_product_code: 7374511000001107
   snomed_product_term:
     Revaxis vaccine suspension for injection 0.5ml pre-filled syringes (Sanofi) 1 pre-filled
