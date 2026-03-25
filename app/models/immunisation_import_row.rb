@@ -408,8 +408,13 @@ class ImmunisationImportRow
   def session
     @session ||=
       if session_id&.to_s == SESSION_ID_CLINIC && academic_year &&
-           (programme_type = programme&.type)
-        ClinicSessionFactory.call(team:, academic_year:, programme_type:)
+           (programme_type = programme&.type) && performed_at_date.present?
+        ClinicSessionFactory.call(
+          team:,
+          academic_year:,
+          programme_type:,
+          date: performed_at_date
+        )
       elsif (id = session_id&.to_i)
         Session
           .joins(:team_location)

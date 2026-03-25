@@ -472,6 +472,19 @@ describe ImmunisationImportRow do
           end
         end
 
+        context "on a different day to today" do
+          let(:data) do
+            valid_clinic_data.merge(
+              "CLINIC_NAME" => "A clinic",
+              "DATE_OF_VACCINATION" => Date.yesterday.strftime("%Y%m%d")
+            )
+          end
+
+          it "is valid" do
+            expect(immunisation_import_row).to be_valid
+          end
+        end
+
         context "with incorrect casing for an existing clinic" do
           let(:data) { valid_clinic_data.merge("CLINIC_NAME" => "a cLinIC") }
 

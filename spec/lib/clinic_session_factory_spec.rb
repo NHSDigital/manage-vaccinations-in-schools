@@ -79,5 +79,26 @@ describe ClinicSessionFactory do
         }.from(%w[flu]).to(%w[flu hpv])
       end
     end
+
+    context "when specifying the date" do
+      subject(:call) do
+        described_class.call(
+          team:,
+          academic_year:,
+          programme_type:,
+          date: Date.tomorrow
+        )
+      end
+
+      it "creates a new session for that date" do
+        expect { call }.to change(Session, :count).by(1)
+
+        session = Session.last
+        expect(session.team_location.team).to eq(team)
+        expect(session.team_location.academic_year).to eq(academic_year)
+        expect(session.dates).to contain_exactly(Date.tomorrow)
+        expect(session.programme_types).to contain_exactly(programme_type)
+      end
+    end
   end
 end
