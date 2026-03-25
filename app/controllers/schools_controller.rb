@@ -17,16 +17,14 @@ class SchoolsController < ApplicationController
 
     @pagy, @locations = pagy(locations)
 
+    academic_year = AcademicYear.pending
+
     @patient_count_by_school_id =
       Patient
         .joins(:patient_locations)
-        .where(
-          patient_locations: {
-            location: @locations,
-            academic_year: AcademicYear.pending
-          }
-        )
+        .where(patient_locations: { location: @locations, academic_year: })
         .not_archived(team: current_team)
+        .appear_in_programmes(current_team.programmes, academic_year:)
         .distinct
         .group(:school_id)
         .count

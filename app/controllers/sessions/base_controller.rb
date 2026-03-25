@@ -17,6 +17,7 @@ class Sessions::BaseController < ApplicationController
   def set_programme_statuses
     @programme_statuses =
       Patient::ProgrammeStatus.statuses.keys -
-        %w[not_eligible needs_consent_follow_up_requested]
+        Patient::ProgrammeStatus::NOT_ELIGIBLE_STATUSES.keys -
+        %w[needs_consent_follow_up_requested]
   end
 end

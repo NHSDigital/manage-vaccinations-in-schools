@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Schools" do
-  scenario "Filtering on schools and viewing sessions" do
+  scenario "filtering on schools and viewing sessions" do
     given_a_team_exists_with_a_few_schools
     and_i_am_signed_in
 
@@ -29,7 +29,7 @@ describe "Schools" do
     then_i_see_the_secondary_sessions
   end
 
-  scenario "Sending clinic invitations to children in no known school" do
+  scenario "sending clinic invitations to children in no known school" do
     given_a_team_with_no_known_school_children
     and_i_am_signed_in
 
@@ -65,12 +65,15 @@ describe "Schools" do
     @secondary_patient =
       create(:patient, year_group: 7, session: @secondary_session)
 
-    @patient_in_both_schools = create(:patient, school: @secondary_school)
+    @patient_in_both_schools = create(:patient, session: @secondary_session)
     create(
       :patient_location,
       patient: @patient_in_both_schools,
       session: @primary_session
     )
+
+    @aged_out_patient =
+      create(:patient, year_group: 13, session: @secondary_session)
 
     @nurse = create(:nurse, team: @team)
   end
