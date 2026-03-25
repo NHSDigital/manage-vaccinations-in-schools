@@ -60,72 +60,15 @@ describe SearchVaccinationRecordsInNHSJob do
     end
   end
 
-  describe "#deduplicate_vaccination_records" do
-    subject(:deduplicate) do
+  describe "#reject_mavis_duplicates" do
+    subject(:reject_mavis_duplicates) do
       described_class
         .new
         .tap { it.instance_variable_set(:@patient, patient) }
-        .send(:deduplicate_vaccination_records, vaccination_records)
+        .send(:reject_mavis_duplicates, vaccination_records)
     end
 
-    shared_examples "handles duplicates" do
-      context "both primary source" do
-        let(:nhs_immunisations_api_primary_source) { true }
-
-        it "returns both records" do
-          expect(deduplicate).to contain_exactly(
-            first_vaccination_record,
-            second_vaccination_record
-          )
-        end
-      end
-
-      context "one primary source" do
-        let(:nhs_immunisations_api_primary_source) { false }
-
-        it "returns only the primary source record" do
-          expect(deduplicate).to contain_exactly(first_vaccination_record)
-        end
-      end
-
-      context "neither primary source" do
-        let(:nhs_immunisations_api_primary_source) { false }
-        let(:first_primary_source) { false }
-
-        it "returns both records" do
-          expect(deduplicate).to contain_exactly(
-            first_vaccination_record,
-            second_vaccination_record
-          )
-        end
-      end
-
-      context "record duplicates a Mavis record" do
-        let(:nhs_immunisations_api_primary_source) { true }
-
-        before do
-          create(
-            :vaccination_record,
-            session:,
-            programme:,
-            patient:,
-            performed_at:
-          )
-        end
-
-        it "returns no records" do
-          expect(deduplicate).to be_empty
-        end
-      end
-    end
-
-    let(:vaccination_records) do
-      [
-        first_vaccination_record,
-        second_vaccination_record,
-        third_vaccination_record
-      ].compact
-    end
+    let(:performed_at) { Time.zone.local(2025, 10, 10) }
 
     let(:first_vaccination_record) do
       build(
@@ -133,241 +76,94 @@ describe SearchVaccinationRecordsInNHSJob do
         :sourced_from_nhs_immunisations_api,
         programme:,
         patient:,
-        nhs_immunisations_api_primary_source: first_primary_source,
+        nhs_immunisations_api_primary_source: true,
         performed_at:
       )
     end
-    let(:first_primary_source) { true }
 
-    let(:performed_at) { Time.zone.local(2025, 10, 10) }
+    let(:second_vaccination_record) do
+      build(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        programme:,
+        patient:,
+        nhs_immunisations_api_primary_source: false,
+        performed_at:
+      )
+    end
 
-    let(:second_vaccination_record) { nil }
+    let(:vaccination_records) { [first_vaccination_record] }
 
-    let(:third_vaccination_record) { nil }
-
-    context "with a single vaccination record" do
+    context "with a single vaccination record and no Mavis records" do
       it "returns the record" do
-        expect(deduplicate).to eq [first_vaccination_record]
+        expect(reject_mavis_duplicates).to eq [first_vaccination_record]
       end
     end
 
-    context "with two vaccination records with the same programme and performed_at" do
-      let(:second_vaccination_record) do
-        build(
-          :vaccination_record,
-          :sourced_from_nhs_immunisations_api,
-          programme:,
-          patient:,
-          nhs_immunisations_api_primary_source:,
-          performed_at:
-        )
-      end
+    context "with no vaccination records" do
+      let(:vaccination_records) { [] }
 
-      include_examples "handles duplicates"
+      it "returns an empty array" do
+        expect(reject_mavis_duplicates).to eq([])
+      end
     end
 
-    context "with the same programme and performed_at on the same day" do
-      let(:second_vaccination_record) do
-        build(
-          :vaccination_record,
-          :sourced_from_nhs_immunisations_api,
-          programme:,
-          patient:,
-          nhs_immunisations_api_primary_source:,
-          performed_at: Time.zone.local(2025, 10, 10, 12, 33, 44)
-        )
-      end
-
-      include_examples "handles duplicates"
-    end
-
-    context "with the same programme and different performed_at" do
-      let(:second_vaccination_record) do
-        build(
-          :vaccination_record,
-          :sourced_from_nhs_immunisations_api,
-          programme:,
-          patient:,
-          nhs_immunisations_api_primary_source: false,
-          performed_at: Time.zone.local(2025, 10, 9)
-        )
+    context "with two records for the same programme and date (primary source duplicates)" do
+      let(:vaccination_records) do
+        [first_vaccination_record, second_vaccination_record]
       end
 
       it "returns both records" do
-        expect(deduplicate).to contain_exactly(
-          second_vaccination_record,
-          first_vaccination_record
-        )
-      end
-    end
-
-    context "with different programmes, same performed_at" do
-      let(:second_vaccination_record) do
-        build(
-          :vaccination_record,
-          :sourced_from_nhs_immunisations_api,
-          programme: Programme.hpv,
-          patient:,
-          nhs_immunisations_api_primary_source: false,
-          performed_at:
-        )
-      end
-
-      it "returns both records" do
-        expect(deduplicate).to contain_exactly(
+        expect(reject_mavis_duplicates).to contain_exactly(
           first_vaccination_record,
           second_vaccination_record
         )
       end
     end
 
-    context "with three duplicate records" do
-      let(:second_vaccination_record) do
+    context "with two records for the same programme, different dates" do
+      let(:other_record) do
         build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme:,
           patient:,
-          nhs_immunisations_api_primary_source: second_primary_source,
-          performed_at:
+          nhs_immunisations_api_primary_source: false,
+          performed_at: Time.zone.local(2025, 10, 9)
         )
       end
+      let(:vaccination_records) { [first_vaccination_record, other_record] }
 
-      let(:third_vaccination_record) do
-        build(
-          :vaccination_record,
-          :sourced_from_nhs_immunisations_api,
-          programme:,
-          patient:,
-          nhs_immunisations_api_primary_source: third_primary_source,
-          performed_at:
+      it "returns both records" do
+        expect(reject_mavis_duplicates).to contain_exactly(
+          first_vaccination_record,
+          other_record
         )
-      end
-
-      context "with one primary source" do
-        let(:second_primary_source) { false }
-        let(:third_primary_source) { false }
-
-        it "returns the first record only" do
-          expect(deduplicate).to contain_exactly(first_vaccination_record)
-        end
-      end
-
-      context "with two primary sources" do
-        let(:second_primary_source) { true }
-        let(:third_primary_source) { false }
-
-        it "returns the first and second records" do
-          expect(deduplicate).to contain_exactly(
-            first_vaccination_record,
-            second_vaccination_record
-          )
-        end
-      end
-
-      context "with three primary sources" do
-        let(:second_primary_source) { true }
-        let(:third_primary_source) { true }
-
-        it "returns all three records" do
-          expect(deduplicate).to contain_exactly(
-            first_vaccination_record,
-            second_vaccination_record,
-            third_vaccination_record
-          )
-        end
       end
     end
 
-    context "with a pair of duplicates and an unrelated record" do
-      shared_examples "contains the unrelated record" do
-        context "when the unrelated record is not primary" do
-          let(:third_primary_source) { false }
-
-          it "returns the unrelated record" do
-            expect(deduplicate).to include(third_vaccination_record)
-          end
-        end
-
-        context "when the unrelated record is primary" do
-          let(:third_primary_source) { true }
-
-          it "returns the unrelated record" do
-            expect(deduplicate).to include(third_vaccination_record)
-          end
-        end
-      end
-
-      let(:second_vaccination_record) do
-        build(
-          :vaccination_record,
-          :sourced_from_nhs_immunisations_api,
-          programme:,
-          patient:,
-          nhs_immunisations_api_primary_source: second_primary_source,
-          performed_at:
-        )
-      end
-
-      let(:third_vaccination_record) do
+    context "with two records for different programmes on the same date" do
+      let(:hpv_record) do
         build(
           :vaccination_record,
           :sourced_from_nhs_immunisations_api,
           programme: Programme.hpv,
           patient:,
-          nhs_immunisations_api_primary_source: third_primary_source,
-          performed_at: Time.zone.local(2025, 10, 9)
+          nhs_immunisations_api_primary_source: false,
+          performed_at:
         )
       end
-      let(:third_primary_source) { true }
+      let(:vaccination_records) { [first_vaccination_record, hpv_record] }
 
-      context "both primary source" do
-        let(:second_primary_source) { true }
-
-        it "returns both records" do
-          expect(deduplicate).to include(
-            first_vaccination_record,
-            second_vaccination_record
-          )
-        end
-
-        include_examples "contains the unrelated record"
-      end
-
-      context "one primary source" do
-        let(:second_primary_source) { false }
-
-        it "returns only the primary source record" do
-          expect(deduplicate).to include(first_vaccination_record)
-        end
-
-        include_examples "contains the unrelated record"
-      end
-
-      context "neither primary source" do
-        let(:second_primary_source) { false }
-        let(:first_primary_source) { false }
-
-        it "returns both records" do
-          expect(deduplicate).to include(
-            first_vaccination_record,
-            second_vaccination_record
-          )
-        end
-
-        include_examples "contains the unrelated record"
+      it "returns both records" do
+        expect(reject_mavis_duplicates).to contain_exactly(
+          first_vaccination_record,
+          hpv_record
+        )
       end
     end
 
-    context "with no vaccination_records" do
-      let(:vaccination_records) { [] }
-
-      it "returns an empty array" do
-        expect(deduplicate).to eq([])
-      end
-    end
-
-    context "with an existing Mavis record" do
+    context "when a Mavis record exists for the same patient, programme and date" do
       before do
         create(
           :vaccination_record,
@@ -378,12 +174,44 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      it "returns an empty array, discarding the incoming duplicate" do
-        expect(deduplicate).to eq([])
+      context "with a single incoming NHS API record" do
+        it "returns an empty array, discarding the incoming record" do
+          expect(reject_mavis_duplicates).to eq([])
+        end
+      end
+
+      context "with two incoming NHS API records (primary source true and false)" do
+        let(:vaccination_records) do
+          [first_vaccination_record, second_vaccination_record]
+        end
+
+        it "discards both incoming records" do
+          expect(reject_mavis_duplicates).to be_empty
+        end
+      end
+
+      context "with an additional incoming record for a different date" do
+        let(:unrelated_record) do
+          build(
+            :vaccination_record,
+            :sourced_from_nhs_immunisations_api,
+            programme:,
+            patient:,
+            nhs_immunisations_api_primary_source: true,
+            performed_at: Time.zone.local(2025, 11, 1)
+          )
+        end
+        let(:vaccination_records) do
+          [first_vaccination_record, unrelated_record]
+        end
+
+        it "discards only the duplicate and keeps the unrelated record" do
+          expect(reject_mavis_duplicates).to contain_exactly(unrelated_record)
+        end
       end
     end
 
-    context "with a national reporting record" do
+    context "when a national reporting record exists for the same patient, programme and date" do
       before do
         Flipper.enable(:sync_national_reporting_to_imms_api)
 
@@ -397,7 +225,7 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       it "returns an empty array, discarding the incoming duplicate" do
-        expect(deduplicate).to eq([])
+        expect(reject_mavis_duplicates).to eq([])
       end
     end
   end
@@ -859,19 +687,35 @@ describe SearchVaccinationRecordsInNHSJob do
       end
     end
 
-    context "with duplicates" do
-      context "with a mavis record in the search results" do
-        let(:body) { file_fixture("fhir/search_response_duplicate.json").read }
+    context "with primarySource duplicates in the search results" do
+      let(:body) { file_fixture("fhir/search_response_duplicate.json").read }
 
-        it "only adds 1 vaccination record" do
-          expect { perform }.to change { patient.vaccination_records.count }.by(
-            1
-          )
-        end
-
-        include_examples "sends discovery comms if required n times", 1
-        include_examples "calls StatusUpdater"
+      it "saves both records" do
+        expect { perform }.to change { patient.vaccination_records.count }.by(2)
       end
+
+      it "saves the primary source record" do
+        perform
+        expect(
+          patient
+            .vaccination_records
+            .where(nhs_immunisations_api_primary_source: true)
+            .count
+        ).to eq(1)
+      end
+
+      it "saves the non-primary source record" do
+        perform
+        expect(
+          patient
+            .vaccination_records
+            .where(nhs_immunisations_api_primary_source: false)
+            .count
+        ).to eq(1)
+      end
+
+      include_examples "sends discovery comms if required n times", 2
+      include_examples "calls StatusUpdater"
     end
 
     context "with a mismatching `Bundle.link`" do

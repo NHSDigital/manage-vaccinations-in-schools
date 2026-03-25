@@ -80,7 +80,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
         extract_fhir_vaccination_records(fhir_bundle)
           .then { convert_to_vaccination_records(it) }
-          .then { deduplicate_vaccination_records(it) }
+          .then { reject_mavis_duplicates(it) }
           .then { select_programme_feature_flagged_records(it) }
           .then { reject_pre_cutoff_records(it) }
       end
@@ -108,36 +108,22 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     end
   end
 
-  def deduplicate_vaccination_records(incoming_vaccination_records)
-    vaccination_records =
-      incoming_vaccination_records +
-        patient
-          .vaccination_records
-          .with_correct_source_for_nhs_immunisations_api
-          .includes(:team)
+  def reject_mavis_duplicates(incoming_vaccination_records)
+    mavis_records =
+      patient
+        .vaccination_records
+        .with_correct_source_for_nhs_immunisations_api
+        .pluck(:performed_at_date, :programme_type)
+        .to_set
 
-    grouped_vaccination_records =
-      vaccination_records.group_by { [it.performed_at_date, it.programme_type] }
-
-    deduplicated_vaccination_records = []
-
-    grouped_vaccination_records.each_value do |records|
-      deduplicated_vaccination_records +=
-        if records.any?(&:correct_source_for_nhs_immunisations_api?)
-          # If there exists a Mavis record, discard all incoming records
-          []
-        elsif records.none?(&:nhs_immunisations_api_primary_source)
-          # If no records are primary sources, keep all of them
-          records
-        else
-          # Otherwise prefer primary sources
-          records.select(&:nhs_immunisations_api_primary_source)
-        end
+    incoming_vaccination_records.reject do |vaccination_record|
+      mavis_records.include?(
+        [
+          vaccination_record.performed_at_date,
+          vaccination_record.programme_type
+        ]
+      )
     end
-
-    deduplicated_vaccination_records.select(
-      &:sourced_from_nhs_immunisations_api?
-    )
   end
 
   def update_vaccination_search_timestamps
