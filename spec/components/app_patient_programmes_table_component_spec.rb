@@ -46,7 +46,7 @@ describe AppPatientProgrammesTableComponent do
     end
 
     context "when vaccinated last year" do
-      let(:patient) { create(:patient, session:, parents: [create(:parent)]) }
+      let(:patient) { create(:patient, session:) }
 
       before do
         create(

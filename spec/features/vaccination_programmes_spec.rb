@@ -69,7 +69,6 @@ describe "Vaccination programmes table" do
         year_group: 10,
         given_name: "John",
         family_name: "Smith",
-        parents: [create(:parent)],
         school:
       )
 

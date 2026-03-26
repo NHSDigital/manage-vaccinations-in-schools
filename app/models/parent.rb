@@ -64,9 +64,6 @@ class Parent < ApplicationRecord
             presence: true,
             if: :contact_method_other?
 
-  scope :contactable,
-        -> { where.not(email: [nil, ""]).or(where.not(phone: [nil, ""])) }
-
   def self.match_existing(patient:, email:, phone:, full_name:)
     if email.present? && (parent = Parent.find_by(email:))
       return parent
