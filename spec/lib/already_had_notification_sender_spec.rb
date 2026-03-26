@@ -46,7 +46,7 @@ describe AlreadyHadNotificationSender do
           vaccination_record:,
           consent: second_consent
         )
-        .exactly(1)
+        .exactly(second_parent.email == first_parent.email ? 0 : 1)
         .times
     end
   end
@@ -132,6 +132,13 @@ describe AlreadyHadNotificationSender do
           let(:performed_at) { 1.year.ago }
 
           include_examples "sends no notifications"
+        end
+
+        context "when the parents have the same email address" do
+          let(:performed_at) { Time.zone.today }
+          let(:second_parent) { create(:parent, email: first_parent.email) }
+
+          include_examples "sends one email to all parents with valid consents"
         end
       end
     end
