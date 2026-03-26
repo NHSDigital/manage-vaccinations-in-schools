@@ -51,6 +51,23 @@ describe AppVaccinationRecordAPISyncStatusComponent do
         end
       end
 
+      context "when record was created before the API integration was enabled" do
+        before do
+          allow(vaccination_record).to receive_messages(
+            sync_status: :not_synced,
+            created_before_api_integration?: true
+          )
+        end
+
+        let(:programme) { Programme.td_ipv }
+
+        it do
+          expect(formatted_status).to include(
+            "Td/IPV vaccinations recorded before 2 March 2026 are not synced with GP practices and NHS England"
+          )
+        end
+      end
+
       context "when child requested that parents aren't notified" do
         before do
           allow(vaccination_record).to receive_messages(
