@@ -48,32 +48,6 @@ describe CohortImport do
 
   it_behaves_like "a CSVImportable model"
 
-  describe "#load_data!" do
-    subject(:load_data!) { cohort_import.load_data! }
-
-    before { load_data! }
-
-    describe "with malformed CSV" do
-      let(:file) { "malformed.csv" }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-        expect(cohort_import.errors[:csv]).to include(/correct format/)
-      end
-    end
-
-    describe "with too many rows" do
-      let(:file) { "valid.csv" }
-
-      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-        expect(cohort_import.errors[:csv]).to include(/less than 2 rows/)
-      end
-    end
-  end
-
   describe "#parse_rows!" do
     subject(:parse_rows!) { cohort_import.parse_rows! }
 
