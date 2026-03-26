@@ -53,15 +53,6 @@ describe "Manual consent reminders" do
         programmes:,
         parents: [@parents[0]]
       )
-
-    create(
-      :consent_notification,
-      :request,
-      patient: @patient_with_no_response,
-      session: @session,
-      programmes:
-    )
-
     @another_patient_with_no_response =
       create(
         :patient,
@@ -70,15 +61,6 @@ describe "Manual consent reminders" do
         programmes:,
         parents: [@parents[1]]
       )
-
-    create(
-      :consent_notification,
-      :request,
-      patient: @another_patient_with_no_response,
-      session: @session,
-      programmes:
-    )
-
     @third_patient_with_a_response =
       create(
         :patient,

@@ -16,10 +16,7 @@ class StatusGenerator::Programme
     consents:,
     triages:,
     attendance_record:,
-    vaccination_records:,
-    parents:,
-    consent_notifications:,
-    notify_log_entries:
+    vaccination_records:
   )
     @programme_type = programme_type
     @academic_year = academic_year
@@ -28,10 +25,6 @@ class StatusGenerator::Programme
     @consents = consents
     @triages = triages
     @attendance_record = attendance_record
-    @vaccination_records = vaccination_records
-    @parents = parents
-    @consent_notifications = consent_notifications
-    @notify_log_entries = notify_log_entries
 
     @vaccination_criteria =
       VaccinationCriteria.new(
@@ -61,10 +54,6 @@ class StatusGenerator::Programme
       :cannot_vaccinate_absent
     elsif should_be_cannot_vaccinate_do_not_vaccinate?
       :cannot_vaccinate_do_not_vaccinate
-    elsif should_be_needs_consent_no_contact_details?
-      :needs_consent_no_contact_details
-    elsif should_be_needs_consent_request_failed?
-      :needs_consent_request_failed
     elsif should_be_needs_consent_no_response?
       :needs_consent_no_response
     elsif should_be_cannot_vaccinate_delay_vaccination?
@@ -79,6 +68,8 @@ class StatusGenerator::Programme
       :has_refusal_consent_refused
     elsif should_be_needs_consent_follow_up_requested?
       :needs_consent_follow_up_requested
+    elsif should_be_needs_consent_request_failed?
+      :needs_consent_request_failed
     elsif should_be_needs_consent_request_scheduled?
       :needs_consent_request_scheduled
     elsif should_be_needs_consent_request_not_scheduled?
@@ -169,10 +160,7 @@ class StatusGenerator::Programme
               :consents,
               :triages,
               :attendance_record,
-              :vaccination_criteria,
-              :parents,
-              :consent_notifications,
-              :notify_log_entries
+              :vaccination_criteria
 
   delegate :vaccinated?,
            :vaccinated_vaccination_record,
@@ -207,8 +195,7 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_consent_no_response?
-    is_eligible? && consent_notifications_requested? &&
-      consent_status == :no_response
+    is_eligible? && consent_status == :no_response
   end
 
   def should_be_cannot_vaccinate_delay_vaccination?
@@ -234,49 +221,15 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_consent_request_failed?
-    is_eligible? && consent_request_failed?
+    false # TODO: Implement this status.
   end
 
   def should_be_needs_consent_request_scheduled?
-    is_eligible? && parents_contactable? && !consent_notifications_requested? &&
-      sessions.any? { it.send_consent_requests_at&.present? }
+    false # TODO: Implement this status.
   end
 
   def should_be_needs_consent_request_not_scheduled?
-    is_eligible? && parents_contactable? && !consent_notifications_requested? &&
-      (sessions.empty? || sessions.any? { it.send_consent_requests_at.nil? })
-  end
-
-  def should_be_needs_consent_no_contact_details?
-    is_eligible? && !parents_contactable?
-  end
-
-  def parents_contactable? = parents.any?
-
-  def consent_notifications_requested?
-    @consent_notifications_requested ||=
-      consent_notifications.any? do |notification|
-        notification.programme_types.include?(programme.type) &&
-          notification.session&.team_location&.academic_year == academic_year
-      end
-  end
-
-  def consent_request_failed?
-    date_range = academic_year.to_academic_year_date_range
-
-    notify_log_entries.any? do |entry|
-      next false unless entry.patient_id == patient.id
-      next false unless date_range.cover?(entry.created_at.to_date)
-      next false unless notify_log_entry_matches_programme_type?(entry)
-
-      entry.delivery_status.to_s.include?("failure")
-    end
-  end
-
-  def notify_log_entry_matches_programme_type?(entry)
-    entry.notify_log_entry_programmes.any? do |programme|
-      programme.programme_type == programme_type
-    end
+    false # TODO: Implement this status.
   end
 
   def year_group = patient.year_group(academic_year:)
@@ -340,17 +293,5 @@ class StatusGenerator::Programme
         triages:,
         vaccination_records:
       )
-  end
-
-  def sessions
-    @sessions ||=
-      patient_locations.flat_map do |patient_location|
-        patient_location
-          .location
-          .team_locations
-          .select { it.academic_year == academic_year }
-          .flat_map(&:sessions)
-          .select { it.programme_types.include?(programme_type) }
-      end
   end
 end

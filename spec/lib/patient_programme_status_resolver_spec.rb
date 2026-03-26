@@ -110,9 +110,7 @@ describe PatientProgrammeStatusResolver do
     let(:date_of_birth) { Date.new(2019, 12, 31) }
 
     context "and eligible for 1st dose" do
-      let(:patient) do
-        create(:patient, date_of_birth:, session:, parents: [create(:parent)])
-      end
+      let(:patient) { create(:patient, date_of_birth:, session:) }
 
       before do
         PatientStatusUpdater.call(patient:)
@@ -125,7 +123,7 @@ describe PatientProgrammeStatusResolver do
             prefix: "MMR",
             text: "Needs consent",
             colour: "blue",
-            details_text: "Request scheduled"
+            details_text: "No response"
           }
         )
       end
