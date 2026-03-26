@@ -1047,8 +1047,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
   end
 
-  add_check_constraint "vaccination_records", "session_id IS NULL AND source <> 0 AND source <> 5 OR session_id IS NOT NULL AND (source = 0 OR source = 5)", name: "source_check", validate: false
-
   create_table "vaccines", force: :cascade do |t|
     t.text "brand", null: false
     t.boolean "contains_gelatine", null: false
