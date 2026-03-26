@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
-describe VaccinationRecordsHelper do
-  describe "#already_vaccinated_link_label" do
+describe VaccinationsHelper do
+  describe "#record_already_vaccinated_text" do
     subject do
-      helper.already_vaccinated_link_label(session:, patient:, programme:)
+      helper.record_already_vaccinated_text(
+        patient:,
+        programme:,
+        academic_year: session.academic_year
+      )
     end
 
     let(:team) { create(:team, programmes: [programme]) }
