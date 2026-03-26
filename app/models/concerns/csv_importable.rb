@@ -6,7 +6,7 @@ module CSVImportable
   MAX_CSV_ROWS = 20_000
 
   included do
-    attr_accessor :csv_is_malformed, :data, :rows
+    attr_accessor :rows
 
     encrypts :csv_data
 
@@ -83,17 +83,37 @@ module CSVImportable
     before_save :ensure_processed_with_count_statistics
   end
 
-  def csv=(file)
-    self.csv_data = remove_bom_if_present(file&.read)
-    self.csv_filename = file&.original_filename
-  end
+  # Assign an uploaded CSV file to this import.
+  #
+  # Reads the uploaded file into {Import::CSVData}, stores the original filename,
+  # and updates {#rows_count} based on the parsed CSV data.
+  #
+  # If the file contains a UTF byte-order mark (BOM) (common when exporting from
+  # Excel), the encoding is detected and handled before reading.
+  #
+  # Raises an error if called on a persisted record, as changing the CSV file for
+  # an existing import is not allowed.
+  #
+  # @param source [ActionDispatch::Http::UploadedFile] the uploaded CSV file
+  # @raise [RuntimeError] if called on a persisted record
+  # @raise [ArgumentError] if `source` is not an uploaded file
+  def csv=(source)
+    if persisted?
+      raise "Cannot change the CSV file for an existing import. " \
+              "Create a new import instead."
+    end
 
-  # CSV files exported from Excel may have a BOM.
-  # https://en.wikipedia.org/wiki/Byte_order_mark
-  # e.g. if you create a new class import from scratch in Excel on Mac v16,
-  # save the file as CSV, and upload it.
-  def remove_bom_if_present(data)
-    StringIO.new(data).tap(&:set_encoding_by_bom).read
+    if source.is_a?(ActionDispatch::Http::UploadedFile)
+      # CSV files exported from Excel may have a BOM.
+      # https://en.wikipedia.org/wiki/Byte_order_mark
+      # e.g. if you create a new class import from scratch in Excel on Mac v16,
+      # save the file as CSV, and upload it.
+      self.csv_data = source.to_io.tap(&:set_encoding_by_bom).read
+      self.csv_filename = source&.original_filename
+      self.rows_count = csv_data_object&.count
+    else
+      raise ArgumentError, "Expected an uploaded file, got #{source}"
+    end
   end
 
   # Needed so that validations match the form field name.
@@ -101,58 +121,24 @@ module CSVImportable
     csv_data
   end
 
+  def csv_data_object
+    @csv_data_object ||= Import::CSVData.new(csv_data)
+  end
+
   def csv_removed?
     csv_removed_at != nil
   end
 
-  def load_data!
-    return if invalid?
-
-    self.data ||= CSVParser.call(csv_data)
-    self.rows_count = data.count
-  rescue CSV::MalformedCSVError
-    self.csv_is_malformed = true
-  end
-
   def parse_rows!
-    load_data! if data.nil?
     return if invalid?
 
-    self.rows =
-      remove_trailing_blank_rows(data)
-        .then { |rows| has_instruction_row? ? rows.drop(1) : rows }
-        .map { |row_data| parse_row(row_data) }
+    self.rows = csv_data_object.records.map { |row_data| parse_row(row_data) }
 
     if invalid?
       self.serialized_errors = errors.to_hash
       self.status = :rows_are_invalid
       save!(validate: false)
     end
-  end
-
-  def remove_trailing_blank_rows(table)
-    found_values = false
-
-    # map(&:itself) because CSV::Table doesn't have a reverse method
-    rows_in_reverse_order = table.map(&:itself).reverse
-
-    filtered_rows =
-      rows_in_reverse_order.select do |row|
-        if found_values
-          true
-        elsif row.fields.all?(&:blank?)
-          false
-        else
-          found_values = true
-          true
-        end
-      end
-
-    filtered_rows.reverse
-  end
-
-  def has_instruction_row?
-    data&.first&.[](0)&.to_s&.match?(/\A(Required|Optional)([,.:]|$)/)
   end
 
   def processed?
@@ -186,13 +172,11 @@ module CSVImportable
   end
 
   def csv_is_valid
-    return unless csv_is_malformed
-
-    errors.add(:csv, :invalid)
+    errors.add(:csv, :invalid) unless csv_data_object.well_formed?
   end
 
   def csv_is_not_too_large
-    return unless data
+    return unless csv_data
 
     if rows_count > MAX_CSV_ROWS
       errors.add(:csv, :too_many_rows, count: MAX_CSV_ROWS)
@@ -200,10 +184,11 @@ module CSVImportable
   end
 
   def csv_has_records
-    return unless data
+    return unless csv_data
 
     csv_has_no_records =
-      data.empty? || (data.count == 1 && has_instruction_row?)
+      csv_data_object.empty? ||
+        (csv_data_object.count == 1 && csv_data_object.has_instruction_row?)
     errors.add(:csv, :empty) if csv_has_no_records
   end
 
@@ -214,7 +199,7 @@ module CSVImportable
 
     check_rows_are_unique
 
-    row_offset = has_instruction_row? ? 3 : 2
+    row_offset = csv_data_object.has_instruction_row? ? 3 : 2
 
     rows.each.with_index do |row, index|
       next if row.errors.empty?

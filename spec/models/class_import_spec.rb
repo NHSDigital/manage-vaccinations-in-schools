@@ -38,7 +38,9 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe ClassImport do
-  subject(:class_import) { create(:class_import, csv:, session:, team:) }
+  subject(:class_import) do
+    create(:class_import, csv_data:, uploaded_csv_file:, session:, team:)
+  end
 
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
@@ -46,7 +48,11 @@ describe ClassImport do
   let(:session) { create(:session, location:, programmes:, team:) }
 
   let(:file) { "valid.csv" }
-  let(:csv) { fixture_file_upload("class_import/#{file}") }
+  let(:csv_data) { file_fixture("class_import/#{file}").read }
+  let(:uploaded_csv_file) { nil }
+
+  # This is used by validation tests in the CSFVImportable shared specs.
+  let(:unsaved_import) { build(:class_import, csv_data:, session:, team:) }
 
   it_behaves_like "a CSVImportable model"
 
@@ -56,6 +62,10 @@ describe ClassImport do
     before { parse_rows! }
 
     describe "with a BOM" do
+      let(:csv_data) { nil }
+      let(:uploaded_csv_file) do
+        fixture_file_upload("class_import/#{file}", filename: file)
+      end
       let(:file) { "valid_with_bom.csv" }
 
       it "removes the BOM" do
