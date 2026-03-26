@@ -333,7 +333,11 @@ class DraftVaccinationRecordsController < ApplicationController
           wizard_path("confirm")
         end
       elsif first_step_of_flow?
-        session_patient_programme_path(@session, @patient, @programme)
+        if @session
+          session_patient_programme_path(@session, @patient, @programme)
+        else
+          patient_programme_path(@patient, @programme)
+        end
       else
         previous_wizard_path
       end
