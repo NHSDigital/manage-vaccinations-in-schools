@@ -39,12 +39,12 @@ class SMSDeliveryJob < NotifyDeliveryJob
       )
 
     phone_number =
-      if template_name_sym == :consent_unknown_contact_details_warning
-        personalisation.parent&.phone
-      else
-        personalisation.consent_form&.parent_phone ||
-          personalisation.parent&.phone
-      end
+      phone_number_for(
+        template_name,
+        personalisation.parent,
+        personalisation.consent_form
+      )
+
     return if phone_number.nil?
 
     template = NotifyTemplate.find(template_name_sym, channel: :sms)
@@ -99,5 +99,13 @@ class SMSDeliveryJob < NotifyDeliveryJob
           { programme_type: it.type, disease_types: it.disease_types }
         end
     )
+  end
+
+  def self.phone_number_for(template_name, parent, consent_form = nil)
+    if template_name == :consent_unknown_contact_details_warning
+      parent&.phone
+    else
+      consent_form&.parent_phone || parent&.phone
+    end
   end
 end

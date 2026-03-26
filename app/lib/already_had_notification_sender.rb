@@ -22,6 +22,25 @@ class AlreadyHadNotificationSender
     end
   end
 
+  class SMSDeliveryTracker
+    def initialize(template)
+      @template = template
+      @already_sent_to = Set.new
+    end
+
+    def queue(params)
+      phone_number = SMSDeliveryJob.phone_number_for(@template, params[:parent])
+      if phone_number.nil? || @already_sent_to.include?(phone_number) ||
+           !params[:parent].phone_receive_updates
+        return
+      end
+
+      @already_sent_to << phone_number
+
+      SMSDeliveryJob.perform_later(@template, params)
+    end
+  end
+
   def call
     return if vaccination_record.sourced_from_service?
     return if was_already_vaccinated?
@@ -46,16 +65,14 @@ class AlreadyHadNotificationSender
       ).parents_with_consent
 
     email_delivery_tracker = EmailDeliveryTracker.new(:vaccination_already_had)
+    sms_delivery_tracker = SMSDeliveryTracker.new(:vaccination_already_had)
 
     parents_with_consent.each do |parent, consent|
-      if parent.phone_receive_updates
-        SMSDeliveryJob.perform_later(
-          :vaccination_already_had,
-          parent:,
-          vaccination_record: @vaccination_record,
-          consent:
-        )
-      end
+      sms_delivery_tracker.queue(
+        parent:,
+        vaccination_record: @vaccination_record,
+        consent:
+      )
 
       email_delivery_tracker.queue(
         parent:,
