@@ -66,8 +66,9 @@ class ImmunisationImport < ApplicationRecord
 
   private
 
+  # TODO: This is called by the `rows_are_valid` validation. Move it to it's own validation.
   def check_rows_are_unique
-    row_offset = has_instruction_row? ? 3 : 2
+    row_offset = csv_data_object.has_instruction_row? ? 3 : 2
 
     rows
       .map(&:full_row_deduplication_attributes)

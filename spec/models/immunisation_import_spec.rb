@@ -35,7 +35,7 @@
 
 describe ImmunisationImport do
   subject(:immunisation_import) do
-    create(:immunisation_import, team:, csv:, uploaded_by:)
+    create(:immunisation_import, team:, csv_data:, uploaded_by:)
   end
 
   before do
@@ -56,15 +56,21 @@ describe ImmunisationImport do
   let(:school) { create(:gias_school, urn: "123456") }
 
   let(:file) { "valid_flu.csv" }
-  let(:csv) { fixture_file_upload("immunisation_import/#{type}/#{file}") }
+  let(:csv_data) { file_fixture("immunisation_import/#{type}/#{file}").read }
+  let(:uploaded_csv_file) { nil }
   let(:uploaded_by) { create(:user, team:) }
 
   let(:type) { "point_of_care" }
 
+  # This is used by validation tests in the CSFVImportable shared specs.
+  let(:unsaved_import) do
+    build(:immunisation_import, team:, csv_data:, uploaded_by:)
+  end
+
   it_behaves_like "a CSVImportable model"
 
-  describe "#load_data!" do
-    before { immunisation_import.load_data! }
+  describe "validations" do
+    subject { unsaved_import }
 
     context "with a duplicated row" do
       let(:file) { "duplicate_row.csv" }
@@ -157,7 +163,6 @@ describe ImmunisationImport do
     context "with a national reporting upload" do
       let(:type) { "national_reporting" }
       let(:file) { "valid_mixed_flu_hpv.csv" }
-
       let(:test_date) { Date.new(2025, 12, 1) }
 
       it "populates the rows" do
@@ -186,6 +191,10 @@ describe ImmunisationImport do
     before do
       Flipper.enable(:pds)
       Flipper.enable(:pds_enqueue_bulk_updates)
+    end
+
+    let(:duplicate_import) do
+      create(:immunisation_import, csv_data:, team:, uploaded_by:)
     end
 
     context "with an empty CSV file (no data rows)" do
@@ -245,8 +254,8 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(:immunisation_import, csv:, team:, uploaded_by:).process!
-        csv.rewind
+        duplicate_import.parse_rows!
+        duplicate_import.process!
 
         process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
@@ -297,8 +306,8 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(:immunisation_import, csv:, team:, uploaded_by:).process!
-        csv.rewind
+        duplicate_import.parse_rows!
+        duplicate_import.process!
 
         process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
@@ -349,8 +358,8 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(:immunisation_import, csv:, team:, uploaded_by:).process!
-        csv.rewind
+        duplicate_import.parse_rows!
+        duplicate_import.process!
 
         process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)

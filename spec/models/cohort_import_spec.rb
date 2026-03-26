@@ -34,17 +34,22 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) { create(:cohort_import, csv:, team:) }
+  subject(:cohort_import) do
+    create(:cohort_import, csv_data:, team:, uploaded_csv_file:)
+  end
 
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
 
   let(:file) { "valid.csv" }
-  let(:csv) { fixture_file_upload("cohort_import/#{file}") }
-  let(:academic_year) { AcademicYear.current }
+  let(:csv_data) { file_fixture("cohort_import/#{file}").read }
+  let(:uploaded_csv_file) { nil }
 
   # Ensure location URN matches the URN in our fixture files
   let!(:location) { create(:gias_school, urn: "123456", team:) } # rubocop:disable RSpec/LetSetup
+
+  # This is used by validation tests in the CSFVImportable shared specs.
+  let(:unsaved_import) { build(:cohort_import, csv_data:, team:) }
 
   it_behaves_like "a CSVImportable model"
 

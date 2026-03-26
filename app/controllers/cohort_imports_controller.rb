@@ -26,7 +26,6 @@ class CohortImportsController < ApplicationController
                   **cohort_import_params
                 )
 
-    @cohort_import.load_data!
     if @cohort_import.invalid?
       render :new, status: :unprocessable_content and return
     end

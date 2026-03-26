@@ -9,11 +9,10 @@ describe CommitPatientChangesetsJob do
   let(:session) { create(:session, location:, programmes:, team:) }
 
   let(:file) { "valid.csv" }
-  let(:csv) { fixture_file_upload("class_import/#{file}") }
-  let(:import) { create(:class_import, csv:, session:, team:) }
+  let(:csv_data) { file_fixture("class_import/#{file}").read }
+  let(:import) { create(:class_import, csv_data:, session:, team:) }
 
   let!(:changesets) do
-    import.load_data!
     import.parse_rows!
     import.rows.each_with_index.map do |row, row_number|
       PatientChangeset.from_import_row(row:, import:, row_number:)

@@ -179,6 +179,8 @@ class PatientImport < ApplicationRecord
     end
   end
 
+  # TODO: This is called by the `rows_are_valid` validation. Move it to it's own validation.
+  # TODO: Currently entested, unlike the equivalent in ImmunisationImport. Add tests.
   def check_rows_are_unique
     rows
       .map(&:nhs_number_value)
