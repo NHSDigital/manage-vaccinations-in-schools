@@ -2,7 +2,9 @@
   <%= render AppBreadcrumbComponent.new(items: @breadcrumb_items) %>
 <% end %>
 
-<%= h1 @patient.full_name %>
+<%= h1 page_title: "#{@patient.initials} – #{@vaccination_record.programme.name}" do %>
+  <%= @patient.full_name %>
+<% end %>
 
 <%= render AppPatientCardComponent.new(@patient, current_team:, show_parents: !current_team.has_national_reporting_access?) %>
 

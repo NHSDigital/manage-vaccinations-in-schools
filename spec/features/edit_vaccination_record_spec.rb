@@ -13,6 +13,7 @@ describe "Edit vaccination record" do
 
       when_i_go_to_the_vaccination_record_for_the_patient
       then_i_should_see_the_vaccination_record
+      and_i_should_see_the_correct_page_title
 
       when_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
@@ -712,6 +713,10 @@ describe "Edit vaccination record" do
 
   def then_i_should_see_the_vaccination_record
     expect(page).to have_content("Full nameSMITH, John")
+  end
+
+  def and_i_should_see_the_correct_page_title
+    expect(page.title).to include("JS – HPV")
   end
 
   def when_i_click_on_edit_vaccination_record
