@@ -996,6 +996,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.datetime "discarded_at"
     t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
+    t.bigint "duplicate_of_vaccination_record_id"
     t.boolean "full_dose"
     t.string "local_patient_id"
     t.string "local_patient_id_uri"
@@ -1030,6 +1031,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "vaccine_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
+    t.index ["duplicate_of_vaccination_record_id"], name: "idx_on_duplicate_of_vaccination_record_id_5071adce87"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
     t.index ["next_dose_delay_triage_id"], name: "index_vaccination_records_on_next_dose_delay_triage_id"
@@ -1199,6 +1201,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "users", column: "reported_by_id"
   add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
+  add_foreign_key "vaccination_records", "vaccination_records", column: "duplicate_of_vaccination_record_id"
   add_foreign_key "vaccination_records", "vaccines"
 
   create_view "reporting_api_totals", materialized: true, sql_definition: <<-SQL
