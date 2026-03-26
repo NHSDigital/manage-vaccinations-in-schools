@@ -91,6 +91,8 @@ shared_examples_for "a CSVImportable model" do
   describe "#process!" do
     let(:today) { Time.zone.local(2025, 6, 1) }
 
+    before { subject.parse_rows! }
+
     # TODO: Remove if ... when ImmunisationImport's implementation has been
     #       updated to match the others (i.e. it uses changesets)
     if described_class <= ImmunisationImport

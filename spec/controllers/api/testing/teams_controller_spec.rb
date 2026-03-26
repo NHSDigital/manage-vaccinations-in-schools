@@ -47,6 +47,7 @@ describe API::Testing::TeamsController do
         create(:session, team:, location: team.gias_schools.first, programmes:)
 
       process_and_approve_import(cohort_import)
+      immunisation_import.parse_rows!
       immunisation_import.process!
 
       Patient.find_each do |patient|

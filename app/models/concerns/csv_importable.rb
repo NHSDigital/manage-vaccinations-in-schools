@@ -146,11 +146,6 @@ module CSVImportable
   end
 
   def process!
-    return if processed?
-
-    parse_rows! if rows.nil?
-    return if invalid?
-
     process_import!
 
     TeamCachedCounts.new(team).reset_import_issues!

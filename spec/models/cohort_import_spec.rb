@@ -143,6 +143,8 @@ describe CohortImport do
         queue: :imports
       ).and_return(configured_job)
       allow(configured_job).to receive(:perform_later)
+
+      cohort_import.parse_rows!
     end
 
     context "when pds_search_during_import flag is enabled" do

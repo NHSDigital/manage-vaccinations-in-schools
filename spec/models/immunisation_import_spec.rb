@@ -197,6 +197,8 @@ describe ImmunisationImport do
     before do
       Flipper.enable(:pds)
       Flipper.enable(:pds_enqueue_bulk_updates)
+
+      immunisation_import.parse_rows!
     end
 
     let(:duplicate_import) do
