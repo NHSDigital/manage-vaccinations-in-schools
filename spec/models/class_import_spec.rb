@@ -59,9 +59,7 @@ describe ClassImport do
   it_behaves_like "a CSVImportable model"
 
   describe "#parse_rows!" do
-    subject(:parse_rows!) { class_import.parse_rows! }
-
-    before { parse_rows! }
+    before { class_import.parse_rows! }
 
     describe "with invalid fields" do
       let(:file) { "invalid_fields.csv" }
@@ -136,8 +134,6 @@ describe ClassImport do
   end
 
   describe "#process!" do
-    subject(:process!) { class_import.process! }
-
     let(:file) { "valid.csv" }
     let(:configured_job) { instance_double(ActiveJob::ConfiguredJob) }
 
@@ -155,7 +151,7 @@ describe ClassImport do
       end
 
       it "enqueues PDSCascadingSearchJob for each changeset with a postcode" do
-        process!
+        class_import.process!
 
         expect(configured_job).to have_received(:perform_later).exactly(3).times
         without_postcode =
@@ -172,7 +168,7 @@ describe ClassImport do
       before { Flipper.disable(:pds_search_during_import) }
 
       it "enqueues ReviewPatientChangesetJob for each changeset" do
-        expect { process! }.to have_enqueued_job(
+        expect { class_import.process! }.to have_enqueued_job(
           ReviewPatientChangesetJob
         ).exactly(4).times
 
@@ -227,8 +223,6 @@ describe ClassImport do
   end
 
   describe "#validate_pds_match_rate!" do
-    subject(:validate_pds_match_rate!) { class_import.validate_pds_match_rate! }
-
     context "when match rate is equal to threshold" do
       before do
         create_list(
@@ -241,7 +235,7 @@ describe ClassImport do
       end
 
       it "does not mark as low_pds_match_rate" do
-        validate_pds_match_rate!
+        class_import.validate_pds_match_rate!
         expect(class_import.reload.status).not_to eq("low_pds_match_rate")
       end
     end
@@ -258,7 +252,7 @@ describe ClassImport do
       end
 
       it "marks the import as low_pds_match_rate" do
-        validate_pds_match_rate!
+        class_import.validate_pds_match_rate!
         expect(class_import.reload.status).to eq("low_pds_match_rate")
       end
     end
@@ -267,22 +261,18 @@ describe ClassImport do
       before { create_list(:patient_changeset, 5, import: class_import) }
 
       it "skips validation" do
-        validate_pds_match_rate!
+        class_import.validate_pds_match_rate!
         expect(class_import.reload.status).not_to eq("low_pds_match_rate")
       end
     end
   end
 
   describe "#validate_changeset_uniqueness!" do
-    subject(:validate_changeset_uniqueness!) do
-      class_import.validate_changeset_uniqueness!
-    end
-
     context "when all rows are unique" do
       before { create_list(:patient_changeset, 3, import: class_import) }
 
       it "does not mark the import as changesets_are_invalid" do
-        validate_changeset_uniqueness!
+        class_import.validate_changeset_uniqueness!
         expect(class_import.reload.status).not_to eq("changesets_are_invalid")
         expect(class_import.serialized_errors).to be_nil.or eq({})
       end
@@ -316,7 +306,7 @@ describe ClassImport do
       end
 
       it "marks the import as changesets_are_invalid and records errors" do
-        validate_changeset_uniqueness!
+        class_import.validate_changeset_uniqueness!
 
         expect(class_import.reload.status).to eq("changesets_are_invalid")
         expect(class_import.serialized_errors.values.flatten).to include(
@@ -333,7 +323,7 @@ describe ClassImport do
       end
 
       it "marks the import as changesets_are_invalid and includes Mavis duplicate error" do
-        validate_changeset_uniqueness!
+        class_import.validate_changeset_uniqueness!
 
         expect(class_import.reload.status).to eq("changesets_are_invalid")
         expect(class_import.serialized_errors.values.flatten).to include(

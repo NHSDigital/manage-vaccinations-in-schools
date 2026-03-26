@@ -56,9 +56,7 @@ describe CohortImport do
   it_behaves_like "a CSVImportable model"
 
   describe "#parse_rows!" do
-    subject(:parse_rows!) { cohort_import.parse_rows! }
-
-    before { parse_rows! }
+    before { cohort_import.parse_rows! }
 
     describe "with invalid fields" do
       let(:file) { "invalid_fields.csv" }
@@ -137,8 +135,6 @@ describe CohortImport do
   end
 
   describe "#process!" do
-    subject(:process!) { cohort_import.process! }
-
     let(:configured_job) { instance_double(ActiveJob::ConfiguredJob) }
     let(:file) { "valid.csv" }
 
@@ -156,7 +152,7 @@ describe CohortImport do
       end
 
       it "enqueues PDSCascadingSearchJob for each changeset" do
-        process!
+        cohort_import.process!
 
         expect(configured_job).to have_received(:perform_later).exactly(3).times
       end
@@ -166,7 +162,7 @@ describe CohortImport do
       before { Flipper.disable(:pds_search_during_import) }
 
       it "enqueues ReviewPatientChangesetJob for each changeset" do
-        expect { process! }.to have_enqueued_job(
+        expect { cohort_import.process! }.to have_enqueued_job(
           ReviewPatientChangesetJob
         ).exactly(3).times
       end
