@@ -16,7 +16,15 @@ describe AppConsentConfirmationComponent do
     )
   end
 
-  context "with Flu programme" do
+  context "when the consent form has no session" do
+    let(:team) { create(:team) }
+    let(:consent_form) { create(:consent_form, original_session: nil) }
+
+    it { should have_text("Consent confirmed") }
+    it { should_not have_text("at school on") }
+  end
+
+  context "with flu programme" do
     let(:programme) { Programme.flu }
     let(:session) { create(:session, programmes: [programme]) }
     let(:consent_form) { create(:consent_form, :given, session:) }
