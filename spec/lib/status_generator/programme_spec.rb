@@ -499,6 +499,32 @@ describe StatusGenerator::Programme do
     end
   end
 
+  context "when a vaccination record was added after a safe to vaccinate triage" do
+    let(:programme) { Programme.mmr }
+
+    before do
+      create(:consent, :given, patient:, programme:)
+      create(
+        :triage,
+        :safe_to_vaccinate,
+        patient:,
+        programme:,
+        created_at: 1.day.ago
+      )
+      create(:vaccination_record, :yesterday, patient:, programme:)
+    end
+
+    its(:consent_status) { should be(:given) }
+    its(:consent_vaccine_methods) { should contain_exactly("injection") }
+    its(:date) { should eq(Date.yesterday) }
+    its(:disease_types) { should be_empty }
+    its(:dose_sequence) { should eq(2) }
+    its(:location_id) { should be_nil }
+    its(:status) { should be(:review_vaccination_history) }
+    its(:vaccine_methods) { should contain_exactly("injection") }
+    its(:without_gelatine) { should be(false) }
+  end
+
   context "when not eligible" do
     let(:patient) { create(:patient, year_group: 12, parents:) }
 

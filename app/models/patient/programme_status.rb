@@ -85,6 +85,7 @@ class Patient::ProgrammeStatus < ApplicationRecord
     needs_consent
     has_refusal
     needs_triage
+    review_vaccination_history
     due
     cannot_vaccinate
     vaccinated
@@ -108,6 +109,10 @@ class Patient::ProgrammeStatus < ApplicationRecord
 
   NEEDS_TRIAGE_STATUSES = { "needs_triage" => 30 }.freeze
 
+  REVIEW_VACCINATION_HISTORY_STATUSES = {
+    "review_vaccination_history" => 35
+  }.freeze
+
   DUE_STATUSES = { "due" => 40 }.freeze
 
   CANNOT_VACCINATE_STATUSES = {
@@ -130,6 +135,7 @@ class Patient::ProgrammeStatus < ApplicationRecord
          **NEEDS_CONSENT_STATUSES,
          **HAS_REFUSAL_STATUSES,
          **NEEDS_TRIAGE_STATUSES,
+         **REVIEW_VACCINATION_HISTORY_STATUSES,
          **DUE_STATUSES,
          **CANNOT_VACCINATE_STATUSES,
          **VACCINATED_STATUSES
