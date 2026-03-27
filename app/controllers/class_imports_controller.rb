@@ -5,7 +5,7 @@ class ClassImportsController < ApplicationController
 
   before_action :set_draft_import, only: %i[new create]
   before_action :set_class_import,
-                only: %i[show update approve cancel re_review imported_records]
+                only: %i[show approve cancel re_review imported_records]
   before_action :set_open_sections, only: %i[show]
   before_action :set_review_records, only: %i[re_review imported_records]
 
@@ -82,12 +82,6 @@ class ClassImportsController < ApplicationController
            locals: {
              import: @class_import
            }
-  end
-
-  def update
-    @class_import.process!
-
-    redirect_to class_import_path(@class_import)
   end
 
   def re_review
