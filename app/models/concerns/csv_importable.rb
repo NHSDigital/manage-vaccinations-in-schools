@@ -145,12 +145,6 @@ module CSVImportable
     processed_at != nil
   end
 
-  def process!
-    process_import!
-
-    TeamCachedCounts.new(team).reset_import_issues!
-  end
-
   def remove!
     return if csv_removed?
     update!(csv_data: nil, csv_removed_at: Time.zone.now)

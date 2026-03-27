@@ -34,7 +34,9 @@ class PatientImport < ApplicationRecord
     changesets.from_file.count
   end
 
-  def process_import!
+  def process!
+    raise "'rows' are empty. Call parse_rows! before processing." if rows.nil?
+
     changesets =
       rows.each_with_index.map do |row, row_number|
         PatientChangeset.from_import_row(row:, import: self, row_number:)
@@ -54,6 +56,8 @@ class PatientImport < ApplicationRecord
     return if changesets_are_invalid?
 
     enqueue_review_jobs(self.changesets)
+
+    TeamCachedCounts.new(team).reset_import_issues!
   end
 
   def validate_pds_match_rate!
