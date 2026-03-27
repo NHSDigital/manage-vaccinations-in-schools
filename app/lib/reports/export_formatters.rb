@@ -6,12 +6,10 @@ module Reports::ExportFormatters
   def school_urn(location:, patient:)
     if location&.school?
       location.urn
-    elsif patient.home_educated?
-      "999999"
     elsif (school = patient.school)
       school.urn
     else
-      "888888"
+      Location::URN_UNKNOWN
     end
   end
 

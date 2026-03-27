@@ -19,7 +19,6 @@
 #  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
 #  given_name                 :string           not null
-#  home_educated              :boolean
 #  invalidated_at             :datetime
 #  local_authority_mhclg_code :string
 #  nhs_number                 :string
@@ -640,7 +639,7 @@ describe Patient do
       subject(:patient) { build(:patient, gp_practice: create(:school)) }
 
       it "is invalid" do
-        expect(patient.valid?).to be(false)
+        expect(patient).not_to be_valid
         expect(patient.errors[:gp_practice]).to include(
           "must be a GP practice location type"
         )
@@ -651,7 +650,7 @@ describe Patient do
       subject(:patient) { build(:patient, school: create(:community_clinic)) }
 
       it "is invalid" do
-        expect(patient.valid?).to be(false)
+        expect(patient).not_to be_valid
         expect(patient.errors[:school]).to include(
           "must be a school location type"
         )

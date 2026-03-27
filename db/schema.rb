@@ -1218,16 +1218,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
       COALESCE(la.mhclg_code, pat.local_authority_mhclg_code, 'UNKNOWN'::character varying) AS patient_local_authority_code,
       COALESCE(la.official_name, pat_la.official_name, 'Unknown Local Authority'::character varying) AS patient_local_authority_official_name,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
-          CASE
-              WHEN (school.urn IS NOT NULL) THEN school.urn
-              WHEN (pat.home_educated = true) THEN '999999'::character varying
-              ELSE '888888'::character varying
-          END AS patient_school_urn,
-          CASE
-              WHEN (school.name IS NOT NULL) THEN school.name
-              WHEN (pat.home_educated = true) THEN 'Home-schooled'::text
-              ELSE 'Unknown school'::text
-          END AS patient_school_name,
+      COALESCE(school.urn, '888888'::character varying) AS patient_school_urn,
+      COALESCE(school.name, 'Unknown school'::text) AS patient_school_name,
       (ar.patient_id IS NOT NULL) AS is_archived,
       (EXISTS ( SELECT 1
              FROM consents con

@@ -536,18 +536,14 @@ class ConsentForm < ApplicationRecord
     end
   end
 
-  def home_educated
-    return nil if education_setting_school?
-
-    education_setting_home?
-  end
-
-  def home_educated_changed?
-    education_setting_changed?
-  end
-
   def school_for_school_move
-    school || (home_educated ? team.home_educated_school : team.unknown_school)
+    if school
+      school
+    elsif education_setting_home?
+      team.home_educated_school
+    else
+      team.unknown_school
+    end
   end
 
   def reason_for_refusal

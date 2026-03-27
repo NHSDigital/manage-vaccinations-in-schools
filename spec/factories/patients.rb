@@ -19,7 +19,6 @@
 #  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
 #  given_name                 :string           not null
-#  home_educated              :boolean
 #  invalidated_at             :datetime
 #  local_authority_mhclg_code :string
 #  nhs_number                 :string
@@ -119,7 +118,6 @@ FactoryBot.define do
     registration_academic_year { academic_year if registration.present? }
 
     school { session.location if session&.location&.school? }
-    home_educated { school.present? ? nil : false }
 
     address_line_1 { Faker::Address.street_address }
     address_line_2 { Faker::Address.secondary_address }
@@ -172,7 +170,6 @@ FactoryBot.define do
     trait :home_educated do
       team { session&.team || create(:team, programmes:) }
       school { team.home_educated_school }
-      home_educated { nil }
     end
 
     trait :deceased do

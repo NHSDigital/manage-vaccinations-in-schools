@@ -183,8 +183,8 @@ describe API::Reporting::TotalsController do
         performed_at: Time.current
       )
 
-      create(:patient, session:, school: nil, home_educated: true)
-      create(:patient, session:, school: nil, home_educated: false)
+      create(:patient, session:, school: team.home_educated_school)
+      create(:patient, session:, school: team.unknown_school)
 
       refresh_reporting_views!
 
@@ -209,7 +209,7 @@ describe API::Reporting::TotalsController do
       expect(school_two_data["vaccinated"]).to eq(1)
       expect(school_two_data["not_vaccinated"]).to eq(0)
 
-      expect(home_educated_data["school_name"]).to eq("Home-schooled")
+      expect(home_educated_data["school_name"]).to eq("Home-educated")
       expect(home_educated_data["cohort"]).to eq(1)
       expect(home_educated_data["vaccinated"]).to eq(0)
       expect(home_educated_data["not_vaccinated"]).to eq(1)
@@ -356,8 +356,7 @@ describe API::Reporting::TotalsController do
       create(
         :patient,
         session:,
-        school: nil,
-        home_educated: true,
+        school: team.home_educated_school,
         local_authority_mhclg_code: nil
       )
 
@@ -365,8 +364,7 @@ describe API::Reporting::TotalsController do
       create(
         :patient,
         session:,
-        school: nil,
-        home_educated: false,
+        school: team.unknown_school,
         local_authority_mhclg_code: nil
       )
 

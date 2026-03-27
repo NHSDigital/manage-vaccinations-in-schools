@@ -237,7 +237,6 @@ class GraphRecords
       address_line_2
       address_town
       address_postcode
-      home_educated
       date_of_death
       pending_changes
     ],

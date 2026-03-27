@@ -160,8 +160,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   end
 
   def school_match?
-    consent_form.home_educated == patient.home_educated &&
-      consent_form.school == patient.school
+    consent_form.school_for_school_move == patient.school
   end
 
   def highlight(text, opts)
