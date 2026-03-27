@@ -58,8 +58,6 @@ class ImportDuplicateForm
   end
 
   def discard_pending_changes!
-    remove_imported_parent_relationships_if_needed!
-
     object.patient.discard_pending_changes! if object.respond_to?(:patient)
 
     object.discard_pending_changes!
@@ -91,19 +89,5 @@ class ImportDuplicateForm
 
   def reset_count!
     TeamCachedCounts.new(current_team).reset_import_issues!
-  end
-
-  def remove_imported_parent_relationships_if_needed!
-    return unless object.is_a?(Patient)
-
-    changeset = object.changesets.includes(:import).order(:created_at).last
-    return if changeset.nil?
-
-    changeset
-      .import
-      .parent_relationships
-      .includes(:patient)
-      .where(patient: object)
-      .find_each(&:destroy!)
   end
 end

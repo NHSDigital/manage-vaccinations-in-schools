@@ -93,7 +93,7 @@ describe ImportDuplicateForm do
           expect(class_import.patients.reload).to contain_exactly(new_patient)
         end
 
-        it "removes imported parent relationships when discarding changes" do
+        it "keeps imported parent relationships when discarding changes" do
           form =
             described_class.new(
               apply_changes: "discard",
@@ -103,9 +103,7 @@ describe ImportDuplicateForm do
 
           expect(form.save).to be(true)
 
-          expect { import_relationship.reload }.to raise_error(
-            ActiveRecord::RecordNotFound
-          )
+          expect(import_relationship.reload.patient).to eq(existing_patient)
           expect(existing_relationship.reload.patient).to eq(existing_patient)
           expect(changeset.reload.patient).to eq(existing_patient)
         end
