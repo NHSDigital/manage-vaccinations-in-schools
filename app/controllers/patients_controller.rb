@@ -96,8 +96,7 @@ class PatientsController < ApplicationController
         []
       else
         Patient::ProgrammeStatus.statuses.keys -
-          Patient::ProgrammeStatus::NOT_ELIGIBLE_STATUSES.keys -
-          %w[needs_consent_follow_up_requested]
+          Patient::ProgrammeStatus::NOT_ELIGIBLE_STATUSES.keys
       end
   end
 
