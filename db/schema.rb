@@ -524,7 +524,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
     t.text "address_line_2"
     t.text "address_postcode"
     t.text "address_town"
-    t.text "alternative_name"
     t.datetime "created_at", null: false
     t.integer "gias_establishment_number"
     t.integer "gias_local_authority_code"
