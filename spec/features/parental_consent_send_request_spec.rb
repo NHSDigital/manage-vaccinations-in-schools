@@ -264,7 +264,9 @@ describe "Parental consent" do
   end
 
   def then_i_see_no_requests_sent
-    expect(page).to have_content("No requests have been sent.")
+    expect(page).to have_content(
+      /No requests have been sent|Request not scheduled/
+    )
   end
 
   def when_i_click_send_consent_request

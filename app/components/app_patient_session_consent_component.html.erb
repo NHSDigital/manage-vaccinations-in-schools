@@ -21,6 +21,10 @@
       <p><%= patient.full_name %> is ready for the vaccinator.</p>
     <% elsif consent_status_value == :no_contact_details %>
       <p>We cannot send consent requests because we have no parent contact details.</p>
+    <% elsif consent_status_value == :request_not_scheduled %>
+      <p>No consent request is scheduled to be sent because the child has not been added to a scheduled session.</p>
+    <% elsif consent_status_value == :request_scheduled %>
+      <p>A consent request will be sent on <%= session.send_consent_requests_at.to_fs(:long) %>.</p>
     <% end %>
 
     <div class="nhsuk-button-group">
