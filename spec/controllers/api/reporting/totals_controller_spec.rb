@@ -252,13 +252,24 @@ describe API::Reporting::TotalsController do
       create(:consent, :refused, patient: patient2, programme:, team:)
       PatientStatusUpdater.call(patient: patient2)
 
-      create(
-        :patient,
-        session:,
-        school:,
-        year_group: 8,
-        parents: [create(:parent)]
-      )
+      patient3 =
+        create(
+          :patient,
+          session:,
+          school:,
+          year_group: 8,
+          parents: [create(:parent)]
+        )
+
+      [patient1, patient2, patient3].each do |patient|
+        create(
+          :consent_notification,
+          :request,
+          patient:,
+          session:,
+          programmes: [programme]
+        )
+      end
 
       refresh_reporting_views!
 
@@ -1159,7 +1170,16 @@ describe API::Reporting::TotalsController do
     end
 
     it "counts children with no consent response" do
-      create(:patient, session: hpv_session, parents: [create(:parent)])
+      patient =
+        create(:patient, session: hpv_session, parents: [create(:parent)])
+
+      create(
+        :consent_notification,
+        :request,
+        patient:,
+        session: hpv_session,
+        programmes: [hpv_programme]
+      )
 
       refresh_and_get_totals
 

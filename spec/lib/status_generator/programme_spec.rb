@@ -8,21 +8,40 @@ describe StatusGenerator::Programme do
       patient:,
       patient_locations:
         patient.patient_locations.includes(
-          location: :location_programme_year_groups
+          location: [
+            :location_programme_year_groups,
+            { team_locations: { sessions: :session_programme_year_groups } }
+          ]
         ),
       consents: patient.consents,
       triages: patient.triages,
       attendance_record: patient.attendance_records.first,
       vaccination_records: patient.vaccination_records.order_by_performed_at,
-      parents: patient.parents
+      parents: patient.parents,
+      consent_notifications:
+        patient.consent_notifications.includes(session: :team_location)
     )
   end
 
   let(:programme) { Programme.sample }
-  let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:, parents:) }
   let(:parents) { [create(:parent)] }
   let(:location) { create(:gias_school) }
+  let(:send_consent_requests_at) { nil }
+
+  let(:session) do
+    create(:session, programmes: [programme], send_consent_requests_at:)
+  end
+
+  before do
+    create(
+      :consent_notification,
+      :request,
+      patient:,
+      session:,
+      programmes: [programme]
+    )
+  end
 
   context "when already vaccinated" do
     let(:programme) { Programme.hpv }
@@ -386,6 +405,32 @@ describe StatusGenerator::Programme do
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
 
+    context "when the only session is completed" do
+      let(:session) { create(:session, :completed, programmes: [programme]) }
+
+      before { ConsentNotification.delete_all }
+
+      its(:status) { should be(:needs_consent_request_not_scheduled) }
+    end
+
+    context "when the patient only has a generic clinic location" do
+      let(:team) { create(:team, programmes: [programme]) }
+      let(:location) { create(:generic_clinic, team:) }
+      let(:session) do
+        create(
+          :session,
+          team:,
+          location:,
+          programmes: [programme],
+          send_consent_requests_at: Date.tomorrow
+        )
+      end
+
+      before { ConsentNotification.delete_all }
+
+      its(:status) { should be(:needs_consent_request_not_scheduled) }
+    end
+
     context "when there are no contact details for parents and no consent request has been sent" do
       let(:parents) { [create(:parent, :non_contactable)] }
 
@@ -396,6 +441,55 @@ describe StatusGenerator::Programme do
       let(:parents) { [] }
 
       its(:status) { should be(:needs_consent_no_contact_details) }
+    end
+
+    context "when a consent request is scheduled for a future session" do
+      let(:send_consent_requests_at) { Date.tomorrow }
+
+      before { ConsentNotification.delete_all }
+
+      its(:status) { should be(:needs_consent_request_scheduled) }
+    end
+
+    context "when the patient moved from a school to home educated" do
+      let(:send_consent_requests_at) { Date.tomorrow }
+      let(:school_move) do
+        create(
+          :school_move,
+          :to_home_educated,
+          patient:,
+          team: session.team,
+          academic_year: AcademicYear.current
+        )
+      end
+
+      before do
+        ConsentNotification.delete_all
+        school_move.confirm!
+      end
+
+      its(:status) { should be(:needs_consent_request_not_scheduled) }
+    end
+
+    context "when a consent requests are not scheduled to go out in the future" do
+      let(:send_consent_requests_at) { nil }
+
+      before { ConsentNotification.delete_all }
+
+      its(:status) { should be(:needs_consent_request_not_scheduled) }
+    end
+
+    context "when there is a future session for a different programme" do
+      before do
+        create(
+          :session,
+          programmes: [Programme.hpv],
+          team_location: session.team_location,
+          send_consent_requests_at: Date.tomorrow
+        )
+      end
+
+      its(:status) { should be(:needs_consent_no_response) }
     end
 
     context "with a multi-dose programme" do
