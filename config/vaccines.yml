@@ -174,7 +174,6 @@ menquadfi:
     - drowsy
     - feeling_sick
     - headache
-    - high_temperature
     - irritable
     - loss_of_appetite
     - rash
@@ -196,7 +195,6 @@ menveo:
     - drowsy
     - feeling_sick
     - headache
-    - high_temperature
     - irritable
     - loss_of_appetite
     - rash
@@ -220,7 +218,6 @@ nimenrix:
     - drowsy
     - feeling_sick
     - headache
-    - high_temperature
     - irritable
     - loss_of_appetite
     - rash
