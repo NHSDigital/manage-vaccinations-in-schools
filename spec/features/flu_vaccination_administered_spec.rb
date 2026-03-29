@@ -346,6 +346,7 @@ describe "Flu vaccination" do
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
+        subject: "Your child had their flu vaccination today",
         template: :vaccination_administered_flu
       ).with_content_including("Vaccination: flu", "Possible side effects")
     )
