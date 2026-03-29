@@ -518,7 +518,7 @@ class GovukNotifyPersonalisation
   end
 
   def programme_names
-    @programme_names ||= programmes.map(&:name)
+    @programme_names ||= programmes.map(&:name_in_sentence)
   end
 
   def programme_names_and_methods

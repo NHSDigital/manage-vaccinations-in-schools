@@ -1,13 +1,13 @@
 ---
 template_id: "7238ee27-5840-40e5-b9b9-3130ba4cd4fa"
 template_name: vaccination_administered_flu
-subject: "Your child had their flu vaccination <%= today_or_date_of_vaccination %>"
+subject: "Your child had their <%= vaccination %> <%= today_or_date_of_vaccination %>"
 ---
 <%= full_and_preferred_patient_name %> had their flu vaccination at <%= location_name %> <%= today_or_date_of_vaccination %>.
 
 We suggest you record the following details somewhere.
 
-Vaccination: flu
+Vaccination: <%= vaccination %>
 Vaccine: <%= vaccine_brand %>
 Method: <%= if vaccine_is?("injection") then "injection" elsif vaccine_is?("nasal") then "nasal spray" end %>
 Date of vaccination: <%= day_month_year_of_vaccination %>
