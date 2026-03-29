@@ -625,15 +625,16 @@
 
 <p>Table name: consent_form_programmes</p>
 
-<pre>id                 :bigint           not null, primary key
-disease_types      :enum             is an Array
-notes              :text             default(&quot;&quot;), not null
-programme_type     :enum             not null
-reason_for_refusal :integer
-response           :integer
-vaccine_methods    :integer          default([]), not null, is an Array
-without_gelatine   :boolean
-consent_form_id    :bigint           not null</pre>
+<pre>id                  :bigint           not null, primary key
+disease_types       :enum             is an Array
+follow_up_requested :boolean
+notes               :text             default(&quot;&quot;), not null
+programme_type      :enum             not null
+reason_for_refusal  :integer
+response            :integer
+vaccine_methods     :integer          default([]), not null, is an Array
+without_gelatine    :boolean
+consent_form_id     :bigint           not null</pre>
 
 <p>Indexes</p>
 
@@ -692,7 +693,7 @@ index_consent_form_programmes_on_consent_form_id  (consent_form_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="human_enum_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 45</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">human_enum_name</span>(<span class="ruby-identifier">attribute</span>)
   <span class="ruby-constant">Consent</span>.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">send</span>(<span class="ruby-identifier">attribute</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -734,7 +735,7 @@ index_consent_form_programmes_on_consent_form_id  (consent_form_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccines-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 39</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_consentable</span>(<span class="ruby-keyword">self</span>).<span class="ruby-identifier">apply</span>(
     <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">active</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">programme_type:</span>, <span class="ruby-value">disease_types:</span>)
