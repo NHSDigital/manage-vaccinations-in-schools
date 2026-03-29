@@ -304,14 +304,11 @@ revaxis:
   dose_volume_ml: 0.5
   disease_types: [tetanus, diphtheria, polio]
   side_effects:
-    - drowsy
-    - feeling_sick
+    - dizziness
+    - feeling_or_being_sick
     - headache
     - high_temperature
-    - irritable
-    - loss_of_appetite
     - swelling
-    - unwell
   snomed_product_code: 7374511000001107
   snomed_product_term:
     Revaxis vaccine suspension for injection 0.5ml pre-filled syringes (Sanofi) 1 pre-filled

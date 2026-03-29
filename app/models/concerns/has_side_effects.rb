@@ -10,6 +10,7 @@ module HasSideEffects
                  aching: 0,
                  dizziness: 1,
                  drowsy: 2,
+                 feeling_or_being_sick: 18,
                  feeling_sick: 3,
                  headache: 4,
                  high_temperature: 5,
