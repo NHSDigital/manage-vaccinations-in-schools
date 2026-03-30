@@ -701,7 +701,9 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "B0C4P" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should be_nil }
+        its(:notes) do
+          should eq "Performing organisation display name: Acme Healthcare"
+        end
       end
 
       context "with a record with not full dose" do
@@ -742,7 +744,9 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "B0C4P" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should be_nil }
+        its(:notes) do
+          should eq "Performing organisation display name: Acme Healthcare"
+        end
       end
 
       context "with a record with an unexpected dose unit, and is nasal flu" do
@@ -784,7 +788,9 @@ describe FHIRMapper::VaccinationRecord do
         its(:location_name) { should be_nil }
         its(:performed_ods_code) { should eq "B0C4P" }
 
-        its(:notes) { should be_nil }
+        its(:notes) do
+          should eq "Performing organisation display name: Acme Healthcare"
+        end
       end
 
       context "with a record with extended milliliter description" do
