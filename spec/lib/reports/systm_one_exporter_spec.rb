@@ -295,16 +295,52 @@ describe Reports::SystmOneExporter do
       let(:programme) { Programme.mmr }
       let(:dose_sequence) { nil }
 
-      context "Priorix" do
+      context "Priorix with unknown dose sequence" do
         let(:vaccine) { Vaccine.find_by!(brand: "Priorix") }
 
-        it { should eq("Yav8l") }
+        it { should eq("Priorix") }
       end
 
-      context "MMR VaxPro" do
+      context "MMR VaxPro with unknown dose sequence" do
         let(:vaccine) { Vaccine.find_by!(brand: "MMR VaxPro") }
 
-        it { should eq("Yb9ZN") }
+        it { should eq("MMR VaxPro") }
+      end
+
+      context "Priorix with dose sequence 1" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Priorix") }
+        let(:dose_sequence) { 1 }
+
+        it { should eq("65M1.") }
+      end
+
+      context "MMR VaxPro with dose sequence 2" do
+        let(:vaccine) { Vaccine.find_by!(brand: "MMR VaxPro") }
+        let(:dose_sequence) { 2 }
+
+        it { should eq("65MA.") }
+      end
+
+      context "MMRV vaccinations" do
+        context "ProQuad with unknown dose sequence" do
+          let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }
+
+          it { should eq("ProQuad") }
+        end
+
+        context "ProQuad with dose sequence 1" do
+          let(:vaccine) { Vaccine.find_by!(brand: "ProQuad") }
+          let(:dose_sequence) { 1 }
+
+          it { should eq("Y3fec") }
+        end
+
+        context "Priorix Tetra with dose sequence 2" do
+          let(:vaccine) { Vaccine.find_by!(brand: "Priorix-Tetra") }
+          let(:dose_sequence) { 2 }
+
+          it { should eq("Y3fed") }
+        end
       end
     end
 

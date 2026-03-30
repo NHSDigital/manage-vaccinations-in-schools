@@ -10,8 +10,8 @@ class Reports::SystmOneExporter
 
   # We think these are CVT3 Read codes still used within SystmOne
   # They have been looked up from the SystmOne Code Browser
-  # They are also available online here: https://biobank.ndph.ox.ac.uk/ukb/coding.cgi?id=8708&nl=1
-  VACCINE_DOSE_MAPPINGS = {
+  # Some of them are also available online here: https://biobank.ndph.ox.ac.uk/ukb/coding.cgi?id=8708&nl=1
+  PRODUCT_DOSE_MAPPINGS = {
     "Cell-based Trivalent Influenza Vaccine Seqirus" => {
       1 => "YcjYj"
     },
@@ -31,15 +31,9 @@ class Reports::SystmOneExporter
       1 => "Y0da5",
       nil => "Y0da5"
     },
-    "MMR VaxPro" => {
-      nil => "Yb9ZN"
-    },
     "Nimenrix" => {
       1 => "YOfcf",
       nil => "YOfcf"
-    },
-    "Priorix" => {
-      nil => "Yav8l"
     },
     "Revaxis" => {
       1 => "Y3417",
@@ -55,6 +49,17 @@ class Reports::SystmOneExporter
     },
     "Viatris" => {
       1 => "YcjYh"
+    }
+  }.freeze
+
+  PROCEDURE_DOSE_MAPPINGS = {
+    "mmr" => {
+      1 => "65M1.",
+      2 => "65MA."
+    },
+    "mmrv" => {
+      1 => "Y3fec",
+      2 => "Y3fed"
     }
   }.freeze
 
@@ -222,10 +227,16 @@ class Reports::SystmOneExporter
   def vaccination(vaccination_record)
     return if vaccination_record.not_administered?
 
+    programme = vaccination_record.programme
     vaccine_brand = vaccination_record.vaccine.brand
     dose_sequence = vaccination_record.dose_sequence
 
-    mapping = VACCINE_DOSE_MAPPINGS.dig(vaccine_brand, dose_sequence)
+    mapping =
+      if programme.mmr?
+        PROCEDURE_DOSE_MAPPINGS.dig(programme.variant_type, dose_sequence)
+      else
+        PRODUCT_DOSE_MAPPINGS.dig(vaccine_brand, dose_sequence)
+      end
 
     return mapping if mapping.present?
 
