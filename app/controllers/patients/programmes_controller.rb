@@ -3,9 +3,6 @@
 class Patients::ProgrammesController < Patients::BaseController
   before_action :set_programme
   before_action :set_academic_year
-  before_action :set_can_invite_to_clinic, only: :show
-  before_action :set_can_send_clinic_invitation_reminder, only: :show
-  before_action :set_can_send_consent_request, only: :show
   before_action :record_access_log_entry, only: :show
 
   skip_after_action :verify_policy_scoped
@@ -107,38 +104,6 @@ class Patients::ProgrammesController < Patients::BaseController
 
   def set_academic_year
     @academic_year = AcademicYear.pending
-  end
-
-  def set_can_invite_to_clinic
-    @can_invite_to_clinic =
-      @patient.notifier.can_send_clinic_invitation?(
-        [@programme],
-        team: current_team,
-        academic_year: @academic_year,
-        include_already_invited_programmes: false
-      )
-  end
-
-  def set_can_send_clinic_invitation_reminder
-    @can_send_clinic_invitation_reminder =
-      @patient.notifier.can_send_clinic_invitation?(
-        [@programme],
-        team: current_team,
-        academic_year: @academic_year
-      )
-  end
-
-  def set_can_send_consent_request
-    @can_send_consent_request =
-      @patient.invited_to_clinic?(
-        [@programme],
-        team: current_team,
-        academic_year: @academic_year
-      ) &&
-        @patient.notifier.can_send_consent_request?(
-          [@programme],
-          academic_year: @academic_year
-        )
   end
 
   def record_access_log_entry

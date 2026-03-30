@@ -5,8 +5,6 @@
 
   <% if vaccination_records.present? %>
     <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
-      <% table.with_caption(text: "Vaccination records", size: "s") if show_caption %>
-
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
           <% row.with_cell(text: "Vaccination date") %>
@@ -54,7 +52,7 @@
   <% if can_record_new_vaccination? %>
     <div class="nhsuk-button-group">
       <%= govuk_button_to "Record a vaccination in clinic",
-                          record_new_vaccination_patient_programme_path(patient, programme),
+                          record_new_vaccination_patient_programme_path(patient, programme_type),
                           secondary: true %>
     </div>
   <% end %>

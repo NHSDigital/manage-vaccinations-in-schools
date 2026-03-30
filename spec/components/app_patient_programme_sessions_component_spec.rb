@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-describe AppPatientProgrammeSessionTableComponent do
+describe AppPatientProgrammeSessionsComponent do
   subject { render_inline(component) }
 
   let(:component) do
-    described_class.new(patient, current_team: team, programme_type:)
+    described_class.new(patient, programme, academic_year:, team:)
   end
-  let(:programme_type) { :hpv }
+
+  let(:programme) { Programme.hpv }
+  let(:academic_year) { AcademicYear.current }
   let(:team) { create(:team) }
 
   context "without a session" do
@@ -78,7 +80,7 @@ describe AppPatientProgrammeSessionTableComponent do
           session:,
           outcome: :administered,
           performed_at_date: 1.month.ago,
-          programme_type:
+          programme:
         )
         create(
           :vaccination_record,
@@ -86,7 +88,7 @@ describe AppPatientProgrammeSessionTableComponent do
           session:,
           outcome: :refused,
           performed_at_date: 1.year.ago,
-          programme_type:
+          programme:
         )
       end
 
@@ -100,11 +102,7 @@ describe AppPatientProgrammeSessionTableComponent do
 
       context "with a programme type filter that matches only one session" do
         let(:component) do
-          described_class.new(
-            patient,
-            current_team: team,
-            programme_type: :menacwy
-          )
+          described_class.new(patient, Programme.menacwy, academic_year:, team:)
         end
 
         it { should_not have_link("Waterloo Road") }
