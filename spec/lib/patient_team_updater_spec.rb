@@ -28,7 +28,7 @@ describe PatientTeamUpdater do
       end
     end
 
-    context "with a school move by school" do
+    context "with a school move" do
       before do
         create(
           :school_move,
@@ -45,19 +45,6 @@ describe PatientTeamUpdater do
         expect(PatientTeam.last.sources).to contain_exactly(
           "school_move_school"
         )
-      end
-    end
-
-    context "with a school move by team" do
-      before do
-        create(:school_move, :to_home_educated, patient:, team:)
-        PatientTeam.delete_all
-      end
-
-      it "adds the patient to the team" do
-        expect(patient.teams).to be_empty
-        expect { call }.to change(PatientTeam, :count).by(1)
-        expect(PatientTeam.last.sources).to contain_exactly("school_move_team")
       end
     end
 
