@@ -24,6 +24,9 @@ services:
       # Redis service connection
       REDIS_URL: redis://redis:6379/0
       SIDEKIQ_REDIS_URL: redis://redis:6379/0
+      # Use polling instead of inotify for file watching. The host kernel's
+      # inotify instance limit is quickly exhausted inside Docker containers.
+      LIVERELOAD_FORCE_POLLING: "true"
 
   postgres:
     image: postgres:17
