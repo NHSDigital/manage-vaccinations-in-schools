@@ -1,9 +1,19 @@
 # frozen_string_literal: true
 
 class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
-  def initialize(changesets:)
-    @changesets = changesets.sort_by { it.row_number || Float::INFINITY }
+  def initialize(changesets:, pagy: nil, anchor: nil)
+    @changesets =
+      (
+        if pagy
+          changesets
+        else
+          changesets.sort_by { it.row_number || Float::INFINITY }
+        end
+      )
     @destination_schools = {}
+
+    @pagy = pagy
+    @anchor = anchor
   end
 
   private
@@ -39,4 +49,6 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
 
     (new_teams & current_teams).empty?
   end
+
+  def has_results? = @pagy&.count&.positive?
 end

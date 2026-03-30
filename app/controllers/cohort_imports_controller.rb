@@ -174,12 +174,19 @@ class CohortImportsController < ApplicationController
             :school,
             :patient_locations,
             :archive_reasons,
-            { patient_locations: :location, school: { team_locations: :team } }
+            {
+              patient_locations: :location,
+              school: {
+                team_locations: :team
+              },
+              school_moves: :school_teams
+            }
           ]
         )
         .from_file
         .ready_for_review
         .select(&:inter_team_move?)
+    @inter_team_ids = @inter_team.map(&:id) || []
     @new_records =
       pagy(
         @cohort_import.changesets.ready_for_review.new_patient.order(
@@ -188,19 +195,37 @@ class CohortImportsController < ApplicationController
         page_param: :new_records_page
       )
     @auto_matched_records =
-      @cohort_import.changesets.ready_for_review.auto_match - @inter_team
+      pagy(
+        @cohort_import
+          .changesets
+          .ready_for_review
+          .auto_match
+          .where.not(id: @inter_team_ids)
+          .order(:row_number),
+        page_param: :auto_matched_records_page
+      )
     @import_issues =
-      @cohort_import
-        .changesets
-        .includes(:patient)
-        .ready_for_review
-        .import_issue - @inter_team
+      pagy(
+        @cohort_import
+          .changesets
+          .includes(:patient)
+          .ready_for_review
+          .import_issue
+          .where.not(id: @inter_team_ids)
+          .order(:row_number),
+        page_param: :import_issues_page
+      )
     @school_moves =
-      @cohort_import
-        .changesets
-        .includes(:school, patient: :school)
-        .ready_for_review
-        .with_school_moves - @inter_team
+      pagy(
+        @cohort_import
+          .changesets
+          .includes(:school, patient: :school)
+          .ready_for_review
+          .with_school_moves
+          .where.not(id: @inter_team_ids)
+          .order(:row_number),
+        page_param: :school_moves_page
+      )
     @skipped_school_moves =
       @cohort_import
         .changesets
