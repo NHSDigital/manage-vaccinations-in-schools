@@ -46,7 +46,7 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def import_issues_message
-    count = @import_issues.count
+    count = @import_issues_pagy.count
     "This upload includes #{pluralize(count, "record")} that " \
       "#{count > 1 ? "are close matches to existing records" : "is a close match to an existing record"} " \
       "in Mavis. If you approve the upload, you will need to resolve " \
@@ -62,7 +62,7 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def school_moves_message
-    count = @school_moves.count
+    count = @school_moves_pagy.count
     if @import.is_a?(ClassImport)
       "This upload will change the school of the #{count > 1 ? "children" : "child"} listed below. " \
         "Children present in the class list will be moved into the school, and those who are not in the " \

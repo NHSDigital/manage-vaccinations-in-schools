@@ -105,6 +105,35 @@ describe AppImportReviewComponent do
     end
   end
 
+  describe "with multiple pages of new records" do
+    let(:new_records) do
+      create_list(:patient_changeset, 75, :new_patient, import:)
+    end
+    let(:new_records_pagy) do
+      instance_double(
+        Pagy,
+        count: new_records.count,
+        limit: 50,
+        from: 1,
+        to: 50
+      ).as_null_object
+    end
+
+    include_examples "section with details",
+                     title: "New records",
+                     summary: /75 new records\s+\(showing 1 to 50\)/,
+                     count: 75
+
+    it "shows the section description" do
+      expect(rendered).to have_content(
+        "This upload includes 75 new records that are not currently in Mavis"
+      )
+      expect(rendered).to have_content(
+        "If you approve the upload, these records will be added to Mavis"
+      )
+    end
+  end
+
   describe "with auto-matched records" do
     let(:auto_matched_records) do
       [
@@ -260,6 +289,39 @@ describe AppImportReviewComponent do
           "Children present in the class list will be moved into the school"
         )
       end
+    end
+  end
+
+  describe "with multiple pages of school moves" do
+    let(:school_moves) do
+      create_list(
+        :patient_changeset,
+        55,
+        :with_school_move,
+        import:,
+        patient: school_move_patient,
+        school: second_location
+      )
+    end
+    let(:school_moves_pagy) do
+      instance_double(
+        Pagy,
+        count: school_moves.count,
+        limit: 50,
+        from: 1,
+        to: 50
+      ).as_null_object
+    end
+
+    include_examples "section with details",
+                     title: "School moves - resolve after import",
+                     summary: /55 school moves\s+\(showing 1 to 50\)/,
+                     count: 55
+
+    it "shows correct total in import message" do
+      expect(rendered).to have_content(
+        "This upload includes 55 children with a different school to the one on their Mavis record"
+      )
     end
   end
 
