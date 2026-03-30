@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1020,7 +1020,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
     t.string "performed_ods_code"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "protocol"
-    t.datetime "reported_at"
     t.bigint "reported_by_id"
     t.bigint "session_id"
     t.integer "source", null: false
