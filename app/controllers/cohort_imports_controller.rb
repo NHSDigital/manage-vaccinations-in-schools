@@ -48,7 +48,7 @@ class CohortImportsController < ApplicationController
       redirect_to re_review_cohort_import_path(@cohort_import) and return
     end
 
-    if @cohort_import.processed? || @cohort_import.partially_processed?
+    if @cohort_import.processed_at? || @cohort_import.partially_processed?
       @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 
       @duplicates =

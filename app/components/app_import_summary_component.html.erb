@@ -68,7 +68,7 @@
         import.parent_relationships.present? %>
     <% if import.removing_parent_relationships? %>
       <p class="nhsuk-u-secondary-text-colour">Parent-child relationships are currently being removed from this import</p>
-    <% elsif import.processed? && import.parent_relationships.any? %>
+    <% elsif import.processed_at? && import.parent_relationships.any? %>
       <p>
         <%= link_to "Remove all parent-child relationships from import", imports_bulk_remove_parents_path(import.class.name.underscore, import.id) %>
       </p>

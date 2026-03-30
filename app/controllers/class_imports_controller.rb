@@ -49,7 +49,7 @@ class ClassImportsController < ApplicationController
       redirect_to re_review_class_import_path(@class_import) and return
     end
 
-    if @class_import.processed? || @class_import.partially_processed?
+    if @class_import.processed_at? || @class_import.partially_processed?
       @pagy, @patients = pagy(@class_import.patients.includes(:school))
 
       @duplicates =

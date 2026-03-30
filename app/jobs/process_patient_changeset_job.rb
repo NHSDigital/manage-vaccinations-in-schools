@@ -5,7 +5,7 @@ class ProcessPatientChangesetJob < ApplicationJob
 
   def perform(patient_changeset_id)
     patient_changeset = PatientChangeset.find(patient_changeset_id)
-    return if patient_changeset.processed?
+    return if patient_changeset.processed_at?
 
     unique_nhs_number = get_unique_nhs_number(patient_changeset)
     if unique_nhs_number
