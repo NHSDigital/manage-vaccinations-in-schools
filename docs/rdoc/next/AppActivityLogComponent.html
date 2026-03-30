@@ -1192,7 +1192,7 @@
             </details>
           </div>
           <div class="method-source-code" id="attendance_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 519</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 534</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">attendance_events</span>
   <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attendance_record</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">title</span> =
@@ -1252,11 +1252,26 @@
   <span class="ruby-identifier">consents</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">consent</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">events</span> = []
 
-    <span class="ruby-identifier">original_response</span> = <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">withdrawn?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;given&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">response</span>
+    <span class="ruby-identifier">original_response</span> =
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">withdrawn?</span>
+        <span class="ruby-string">&quot;given&quot;</span>
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">follow_up_requested?</span>
+        <span class="ruby-string">&quot;follow_up_requested&quot;</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">response</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">human_response</span> = <span class="ruby-constant">Consent</span>.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-value">:response</span>, <span class="ruby-identifier">original_response</span>)
+
+    <span class="ruby-identifier">title</span> =
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">original_response</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;not_provided&quot;</span>
+        <span class="ruby-string">&quot;Consent not provided&quot;</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">human_response</span>
+      <span class="ruby-keyword">end</span>
 
     <span class="ruby-identifier">events</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">if</span> (<span class="ruby-identifier">consent_form</span> = <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">consent_form</span>)
       {
-        <span class="ruby-value">title:</span> <span class="ruby-node">&quot;Consent #{original_response}&quot;</span>,
+        <span class="ruby-value">title:</span>,
         <span class="ruby-value">at:</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">recorded_at</span>,
         <span class="ruby-value">by:</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">parent_relationship</span>.<span class="ruby-identifier">label_with_parent</span>,
         <span class="ruby-value">programmes:</span> [<span class="ruby-identifier">consent</span>.<span class="ruby-identifier">programme</span>]
@@ -1264,7 +1279,7 @@
     <span class="ruby-keyword">else</span>
       {
         <span class="ruby-value">title:</span>
-          <span class="ruby-node">&quot;Consent #{original_response} by #{consent.name} (#{consent.who_responded.downcase_first})&quot;</span>,
+          <span class="ruby-node">&quot;#{title} by #{consent.name} (#{consent.who_responded.downcase_first})&quot;</span>,
         <span class="ruby-value">at:</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">submitted_at</span>,
         <span class="ruby-value">by:</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">recorded_by</span>,
         <span class="ruby-value">programmes:</span> [<span class="ruby-identifier">consent</span>.<span class="ruby-identifier">programme</span>]
@@ -1337,7 +1352,7 @@
             </details>
           </div>
           <div class="method-source-code" id="expiration_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 267</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 282</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">expiration_events</span>
   <span class="ruby-identifier">all_programmes</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">to_a</span>
 
@@ -1443,7 +1458,7 @@
             </details>
           </div>
           <div class="method-source-code" id="gillick_assessment_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 335</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 350</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gillick_assessment_events</span>
   <span class="ruby-identifier">gillick_assessments</span>.<span class="ruby-identifier">each_with_index</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">gillick_assessment</span>, <span class="ruby-identifier">index</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">action</span> = <span class="ruby-identifier">index</span>.<span class="ruby-identifier">zero?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;Completed&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;Updated&quot;</span>
@@ -1503,7 +1518,7 @@
             </details>
           </div>
           <div class="method-source-code" id="historical_vaccination_event-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 514</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 529</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">historical_vaccination_event?</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">sourced_from_historical_upload?</span> <span class="ruby-operator">||</span>
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">sourced_from_manual_report?</span>
@@ -1546,7 +1561,7 @@
             </details>
           </div>
           <div class="method-source-code" id="note_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 357</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 372</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">note_events</span>
   <span class="ruby-identifier">notes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">note</span><span class="ruby-operator">|</span>
     {
@@ -1596,7 +1611,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notify_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 369</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 384</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notify_events</span>
   <span class="ruby-identifier">notify_log_entries</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">notify_log_entry</span><span class="ruby-operator">|</span>
     {
@@ -1646,7 +1661,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_merge_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 381</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 396</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_merge_events</span>
   <span class="ruby-identifier">patient_merge_log_entries</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_merge_log_entry</span><span class="ruby-operator">|</span>
     {
@@ -1699,7 +1714,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_specific_direction_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 396</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 411</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_specific_direction_events</span>
   <span class="ruby-identifier">patient_specific_directions</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_specific_direction</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">events</span> = []
@@ -1760,7 +1775,7 @@
             </details>
           </div>
           <div class="method-source-code" id="pre_screening_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 419</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 434</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">pre_screening_events</span>
   <span class="ruby-identifier">pre_screenings</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">pre_screening</span><span class="ruby-operator">|</span>
     {
@@ -1810,7 +1825,7 @@
             </details>
           </div>
           <div class="method-source-code" id="session_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 431</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 446</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_events</span>
   <span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">filter_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_location</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">location</span> = <span class="ruby-identifier">patient_location</span>.<span class="ruby-identifier">location</span>
@@ -1860,7 +1875,7 @@
             </details>
           </div>
           <div class="method-source-code" id="triage_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 443</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 458</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_events</span>
   <span class="ruby-identifier">triages</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">triage</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">title</span> = <span class="ruby-node">&quot;Triaged decision: #{triage.human_enum_name(:status)}&quot;</span>
@@ -1917,7 +1932,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 462</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 477</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_events</span>
   <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">title</span> =

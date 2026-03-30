@@ -776,7 +776,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 146</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_status</span>
   <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">status</span>
 <span class="ruby-keyword">end</span></pre>
@@ -818,7 +818,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 150</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 156</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_vaccine_methods</span>
   <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">vaccine_methods</span>
 <span class="ruby-keyword">end</span></pre>
@@ -860,7 +860,7 @@
             </details>
           </div>
           <div class="method-source-code" id="date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 127</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 133</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">date</span>
   <span class="ruby-keyword">if</span> (
        <span class="ruby-identifier">delay_vaccination_until_date</span> =
@@ -1008,7 +1008,7 @@
             </details>
           </div>
           <div class="method-source-code" id="location_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 142</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 148</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_id</span>
   <span class="ruby-identifier">vaccinated_vaccination_record</span>&amp;.<span class="ruby-identifier">location_id</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1170,12 +1170,15 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 112</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 115</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_methods</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">not_eligible?</span> <span class="ruby-operator">||</span>
        <span class="ruby-identifier">triage_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(
          <span class="ruby-node">%i[required invite_to_clinic do_not_vaccinate]</span>
-       ) <span class="ruby-operator">||</span> <span class="ruby-identifier">consent_status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%i[no_response conflicts refused]</span>)
+       ) <span class="ruby-operator">||</span>
+       <span class="ruby-identifier">consent_status</span>.<span class="ruby-identifier">in?</span>(
+         <span class="ruby-node">%i[no_response conflicts refused follow_up_requested]</span>
+       )
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
 
@@ -1228,7 +1231,10 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">not_eligible?</span> <span class="ruby-operator">||</span>
        <span class="ruby-identifier">triage_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(
          <span class="ruby-node">%i[required invite_to_clinic do_not_vaccinate]</span>
-       ) <span class="ruby-operator">||</span> <span class="ruby-identifier">consent_status</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%i[no_response conflicts refused]</span>)
+       ) <span class="ruby-operator">||</span>
+       <span class="ruby-identifier">consent_status</span>.<span class="ruby-identifier">in?</span>(
+         <span class="ruby-node">%i[no_response conflicts refused follow_up_requested]</span>
+       )
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
 

@@ -753,7 +753,7 @@
             </details>
           </div>
           <div class="method-source-code" id="date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/consent.rb, line 36</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/consent.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">date</span>
   <span class="ruby-identifier">consents_for_status</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:submitted_at</span>).<span class="ruby-identifier">max</span>.<span class="ruby-identifier">to_date</span>
 <span class="ruby-keyword">end</span></pre>
@@ -795,7 +795,7 @@
             </details>
           </div>
           <div class="method-source-code" id="disease_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/consent.rb, line 48</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/consent.rb, line 50</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span>
   <span class="ruby-identifier">status_should_be_given?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">agreed_disease_types</span> <span class="ruby-operator">:</span> []
 <span class="ruby-keyword">end</span></pre>
@@ -885,6 +885,8 @@
     <span class="ruby-value">:given</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">status_should_be_refused?</span>
     <span class="ruby-value">:refused</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">status_should_be_follow_up_requested?</span>
+    <span class="ruby-value">:follow_up_requested</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">status_should_be_conflicts?</span>
     <span class="ruby-value">:conflicts</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">status_should_be_no_response?</span>
@@ -931,7 +933,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/consent.rb, line 40</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/consent.rb, line 42</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_methods</span>
   <span class="ruby-identifier">status_should_be_given?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">agreed_vaccine_methods</span> <span class="ruby-operator">:</span> []
 <span class="ruby-keyword">end</span></pre>
@@ -973,7 +975,7 @@
             </details>
           </div>
           <div class="method-source-code" id="without_gelatine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/consent.rb, line 44</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/consent.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">without_gelatine</span>
   <span class="ruby-identifier">status_should_be_given?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">agreed_without_gelatine</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
