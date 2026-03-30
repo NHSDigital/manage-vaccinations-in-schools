@@ -678,7 +678,7 @@
             </details>
           </div>
           <div class="method-source-code" id="approve-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 108</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 109</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">approve</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">reviewed_by_user_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">reviewed_at</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>
@@ -746,7 +746,7 @@
             </details>
           </div>
           <div class="method-source-code" id="cancel-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 138</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 139</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">reviewed_by_user_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">reviewed_at</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>
@@ -813,7 +813,7 @@
             </details>
           </div>
           <div class="method-source-code" id="create-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 19</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 20</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>
   <span class="ruby-ivar">@class_import</span> =
     <span class="ruby-identifier">authorize</span> <span class="ruby-constant">ClassImport</span>.<span class="ruby-identifier">new</span>(
@@ -873,7 +873,7 @@
             </details>
           </div>
           <div class="method-source-code" id="imported_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 100</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 101</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/imported_records&quot;</span>,
          <span class="ruby-value">layout:</span> <span class="ruby-string">&quot;full&quot;</span>,
@@ -919,7 +919,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new</span>
   <span class="ruby-ivar">@class_import</span> = <span class="ruby-identifier">authorize</span> <span class="ruby-constant">ClassImport</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">team:</span> <span class="ruby-identifier">current_team</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -961,7 +961,7 @@
             </details>
           </div>
           <div class="method-source-code" id="re_review-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 92</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 93</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/re_review&quot;</span>,
          <span class="ruby-value">layout:</span> <span class="ruby-string">&quot;full&quot;</span>,
@@ -1007,7 +1007,7 @@
             </details>
           </div>
           <div class="method-source-code" id="show-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 41</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 42</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">rows_are_invalid?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">changesets_are_invalid?</span>
     <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">load_serialized_errors!</span>(<span class="ruby-value">limit:</span> <span class="ruby-identifier">error_rows_limit</span>)
@@ -1090,7 +1090,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 86</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 87</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">process!</span>
 

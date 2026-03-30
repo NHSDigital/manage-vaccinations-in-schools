@@ -678,7 +678,7 @@
             </details>
           </div>
           <div class="method-source-code" id="approve-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 113</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 114</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">approve</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">reviewed_by_user_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">reviewed_at</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>
@@ -728,7 +728,7 @@
             </details>
           </div>
           <div class="method-source-code" id="cancel-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 125</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 126</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">reviewed_by_user_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">reviewed_at</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>
@@ -790,7 +790,7 @@
             </details>
           </div>
           <div class="method-source-code" id="create-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 19</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 20</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>
   <span class="ruby-ivar">@cohort_import</span> =
     <span class="ruby-identifier">authorize</span> <span class="ruby-constant">CohortImport</span>.<span class="ruby-identifier">new</span>(
@@ -848,7 +848,7 @@
             </details>
           </div>
           <div class="method-source-code" id="imported_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 105</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 106</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/imported_records&quot;</span>,
          <span class="ruby-value">layout:</span> <span class="ruby-string">&quot;full&quot;</span>,
@@ -894,7 +894,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new</span>
   <span class="ruby-ivar">@cohort_import</span> = <span class="ruby-identifier">authorize</span> <span class="ruby-constant">CohortImport</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">team:</span> <span class="ruby-identifier">current_team</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -936,7 +936,7 @@
             </details>
           </div>
           <div class="method-source-code" id="re_review-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 97</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/re_review&quot;</span>,
          <span class="ruby-value">layout:</span> <span class="ruby-string">&quot;full&quot;</span>,
@@ -982,7 +982,7 @@
             </details>
           </div>
           <div class="method-source-code" id="show-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 39</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">rows_are_invalid?</span> <span class="ruby-operator">||</span>
        <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">changesets_are_invalid?</span>
@@ -1072,7 +1072,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 91</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">process!</span>
 

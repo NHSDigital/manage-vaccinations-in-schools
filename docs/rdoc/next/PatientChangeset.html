@@ -1211,7 +1211,7 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
-  <span class="ruby-identifier">row_number</span> </pre>
+  (<span class="ruby-identifier">row_number</span> <span class="ruby-operator">||</span> <span class="ruby-value">0</span>) </pre>
           </div>
 
 
@@ -1606,7 +1606,8 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
   <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span>)
 <span class="ruby-keyword">end</span>
 
-</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
+  </pre>
           </div>
 
 
@@ -2180,7 +2181,7 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
-  <span class="ruby-identifier">row_number</span> <span class="ruby-operator">+</span> </pre>
+  (<span class="ruby-identifier">row_number</span> <span class="ruby-operator">||</span> <span class="ruby-value">0</span>) <span class="ruby-operator">+</span> </pre>
           </div>
 
 
@@ -2690,7 +2691,8 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_patient_id!</span>
-  <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>,</pre>
+  <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span>)
+<span class="ruby-keyword">end</span></pre>
           </div>
 
 
@@ -2774,7 +2776,7 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
           <div class="method-source-code" id="csv_row_number-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/patient_changeset.rb, line 524</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
-  <span class="ruby-identifier">row_number</span> <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
+  (<span class="ruby-identifier">row_number</span> <span class="ruby-operator">||</span> <span class="ruby-value">0</span>) <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -3170,7 +3172,9 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_patient_id!</span>
   <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span>)
-<span class="ruby-keyword">end</span></pre>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span></pre>
           </div>
 
 
@@ -3688,7 +3692,10 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_patient_id!</span>
-  <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span></pre>
+  <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span>)
+<span class="ruby-keyword">end</span>
+
+</pre>
           </div>
 
 
@@ -4085,7 +4092,9 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_patient_id!</span>
   <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span>)
-</pre>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span></pre>
           </div>
 
 
@@ -4532,7 +4541,7 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
-  <span class="ruby-identifier">row_number</span> <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
+  (<span class="ruby-identifier">row_number</span> <span class="ruby-operator">||</span> <span class="ruby-value">0</span>) <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
 </pre>
           </div>
 
@@ -4999,7 +5008,7 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
-    <span class="ruby-identifier">row_number</span> <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
+    (<span class="ruby-identifier">row_number</span> <span class="ruby-operator">||</span> <span class="ruby-value">0</span>) <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -5394,7 +5403,8 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
   <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span></pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
+  (<span class="ruby-identifier">row_number</span></pre>
           </div>
 
 
@@ -5785,7 +5795,8 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
   <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span>)
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span></pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
+  (<span class="ruby-identifier">row_number</span> <span class="ruby-operator">||</span></pre>
           </div>
 
 
@@ -6584,7 +6595,8 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_patient_id!</span>
-  <span class="ruby-identifier">update_column</span>(</pre>
+  <span class="ruby-identifier">update_column</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-keyword">nil</span>)
+</pre>
           </div>
 
 
@@ -7046,7 +7058,7 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
-  <span class="ruby-identifier">row_number</span> <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
+  (<span class="ruby-identifier">row_number</span> <span class="ruby-operator">||</span> <span class="ruby-value">0</span>) <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -7490,7 +7502,7 @@ fk_rails_...  (school_id =&gt; locations.id)</pre>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_row_number</span>
-  </pre>
+  (<span class="ruby-identifier">row_number</span> <span class="ruby-operator">||</span> <span class="ruby-value">0</span></pre>
           </div>
 
 

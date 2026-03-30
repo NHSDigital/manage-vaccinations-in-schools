@@ -646,7 +646,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(summary: nil, open: false, expander: false, sticky: false)</span>
+                <span class="method-args">( summary: nil, open: false, expander: false, sticky: false, id: nil )</span>
               </a>
             </div>
 
@@ -660,11 +660,18 @@
           </div>
           <div class="method-source-code" id="new-source">
             <pre class="ruby"><span class="ruby-comment"># File app/components/app_details_component.rb, line 20</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">summary:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">open:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">expander:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">sticky:</span> <span class="ruby-keyword">false</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(
+  <span class="ruby-value">summary:</span> <span class="ruby-keyword">nil</span>,
+  <span class="ruby-value">open:</span> <span class="ruby-keyword">false</span>,
+  <span class="ruby-value">expander:</span> <span class="ruby-keyword">false</span>,
+  <span class="ruby-value">sticky:</span> <span class="ruby-keyword">false</span>,
+  <span class="ruby-value">id:</span> <span class="ruby-keyword">nil</span>
+)
   <span class="ruby-identifier">with_summary</span> { <span class="ruby-identifier">summary</span> } <span class="ruby-keyword">if</span> <span class="ruby-identifier">summary</span>
   <span class="ruby-ivar">@open</span> = <span class="ruby-identifier">open</span>
   <span class="ruby-ivar">@expander</span> = <span class="ruby-identifier">expander</span>
   <span class="ruby-ivar">@sticky</span> = <span class="ruby-identifier">sticky</span>
+  <span class="ruby-ivar">@id</span> = <span class="ruby-identifier">id</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -718,7 +725,7 @@
             </details>
           </div>
           <div class="method-source-code" id="expander_class-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_details_component.rb, line 33</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_details_component.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">expander_class</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@expander</span>
 
@@ -762,7 +769,7 @@
             </details>
           </div>
           <div class="method-source-code" id="open_attr-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_details_component.rb, line 27</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_details_component.rb, line 34</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">open_attr</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@open</span>
 
@@ -806,7 +813,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sticky_class-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_details_component.rb, line 39</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_details_component.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sticky_class</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@sticky</span>
 
