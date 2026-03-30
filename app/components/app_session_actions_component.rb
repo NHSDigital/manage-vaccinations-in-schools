@@ -30,6 +30,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       no_nhs_number_row,
       unmatched_consent_row,
       no_consent_response_row,
+      follow_up_requested_row,
       conflicting_consent_row,
       triage_required_row,
       register_attendance_row,
@@ -71,6 +72,24 @@ class AppSessionActionsComponent < ViewComponent::Base
     ].compact
 
     generate_row(:children_with_no_consent_response, count:, href:, actions:)
+  end
+
+  def follow_up_requested_row
+    count =
+      patients.has_programme_status(
+        "needs_consent_follow_up_requested",
+        programme: programmes,
+        academic_year:
+      ).count
+
+    href =
+      session_patients_path(
+        session,
+        programme_status_group: "needs_consent",
+        programme_statuses: %w[needs_consent_follow_up_requested]
+      )
+
+    generate_row(:children_with_follow_up_requested, count:, href:)
   end
 
   def conflicting_consent_row

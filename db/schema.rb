@@ -309,7 +309,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.bigint "consent_form_id"
     t.datetime "created_at", null: false
     t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
+    t.integer "follow_up_outcome"
     t.boolean "follow_up_requested"
+    t.datetime "follow_up_resolved_at"
     t.jsonb "health_answers", default: [], null: false
     t.datetime "invalidated_at"
     t.text "notes", default: "", null: false

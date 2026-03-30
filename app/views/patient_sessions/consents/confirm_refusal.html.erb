@@ -1,0 +1,28 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: follow_up_session_patient_programme_consent_path) %>
+<% end %>
+
+<%= form_with model: @form, url: confirm_refusal_session_patient_programme_consent_path, method: :post do |f| %>
+  <%= f.mavis_error_summary %>
+
+  <% page_title = "Update consent response" %>
+  <%= h1 page_title: do %>
+    <span class="nhsuk-caption-l">
+      Consent response from <%= @consent.name %>
+    </span>
+    <%= page_title %>
+  <% end %>
+
+  <%= f.govuk_text_area :notes, label: { text: "Notes" } %>
+
+  <%= f.govuk_radio_buttons_fieldset :confirmed,
+                                     legend: { text: "Confirm consent refusal?" } do %>
+    <%= f.govuk_radio_button :confirmed, "true",
+                             label: { text: "Yes" },
+                             link_errors: true %>
+    <%= f.govuk_radio_button :confirmed, "false",
+                             label: { text: "No" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Save changes" %>
+<% end %>

@@ -315,6 +315,12 @@ Rails.application.routes.draw do
           post "send-request", on: :collection, action: :send_request
 
           member do
+            get "follow-up", action: :edit_follow_up
+            post "follow-up", action: :update_follow_up
+
+            get "confirm-refusal", action: :edit_confirm_refusal
+            post "confirm-refusal", action: :update_confirm_refusal
+
             get "withdraw", action: :edit_withdraw
             post "withdraw", action: :update_withdraw
 

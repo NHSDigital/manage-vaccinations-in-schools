@@ -5,6 +5,13 @@
 <%= h1 "Consent response from #{@consent.name}" %>
 
 <%= render AppActionListComponent.new do |action_list| %>
+  <% if @consent.can_follow_up? %>
+    <% action_list.with_item(
+         text: "Follow up",
+         href: follow_up_session_patient_programme_consent_path,
+       ) %>
+  <% end %>
+
   <% if @consent.can_withdraw? %>
     <% action_list.with_item(
          text: "Withdraw consent",

@@ -1,0 +1,31 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: session_patient_programme_consent_path) %>
+<% end %>
+
+<%= form_with model: @form, url: follow_up_session_patient_programme_consent_path, method: :post do |f| %>
+  <%= f.mavis_error_summary %>
+
+  <% page_title = "Follow up refusal" %>
+  <%= h1 page_title: do %>
+    <span class="nhsuk-caption-l">
+      Consent response from <%= @consent.name %>
+    </span>
+    <%= page_title %>
+  <% end %>
+
+  <div class="nhsuk-inset-text">
+    <span class="nhsuk-u-visually-hidden">Information: </span>
+    <%= render AppConsentSummaryComponent.new(@consent, show_parent_name: true, show_email_address: true, show_phone_number: true, show_programme: true, show_notes: true) %>
+  </div>
+
+  <%= f.govuk_radio_buttons_fieldset :decision_stands,
+                                     legend: { text: "Does their original decision still stand?" } do %>
+    <%= f.govuk_radio_button :decision_stands, "true",
+                             label: { text: "Yes" },
+                             link_errors: true %>
+    <%= f.govuk_radio_button :decision_stands, "false",
+                             label: { text: "No" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>
