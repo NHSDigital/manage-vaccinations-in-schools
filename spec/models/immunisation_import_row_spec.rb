@@ -219,6 +219,12 @@ describe ImmunisationImportRow do
         end
       end
 
+      context "with a vaccine name in a different case" do
+        let(:data) { valid_hpv_data.merge("VACCINE_GIVEN" => "gardasil9") }
+
+        it { should be_valid }
+      end
+
       context "with an invalid vaccine for the programme" do
         let(:data) do
           { "PROGRAMME" => "HPV", "VACCINE_GIVEN" => "AstraZeneca Fluenz" }
@@ -2872,6 +2878,9 @@ describe ImmunisationImportRow do
                          "45354911000001100"
         include_examples "accepts a VACCINE_GIVEN code",
                          "Seqirus Cell-Based Trivalent IIVc",
+                         "43207411000001105"
+        include_examples "accepts a VACCINE_GIVEN code",
+                         "seqirus cell-based trivalent iivc",
                          "43207411000001105"
 
         include_examples "with pseudo-postcodes"
