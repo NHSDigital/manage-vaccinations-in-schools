@@ -668,7 +668,9 @@
       <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;config/feature_flags.yml&quot;</span>))
     ).<span class="ruby-identifier">keys</span>
 
-  <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> { <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">it</span>) <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">it</span>) }
+  <span class="ruby-constant">Flipper</span><span class="ruby-operator">::</span><span class="ruby-constant">Adapters</span><span class="ruby-operator">::</span><span class="ruby-constant">Strict</span>.<span class="ruby-identifier">with_sync_mode</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> { <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">it</span>) <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">it</span>) }
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">features</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">feature</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">feature</span>.<span class="ruby-identifier">remove</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">feature</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-identifier">names</span>)
@@ -712,7 +714,7 @@
             </details>
           </div>
           <div class="method-source-code" id="enable_for_development-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/feature_flag_factory.rb, line 19</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/feature_flag_factory.rb, line 21</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">enable_for_development!</span>(<span class="ruby-value">check_rails_env:</span> <span class="ruby-keyword">true</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">check_rails_env</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span>(<span class="ruby-constant">Rails</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">development?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">end_to_end?</span>)
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;These flags should only be enabled in development or end_to_end.&quot;</span>

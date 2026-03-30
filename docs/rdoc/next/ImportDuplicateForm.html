@@ -600,8 +600,6 @@
 
         <li ><a href="#method-i-keep_both_changes-21">keep_both_changes!</a></li>
 
-        <li ><a href="#method-i-remove_imported_parent_relationships_if_needed-21">remove_imported_parent_relationships_if_needed!</a></li>
-
         <li ><a href="#method-i-reset_count-21">reset_count!</a></li>
 
         <li ><a href="#method-i-save">save</a></li>
@@ -924,7 +922,7 @@
             </details>
           </div>
           <div class="method-source-code" id="changeset_for_keep_both-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 77</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">changeset_for_keep_both</span>
   <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>)
 
@@ -979,8 +977,6 @@
           <div class="method-source-code" id="discard_pending_changes-21-source">
             <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">discard_pending_changes!</span>
-  <span class="ruby-identifier">remove_imported_parent_relationships_if_needed!</span>
-
   <span class="ruby-identifier">object</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">discard_pending_changes!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">object</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:patient</span>)
 
   <span class="ruby-identifier">object</span>.<span class="ruby-identifier">discard_pending_changes!</span>
@@ -1023,7 +1019,7 @@
             </details>
           </div>
           <div class="method-source-code" id="keep_both_changes-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 68</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 66</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">keep_both_changes!</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_keep_both?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_apply?</span>
@@ -1031,58 +1027,6 @@
   <span class="ruby-identifier">object</span>.<span class="ruby-identifier">apply_pending_changes_to_new_record!</span>(
     <span class="ruby-value">changeset:</span> <span class="ruby-identifier">changeset_for_keep_both</span>
   )
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-remove_imported_parent_relationships_if_needed-21" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-remove_imported_parent_relationships_if_needed-21" title="Link to this method">
-                <span class="method-name">remove_imported_parent_relationships_if_needed!</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="remove_imported_parent_relationships_if_needed-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 96</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove_imported_parent_relationships_if_needed!</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">object</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Patient</span>)
-
-  <span class="ruby-identifier">changeset</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>).<span class="ruby-identifier">last</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">changeset</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-identifier">changeset</span>
-    .<span class="ruby-identifier">import</span>
-    .<span class="ruby-identifier">parent_relationships</span>
-    .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:patient</span>)
-    .<span class="ruby-identifier">where</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">object</span>)
-    .<span class="ruby-identifier">find_each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:destroy!</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1122,7 +1066,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reset_count-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 92</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 90</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_count!</span>
   <span class="ruby-constant">TeamCachedCounts</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">current_team</span>).<span class="ruby-identifier">reset_import_issues!</span>
 <span class="ruby-keyword">end</span></pre>
