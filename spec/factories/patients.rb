@@ -260,6 +260,19 @@ FactoryBot.define do
       end
     end
 
+    trait :needs_consent_no_contact_details do
+      programme_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_programme_status,
+            :needs_consent_no_contact_details,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_given_triage_not_needed do
       consents do
         programmes.map do |programme|

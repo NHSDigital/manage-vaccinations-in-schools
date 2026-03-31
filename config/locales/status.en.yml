@@ -18,6 +18,7 @@ en:
         no_response: No response
         not_required: No consent needed
         refused: Consent refused
+        no_contact_details: No contact details
       colour:
         conflicts: orange
         follow_up_requested: orange
@@ -29,6 +30,7 @@ en:
         no_response: grey
         not_required: grey
         refused: red
+        no_contact_details: grey
     patient_specific_direction:
       label:
         added: PSD added
@@ -59,6 +61,7 @@ en:
         needs_consent_request_failed: Needs consent
         needs_consent_request_not_scheduled: Needs consent
         needs_consent_request_scheduled: Needs consent
+        needs_consent_no_contact_details: Needs consent
         needs_triage: Needs triage
         not_eligible: Not eligible
         vaccinated: Vaccinated
@@ -86,6 +89,7 @@ en:
         needs_consent_request_failed: blue
         needs_consent_request_not_scheduled: blue
         needs_consent_request_scheduled: blue
+        needs_consent_no_contact_details: blue
         needs_triage: blue
         not_eligible: grey
         vaccinated: white
@@ -105,6 +109,7 @@ en:
         needs_consent_request_failed: Request failed
         needs_consent_request_not_scheduled: Request not scheduled
         needs_consent_request_scheduled: Request scheduled
+        needs_consent_no_contact_details: No contact details
         vaccinated_already: Already had the vaccine
         vaccinated_fully: Vaccinated
     registration:

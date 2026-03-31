@@ -7,15 +7,23 @@ describe StatusGenerator::Consent do
       academic_year: AcademicYear.current,
       patient:,
       consents: patient.consents,
-      vaccination_records: patient.vaccination_records
+      vaccination_records: patient.vaccination_records,
+      parents: patient.parents
     )
   end
 
-  let(:patient) { create(:patient) }
+  let(:parents) { [create(:parent)] }
+  let(:patient) { create(:patient, parents:) }
   let(:programme) { Programme.sample }
 
   describe "#status" do
     subject { generator.status }
+
+    context "with no contactable parents" do
+      let(:parents) { [] }
+
+      it { should be(:no_contact_details) }
+    end
 
     context "with no consent" do
       it { should be(:no_response) }
@@ -224,7 +232,7 @@ describe StatusGenerator::Consent do
             :given,
             patient:,
             programme:,
-            parent: parent,
+            parent:,
             submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
           )
         end
@@ -244,7 +252,7 @@ describe StatusGenerator::Consent do
           )
         end
 
-        it { should be(:no_response) }
+        it { should be(:no_contact_details) }
       end
 
       context "with a given and refused consent from current and previous academic years" do

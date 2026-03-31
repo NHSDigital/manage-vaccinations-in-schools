@@ -5,11 +5,12 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
     @patient = patient
     @session = session
     @programme = programme
+    @parents = patient.parents
   end
 
   private
 
-  attr_reader :patient, :session, :programme
+  attr_reader :patient, :session, :programme, :parents
 
   delegate :academic_year, :team, to: :session
 
@@ -61,7 +62,8 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
         academic_year:,
         patient:,
         consents:,
-        vaccination_records:
+        vaccination_records:,
+        parents:
       )
   end
 
@@ -73,7 +75,8 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
         patient:,
         consents:,
         triages:,
-        vaccination_records:
+        vaccination_records:,
+        parents:
       )
   end
 
@@ -116,7 +119,7 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
   def can_send_consent_request?
     consent_status_value == :no_response &&
       patient.send_notifications?(team: @session.team) &&
-      session.can_receive_consent? && patient.parents.any?
+      session.can_receive_consent? && patient.parents.any?(&:contactable?)
   end
 
   def grouped_consents

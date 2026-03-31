@@ -146,7 +146,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_status_reflects_that_there_is_no_consent
-    expect(page).to have_content("No response")
+    expect(page).to have_content("No contact details")
   end
 
   def and_the_activity_log_shows_the_gillick_non_competence

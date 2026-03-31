@@ -166,7 +166,7 @@ describe "Td/IPV" do
   end
 
   def then_i_see_the_patient_needs_consent
-    expect(page).to have_content("No response")
+    expect(page).to have_content("No contact details")
   end
 
   def then_i_see_the_patient_needs_triage

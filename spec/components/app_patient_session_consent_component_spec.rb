@@ -7,7 +7,7 @@ describe AppPatientSessionConsentComponent do
 
   let(:programme) { Programme.hpv }
   let(:session) { create(:session, programmes: [programme]) }
-  let(:patient) { create(:patient, session:) }
+  let(:patient) { create(:patient, session:, parents: [create(:parent)]) }
 
   before { stub_authorization(allowed: true) }
 

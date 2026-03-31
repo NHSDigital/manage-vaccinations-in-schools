@@ -8,7 +8,8 @@ describe StatusGenerator::Triage do
       patient:,
       consents: patient.consents,
       triages: patient.triages,
-      vaccination_records: patient.vaccination_records
+      vaccination_records: patient.vaccination_records,
+      parents: patient.parents
     )
   end
 

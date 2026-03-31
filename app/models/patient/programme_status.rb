@@ -63,6 +63,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
           through: :patient,
           source: :attendance_records
 
+  has_many :parents, through: :patient
+
   GROUPS = %w[
     not_eligible
     needs_consent
@@ -80,7 +82,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
     "needs_consent_request_scheduled" => 11,
     "needs_consent_request_failed" => 12,
     "needs_consent_no_response" => 13,
-    "needs_consent_follow_up_requested" => 14
+    "needs_consent_follow_up_requested" => 14,
+    "needs_consent_no_contact_details" => 15
   }.freeze
 
   HAS_REFUSAL_STATUSES = {
@@ -126,7 +129,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
          refused: 2,
          conflicts: 3,
          not_required: 4,
-         follow_up_requested: 5
+         follow_up_requested: 5,
+         no_contact_details: 6
        },
        default: :no_response,
        prefix: :consent,
@@ -195,7 +199,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
         consents:,
         triages:,
         attendance_record:,
-        vaccination_records:
+        vaccination_records:,
+        parents:
       )
   end
 end

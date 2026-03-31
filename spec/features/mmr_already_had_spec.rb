@@ -170,12 +170,22 @@ describe "MMR/MMRV" do
 
   def and_a_patient_is_in_the_session_born_after_january_2020
     @patient =
-      create(:patient, session: @session, date_of_birth: Date.new(2020, 1, 1))
+      create(
+        :patient,
+        session: @session,
+        date_of_birth: Date.new(2020, 1, 1),
+        parents: [create(:parent)]
+      )
   end
 
   def and_a_patient_is_in_the_session_born_before_january_2020
     @patient =
-      create(:patient, session: @session, date_of_birth: Date.new(2019, 12, 31))
+      create(
+        :patient,
+        session: @session,
+        date_of_birth: Date.new(2019, 12, 31),
+        parents: [create(:parent)]
+      )
   end
 
   def and_the_patient_doesnt_need_triage

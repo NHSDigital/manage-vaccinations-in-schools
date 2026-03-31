@@ -6,13 +6,15 @@ class StatusGenerator::Consent
     academic_year:,
     patient:,
     consents:,
-    vaccination_records:
+    vaccination_records:,
+    parents:
   )
     @programme_type = programme_type
     @academic_year = academic_year
     @patient = patient
     @consents = consents
     @vaccination_records = vaccination_records
+    @parents = parents
   end
 
   def programme
@@ -28,6 +30,8 @@ class StatusGenerator::Consent
       :follow_up_requested
     elsif status_should_be_conflicts?
       :conflicts
+    elsif status_should_be_no_contact_details?
+      :no_contact_details
     elsif status_should_be_no_response?
       :no_response
     else
@@ -57,7 +61,8 @@ class StatusGenerator::Consent
               :academic_year,
               :patient,
               :consents,
-              :vaccination_records
+              :vaccination_records,
+              :parents
 
   def vaccinated?
     return @vaccinated if defined?(@vaccinated)
@@ -121,6 +126,10 @@ class StatusGenerator::Consent
   end
 
   def status_should_be_no_response? = !vaccinated?
+
+  def status_should_be_no_contact_details?
+    parents.none?(&:contactable?)
+  end
 
   def agreed_vaccine_methods
     @agreed_vaccine_methods ||=

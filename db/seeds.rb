@@ -134,6 +134,7 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
         consent_conflicting
         consent_given_triage_needed
         consent_given_triage_not_needed
+        needs_consent_no_contact_details
         consent_refused
         consent_given_triage_delay_vaccination
         consent_given_triage_safe_to_vaccinate

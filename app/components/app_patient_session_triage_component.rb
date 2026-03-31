@@ -13,6 +13,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
     @programme = programme
     @current_user = current_user
     @triage_form = triage_form || default_triage_form
+    @parents = patient.parents
   end
 
   def render?
@@ -22,7 +23,12 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient, :session, :programme, :current_user, :triage_form
+  attr_reader :patient,
+              :session,
+              :programme,
+              :current_user,
+              :triage_form,
+              :parents
 
   delegate :academic_year, :team, to: :session
 
@@ -70,7 +76,8 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         patient:,
         consents:,
         triages:,
-        vaccination_records:
+        vaccination_records:,
+        parents:
       )
   end
 
@@ -81,7 +88,8 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         academic_year:,
         patient:,
         consents:,
-        vaccination_records:
+        vaccination_records:,
+        parents:
       )
   end
 

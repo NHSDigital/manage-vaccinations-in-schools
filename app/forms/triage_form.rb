@@ -129,7 +129,8 @@ class TriageForm
         academic_year:,
         patient:,
         consents: patient.consents,
-        vaccination_records: []
+        vaccination_records: [],
+        parents: []
       )
   end
 
