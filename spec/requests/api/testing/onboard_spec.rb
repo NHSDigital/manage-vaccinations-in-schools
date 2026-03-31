@@ -65,12 +65,12 @@ describe "/api/testing/onboard" do
 
         expect(errors).to eq(
           {
-            "clinics" => ["can't be blank"],
-            "organisation.ods_code" => ["can't be blank"],
-            "team.name" => ["can't be blank"],
-            "team.type" => ["is not included in the list"],
-            "team.workgroup" => ["can't be blank"],
-            "programmes" => ["can't be blank"],
+            "clinics" => ["Choose at least one clinic"],
+            "organisation.ods_code" => ["Enter an ODS code"],
+            "team.name" => ["Enter a name"],
+            "team.type" => ["Choose a type"],
+            "team.workgroup" => ["Enter a workgroup"],
+            "programmes" => ["Choose at least one programme"],
             "school.0.location" => ["can't be blank"],
             "school.0.status" => ["is not included in the list"],
             "school.0.subteam" => ["can't be blank"],
@@ -93,7 +93,7 @@ describe "/api/testing/onboard" do
               "URN(s) 456789 cannot appear as both a regular school and a site"
             ],
             "subteam.email" => ["can't be blank"],
-            "subteam.name" => ["can't be blank"]
+            "subteam.name" => ["Enter a name"]
           }
         )
       end

@@ -417,7 +417,7 @@ describe DraftVaccinationRecord do
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
         expect(draft_vaccination_record.errors[:source]).to include(
-          "is not included in the list"
+          "Choose a source"
         )
       end
     end
@@ -430,7 +430,7 @@ describe DraftVaccinationRecord do
       it "is invalid" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
         expect(draft_vaccination_record.errors[:source]).to include(
-          "is not included in the list"
+          "Choose a source"
         )
       end
     end
