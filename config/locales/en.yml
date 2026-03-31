@@ -39,6 +39,8 @@ en:
             notes:
               blank: Enter notes
               too_long: Enter notes that are less than %{count} characters long
+            outcome:
+              blank: Choose an outcome
             parent_email:
               blank: Enter an email address
               invalid: Enter a valid email address, such as j.doe@gmail.com
@@ -52,6 +54,8 @@ en:
               blank: Enter a phone number
               invalid: Enter a valid phone number, like 07700 900 000
               too_long: Enter a phone number that is less than 300 characters long
+            parent_phone_receive_updates:
+              inclusion: Choose whether to send updates by text message
             parent_relationship_type:
               blank: Choose a relationship
               inclusion: Choose a relationship
@@ -62,6 +66,10 @@ en:
               inclusion: Choose if they consent
             route:
               inclusion: Choose how the response was given
+            triage_form_valid:
+              blank: Complete the triage form
+            vaccine_stock_is_available:
+              inclusion: Choose whether vaccine stock is available
             without_gelatine:
               inclusion: Select yes or no
         draft_import:
@@ -153,6 +161,9 @@ en:
               nasal_spray_must_be_nose: Site must be nose if the nasal spray was given
               injection_cannot_be_nose:
                 Site cannot be nose for intramuscular or subcutaneous injections
+            dose_sequence:
+              blank: Choose a dose sequence
+              inclusion: Choose a dose sequence
             full_dose:
               inclusion: Choose whether they got the full dose
             identity_check_confirmed_by_other_name:
@@ -161,6 +172,8 @@ en:
               blank: Enter the person’s relationship
             identity_check_confirmed_by_patient:
               inclusion: Choose who confirmed their child’s identity
+            location_id:
+              blank: Choose a location
             location_name:
               blank: Enter where the vaccination was given
             mmr_or_mmrv:
@@ -168,6 +181,7 @@ en:
             notes:
               too_long: Enter notes that are less than %{count} characters long
             outcome:
+              blank: Choose an outcome
               inclusion: Choose an outcome
             performed_at_date:
               blank: Enter a date
@@ -185,6 +199,12 @@ en:
               blank: First name can't be blank
             performed_by_family_name:
               blank: Last name can't be blank
+            protocol:
+              blank: Choose a protocol
+            source:
+              inclusion: Choose a source
+            vaccine_id:
+              blank: Choose a vaccine
         health_answer:
           attributes:
             notes:
@@ -196,6 +216,42 @@ en:
           attributes:
             apply_changes:
               inclusion: Choose which record to keep
+        onboarding:
+          attributes:
+            clinics:
+              blank: Choose at least one clinic
+            programmes:
+              blank: Choose at least one programme
+            schools:
+              blank: Choose at least one school
+            subteams:
+              blank: Choose at least one subteam
+            team:
+              blank: Choose a team
+          existing_programme:
+            attributes:
+              programme:
+                blank: Choose a programme
+          existing_school:
+            attributes:
+              location:
+                blank: Choose a school
+              status:
+                inclusion: Choose a status
+              subteam:
+                blank: Choose a subteam
+          new_school_site:
+            attributes:
+              location:
+                blank: Choose a location
+              name:
+                blank: Enter a name
+              site:
+                blank: Enter a site
+              status:
+                inclusion: Choose a status
+              subteam:
+                blank: Choose a subteam
         patient_archive_form:
           attributes:
             other_details:
@@ -431,6 +487,49 @@ en:
           unwell: generally feeling unwell
     errors:
       models:
+        access_log_entry:
+          attributes:
+            action:
+              inclusion: Choose an action
+            controller:
+              inclusion: Choose a controller
+        active_storage:
+          blob:
+            attributes:
+              checksum:
+                blank: Enter a checksum
+              service_name:
+                blank: Enter a service name
+        archive_reason:
+          attributes:
+            other_details:
+              blank: Enter details
+            type:
+              inclusion: Choose a type
+        batch:
+          attributes:
+            expiry:
+              taken: This batch expiry date already exists for this batch number
+            number:
+              blank: Enter a batch number
+        careplus_export:
+          attributes:
+            academic_year:
+              blank: Enter an academic year
+            date_from:
+              blank: Enter a start date
+            date_to:
+              blank: Enter an end date
+            programme_types:
+              blank: Choose programme types
+            scheduled_at:
+              blank: Enter a scheduled date
+            status:
+              inclusion: Choose a status
+        careplus_export_vaccination_record:
+          attributes:
+            change_type:
+              inclusion: Choose a change type
         class_import:
           attributes:
             csv:
@@ -442,6 +541,12 @@ en:
                 less than %{count} rows
             csv_filename:
               blank: Choose a file
+            status:
+              inclusion: Choose a status
+        clinic_notification:
+          attributes:
+            type:
+              inclusion: Choose a notification type
         cohort_import:
           attributes:
             csv:
@@ -453,11 +558,29 @@ en:
                 less than %{count} rows
             csv_filename:
               blank: Choose a file
+            status:
+              inclusion: Choose a status
         consent:
           attributes:
+            follow_up_outcome:
+              inclusion: Choose a follow-up outcome
             notes:
               blank: Enter notes
               too_long: Enter notes that are less than %{count} characters long
+            parent:
+              blank: Choose a parent
+            reason_for_refusal:
+              inclusion: Choose a reason for refusal
+            recorded_by:
+              blank: Enter who recorded the consent
+            response:
+              inclusion: Choose a response
+            route:
+              inclusion: Choose a route
+            vaccine_methods:
+              blank: Choose vaccine methods
+            without_gelatine:
+              inclusion: Select yes or no
         consent_form:
           attributes:
             ethnicity_question:
@@ -498,6 +621,8 @@ en:
             family_name:
               blank: Enter a last name
               too_long: Enter a last name that is less than 300 characters long
+            follow_up_requested:
+              inclusion: Select yes or no
             given_name:
               blank: Enter a first name
               too_long: Enter a first name that is less than 300 characters long
@@ -507,6 +632,7 @@ en:
               blank: Enter notes
               too_long: Enter notes that are less than %{count} characters long
             parent_contact_method_type:
+              blank: Choose a contact method
               inclusion: Choose a contact method
             parent_contact_method_other_details:
               blank: Enter details about how to contact you
@@ -538,6 +664,10 @@ en:
               too_long: Enter a name that is less than 300 characters long
             reason:
               blank: Choose a reason
+            reason_for_refusal:
+              blank: Choose a reason for refusal
+            reason_for_refusal_notes:
+              blank: Enter reason for refusal notes
             response:
               inclusion: Choose if you agree
             school_confirmed:
@@ -549,8 +679,29 @@ en:
               inclusion: Tell us whether they use a different name
             without_gelatine:
               inclusion: Select yes or no
-            follow_up_requested:
-              inclusion: Select yes or no
+        consent_form_programme:
+          attributes:
+            notes:
+              blank: Enter notes
+            reason_for_refusal:
+              inclusion: Choose a reason for refusal
+        consent_notification:
+          attributes:
+            type:
+              inclusion: Choose a notification type
+        flipper:
+          adapters:
+            active_record:
+              feature:
+                attributes:
+                  key:
+                    blank: Enter a key
+              gate:
+                attributes:
+                  feature_key:
+                    blank: Enter a feature key
+                  key:
+                    blank: Enter a key
         gillick_assessment:
           attributes:
             knows_vaccination:
@@ -565,7 +716,14 @@ en:
             knows_side_effects:
               inclusion: Choose whether the child knows which side effects they might experience
             notes:
+              blank: Enter notes
               too_long: Enter notes that are less than %{count} characters long
+        identity_check:
+          attributes:
+            confirmed_by_other_name:
+              blank: Enter a name
+            confirmed_by_other_relationship:
+              blank: Enter a relationship
         immunisation_import:
           attributes:
             csv:
@@ -577,11 +735,68 @@ en:
                 less than %{count} rows
             csv_filename:
               blank: Choose a file
+            status:
+              inclusion: Choose a status
+            type:
+              inclusion: Choose a type
+        important_notice:
+          attributes:
+            message:
+              blank: Enter a message
+            recorded_at:
+              blank: Enter a date
+            type:
+              blank: Enter a type
+        local_authority:
+          attributes:
+            gias_code:
+              taken: This GIAS code is already in use
+            gss_code:
+              taken: This GSS code is already in use
+            mhclg_code:
+              taken: This MHCLG code is already in use
+            region:
+              inclusion: Choose a region
+        location:
+          attributes:
+            gias_establishment_number:
+              blank: Enter a GIAS establishment number
+            gias_local_authority_code:
+              blank: Enter a GIAS local authority code
+            gias_phase:
+              inclusion: Choose a GIAS phase
+            name:
+              blank: Enter a name
+            ods_code:
+              blank: Enter an ODS code
+              exclusion: This ODS code is not allowed
+              taken: This ODS code is already in use
+            site:
+              taken: This site already exists
+            urn:
+              blank: Enter a URN
+              inclusion: Choose a valid URN
+              taken: This URN is already in use
+          year_group:
+            attributes:
+              source:
+                inclusion: Choose a source
+              value:
+                blank: Enter a year group
+                taken: This year group already exists
         note:
           attributes:
             body:
               blank: Enter a note
               too_long: Enter a note that is less than %{count} characters long
+        notify_log_entry:
+          attributes:
+            recipient:
+              blank: Enter a recipient
+            template_id:
+              blank: Enter a template ID
+            type:
+              inclusion: Choose a type
         offline_password:
           attributes:
             password:
@@ -590,6 +805,11 @@ en:
               too_short: Enter a password that is at least 12 characters long
             password_confirmation:
               confirmation: The password and confirmation do not match
+        organisation:
+          attributes:
+            ods_code:
+              blank: Enter an ODS code
+              taken: This ODS code is already in use
         parent:
           attributes:
             contact_method_type:
@@ -609,17 +829,52 @@ en:
             other_name:
               blank: Enter a relationship
               too_long: Enter a relationship that is less than 300 characters long
+        pds_search_result:
+          attributes:
+            result:
+              inclusion: Choose a result
+            step:
+              inclusion: Choose a step
         patient:
           attributes:
+            date_of_birth:
+              blank: Enter a date of birth
             ethnic_background_other:
-              blank: Enter details about your child's background
+              blank: Enter details about your child’s background
+            family_name:
+              blank: Enter a last name
+            given_name:
+              blank: Enter a first name
             nhs_number:
               invalid: Enter a valid NHS number
               wrong_length: Enter a valid NHS number with 10 characters
               taken: NHS number is already assigned to a different patient
+          programme_status:
+            attributes:
+              consent_status:
+                inclusion: Choose a consent status
+              status:
+                inclusion: Choose a status
+          registration_status:
+            attributes:
+              status:
+                inclusion: Choose a status
+        patient_changeset:
+          attributes:
+            record_type:
+              inclusion: Choose a record type
+            status:
+              inclusion: Choose a status
+        patient_specific_direction:
+          attributes:
+            delivery_site:
+              inclusion: Choose a delivery site
+            vaccine_method:
+              inclusion: Choose a vaccine method
         pre_screening:
           attributes:
             notes:
+              blank: Enter notes
               too_long: Enter notes that are less than %{count} characters long
         programme:
           attributes:
@@ -629,6 +884,69 @@ en:
             vaccines:
               blank: Choose the vaccines this programme administers
               match_type: Vaccines must be suitable for the programme type
+        reporting_api:
+          one_time_token:
+            attributes:
+              token:
+                blank: Enter a token
+                taken: This token is already in use
+              user_id:
+                blank: Enter a user ID
+                taken: This user already has a token
+        school_move:
+          attributes:
+            home_educated:
+              inclusion: Select yes or no
+            school:
+              blank: Choose a school
+            source:
+              inclusion: Choose a source
+            team:
+              blank: Choose a team
+        school_move_log_entry:
+          attributes:
+            home_educated:
+              inclusion: Select yes or no
+            school:
+              blank: Choose a school
+        session_notification:
+          attributes:
+            type:
+              inclusion: Choose a notification type
+        subteam:
+          attributes:
+            name:
+              blank: Enter a name
+              taken: This name is already in use
+            phone:
+              blank: Enter a phone number
+        team:
+          attributes:
+            name:
+              blank: Enter a name
+              taken: This name is already in use
+            phone:
+              blank: Enter a phone number
+            privacy_notice_url:
+              blank: Enter a privacy notice URL
+            privacy_policy_url:
+              blank: Enter a privacy policy URL
+            type:
+              inclusion: Choose a type
+            workgroup:
+              blank: Enter a workgroup
+              taken: This workgroup is already in use
+        triage:
+          attributes:
+            notes:
+              blank: Enter notes
+            status:
+              inclusion: Choose a status
+            vaccine_method:
+              blank: Choose a vaccine method
+              inclusion: Choose a vaccine method
+            without_gelatine:
+              inclusion: Select yes or no
         user:
           attributes:
             email:
@@ -636,6 +954,8 @@ en:
               invalid: Enter a valid email address, such as j.doe@gmail.com
               taken: This email address is already in use
               too_long: Enter an email address that is less than 255 characters long
+            fallback_role:
+              inclusion: Choose a role
             family_name:
               blank: Enter your family name
               too_long: Enter a family name that is less than 255 characters long
@@ -654,12 +974,54 @@ en:
               invalid: The unlock token is invalid
         vaccination_record:
           attributes:
+            batch_expiry:
+              blank: Enter a batch expiry date
+            batch_number:
+              blank: Enter a batch number
+            full_dose:
+              inclusion: Select yes or no
+            location_name:
+              blank: Enter a location name
+            nhs_immunisations_api_identifier_system:
+              blank: Enter an identifier system
+            nhs_immunisations_api_identifier_value:
+              blank: Enter an identifier value
+            nhs_immunisations_api_primary_source:
+              inclusion: Select yes or no
+            notes:
+              blank: Enter notes
+            outcome:
+              inclusion: Choose an outcome
             performed_at_date:
               less_than_or_equal_to: Enter a date in the past
             performed_by_given_name:
-              blank: First name can't be blank
+              blank: First name can’t be blank
             performed_by_family_name:
-              blank: Last name can't be blank
+              blank: Last name can’t be blank
+            protocol:
+              blank: Enter a protocol
+              inclusion: Choose a protocol
+            source:
+              inclusion: Choose a source
+            vaccine_id:
+              blank: Choose a vaccine
+        vaccine:
+          attributes:
+            brand:
+              blank: Enter a brand
+              taken: This brand already exists
+            dose_volume_ml:
+              blank: Enter a dose volume
+            manufacturer:
+              blank: Enter a manufacturer
+            method:
+              inclusion: Choose a method
+            snomed_product_code:
+              blank: Enter a SNOMED product code
+              taken: This SNOMED product code already exists
+            snomed_product_term:
+              blank: Enter a SNOMED product term
+              taken: This SNOMED product term already exists
   consent_forms:
     index:
       title: Unmatched consent responses
