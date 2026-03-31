@@ -140,6 +140,20 @@ describe EnqueueVaccinationsSearchInNHSJob do
               :perform_bulk
             ).once.with(searchable_patients.map(&:id).zip)
           end
+
+          context "when run just after midnight BST" do
+            around do |example|
+              travel_to(Time.zone.parse("2026-06-15 00:15")) { example.run }
+            end
+
+            it "performs searches on the session patients" do
+              described_class.perform_now
+
+              expect(SearchVaccinationRecordsInNHSJob).to have_received(
+                :perform_bulk
+              ).once.with(searchable_patients.map(&:id).zip)
+            end
+          end
         end
       end
 
