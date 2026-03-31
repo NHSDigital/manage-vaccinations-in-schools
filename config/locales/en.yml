@@ -549,6 +549,8 @@ en:
               inclusion: Tell us whether they use a different name
             without_gelatine:
               inclusion: Select yes or no
+            follow_up_requested:
+              inclusion: Select yes or no
         gillick_assessment:
           attributes:
             knows_vaccination:
