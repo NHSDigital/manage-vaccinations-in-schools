@@ -712,6 +712,12 @@ describe FHIRMapper::VaccinationRecord do
         its(:nhs_immunisations_api_snomed_procedure_term) do
           should eq "Seasonal influenza vaccination 111 (procedure)"
         end
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "453684005" }
+
+        its(:nhs_immunisations_api_snomed_reason_term) do
+          should eq "Disease outbreak (event)"
+        end
       end
 
       context "with a record with not full dose" do
@@ -751,6 +757,12 @@ describe FHIRMapper::VaccinationRecord do
         its(:location_name) { should be_nil }
         its(:performed_ods_code) { should eq "B0C4P" }
         its(:nhs_immunisations_api_primary_source) { should be true }
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "453684005" }
+
+        its(:nhs_immunisations_api_snomed_reason_term) do
+          should eq "Disease outbreak (event)"
+        end
 
         its(:notes) do
           should eq "Performing organisation display name: Acme Healthcare"
@@ -795,6 +807,12 @@ describe FHIRMapper::VaccinationRecord do
         its(:location) { should have_attributes(urn: "100006") }
         its(:location_name) { should be_nil }
         its(:performed_ods_code) { should eq "B0C4P" }
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "453684005" }
+
+        its(:nhs_immunisations_api_snomed_reason_term) do
+          should eq "Disease outbreak (event)"
+        end
 
         its(:notes) do
           should eq "Performing organisation display name: Acme Healthcare"
@@ -849,6 +867,9 @@ describe FHIRMapper::VaccinationRecord do
           should eq "Influenza vaccination given by other healthcare provider (situation)"
         end
 
+        its(:nhs_immunisations_api_snomed_reason_code) { should be_nil }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
         its(:notes) { should be_nil }
       end
 
@@ -894,6 +915,12 @@ describe FHIRMapper::VaccinationRecord do
           should eq "Administration of first intranasal seasonal influenza vaccination"
         end
 
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "453684005" }
+
+        its(:nhs_immunisations_api_snomed_reason_term) do
+          should eq "Disease outbreak (event)"
+        end
+
         its(:notes) do
           should include(
                    "SNOMED product code: 43207411000001106",
@@ -932,18 +959,21 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "B12345" }
         its(:nhs_immunisations_api_primary_source) { should be false }
 
-        its(:notes) do
-          should include(
-                   "Reported dose number string: Dose sequence not recorded"
-                 )
-        end
-
         its(:nhs_immunisations_api_snomed_procedure_code) do
           should eq "955651000000100"
         end
 
         its(:nhs_immunisations_api_snomed_procedure_term) do
           should eq "Influenza vaccination given by other healthcare provider (situation)"
+        end
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should be_nil }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
+        its(:notes) do
+          should include(
+                   "Reported dose number string: Dose sequence not recorded"
+                 )
         end
       end
 
@@ -982,6 +1012,9 @@ describe FHIRMapper::VaccinationRecord do
           should eq "Administration of first intranasal seasonal influenza vaccination"
         end
 
+        its(:nhs_immunisations_api_snomed_reason_code) { should be_nil }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
         its(:notes) { should be_nil }
       end
 
@@ -1017,6 +1050,9 @@ describe FHIRMapper::VaccinationRecord do
         its(:nhs_immunisations_api_snomed_procedure_term) do
           should eq "Administration of first intranasal seasonal influenza vaccination"
         end
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should be_nil }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
 
         its(:notes) { should be_nil }
       end
@@ -1057,6 +1093,9 @@ describe FHIRMapper::VaccinationRecord do
         its(:nhs_immunisations_api_snomed_procedure_term) do
           should eq "Administration of first inactivated seasonal influenza vaccination"
         end
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should be_nil }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
 
         its(:notes) { should be_nil }
       end
@@ -1103,6 +1142,9 @@ describe FHIRMapper::VaccinationRecord do
           should eq "Administration of first intranasal seasonal influenza vaccination"
         end
 
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "723620004" }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
         its(:notes) { should be_nil }
       end
 
@@ -1148,6 +1190,9 @@ describe FHIRMapper::VaccinationRecord do
           should eq "Administration of first intranasal seasonal influenza vaccination"
         end
 
+        its(:nhs_immunisations_api_snomed_reason_code) { should be_nil }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
         its(:notes) { should be_nil }
       end
 
@@ -1182,14 +1227,17 @@ describe FHIRMapper::VaccinationRecord do
         its(:outcome) { should eq "administered" }
         its(:performed_ods_code) { should eq "B12345" }
 
+        its(:nhs_immunisations_api_snomed_procedure_code) { should be_nil }
+        its(:nhs_immunisations_api_snomed_procedure_term) { should be_nil }
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should be_nil }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
         its(:notes) do
           should include(
                    "Reported dose number string: Dose sequence not recorded"
                  )
         end
-
-        its(:nhs_immunisations_api_snomed_procedure_code) { should be_nil }
-        its(:nhs_immunisations_api_snomed_procedure_term) { should be_nil }
       end
     end
 
@@ -1242,6 +1290,9 @@ describe FHIRMapper::VaccinationRecord do
           should eq "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
         end
 
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "723620004" }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
         its(:notes) { should be_nil }
       end
     end
@@ -1287,8 +1338,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "R1L" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should include("Reported dose number string: Unknown") }
-
         its(:nhs_immunisations_api_snomed_procedure_code) do
           should eq "871874000"
         end
@@ -1298,6 +1347,11 @@ describe FHIRMapper::VaccinationRecord do
                       "Neisseria meningitidis serogroup A, C, W135 and Y " \
                       "antigens (procedure)"
         end
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "723620004" }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
+        its(:notes) { should include("Reported dose number string: Unknown") }
       end
     end
 
@@ -1342,8 +1396,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "R1L" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should include("Reported dose number string: Unknown") }
-
         its(:nhs_immunisations_api_snomed_procedure_code) do
           should eq "866186002"
         end
@@ -1353,6 +1405,11 @@ describe FHIRMapper::VaccinationRecord do
                       "Clostridium tetani and Corynebacterium diphtheriae " \
                       "and Human poliovirus antigens (procedure)"
         end
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "723620004" }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
+        its(:notes) { should include("Reported dose number string: Unknown") }
       end
     end
 
@@ -1401,8 +1458,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "R1L" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should include("Reported dose number string: Unknown") }
-
         its(:nhs_immunisations_api_snomed_procedure_code) do
           should eq "38598009"
         end
@@ -1412,6 +1467,11 @@ describe FHIRMapper::VaccinationRecord do
                       "Measles morbillivirus and Mumps orthorubulavirus " \
                       "and Rubella virus antigens (procedure)"
         end
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "723620004" }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
+        its(:notes) { should include("Reported dose number string: Unknown") }
       end
     end
 
@@ -1460,8 +1520,6 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "R1L" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should include("Reported dose number string: Unknown") }
-
         its(:nhs_immunisations_api_snomed_procedure_code) do
           should eq "432636005"
         end
@@ -1471,6 +1529,11 @@ describe FHIRMapper::VaccinationRecord do
                       "Human alphaherpesvirus 3 and Measles morbillivirus " \
                       "and Mumps orthorubulavirus and Rubella virus antigens"
         end
+
+        its(:nhs_immunisations_api_snomed_reason_code) { should eq "723620004" }
+        its(:nhs_immunisations_api_snomed_reason_term) { should be_nil }
+
+        its(:notes) { should include("Reported dose number string: Unknown") }
       end
     end
   end
