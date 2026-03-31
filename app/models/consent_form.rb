@@ -576,6 +576,12 @@ class ConsentForm < ApplicationRecord
       .each { it.reason_for_refusal = value }
   end
 
+  def reset_follow_up_requested
+    consent_form_programmes
+      .select(&:response_refused?)
+      .each { it.follow_up_requested = nil }
+  end
+
   def reason_for_refusal_notes
     consent_form_programmes.find(&:response_refused?)&.notes
   end

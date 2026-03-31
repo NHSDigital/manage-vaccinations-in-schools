@@ -14,7 +14,12 @@ describe "Parental consent" do
     then_i_see_the_consent_page
 
     when_i_refuse_consent
+    then_i_see_the_follow_up_question
+    when_i_request_follow_up
     then_i_can_check_my_answers
+
+    when_i_change_my_refusal_reason
+    then_the_consent_doesnt_have_follow_up_requested_stored
 
     when_i_confirm_my_answers
     and_i_refuse_to_answer_questions_on_ethnicity
@@ -91,12 +96,31 @@ describe "Parental consent" do
     )
     fill_in "Give details", with: "They have a weakened immune system"
     click_on "Continue"
+  end
 
+  def then_i_see_the_follow_up_question
     expect(page).to have_content(
       "Would you like a member of the team to contact you to discuss alternative options?"
     )
-    choose "No"
+  end
+
+  def when_i_request_follow_up
+    choose "Yes, I would like someone to contact me"
     click_on "Continue"
+  end
+
+  def when_i_change_my_refusal_reason
+    click_on "Change reason for refusal"
+    choose "Vaccine already received"
+    click_on "Continue"
+
+    fill_in "Give details",
+            with: "They will receive the vaccine at another location"
+    click_on "Continue"
+  end
+
+  def then_the_consent_doesnt_have_follow_up_requested_stored
+    expect(ConsentForm.last.follow_up_requested).to be_nil
   end
 
   def when_i_refuse_consent_and_request_follow_up

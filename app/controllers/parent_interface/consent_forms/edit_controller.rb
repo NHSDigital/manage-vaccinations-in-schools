@@ -45,6 +45,8 @@ module ParentInterface
              @consent_form.parent_phone.present?
           jump_to("contact-method", skip_to_confirm: true)
         end
+      elsif is_reason_for_refusal_step?
+        @consent_form.reset_follow_up_requested
       elsif is_injection_alternative_step?
         @consent_form.update_injection_alternative
         @consent_form.seed_health_questions
@@ -268,6 +270,8 @@ module ParentInterface
     def is_without_gelatine_step? = step == "without-gelatine"
 
     def is_health_question_step? = step == "health-question"
+
+    def is_reason_for_refusal_step? = step == "reason-for-refusal"
 
     def current_health_answer
       index = step.split("-").last.to_i - 1
