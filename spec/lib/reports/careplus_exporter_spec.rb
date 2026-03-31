@@ -734,4 +734,126 @@ describe Reports::CareplusExporter do
       end
     end
   end
+
+  describe ".vaccination_records_scope" do
+    let(:programme) { Programme.hpv }
+    let(:academic_year) { AcademicYear.current }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:session) { create(:session, team:, programmes: [programme]) }
+    let(:patient) { create(:patient, session:) }
+    let(:other_team) { create(:team, programmes: [programme]) }
+    let(:other_session) do
+      create(:session, team: other_team, programmes: [programme])
+    end
+
+    def scope(**overrides)
+      described_class.vaccination_records_scope(
+        **{
+          team:,
+          programmes: [programme],
+          academic_year:,
+          start_date: nil,
+          end_date: nil,
+          include_missing_nhs_number: true
+        }.merge(overrides)
+      )
+    end
+
+    it "includes administered records for the team" do
+      record = create(:vaccination_record, programme:, session:, patient:)
+      expect(scope).to include(record)
+    end
+
+    it "excludes records belonging to a different team" do
+      other_patient = create(:patient, session: other_session)
+      record =
+        create(
+          :vaccination_record,
+          programme:,
+          session: other_session,
+          patient: other_patient
+        )
+      expect(scope).not_to include(record)
+    end
+
+    it "excludes discarded records" do
+      record =
+        create(:vaccination_record, :discarded, programme:, session:, patient:)
+      expect(scope).not_to include(record)
+    end
+
+    it "excludes non-administered records" do
+      record =
+        create(
+          :vaccination_record,
+          :not_administered,
+          programme:,
+          session:,
+          patient:
+        )
+      expect(scope).not_to include(record)
+    end
+
+    context "when include_missing_nhs_number is false" do
+      let(:patient_without_nhs_number) do
+        create(:patient, nhs_number: nil, session:)
+      end
+
+      it "excludes patients without an NHS number" do
+        create(
+          :vaccination_record,
+          programme:,
+          session:,
+          patient: patient_without_nhs_number
+        )
+        expect(scope(include_missing_nhs_number: false)).to be_empty
+      end
+
+      it "includes patients with an NHS number" do
+        record = create(:vaccination_record, programme:, session:, patient:)
+        expect(scope(include_missing_nhs_number: false)).to include(record)
+      end
+    end
+
+    context "with a start_date" do
+      let(:record) do
+        create(:vaccination_record, programme:, session:, patient:)
+      end
+
+      it "includes records created on or after the start date" do
+        expect(scope(start_date: record.created_at.to_date)).to include(record)
+      end
+
+      it "excludes records created and last updated before the start date" do
+        record.update_columns(
+          created_at: 2.months.ago,
+          updated_at: 2.months.ago
+        )
+        expect(scope(start_date: Date.current)).not_to include(record)
+      end
+
+      it "includes records updated on or after the start date even if created before" do
+        record.update_columns(created_at: 2.months.ago)
+        expect(scope(start_date: Date.current)).to include(record)
+      end
+    end
+
+    context "with an end_date" do
+      let(:record) do
+        create(:vaccination_record, programme:, session:, patient:)
+      end
+
+      it "includes records created on or before the end date" do
+        expect(scope(end_date: record.created_at.to_date)).to include(record)
+      end
+
+      it "excludes records created and last updated after the end date" do
+        record.update_columns(
+          created_at: 1.week.from_now,
+          updated_at: 1.week.from_now
+        )
+        expect(scope(end_date: Date.current)).not_to include(record)
+      end
+    end
+  end
 end

@@ -59,6 +59,59 @@ class Reports::CareplusExporter
 
   def self.call(...) = new(...).call
 
+  def self.vaccination_records_scope(
+    team:,
+    programmes:,
+    academic_year:,
+    start_date:,
+    end_date:,
+    include_missing_nhs_number:
+  )
+    scope =
+      VaccinationRecord
+        .kept
+        .sourced_from_service
+        .for_programmes(programmes)
+        .joins(session: :team_location)
+        .where(team_location: { team_id: team.id })
+        .for_academic_year(academic_year)
+        .administered
+        .order_by_performed_at
+
+    if start_date.present?
+      scope =
+        scope.where(
+          "vaccination_records.created_at >= ?",
+          start_date.beginning_of_day
+        ).or(
+          scope.where(
+            "vaccination_records.updated_at >= ?",
+            start_date.beginning_of_day
+          )
+        )
+    end
+
+    if end_date.present?
+      scope =
+        scope.where(
+          "vaccination_records.created_at <= ?",
+          end_date.end_of_day
+        ).or(
+          scope.where(
+            "vaccination_records.updated_at <= ?",
+            end_date.end_of_day
+          )
+        )
+    end
+
+    scope =
+      scope.joins(:patient).merge(
+        Patient.with_nhs_number
+      ) unless include_missing_nhs_number
+
+    scope
+  end
+
   private_class_method :new
 
   private
@@ -121,49 +174,17 @@ class Reports::CareplusExporter
   end
 
   def vaccination_records
-    scope =
-      VaccinationRecord
-        .kept
-        .sourced_from_service
-        .for_programmes(programmes)
-        .where(team_location: { team_id: team.id })
-        .for_academic_year(academic_year)
-        .administered
-        .order_by_performed_at
-        .includes(:patient, :vaccine, session: %i[location team_location])
-
-    if start_date.present?
-      scope =
-        scope.where(
-          "vaccination_records.created_at >= ?",
-          start_date.beginning_of_day
-        ).or(
-          scope.where(
-            "vaccination_records.updated_at >= ?",
-            start_date.beginning_of_day
-          )
-        )
-    end
-
-    if end_date.present?
-      scope =
-        scope.where(
-          "vaccination_records.created_at <= ?",
-          end_date.end_of_day
-        ).or(
-          scope.where(
-            "vaccination_records.updated_at <= ?",
-            end_date.end_of_day
-          )
-        )
-    end
-
-    scope =
-      scope.joins(:patient).merge(
-        Patient.with_nhs_number
-      ) unless include_missing_nhs_number
-
-    scope
+    self
+      .class
+      .vaccination_records_scope(
+        team:,
+        programmes:,
+        academic_year:,
+        start_date:,
+        end_date:,
+        include_missing_nhs_number:
+      )
+      .includes(:patient, :vaccine, session: %i[location team_location])
   end
 
   def consents
