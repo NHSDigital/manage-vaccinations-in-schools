@@ -748,7 +748,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 98</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 104</span>
   <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">call</span>
 
   <span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
@@ -885,14 +885,14 @@
     <span class="ruby-identifier">vaccine_brand</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>.<span class="ruby-identifier">brand</span>
     <span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">dose_sequence</span>
 
-    <span class="ruby-identifier">mapping</span> =
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+      <span class="ruby-identifier">procedure_mapping</span> =
         <span class="ruby-constant">PROCEDURE_DOSE_MAPPINGS</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variant_type</span>, <span class="ruby-identifier">dose_sequence</span>)
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-constant">PRODUCT_DOSE_MAPPINGS</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-identifier">vaccine_brand</span>, <span class="ruby-identifier">dose_sequence</span>)
-      <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-identifier">procedure_mapping</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">procedure_mapping</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">end</span>
 
-    <span class="ruby-keyword">return</span> <span class="ruby-identifier">mapping</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-identifier">product_mapping</span> = <span class="ruby-constant">PRODUCT_DOSE_MAPPINGS</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-identifier">vaccine_brand</span>, <span class="ruby-identifier">dose_sequence</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">product_mapping</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">product_mapping</span>.<span class="ruby-identifier">present?</span>
 
     <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;#{vaccine_brand} Part #{dose_sequence}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">vaccine_brand</span>
   <span class="ruby-keyword">end</span>
@@ -975,7 +975,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 82</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">programme:</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">start_date:</span>, <span class="ruby-value">end_date:</span>)
   <span class="ruby-ivar">@team</span> = <span class="ruby-identifier">team</span>
   <span class="ruby-ivar">@programme</span> = <span class="ruby-identifier">programme</span>
@@ -1035,7 +1035,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 90</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>
   <span class="ruby-constant">CSV</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-value">headers:</span>, <span class="ruby-value">write_headers:</span> <span class="ruby-keyword">true</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">csv</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
@@ -1081,7 +1081,7 @@
             </details>
           </div>
           <div class="method-source-code" id="gender_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 220</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 226</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gender_code</span>(<span class="ruby-identifier">code</span>)
   <span class="ruby-constant">GENDER_CODE_MAPPINGS</span>[<span class="ruby-identifier">code</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -1123,7 +1123,7 @@
             </details>
           </div>
           <div class="method-source-code" id="headers-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 106</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 112</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">headers</span>
   [
     <span class="ruby-string">&quot;Practice code&quot;</span>,
@@ -1187,7 +1187,7 @@
             </details>
           </div>
           <div class="method-source-code" id="method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 280</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 286</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">method</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">not_administered?</span>
 
@@ -1231,7 +1231,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 264</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 270</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notes</span>(<span class="ruby-identifier">vaccination_record</span>)
   [
     <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">notes</span>,
@@ -1285,7 +1285,7 @@
             </details>
           </div>
           <div class="method-source-code" id="practice_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 206</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 212</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">practice_code</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-identifier">location</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">location</span>
 
@@ -1337,7 +1337,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 246</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 252</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">dose_sequence</span>
   <span class="ruby-keyword">when</span> <span class="ruby-value">1</span>, <span class="ruby-keyword">nil</span>
@@ -1384,7 +1384,7 @@
             </details>
           </div>
           <div class="method-source-code" id="row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 178</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 184</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">row</span>(<span class="ruby-value">vaccination_record:</span>)
   <span class="ruby-identifier">patient</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">patient</span>
 
@@ -1450,7 +1450,7 @@
             </details>
           </div>
           <div class="method-source-code" id="site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 258</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 264</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">site</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">not_administered?</span>
 
@@ -1497,7 +1497,7 @@ teams.</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccination-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 227</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 233</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">not_administered?</span>
 
@@ -1505,14 +1505,14 @@ teams.</pre>
   <span class="ruby-identifier">vaccine_brand</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>.<span class="ruby-identifier">brand</span>
   <span class="ruby-identifier">dose_sequence</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">dose_sequence</span>
 
-  <span class="ruby-identifier">mapping</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+    <span class="ruby-identifier">procedure_mapping</span> =
       <span class="ruby-constant">PROCEDURE_DOSE_MAPPINGS</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variant_type</span>, <span class="ruby-identifier">dose_sequence</span>)
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-constant">PRODUCT_DOSE_MAPPINGS</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-identifier">vaccine_brand</span>, <span class="ruby-identifier">dose_sequence</span>)
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">procedure_mapping</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">procedure_mapping</span>.<span class="ruby-identifier">present?</span>
+  <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">mapping</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">present?</span>
+  <span class="ruby-identifier">product_mapping</span> = <span class="ruby-constant">PRODUCT_DOSE_MAPPINGS</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-identifier">vaccine_brand</span>, <span class="ruby-identifier">dose_sequence</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">product_mapping</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">product_mapping</span>.<span class="ruby-identifier">present?</span>
 
   <span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;#{vaccine_brand} Part #{dose_sequence}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">vaccine_brand</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1557,7 +1557,7 @@ teams.</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccination_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 132</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/systm_one_exporter.rb, line 138</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_records</span>
   <span class="ruby-identifier">scope</span> =
     <span class="ruby-identifier">team</span>
