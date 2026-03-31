@@ -504,44 +504,97 @@ describe FHIRMapper::VaccinationRecord do
         end
       end
 
-      describe "the parsed dose_sequence value" do
+      describe "dose sequence parsing" do
         subject { record.dose_sequence }
 
         let(:fixture_file_name) { "fhir/flu/fhir_record_full.json" }
+        let(:dose_number_positive_int) { nil }
+        let(:dose_number_string) { nil }
 
         before do
-          allow(fhir_immunization.protocolApplied.sole).to receive(
-            :doseNumberPositiveInt
-          ).and_return(dose_number)
+          allow(fhir_immunization.protocolApplied.sole).to receive_messages(
+            doseNumberPositiveInt: dose_number_positive_int,
+            doseNumberString: dose_number_string
+          )
         end
 
-        context "when doseNumberPositiveInt is nil" do
-          let(:dose_number) { nil }
-
+        context "when both fields are nil" do
           it { should be_nil }
 
-          it "does not include a dose sequence note" do
-            expect(record.notes.to_s).not_to include("Reported dose sequence")
+          it "does not include any dose notes" do
+            expect(record.notes.to_s).not_to include("Reported dose number")
+            expect(record.notes.to_s).not_to include(
+              "Reported dose number string"
+            )
           end
         end
 
-        context "when doseNumberPositiveInt is less than the maximum dose sequence for flu" do
-          let(:dose_number) { 1 }
+        context "when doseNumberPositiveInt is within the maximum dose sequence for flu" do
+          let(:dose_number_positive_int) { 1 }
 
           it { should eq 1 }
 
           it "does not include a dose sequence note" do
-            expect(record.notes.to_s).not_to include("Reported dose sequence")
+            expect(record.notes.to_s).not_to include("Reported dose number")
           end
         end
 
         context "when doseNumberPositiveInt exceeds the maximum dose sequence for flu" do
-          let(:dose_number) { 3 }
+          let(:dose_number_positive_int) { 3 }
 
           it { should be_nil }
 
           it "records the out-of-range dose sequence in notes" do
-            expect(record.notes.to_s).to include("Reported dose sequence: 3")
+            expect(record.notes.to_s).to include("Reported dose number: 3")
+          end
+        end
+
+        context "when doseNumberPositiveInt is present and doseNumberString is also present" do
+          let(:dose_number_positive_int) { 2 }
+          let(:dose_number_string) { "first" }
+
+          it { should eq 2 }
+
+          it "does not include a dose number string note" do
+            expect(record.notes.to_s).not_to include(
+              "Reported dose number string"
+            )
+          end
+        end
+
+        context "when doseNumberString is an integer string" do
+          let(:dose_number_string) { "1" }
+
+          it { should eq 1 }
+
+          it "does not include a dose number string note" do
+            expect(record.notes.to_s).not_to include(
+              "Reported dose number string"
+            )
+          end
+        end
+
+        context "when doseNumberString is a non-integer string" do
+          let(:dose_number_string) { "first" }
+
+          it { should be_nil }
+
+          it "appends the value to notes" do
+            expect(record.notes.to_s).to include(
+              "Reported dose number string: first"
+            )
+          end
+        end
+
+        context "when doseNumberString is blank" do
+          let(:dose_number_string) { "" }
+
+          it { should be_nil }
+
+          it "does not include a dose number string note" do
+            expect(record.notes.to_s).not_to include(
+              "Reported dose number string"
+            )
           end
         end
       end
@@ -783,7 +836,11 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "B12345" }
         its(:nhs_immunisations_api_primary_source) { should be false }
 
-        its(:notes) { should be_nil }
+        its(:notes) do
+          should include(
+                   "Reported dose number string: Dose sequence not recorded"
+                 )
+        end
       end
 
       context "with a record that is nasal flu, and is missing dose quantity (from real GP)" do
@@ -980,7 +1037,11 @@ describe FHIRMapper::VaccinationRecord do
         its(:outcome) { should eq "administered" }
         its(:performed_ods_code) { should eq "B12345" }
 
-        its(:notes) { should be_nil }
+        its(:notes) do
+          should include(
+                   "Reported dose number string: Dose sequence not recorded"
+                 )
+        end
       end
     end
 
@@ -1070,7 +1131,7 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "R1L" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should be_nil }
+        its(:notes) { should include("Reported dose number string: Unknown") }
       end
     end
 
@@ -1115,7 +1176,7 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "R1L" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should be_nil }
+        its(:notes) { should include("Reported dose number string: Unknown") }
       end
     end
 
@@ -1164,7 +1225,7 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "R1L" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should be_nil }
+        its(:notes) { should include("Reported dose number string: Unknown") }
       end
     end
 
@@ -1213,7 +1274,7 @@ describe FHIRMapper::VaccinationRecord do
         its(:performed_ods_code) { should eq "R1L" }
         its(:nhs_immunisations_api_primary_source) { should be true }
 
-        its(:notes) { should be_nil }
+        its(:notes) { should include("Reported dose number string: Unknown") }
       end
     end
   end
