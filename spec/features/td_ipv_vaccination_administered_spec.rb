@@ -214,8 +214,18 @@ describe "Td/IPV vaccination" do
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
+        subject:
+          "Your child had their Td/IPV (3-in-1 teenage booster) vaccination today",
         template: :vaccination_administered_td_ipv
-      ).with_content_including("3-in-1 teenage booster", "Revaxis")
+      ).with_content_including(
+        "3-in-1 teenage booster",
+        "Revaxis",
+        "dizziness",
+        "feeling or being sick",
+        "a headache",
+        "a high temperature",
+        "swelling or pain where the injection was given"
+      )
     )
   end
 

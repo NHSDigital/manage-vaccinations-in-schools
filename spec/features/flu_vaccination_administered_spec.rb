@@ -343,11 +343,34 @@ describe "Flu vaccination" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    vaccine =
+      VaccinationRecord.includes(:vaccine).find_by!(patient: @patient).vaccine
+
+    side_effects =
+      case vaccine.brand
+      when "Fluenz"
+        [
+          "a runny or blocked nose",
+          "loss of appetite",
+          "tiredness",
+          "a headache"
+        ]
+      when "Cell-based Trivalent Influenza Vaccine Seqirus"
+        [
+          "an aching body",
+          "a slightly raised temperature",
+          "swelling or pain where the injection was given"
+        ]
+      else
+        raise "Unexpected flu vaccine: #{vaccine.brand}"
+      end
+
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
+        subject: "Your child had their flu vaccination today",
         template: :vaccination_administered_flu
-      ).with_content_including("Vaccination: flu", "Possible side effects")
+      ).with_content_including("Vaccination: flu", *side_effects)
     )
   end
 

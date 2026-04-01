@@ -214,8 +214,20 @@ describe "MenACWY vaccination" do
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
+        subject: "Your child had their MenACWY vaccination today",
         template: :vaccination_administered_menacwy
-      ).with_content_including("MenACWY vaccination", "MenQuadfi")
+      ).with_content_including(
+        "MenACWY vaccination",
+        "MenQuadfi",
+        "swelling or pain where the injection was given",
+        "feeling drowsy",
+        "feeling sick",
+        "a headache",
+        "feeling irritable",
+        "loss of appetite",
+        "a rash",
+        "generally feeling unwell"
+      )
     )
   end
 

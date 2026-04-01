@@ -860,9 +860,9 @@ describe GovukNotifyPersonalisation do
 
     it do
       expect(personalisation).to have_attributes(
-        vaccination: "Flu vaccination",
+        vaccination: "flu vaccination",
         vaccination_and_method: "flu vaccination",
-        vaccine: "Flu vaccine",
+        vaccine: "flu vaccine",
         vaccine_and_method: "flu vaccine"
       )
     end
@@ -874,9 +874,9 @@ describe GovukNotifyPersonalisation do
 
       it do
         expect(personalisation).to have_attributes(
-          vaccination: "Flu vaccination",
+          vaccination: "flu vaccination",
           vaccination_and_method: "injected flu vaccination",
-          vaccine: "Flu vaccine",
+          vaccine: "flu vaccine",
           vaccine_and_method: "injected flu vaccine"
         )
       end
@@ -894,9 +894,9 @@ describe GovukNotifyPersonalisation do
 
       it do
         expect(personalisation).to have_attributes(
-          vaccination: "Flu vaccination",
+          vaccination: "flu vaccination",
           vaccination_and_method: "nasal spray flu vaccination",
-          vaccine: "Flu vaccine",
+          vaccine: "flu vaccine",
           vaccine_and_method: "nasal spray flu vaccine"
         )
       end
