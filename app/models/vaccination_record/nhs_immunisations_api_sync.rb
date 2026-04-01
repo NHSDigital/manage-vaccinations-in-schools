@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SyncableToNHSImmunisationsAPI
+module VaccinationRecord::NHSImmunisationsAPISync
   extend ActiveSupport::Concern
 
   included do
@@ -52,9 +52,14 @@ module SyncableToNHSImmunisationsAPI
       )
   end
 
+  def should_be_in_nhs_immunisations_api?
+    kept? && correct_source_for_nhs_immunisations_api? && administered? &&
+      Flipper.enabled?(:imms_api_sync_job, programme) &&
+      notify_parents != false && patient.not_invalidated?
+  end
+
   def sync_status
-    should_be_synced =
-      NHS::ImmunisationsAPI.should_be_in_immunisations_api?(self)
+    should_be_synced = should_be_in_nhs_immunisations_api?
     return :not_synced unless should_be_synced
 
     synced_at = nhs_immunisations_api_synced_at
