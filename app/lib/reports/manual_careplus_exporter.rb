@@ -11,7 +11,6 @@ class Reports::ManualCareplusExporter
       include_gender: true,
       include_missing_nhs_number: true,
       vaccine_columns: %i[
-        vaccine
         vaccine_code
         dose
         reason_not_given
