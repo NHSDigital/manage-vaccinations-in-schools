@@ -56,6 +56,6 @@ class ClinicSessionFactory
   end
 
   def new_session
-    Session.create!(team_location:, dates: [date])
+    Session.create!(team_location:, dates: [date], requires_registration: false)
   end
 end
