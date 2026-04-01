@@ -610,6 +610,23 @@
 
 
 
+    <section class="constants-list">
+      <header>
+        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="HIDDEN_PROGRAMME_STATUSES">HIDDEN_PROGRAMME_STATUSES</dt>
+
+        <dd>
+
+          <p>Remove these statuses once implemented.</p>
+        </dd>
+
+
+      </dl>
+    </section>
+
 
 
 
@@ -642,7 +659,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_patient_search_form_component.rb, line 4</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_patient_search_form_component.rb, line 11</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(
   <span class="ruby-identifier">form</span>,
   <span class="ruby-value">url:</span>,
@@ -664,7 +681,7 @@
 
   <span class="ruby-ivar">@programmes</span> = <span class="ruby-identifier">programmes</span>
   <span class="ruby-ivar">@patient_specific_direction_statuses</span> = <span class="ruby-identifier">patient_specific_direction_statuses</span>
-  <span class="ruby-ivar">@programme_statuses</span> = <span class="ruby-identifier">programme_statuses</span>
+  <span class="ruby-ivar">@programme_statuses</span> = <span class="ruby-identifier">programme_statuses</span> <span class="ruby-operator">-</span> <span class="ruby-constant">HIDDEN_PROGRAMME_STATUSES</span>
   <span class="ruby-ivar">@registration_statuses</span> = <span class="ruby-identifier">registration_statuses</span>
   <span class="ruby-ivar">@year_groups</span> = <span class="ruby-identifier">year_groups</span>
   <span class="ruby-ivar">@heading_level</span> = <span class="ruby-identifier">heading_level</span>
