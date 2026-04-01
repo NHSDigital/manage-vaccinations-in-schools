@@ -795,8 +795,6 @@
   <span class="ruby-identifier">object</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">apply_pending_changes!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">object</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:patient</span>)
 
   <span class="ruby-identifier">object</span>.<span class="ruby-identifier">apply_pending_changes!</span>
-
-  <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">object</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">object</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Patient</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -924,7 +922,7 @@
             </details>
           </div>
           <div class="method-source-code" id="changeset_for_keep_both-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 79</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">changeset_for_keep_both</span>
   <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>)
 
@@ -977,7 +975,7 @@
             </details>
           </div>
           <div class="method-source-code" id="discard_pending_changes-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 62</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">discard_pending_changes!</span>
   <span class="ruby-identifier">object</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">discard_pending_changes!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">object</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:patient</span>)
 
@@ -1021,16 +1019,14 @@
             </details>
           </div>
           <div class="method-source-code" id="keep_both_changes-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 68</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 66</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">keep_both_changes!</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_keep_both?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_apply?</span>
 
-  <span class="ruby-identifier">new_record</span> =
-    <span class="ruby-identifier">object</span>.<span class="ruby-identifier">apply_pending_changes_to_new_record!</span>(
-      <span class="ruby-value">changeset:</span> <span class="ruby-identifier">changeset_for_keep_both</span>
-    )
-  <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">new_record</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Patient</span>)
+  <span class="ruby-identifier">object</span>.<span class="ruby-identifier">apply_pending_changes_to_new_record!</span>(
+    <span class="ruby-value">changeset:</span> <span class="ruby-identifier">changeset_for_keep_both</span>
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1070,7 +1066,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reset_count-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 94</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 90</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_count!</span>
   <span class="ruby-constant">TeamCachedCounts</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">current_team</span>).<span class="ruby-identifier">reset_import_issues!</span>
 <span class="ruby-keyword">end</span></pre>
