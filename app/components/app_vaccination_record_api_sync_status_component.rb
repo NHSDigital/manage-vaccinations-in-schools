@@ -25,6 +25,9 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
            :sync_status,
            :sourced_from_service?,
            :notify_parents,
+           :created_before_api_integration?,
+           :api_integration_cutoff_date,
+           :programme,
            to: :vaccination_record
 
   SYNC_STATUS_COLOURS = {
@@ -58,6 +61,9 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
         elsif notify_parents == false
           "The child gave consent under Gillick competence and does not want their parents to be notified. " \
             "You must let the child’s GP know they were vaccinated."
+        elsif created_before_api_integration?
+          "#{programme.name} vaccinations recorded before #{api_integration_cutoff_date&.to_fs(:long)} " \
+            "are not synced with GP practices and NHS England"
         elsif sourced_from_service?
           "Records are not synced if the vaccination was not given"
         end

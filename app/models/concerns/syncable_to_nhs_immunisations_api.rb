@@ -59,13 +59,36 @@ module SyncableToNHSImmunisationsAPI
 
     synced_at = nhs_immunisations_api_synced_at
     pending_at = nhs_immunisations_api_sync_pending_at
+
     if synced_at.present? && (pending_at.nil? || synced_at > pending_at)
       return :synced
     end
 
+    return :not_synced if created_before_api_integration?
+
     return :failed if pending_at.present? && 24.hours.ago > pending_at
 
     :pending
+  end
+
+  API_INTEGRATION_CUT_OFF_DATES = {
+    "flu" => nil,
+    "hpv" => nil,
+    "menacwy" => Date.new(2026, 3, 2),
+    "mmr" => Date.new(2026, 3, 2),
+    "td_ipv" => Date.new(2026, 3, 2)
+  }.freeze
+
+  def created_before_api_integration?
+    cut_off = API_INTEGRATION_CUT_OFF_DATES.fetch(programme_type)
+
+    return false if cut_off.nil?
+
+    created_at.to_date < cut_off
+  end
+
+  def api_integration_cutoff_date
+    API_INTEGRATION_CUT_OFF_DATES.fetch(programme_type)
   end
 
   def changes_need_to_be_synced_to_nhs_immunisations_api?

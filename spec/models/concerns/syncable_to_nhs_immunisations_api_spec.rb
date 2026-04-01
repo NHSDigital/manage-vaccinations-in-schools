@@ -2,11 +2,12 @@
 
 describe SyncableToNHSImmunisationsAPI do
   let(:vaccination_record) do
-    build(:vaccination_record, outcome:, programme:, session:)
+    build(:vaccination_record, outcome:, programme:, session:, created_at:)
   end
   let(:outcome) { "administered" }
   let(:programme) { Programme.flu }
   let(:session) { create(:session, programmes: [programme]) }
+  let(:created_at) { Date.new(2025, 1, 1) }
 
   describe "#sync_to_nhs_immunisations_api!" do
     before { Flipper.enable(:imms_api_sync_job, programme) }
@@ -418,6 +419,105 @@ describe SyncableToNHSImmunisationsAPI do
 
       it "returns `not_synced`" do
         expect(sync_status).to eq(:not_synced)
+      end
+    end
+
+    context "when the record was created before the API integration was enabled for that programme" do
+      let(:programme) { Programme.td_ipv }
+
+      before do
+        Flipper.enable(:imms_api_sync_job, programme)
+        vaccination_record.update!(
+          nhs_immunisations_api_sync_pending_at: nil,
+          nhs_immunisations_api_synced_at: nil,
+          created_at: Date.new(2026, 3, 1)
+        )
+      end
+
+      it "returns :not_synced" do
+        expect(sync_status).to eq(:not_synced)
+      end
+
+      context "when the record has since been synced (e.g. due to an edit after integration was enabled)" do
+        before do
+          vaccination_record.update!(
+            nhs_immunisations_api_sync_pending_at: 2.hours.ago,
+            nhs_immunisations_api_synced_at: 1.hour.ago
+          )
+        end
+
+        it "returns :synced" do
+          expect(sync_status).to eq(:synced)
+        end
+      end
+    end
+
+    context "when the record was created on the cut-off date for the programme" do
+      let(:programme) { Programme.td_ipv }
+
+      before do
+        Flipper.enable(:imms_api_sync_job, programme)
+        vaccination_record.update!(
+          nhs_immunisations_api_sync_pending_at: nil,
+          nhs_immunisations_api_synced_at: nil,
+          created_at: Date.new(2026, 3, 2)
+        )
+      end
+
+      it "returns :pending (not treated as pre-integration)" do
+        expect(sync_status).to eq(:pending)
+      end
+    end
+
+    context "when the programme has no cut-off date (flu)" do
+      before do
+        vaccination_record.update!(
+          nhs_immunisations_api_sync_pending_at: nil,
+          nhs_immunisations_api_synced_at: nil,
+          created_at: Date.new(2025, 1, 1)
+        )
+      end
+
+      it "returns :pending (no pre-integration limit for flu)" do
+        expect(sync_status).to eq(:pending)
+      end
+    end
+  end
+
+  describe "#created_before_api_integration?" do
+    subject { vaccination_record.created_before_api_integration? }
+
+    context "when programme has no cut-off (flu)" do
+      it { should be false }
+    end
+
+    context "when programme has no cut-off (hpv)" do
+      let(:programme) { Programme.hpv }
+
+      it { should be false }
+    end
+
+    context "when programme has a cut-off (td_ipv)" do
+      let(:programme) { Programme.td_ipv }
+
+      before { Flipper.enable(:imms_api_sync_job, programme) }
+
+      context "and record was created before the cut-off" do
+        let(:created_at) { Date.new(2026, 3, 1) }
+
+        it { should be true }
+      end
+
+      context "and record was created on the cut-off date" do
+        let(:created_at) { Date.new(2026, 3, 2) }
+
+        it { should be false }
+      end
+
+      context "and record was created after the cut-off" do
+        let(:created_at) { Date.new(2026, 3, 3) }
+
+        it { should be false }
       end
     end
   end
