@@ -29,12 +29,12 @@
 
   // Adjust design and spacing of details component
   .nhsuk-details {
-    margin-right: nhsuk-spacing(-4);
-    margin-left: nhsuk-spacing(-4);
+    margin-right: nhsuk-spacing(-3);
+    margin-left: nhsuk-spacing(-3);
 
     @include nhsuk-media-query($from: tablet) {
-      margin-right: nhsuk-spacing(-5);
-      margin-left: nhsuk-spacing(-5);
+      margin-right: nhsuk-spacing(-4);
+      margin-left: nhsuk-spacing(-4);
     }
 
     &[open] {
@@ -43,8 +43,8 @@
   }
 
   .nhsuk-details__summary {
-    @include nhsuk-responsive-margin(5, "left");
-    @include nhsuk-responsive-margin(5, "right");
+    @include nhsuk-responsive-margin(4, "left");
+    @include nhsuk-responsive-margin(4, "right");
   }
 
   .nhsuk-details__text {
