@@ -7,6 +7,9 @@
 #  id                                              :bigint           not null, primary key
 #  academic_year                                   :integer          not null
 #  disease_types                                   :enum             not null, is an Array
+#  follow_up_outcome                               :integer
+#  follow_up_requested                             :boolean
+#  follow_up_resolved_at                           :datetime
 #  health_answers                                  :jsonb            not null
 #  invalidated_at                                  :datetime
 #  notes                                           :text             default(""), not null
@@ -475,6 +478,50 @@ describe Consent do
                 .and(
                   not_change { vaccination_records[2].reload.notify_parents }
                 )
+      end
+    end
+  end
+
+  describe "#resolve_follow_up!" do
+    let(:patient) { create(:patient) }
+    let(:consent) { create(:consent, patient:, notes: "Existing notes") }
+
+    before { allow(PatientStatusUpdater).to receive(:call) }
+
+    context "when confirming refusal with notes" do
+      it "updates follow-up fields and overwrites notes" do
+        freeze_time do
+          expect {
+            consent.resolve_follow_up!(outcome: :confirmed, notes: "New notes")
+          }.to change { consent.reload.follow_up_outcome }.to(
+            "confirmed"
+          ).and change(consent, :follow_up_requested).to(false).and change(
+                        consent,
+                        :follow_up_resolved_at
+                      ).to(Time.current).and change(consent, :notes).to(
+                              "New notes"
+                            )
+        end
+
+        expect(PatientStatusUpdater).to have_received(:call).with(patient:)
+      end
+    end
+
+    context "when no notes are provided" do
+      it "does not overwrite existing notes" do
+        expect { consent.resolve_follow_up!(outcome: :confirmed) }.not_to(
+          change { consent.reload.notes }
+        )
+      end
+    end
+
+    context "when invalidate is true" do
+      it "sets invalidated_at" do
+        freeze_time do
+          expect {
+            consent.resolve_follow_up!(outcome: :withdrawn, invalidate: true)
+          }.to change { consent.reload.invalidated_at }.to(Time.current)
+        end
       end
     end
   end

@@ -7,11 +7,12 @@ describe AppImportReviewComponent do
     described_class.new(
       import:,
       inter_team:,
-      new_records:,
-      auto_matched_records:,
-      import_issues:,
-      school_moves:,
-      skipped_school_moves:
+      new_records: [new_records_pagy, new_records],
+      auto_matched_records: [auto_matched_records_pagy, auto_matched_records],
+      import_issues: [import_issues_pagy, import_issues],
+      school_moves: [school_moves_pagy, school_moves],
+      skipped_school_moves:,
+      open_sections:
     )
   end
 
@@ -34,11 +35,32 @@ describe AppImportReviewComponent do
   let(:second_school_move_patient) { create(:patient, school: second_location) }
 
   let(:new_records) { [] }
+  let(:new_records_pagy) do
+    instance_double(Pagy, count: new_records.count, limit: 50).as_null_object
+  end
   let(:auto_matched_records) { [] }
+  let(:auto_matched_records_pagy) do
+    instance_double(
+      Pagy,
+      count: auto_matched_records.count,
+      limit: 50
+    ).as_null_object
+  end
   let(:import_issues) { [] }
+  let(:import_issues_pagy) do
+    instance_double(Pagy, count: import_issues.count, limit: 50).as_null_object
+  end
   let(:inter_team) { [] }
   let(:school_moves) { [] }
+  let(:school_moves_pagy) do
+    instance_double(Pagy, count: school_moves.count, limit: 50).as_null_object
+  end
   let(:skipped_school_moves) { [] }
+  let(:open_sections) { [] }
+
+  before do
+    allow(AppPaginationComponent).to receive(:new) { double.as_null_object }
+  end
 
   shared_examples "section with details" do |title:, summary:, count:|
     it "renders section '#{title}'" do
@@ -76,6 +98,35 @@ describe AppImportReviewComponent do
     it "shows the section description" do
       expect(rendered).to have_content(
         "This upload includes 2 new records that are not currently in Mavis"
+      )
+      expect(rendered).to have_content(
+        "If you approve the upload, these records will be added to Mavis"
+      )
+    end
+  end
+
+  describe "with multiple pages of new records" do
+    let(:new_records) do
+      create_list(:patient_changeset, 75, :new_patient, import:)
+    end
+    let(:new_records_pagy) do
+      instance_double(
+        Pagy,
+        count: new_records.count,
+        limit: 50,
+        from: 1,
+        to: 50
+      ).as_null_object
+    end
+
+    include_examples "section with details",
+                     title: "New records",
+                     summary: /75 new records\s+\(showing 1 to 50\)/,
+                     count: 75
+
+    it "shows the section description" do
+      expect(rendered).to have_content(
+        "This upload includes 75 new records that are not currently in Mavis"
       )
       expect(rendered).to have_content(
         "If you approve the upload, these records will be added to Mavis"
@@ -241,6 +292,39 @@ describe AppImportReviewComponent do
     end
   end
 
+  describe "with multiple pages of school moves" do
+    let(:school_moves) do
+      create_list(
+        :patient_changeset,
+        55,
+        :with_school_move,
+        import:,
+        patient: school_move_patient,
+        school: second_location
+      )
+    end
+    let(:school_moves_pagy) do
+      instance_double(
+        Pagy,
+        count: school_moves.count,
+        limit: 50,
+        from: 1,
+        to: 50
+      ).as_null_object
+    end
+
+    include_examples "section with details",
+                     title: "School moves - resolve after import",
+                     summary: /55 school moves\s+\(showing 1 to 50\)/,
+                     count: 55
+
+    it "shows correct total in import message" do
+      expect(rendered).to have_content(
+        "This upload includes 55 children with a different school to the one on their Mavis record"
+      )
+    end
+  end
+
   describe "with skipped school moves" do
     let(:other_team_school) do
       create(:school, team: other_team, name: "School in Other Team")
@@ -364,6 +448,26 @@ describe AppImportReviewComponent do
 
     it "adds sticky module to summary" do
       expect(rendered).to have_css('summary[data-module="app-sticky"]')
+    end
+  end
+
+  describe "open_sections" do
+    let(:new_records) do
+      [create(:patient_changeset, :new_patient, import:, patient: new_patient)]
+    end
+
+    context "without any open sections specified" do
+      it "renders all sections closed" do
+        expect(rendered).not_to have_css("details[open]")
+      end
+    end
+
+    context "with specified open sections" do
+      let(:open_sections) { [:new_records] }
+
+      it "renders specified sections open" do
+        expect(rendered).to have_css("details[open]")
+      end
     end
   end
 end

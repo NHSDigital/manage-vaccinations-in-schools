@@ -38,6 +38,9 @@ describe "Parental consent" do
     then_i_see_the_consent_form
 
     when_i_refuse_consent
+    then_i_see_the_follow_up_question
+
+    when_i_answer_no_to_the_follow_up_question_and_continue
     then_i_see_the_check_and_confirm_page
 
     when_i_submit_the_consent_form
@@ -148,6 +151,17 @@ describe "Parental consent" do
 
     # Resaon for refusal
     choose "Personal choice"
+    click_button "Continue"
+  end
+
+  def then_i_see_the_follow_up_question
+    expect(page).to have_content(
+      "Would you like a member of the team to contact you to discuss alternative options?"
+    )
+  end
+
+  def when_i_answer_no_to_the_follow_up_question_and_continue
+    choose "No"
     click_button "Continue"
   end
 

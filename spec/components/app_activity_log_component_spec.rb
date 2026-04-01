@@ -526,6 +526,101 @@ describe AppActivityLogComponent do
                      programme: "HPV"
   end
 
+  describe "follow-up requested consent" do
+    before do
+      create(
+        :consent,
+        :follow_up_requested,
+        programme: programmes.first,
+        patient:,
+        parent: mum,
+        submitted_at: Time.zone.local(2025, 5, 30, 12)
+      )
+    end
+
+    include_examples "card",
+                     title: "Follow-up requested by Jane Doe (mum)",
+                     date: "30 May 2025 at 12:00pm",
+                     programme: "HPV"
+  end
+
+  describe "follow-up resolved consent (confirmed)" do
+    before do
+      create(
+        :consent,
+        :follow_up_requested,
+        follow_up_requested: false,
+        follow_up_outcome: "confirmed",
+        follow_up_resolved_at: Time.zone.local(2025, 6, 30, 12),
+        programme: programmes.first,
+        patient:,
+        parent: mum,
+        submitted_at: Time.zone.local(2025, 5, 30, 12)
+      )
+    end
+
+    include_examples "card",
+                     title: "Follow-up requested by Jane Doe (mum)",
+                     date: "30 May 2025 at 12:00pm",
+                     programme: "HPV"
+
+    include_examples "card",
+                     title:
+                       "Consent response from Jane Doe (mum) followed-up: " \
+                         "refusal confirmed",
+                     date: "30 June 2025 at 12:00pm",
+                     programme: "HPV"
+  end
+
+  describe "follow-up resolved consent (withdrawn)" do
+    before do
+      create(
+        :consent,
+        :follow_up_requested,
+        follow_up_outcome: "withdrawn",
+        follow_up_resolved_at: Time.zone.local(2025, 6, 30, 12),
+        invalidated_at: Time.zone.local(2025, 6, 30, 12),
+        notes: "Consent given in follow-up discussion.",
+        programme: programmes.first,
+        patient:,
+        parent: mum,
+        submitted_at: Time.zone.local(2025, 5, 30, 12)
+      )
+      create(
+        :consent,
+        :given_verbally,
+        programme: programmes.first,
+        patient:,
+        parent: mum,
+        submitted_at: Time.zone.local(2025, 6, 30, 13)
+      )
+    end
+
+    include_examples "card",
+                     title: "Follow-up requested",
+                     date: "30 May 2025 at 12:00pm",
+                     programme: "HPV"
+
+    include_examples "card",
+                     title:
+                       "Consent response from Jane Doe (mum) followed-up: " \
+                         "refusal withdrawn",
+                     date: "30 June 2025 at 12:00pm",
+                     programme: "HPV"
+
+    include_examples "card",
+                     title: "Consent given by Jane Doe (mum)",
+                     date: "30 June 2025 at 1:00pm",
+                     programme: "HPV"
+
+    it "does not render an 'invalidated' card for the old consent" do
+      expect(rendered).not_to have_css(
+        ".app-timeline__header",
+        text: "Consent from Jane Doe invalidated"
+      )
+    end
+  end
+
   describe "gillick assessments" do
     let(:programmes) { [Programme.td_ipv] }
 

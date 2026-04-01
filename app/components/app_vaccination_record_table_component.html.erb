@@ -2,6 +2,9 @@
 <%= render AppDetailsComponent.new(expander: true, sticky: true, open: @pagy.page > 1) do |c| %>
   <% c.with_summary do %>
     <%= pluralize(@pagy.count, "imported record") %>
+    <% if @pagy.count > @pagy.limit %>
+      (showing <b><%= @pagy.from %></b> to <b><%= @pagy.to %></b>)
+    <% end %>
   <% end %>
   <div class="nhsuk-details__text">
     <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>

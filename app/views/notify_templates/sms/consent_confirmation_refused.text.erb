@@ -4,6 +4,8 @@ template_name: consent_confirmation_refused
 ---
 You have told us you do not want <%= short_patient_name %> to have their <%= vaccination %>.
 
+<% if follow_up_discussion %>You've also asked for someone to contact you about alternative options. A member of our team will be in touch soon.<% end %>
+
 You can give feedback about the 'Give or refuse consent' service by completing our short survey:
 
 https://feedback.digital.nhs.uk/jfe/form/SV_3fICo6frMvUZX1k

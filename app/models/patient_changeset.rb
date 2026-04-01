@@ -205,12 +205,7 @@ class PatientChangeset < ApplicationRecord
       if (existing_patient = existing_patients.first)
         prepare_patient_changes(existing_patient)
       else
-        Patient.new(
-          child_attributes.merge(
-            "home_educated" => false,
-            "patient_locations" => []
-          )
-        )
+        Patient.new(child_attributes.merge("patient_locations" => []))
       end
   end
 
@@ -284,7 +279,6 @@ class PatientChangeset < ApplicationRecord
         end
 
         if patient.new_record? || patient.school != school ||
-             patient.home_educated != home_educated ||
              patient.not_in_team?(team:, academic_year:) ||
              patient.archived?(team:) || patient.school_moves.any?
           school_move =
@@ -320,8 +314,7 @@ class PatientChangeset < ApplicationRecord
     return false unless patient.persisted?
 
     from_known_school =
-      patient.home_educated ||
-        (patient.school && patient.school&.urn != Location::URN_UNKNOWN)
+      patient.school && patient.school&.urn != Location::URN_UNKNOWN
     to_known_school =
       home_educated || (school && school&.urn != Location::URN_UNKNOWN)
 
@@ -529,6 +522,6 @@ class PatientChangeset < ApplicationRecord
   end
 
   def csv_row_number
-    row_number + 2
+    (row_number || 0) + 2
   end
 end

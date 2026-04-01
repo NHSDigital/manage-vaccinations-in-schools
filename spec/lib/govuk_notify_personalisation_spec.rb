@@ -561,6 +561,36 @@ describe GovukNotifyPersonalisation do
       )
     end
 
+    describe "#follow_up_discussion" do
+      subject(:follow_up_discussion) do
+        described_class.new(consent_form:).follow_up_discussion
+      end
+
+      it "is nil when follow_up_requested is not set" do
+        expect(follow_up_discussion).to be_nil
+      end
+
+      context "when follow_up_requested is true" do
+        before do
+          consent_form.consent_form_programmes.update!(
+            follow_up_requested: true
+          )
+        end
+
+        it { should be(true) }
+      end
+
+      context "when follow_up_requested is false" do
+        before do
+          consent_form.consent_form_programmes.update!(
+            follow_up_requested: false
+          )
+        end
+
+        it { should be(false) }
+      end
+    end
+
     context "where the school is different" do
       let(:session) { nil }
       let(:school) { create(:school, name: "Waterloo Road", team:) }

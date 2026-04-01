@@ -122,6 +122,20 @@ describe AppConsentConfirmationComponent do
           "#{consent_form.family_name} to get the HPV vaccination at school"
       )
     end
+
+    context "when follow-up discussion was requested" do
+      before do
+        consent_form.consent_form_programmes.update!(follow_up_requested: true)
+      end
+
+      it { should have_text("You've asked for a follow-up") }
+
+      it "informs the user that someone will be in touch" do
+        expect(rendered).to have_text(
+          "A member of the team will contact you soon to discuss your options."
+        )
+      end
+    end
   end
 
   context "consent refused for MenACWY and Td/IPV" do

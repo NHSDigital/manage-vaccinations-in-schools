@@ -168,6 +168,12 @@ describe AppConsentSummaryComponent do
     end
   end
 
+  context "when showing parent's name" do
+    let(:component) { described_class.new(consent, show_parent_name: true) }
+
+    it { should have_content("Parent#{consent.parent.full_name}") }
+  end
+
   context "when showing email and phone" do
     let(:parent) do
       create(:parent, email: "parent@example.com", phone: "07700900123")

@@ -6,6 +6,7 @@ class CohortImportsController < ApplicationController
   before_action :set_draft_import, only: %i[new create]
   before_action :set_cohort_import,
                 only: %i[show update approve cancel re_review imported_records]
+  before_action :set_open_sections, only: %i[show]
   before_action :set_review_records, only: %i[re_review imported_records]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
@@ -173,27 +174,58 @@ class CohortImportsController < ApplicationController
             :school,
             :patient_locations,
             :archive_reasons,
-            { patient_locations: :location, school: { team_locations: :team } }
+            {
+              patient_locations: :location,
+              school: {
+                team_locations: :team
+              },
+              school_moves: :school_teams
+            }
           ]
         )
         .from_file
         .ready_for_review
         .select(&:inter_team_move?)
-    @new_records = @cohort_import.changesets.ready_for_review.new_patient
+    @inter_team_ids = @inter_team.map(&:id) || []
+    @new_records =
+      pagy(
+        @cohort_import.changesets.ready_for_review.new_patient.order(
+          :row_number
+        ),
+        page_param: :new_records_page
+      )
     @auto_matched_records =
-      @cohort_import.changesets.ready_for_review.auto_match - @inter_team
+      pagy(
+        @cohort_import
+          .changesets
+          .ready_for_review
+          .auto_match
+          .where.not(id: @inter_team_ids)
+          .order(:row_number),
+        page_param: :auto_matched_records_page
+      )
     @import_issues =
-      @cohort_import
-        .changesets
-        .includes(:patient)
-        .ready_for_review
-        .import_issue - @inter_team
+      pagy(
+        @cohort_import
+          .changesets
+          .includes(:patient)
+          .ready_for_review
+          .import_issue
+          .where.not(id: @inter_team_ids)
+          .order(:row_number),
+        page_param: :import_issues_page
+      )
     @school_moves =
-      @cohort_import
-        .changesets
-        .includes(:school, patient: :school)
-        .ready_for_review
-        .with_school_moves - @inter_team
+      pagy(
+        @cohort_import
+          .changesets
+          .includes(:school, patient: :school)
+          .ready_for_review
+          .with_school_moves
+          .where.not(id: @inter_team_ids)
+          .order(:row_number),
+        page_param: :school_moves_page
+      )
     @skipped_school_moves =
       @cohort_import
         .changesets
@@ -203,4 +235,13 @@ class CohortImportsController < ApplicationController
   end
 
   def error_rows_limit = 100
+
+  def set_open_sections
+    @open_sections =
+      params
+        .keys
+        .map { |key| key.match(/(.+)_page/) }
+        .compact
+        .map { |match| match[1].to_sym }
+  end
 end

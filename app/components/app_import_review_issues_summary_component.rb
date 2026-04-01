@@ -49,12 +49,24 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
         <% end %>
       <% end %>
     <% end %>
+    <% if @pagy %>
+      <%= render AppPaginationComponent.new(pagy: @pagy, anchor: @anchor) if has_results? %>
+    <% end %>
   ERB
 
-  def initialize(import: nil, records: nil, review_screen: true)
+  def initialize(
+    import: nil,
+    records: nil,
+    pagy: nil,
+    anchor: nil,
+    review_screen: true
+  )
     @import = import
-    @records = Array(records).sort_by { it.try(:row_number) || 0 }
     @review_screen = review_screen
+    @records =
+      (pagy ? records : Array(records).sort_by { it.try(:row_number) || 0 })
+    @pagy = pagy
+    @anchor = anchor
   end
 
   private
@@ -140,4 +152,6 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
       )
     end
   end
+
+  def has_results? = @pagy&.count&.positive?
 end

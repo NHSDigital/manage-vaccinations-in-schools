@@ -76,7 +76,6 @@ class Patients::EditController < Patients::BaseController
   end
 
   def update_school
-    @patient.home_educated = nil
     @patient.school_id = school_id
 
     redirect_to edit_patient_path(@patient) and return unless @patient.changed?

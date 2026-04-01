@@ -40,6 +40,8 @@ class DraftConsent
   attribute :triage_notes, :string
   attribute :triage_status_option, :string
   attribute :vaccine_methods, array: true, default: []
+  attribute :follow_up_consent_id, :integer
+  attribute :follow_up_flow, :boolean, default: false
   attribute :vaccine_stock_is_available, :boolean
   attribute :without_gelatine, :boolean
 
@@ -52,7 +54,7 @@ class DraftConsent
 
   def wizard_steps
     [
-      :who,
+      (:who unless follow_up_flow?),
       (:parent_details unless via_self_consent?),
       (:route unless via_self_consent?),
       (:mmrv_vaccine_availability if eligible_for_mmrv?),
@@ -340,6 +342,8 @@ class DraftConsent
       triage_form.status_option = triage_status_option
     end
   end
+
+  def follow_up_flow? = follow_up_flow == true
 
   def via_self_consent? = route == "self_consent"
 

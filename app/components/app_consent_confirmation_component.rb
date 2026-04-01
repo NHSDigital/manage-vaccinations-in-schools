@@ -18,6 +18,8 @@ class AppConsentConfirmationComponent < ViewComponent::Base
       else
         "Consent for the #{given_vaccinations} confirmed"
       end
+    elsif follow_up_requested?
+      "You've asked for a follow-up"
     else
       "Consent refused"
     end
@@ -37,6 +39,10 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   def full_name = consent_form.full_name(context: :parents)
 
+  def follow_up_requested?
+    refused_consent_form_programmes.any?(&:follow_up_requested?)
+  end
+
   def panel_text
     location = (consent_form.education_setting_school? ? " at school" : "")
 
@@ -51,6 +57,8 @@ class AppConsentConfirmationComponent < ViewComponent::Base
         "#{full_name} is due to get the #{given_vaccinations}#{location}" +
           (dates.present? ? " on #{dates}" : "")
       end
+    elsif follow_up_requested?
+      "A member of the team will contact you soon to discuss your options."
     else
       "You’ve told us that you do not want #{full_name} to get the" \
         " #{refused_vaccinations}#{location}"

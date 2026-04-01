@@ -19,7 +19,6 @@
 #  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
 #  given_name                 :string           not null
-#  home_educated              :boolean
 #  invalidated_at             :datetime
 #  local_authority_mhclg_code :string
 #  nhs_number                 :string
@@ -640,7 +639,7 @@ describe Patient do
       subject(:patient) { build(:patient, gp_practice: create(:school)) }
 
       it "is invalid" do
-        expect(patient.valid?).to be(false)
+        expect(patient).not_to be_valid
         expect(patient.errors[:gp_practice]).to include(
           "must be a GP practice location type"
         )
@@ -651,7 +650,7 @@ describe Patient do
       subject(:patient) { build(:patient, school: create(:community_clinic)) }
 
       it "is invalid" do
-        expect(patient.valid?).to be(false)
+        expect(patient).not_to be_valid
         expect(patient.errors[:school]).to include(
           "must be a school location type"
         )
@@ -1311,7 +1310,7 @@ describe Patient do
       end
     end
 
-    context "when the old patient has a school move to a school" do
+    context "when the old patient has school moves" do
       let(:team) { create(:team) }
       let(:school) { create(:school, team:) }
 
@@ -1327,48 +1326,6 @@ describe Patient do
         expect(new_patient.patient_teams.first.team_id).to eq(team.id)
         expect(new_patient.patient_teams.first.sources).to contain_exactly(
           "school_move_school"
-        )
-      end
-    end
-
-    context "when the old patient has a school move to an unknown school" do
-      let(:team) { create(:team) }
-
-      before do
-        create(:school_move, :to_unknown_school, patient: old_patient, team:)
-      end
-
-      it "adds any school moves from the old patient" do
-        expect(new_patient.school_moves.size).to eq(1)
-        expect(new_patient.school_moves.first.home_educated).to be(false)
-      end
-
-      it "adds the new patient to the teams" do
-        expect(new_patient.patient_teams.size).to eq(1)
-        expect(new_patient.patient_teams.first.team_id).to eq(team.id)
-        expect(new_patient.patient_teams.first.sources).to contain_exactly(
-          "school_move_team"
-        )
-      end
-    end
-
-    context "when the old patient has a school move to home-schooled" do
-      let(:team) { create(:team) }
-
-      before do
-        create(:school_move, :to_home_educated, patient: old_patient, team:)
-      end
-
-      it "adds any school moves from the old patient" do
-        expect(new_patient.school_moves.size).to eq(1)
-        expect(new_patient.school_moves.first.home_educated).to be(true)
-      end
-
-      it "adds the new patient to the teams" do
-        expect(new_patient.patient_teams.size).to eq(1)
-        expect(new_patient.patient_teams.first.team_id).to eq(team.id)
-        expect(new_patient.patient_teams.first.sources).to contain_exactly(
-          "school_move_team"
         )
       end
     end

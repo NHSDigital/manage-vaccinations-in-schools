@@ -10,6 +10,29 @@ describe ConsentsHelper do
     end
   end
 
+  describe "#consent_response_tag" do
+    subject(:tag_html) { helper.consent_response_tag(consent) }
+
+    context "with a follow_up_requested consent" do
+      let(:consent) { build(:consent, :follow_up_requested) }
+
+      it { should include("Follow-up requested") }
+      it { should include("nhsuk-tag--orange") }
+    end
+
+    context "with a given consent" do
+      let(:consent) { build(:consent) }
+
+      it { should include("nhsuk-tag--green") }
+    end
+
+    context "with a refused consent" do
+      let(:consent) { build(:consent, :refused) }
+
+      it { should include("nhsuk-tag--red") }
+    end
+  end
+
   describe "#refusal_reason_label" do
     context "consent record" do
       let(:consent) { build(:consent, programme:) }

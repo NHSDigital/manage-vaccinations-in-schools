@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppImportReviewComponent < ViewComponent::Base
+  include Pagy::Backend
+
   def initialize(
     import:,
     inter_team:,
@@ -8,24 +10,26 @@ class AppImportReviewComponent < ViewComponent::Base
     auto_matched_records:,
     import_issues:,
     school_moves:,
-    skipped_school_moves: []
+    skipped_school_moves: [],
+    open_sections: []
   )
     @import = import
     @inter_team = inter_team.sort_by(&:row_number)
     @inter_team_import_issues =
       @inter_team.select { it.record_type == "import_issue" }
-    @new_records = new_records.sort_by(&:row_number)
-    @auto_matched_records = auto_matched_records.sort_by(&:row_number)
-    @import_issues = import_issues.sort_by(&:row_number)
-    @school_moves = school_moves
+    @new_records_pagy, @new_records = new_records
+    @auto_matched_records_pagy, @auto_matched_records = auto_matched_records
+    @import_issues_pagy, @import_issues = import_issues
+    @school_moves_pagy, @school_moves = school_moves
     @school_moves_from_file = @school_moves.reject { it.row_number.nil? }
     @skipped_school_moves = skipped_school_moves.sort_by(&:row_number)
+    @open_sections = open_sections
   end
 
   private
 
   def new_records_message
-    count = @new_records.count
+    count = @new_records_pagy.count
     "This upload includes #{pluralize(count, "new record")} that " \
       "#{count > 1 ? "are" : "is"} not currently in Mavis. " \
       "If you approve the upload, " \
@@ -33,7 +37,7 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def auto_matched_message
-    count = @auto_matched_records.count
+    count = @auto_matched_records_pagy.count
     "This upload includes #{pluralize(count, "record")} that already " \
       "#{count > 1 ? "exist" : "exists"} in Mavis. " \
       "You do not need to remove #{count > 1 ? "these" : "this"} from your CSV file. " \
@@ -42,7 +46,7 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def import_issues_message
-    count = @import_issues.count
+    count = @import_issues_pagy.count
     "This upload includes #{pluralize(count, "record")} that " \
       "#{count > 1 ? "are close matches to existing records" : "is a close match to an existing record"} " \
       "in Mavis. If you approve the upload, you will need to resolve " \
@@ -58,7 +62,7 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def school_moves_message
-    count = @school_moves.count
+    count = @school_moves_pagy.count
     if @import.is_a?(ClassImport)
       "This upload will change the school of the #{count > 1 ? "children" : "child"} listed below. " \
         "Children present in the class list will be moved into the school, and those who are not in the " \
@@ -79,8 +83,9 @@ class AppImportReviewComponent < ViewComponent::Base
   end
 
   def show_cancel_button?
-    @new_records.any? || @auto_matched_records.any? || @import_issues.any? ||
-      @school_moves_from_file.any?
+    @new_records_pagy.count.positive? ||
+      @auto_matched_records_pagy.count.positive? ||
+      @import_issues_pagy.count.positive? || @school_moves_from_file.any?
   end
 
   def cancel_button_text

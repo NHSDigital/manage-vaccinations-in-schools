@@ -48,9 +48,10 @@ class PatientStatusUpdater < PatientScopedUpdater
         :patient,
         :patient_locations,
         :triages,
-        :vaccination_records
+        :vaccination_records,
+        :parents
       )
-      .find_in_batches(batch_size: 10_000) do |batch|
+      .find_in_batches do |batch|
         batch.each(&:assign)
 
         Patient::ProgrammeStatus.import!(

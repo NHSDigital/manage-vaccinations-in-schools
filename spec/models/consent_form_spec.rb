@@ -1026,10 +1026,6 @@ describe ConsentForm do
         expect { match_with_patient! }.not_to change(patient, :school)
       end
 
-      it "doesn't change the patient's home educated status" do
-        expect { match_with_patient! }.not_to change(patient, :home_educated)
-      end
-
       it "creates a school move" do
         expect { match_with_patient! }.to change(
           patient.school_moves,
@@ -1061,10 +1057,6 @@ describe ConsentForm do
 
       it "doesn't change the patient's school" do
         expect { match_with_patient! }.not_to change(patient, :school)
-      end
-
-      it "changes the patient's home educated status" do
-        expect { match_with_patient! }.not_to change(patient, :home_educated)
       end
 
       it "creates a school move" do

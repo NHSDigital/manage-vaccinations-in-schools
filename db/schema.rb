@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -235,6 +235,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
   create_table "consent_form_programmes", force: :cascade do |t|
     t.bigint "consent_form_id", null: false
     t.enum "disease_types", array: true, enum_type: "disease_type"
+    t.boolean "follow_up_requested"
     t.text "notes", default: "", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"
@@ -308,6 +309,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
     t.bigint "consent_form_id"
     t.datetime "created_at", null: false
     t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
+    t.integer "follow_up_outcome"
+    t.boolean "follow_up_requested"
+    t.datetime "follow_up_resolved_at"
     t.jsonb "health_answers", default: [], null: false
     t.datetime "invalidated_at"
     t.text "notes", default: "", null: false
@@ -524,7 +528,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
     t.text "address_line_2"
     t.text "address_postcode"
     t.text "address_town"
-    t.text "alternative_name"
     t.datetime "created_at", null: false
     t.integer "gias_establishment_number"
     t.integer "gias_local_authority_code"
@@ -1019,7 +1022,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
     t.string "performed_ods_code"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "protocol"
-    t.datetime "reported_at"
     t.bigint "reported_by_id"
     t.bigint "session_id"
     t.integer "source", null: false
@@ -1219,16 +1221,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_153818) do
       COALESCE(la.mhclg_code, pat.local_authority_mhclg_code, 'UNKNOWN'::character varying) AS patient_local_authority_code,
       COALESCE(la.official_name, pat_la.official_name, 'Unknown Local Authority'::character varying) AS patient_local_authority_official_name,
       COALESCE(la.mhclg_code, ''::character varying) AS patient_school_local_authority_code,
-          CASE
-              WHEN (school.urn IS NOT NULL) THEN school.urn
-              WHEN (pat.home_educated = true) THEN '999999'::character varying
-              ELSE '888888'::character varying
-          END AS patient_school_urn,
-          CASE
-              WHEN (school.name IS NOT NULL) THEN school.name
-              WHEN (pat.home_educated = true) THEN 'Home-schooled'::text
-              ELSE 'Unknown school'::text
-          END AS patient_school_name,
+      COALESCE(school.urn, '888888'::character varying) AS patient_school_urn,
+      COALESCE(school.name, 'Unknown school'::text) AS patient_school_name,
       (ar.patient_id IS NOT NULL) AS is_archived,
       (EXISTS ( SELECT 1
              FROM consents con

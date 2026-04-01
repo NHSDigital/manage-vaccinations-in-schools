@@ -38,6 +38,9 @@ describe "Parental consent" do
     then_i_see_the_consent_form
 
     when_i_refuse_consent
+    then_i_see_the_follow_up_question
+
+    when_i_answer_no_to_the_follow_up_question_and_continue
     then_i_see_the_check_and_confirm_page
     and_i_see_the_refusal_reason_on_the_check_and_confirm_page
 
@@ -145,6 +148,20 @@ describe "Parental consent" do
 
     # Resaon for refusal
     choose "I’m concerned the vaccine contains gelatine"
+    click_button "Continue"
+  end
+
+  def then_i_see_the_follow_up_question
+    expect(page).to have_content(
+      "Would you like a member of the team to contact you to discuss alternative options?"
+    )
+    expect(page).to have_content(
+      "For example, it may be possible to use a vaccine that does not contain gelatine."
+    )
+  end
+
+  def when_i_answer_no_to_the_follow_up_question_and_continue
+    choose "No"
     click_button "Continue"
   end
 

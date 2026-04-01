@@ -166,6 +166,8 @@ module CSVImportable
     return if invalid?
 
     process_import!
+
+    TeamCachedCounts.new(team).reset_import_issues!
   end
 
   def remove!

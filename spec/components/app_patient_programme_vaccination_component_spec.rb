@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
-describe AppPatientProgrammeVaccinationCardComponent do
+describe AppPatientProgrammeVaccinationComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) do
-    described_class.new(patient, academic_year:, programme:, show_caption:)
-  end
+  let(:component) { described_class.new(patient, programme, academic_year:) }
 
   let(:patient) { create(:patient) }
   let(:academic_year) { 2023 }
   let(:programme) { Programme.hpv }
-  let(:show_caption) { false }
 
   it { should have_css(".nhsuk-card__heading", text: "No vaccination record") }
   it { should_not have_css(".nhsuk-table") }

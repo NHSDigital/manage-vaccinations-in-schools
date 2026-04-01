@@ -183,8 +183,8 @@ describe API::Reporting::TotalsController do
         performed_at: Time.current
       )
 
-      create(:patient, session:, school: nil, home_educated: true)
-      create(:patient, session:, school: nil, home_educated: false)
+      create(:patient, session:, school: team.home_educated_school)
+      create(:patient, session:, school: team.unknown_school)
 
       refresh_reporting_views!
 
@@ -209,7 +209,7 @@ describe API::Reporting::TotalsController do
       expect(school_two_data["vaccinated"]).to eq(1)
       expect(school_two_data["not_vaccinated"]).to eq(0)
 
-      expect(home_educated_data["school_name"]).to eq("Home-schooled")
+      expect(home_educated_data["school_name"]).to eq("Home-educated")
       expect(home_educated_data["cohort"]).to eq(1)
       expect(home_educated_data["vaccinated"]).to eq(0)
       expect(home_educated_data["not_vaccinated"]).to eq(1)
@@ -228,15 +228,35 @@ describe API::Reporting::TotalsController do
 
       school = create(:school, name: "Test School", urn: "123456")
 
-      patient1 = create(:patient, session:, school:, year_group: 8)
+      patient1 =
+        create(
+          :patient,
+          session:,
+          school:,
+          year_group: 8,
+          parents: [create(:parent)]
+        )
       create(:consent, :given, patient: patient1, programme:, team:)
       PatientStatusUpdater.call(patient: patient1)
 
-      patient2 = create(:patient, session:, school:, year_group: 8)
+      patient2 =
+        create(
+          :patient,
+          session:,
+          school:,
+          year_group: 8,
+          parents: [create(:parent)]
+        )
       create(:consent, :refused, patient: patient2, programme:, team:)
       PatientStatusUpdater.call(patient: patient2)
 
-      create(:patient, session:, school:, year_group: 8)
+      create(
+        :patient,
+        session:,
+        school:,
+        year_group: 8,
+        parents: [create(:parent)]
+      )
 
       refresh_reporting_views!
 
@@ -356,8 +376,7 @@ describe API::Reporting::TotalsController do
       create(
         :patient,
         session:,
-        school: nil,
-        home_educated: true,
+        school: team.home_educated_school,
         local_authority_mhclg_code: nil
       )
 
@@ -365,8 +384,7 @@ describe API::Reporting::TotalsController do
       create(
         :patient,
         session:,
-        school: nil,
-        home_educated: false,
+        school: team.unknown_school,
         local_authority_mhclg_code: nil
       )
 
@@ -1053,7 +1071,7 @@ describe API::Reporting::TotalsController do
     end
 
     it "counts children with no consent response" do
-      create(:patient, session: hpv_session)
+      create(:patient, session: hpv_session, parents: [create(:parent)])
 
       refresh_and_get_totals
 

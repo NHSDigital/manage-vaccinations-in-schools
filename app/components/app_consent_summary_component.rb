@@ -6,6 +6,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
     change_links: {},
     show_email_address: false,
     show_notes: false,
+    show_parent_name: false,
     show_notify_parent: false,
     show_phone_number: false,
     show_programme: false,
@@ -15,6 +16,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
     @change_links = change_links
     @show_email_address = show_email_address
     @show_notes = show_notes
+    @show_parent_name = show_parent_name
     @show_notify_parent = show_notify_parent
     @show_phone_number = show_phone_number
     @show_programme = show_programme
@@ -27,6 +29,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
 
   attr_reader :consent,
               :change_links,
+              :show_parent_name,
               :show_phone_number,
               :show_email_address,
               :show_programme,
@@ -37,12 +40,14 @@ class AppConsentSummaryComponent < ViewComponent::Base
   delegate :programme, to: :consent
   delegate :consent_response_tag,
            :govuk_summary_list,
+           :consent_parent_name,
            :consent_parent_email,
            :consent_parent_phone,
            to: :helpers
 
   def rows
     [
+      parent_name_row,
       phone_number_row,
       email_address_row,
       programme_row,
@@ -55,6 +60,12 @@ class AppConsentSummaryComponent < ViewComponent::Base
       notify_parent_on_refusal_row,
       notes_row
     ].compact
+  end
+
+  def parent_name_row
+    if show_parent_name && (name = consent_parent_name(consent)).present?
+      { key: { text: "Parent" }, value: { text: name } }
+    end
   end
 
   def phone_number_row

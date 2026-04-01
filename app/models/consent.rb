@@ -7,6 +7,9 @@
 #  id                                              :bigint           not null, primary key
 #  academic_year                                   :integer          not null
 #  disease_types                                   :enum             not null, is an Array
+#  follow_up_outcome                               :integer
+#  follow_up_requested                             :boolean
+#  follow_up_resolved_at                           :datetime
 #  health_answers                                  :jsonb            not null
 #  invalidated_at                                  :datetime
 #  notes                                           :text             default(""), not null
@@ -94,6 +97,12 @@ class Consent < ApplicationRecord
        { website: 0, phone: 1, paper: 2, in_person: 3, self_consent: 4 },
        prefix: "via",
        validate: true
+  enum :follow_up_outcome,
+       { confirmed: 0, withdrawn: 1 },
+       prefix: :follow_up,
+       validate: {
+         allow_nil: true
+       }
 
   validates :parent, presence: true, unless: :via_self_consent?
   validates :recorded_by,
@@ -134,6 +143,12 @@ class Consent < ApplicationRecord
   def can_invalidate?
     not_invalidated?
   end
+
+  def can_follow_up?
+    not_invalidated? && refusal_with_follow_up?
+  end
+
+  def follow_up_resolved? = follow_up_resolved_at.present?
 
   def responded_at
     invalidated_at || withdrawn_at || submitted_at
@@ -201,6 +216,7 @@ class Consent < ApplicationRecord
             academic_year: consent_form.academic_year,
             consent_form:,
             disease_types: consent_form_programme.disease_types,
+            follow_up_requested: consent_form_programme.follow_up_requested,
             health_answers: consent_form.health_answers,
             notes: consent_form_programme.notes,
             parent:,
@@ -239,6 +255,23 @@ class Consent < ApplicationRecord
         notify_parents:
           VaccinationNotificationCriteria.call(vaccination_record:)
       )
+    end
+  end
+
+  def resolve_follow_up!(outcome:, notes: nil, invalidate: false)
+    ActiveRecord::Base.transaction do
+      attrs = {
+        follow_up_requested: false,
+        follow_up_outcome: outcome,
+        follow_up_resolved_at: Time.current
+      }
+
+      attrs[:invalidated_at] = Time.current if invalidate
+      attrs[:notes] = notes if notes.present?
+
+      update!(attrs)
+
+      PatientStatusUpdater.call(patient: patient)
     end
   end
 

@@ -51,7 +51,7 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: ":rotating_light: *Continuous Deployment failed* :rotating_light:\n\n \
+                  text: ":rotating_light: *Continuous Deployment failed* :rotating_light:\nPull request merged by: <https://github.com/${{ github.actor }}|${{ github.actor }}>\n\n \
                           <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
           # yamllint enable rule:line-length
       - name: Send Slack notification about failed E2E tests
@@ -68,6 +68,6 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: ":rotating_light: *E2E tests failed on next* :rotating_light:\n\n \
+                  text: ":rotating_light: *E2E tests failed on next* :rotating_light:\nPull request merged by: <https://github.com/${{ github.actor }}|${{ github.actor }}>\n\n \
                           <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
           # yamllint enable rule:line-length

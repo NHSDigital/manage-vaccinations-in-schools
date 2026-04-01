@@ -13,10 +13,14 @@
       <% end %>
     <% elsif consent_status_value == :conflicts %>
       <p>You can only vaccinate if all respondents give consent.</p>
+    <% elsif consent_status_value == :follow_up_requested %>
+      <p><%= who_refused %> would like to speak to a member of the team about other options for their child's vaccination.</p>
     <% elsif consent_status_value == :refused %>
       <p><%= who_refused %> refused to give consent.</p>
     <% elsif consent_status_generator.status == :given %>
       <p><%= patient.full_name %> is ready for the vaccinator.</p>
+    <% elsif consent_status_value == :no_contact_details %>
+      <p>We cannot send consent requests because we have no parent contact details.</p>
     <% end %>
 
     <div class="nhsuk-button-group">

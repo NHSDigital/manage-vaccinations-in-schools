@@ -73,6 +73,16 @@
                               href: change_link["reason-for-refusal"],
                               visually_hidden_text: "reason for refusal")
             end
+          
+            if @consent_form.qualifies_for_follow_up_discussion?
+              summary_list.with_row do |row|
+                row.with_key { "Discuss options" }
+                row.with_value { @consent_form.follow_up_requested ? "Yes" : "No" }
+                row.with_action(text: "Change",
+                                href: change_link["follow-up-discussion"],
+                                visually_hidden_text: "follow-up request")
+              end
+            end
           end %>
     <% end %>
   <% end %>

@@ -179,7 +179,7 @@ describe "mavis teams onboard" do
   end
 
   def then_i_see_an_error_message
-    expect(@output).to include("Programmes can't be blank")
+    expect(@output).to include("Programmes Choose at least one programme")
     expect(@output).to include(
       "Schools URN(s) 456789 cannot appear as both a regular school and a site"
     )

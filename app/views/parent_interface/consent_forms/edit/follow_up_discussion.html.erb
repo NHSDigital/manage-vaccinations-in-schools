@@ -1,0 +1,26 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: backlink_path) %>
+<% end %>
+
+<% legend = "Would you like a member of the team to contact you to discuss alternative options?" %>
+<% content_for :page_title, legend %>
+
+<% hint = case @consent_form.reason_for_refusal
+     when "contains_gelatine"
+       "For example, it may be possible to use a vaccine that does not contain gelatine."
+     when "medical_reasons"
+       "We understand alternatives might not be suitable in some cases."
+     end %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.mavis_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :follow_up_requested,
+                                     legend: { size: "l", text: legend, tag: "h1" },
+                                     hint: hint.present? ? { text: hint } : nil do %>
+    <%= f.govuk_radio_button :follow_up_requested, :true, label: { text: "Yes, I would like someone to contact me" }, link_errors: true %>
+    <%= f.govuk_radio_button :follow_up_requested, :false, label: { text: "No" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

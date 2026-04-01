@@ -102,6 +102,12 @@ describe "Triage" do
     fill_in "Give details", with: "They have a weakened immune system"
     click_on "Continue"
 
+    expect(page).to have_content(
+      "Would you like a member of the team to contact you to discuss alternative options?"
+    )
+    choose "No"
+    click_on "Continue"
+
     click_on "Confirm"
   end
 

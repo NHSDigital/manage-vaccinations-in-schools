@@ -244,10 +244,7 @@ class AppChildSummaryComponent < ViewComponent::Base
   end
 
   def format_school
-    highlight_if(
-      patient_school(@child),
-      @child.school_id_changed? || @child.home_educated_changed?
-    )
+    highlight_if(patient_school(@child), @child.school_id_changed?)
   end
 
   def format_year_group

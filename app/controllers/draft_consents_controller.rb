@@ -42,7 +42,10 @@ class DraftConsentsController < ApplicationController
 
     @draft_consent.seed_health_questions if current_step == :agree
 
-    jump_to("confirm") if @draft_consent.editing? && current_step != :confirm
+    if @draft_consent.editing? && !@draft_consent.follow_up_flow? &&
+         current_step != :confirm
+      jump_to("confirm")
+    end
 
     reload_steps
 
@@ -80,6 +83,15 @@ class DraftConsentsController < ApplicationController
       @consent.update_vaccination_records_no_notify!
 
       PatientStatusUpdater.call(patient: @patient)
+    end
+
+    if (old_consent_id = @draft_consent.follow_up_consent_id)
+      Consent.find(old_consent_id).resolve_follow_up!(
+        outcome: :withdrawn,
+        notes:
+          "#{@draft_consent.human_enum_name(:response)} in follow-up discussion.",
+        invalidate: true
+      )
     end
 
     if @draft_consent.send_confirmation?

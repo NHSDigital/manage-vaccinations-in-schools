@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
-class AppPatientProgrammeVaccinationCardComponent < ViewComponent::Base
-  def initialize(patient, academic_year:, programme: nil, show_caption: false)
+class AppPatientProgrammeVaccinationComponent < ViewComponent::Base
+  def initialize(patient, programme, academic_year:)
     @patient = patient
-    @academic_year = academic_year
     @programme = programme
-    @show_caption = show_caption
+    @academic_year = academic_year
   end
 
   private
 
-  attr_reader :patient, :academic_year, :programme, :show_caption
+  attr_reader :patient, :programme, :academic_year
 
   delegate :govuk_button_to,
            :govuk_table,
            :policy,
            :vaccination_record_source,
            to: :helpers
+
+  def programme_type = programme.type
 
   def vaccination_records
     patient

@@ -57,6 +57,24 @@ shared_examples_for "a CSVImportable model" do
         ).from(nil).to(today)
       end
     end
+
+    it "resets import issues in team cached counts" do
+      team_cached_counts =
+        instance_double(TeamCachedCounts, reset_import_issues!: true)
+
+      allow(TeamCachedCounts).to receive(:new).with(subject.team).and_return(
+        team_cached_counts
+      )
+
+      if subject.is_a?(ImmunisationImport)
+        travel_to(today) { subject.process! }
+      else
+        subject.process!
+      end
+
+      expect(TeamCachedCounts).to have_received(:new).with(subject.team)
+      expect(team_cached_counts).to have_received(:reset_import_issues!)
+    end
   end
 
   describe "#remove!" do

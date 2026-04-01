@@ -25,6 +25,11 @@ en:
     zero: No children to register
     one: 1 child to register
     other: "%{count} children to register"
+  children_with_follow_up_requested:
+    title: Follow-up requested
+    zero: No children with follow-up requests
+    one: 1 child with follow-up request
+    other: "%{count} children with follow-up requests"
   children_with_conflicting_consent_response:
     title: Conflicting consent
     zero: No children with conflicting responses

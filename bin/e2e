@@ -7,7 +7,7 @@ RAILS_PORT="4100"
 HEALTH_CHECK_URL="http://localhost:${RAILS_PORT}/up"
 MAVIS_TEST_REPO="${MAVIS_TEST_REPO:-"../manage-vaccinations-in-schools-testing"}"
 E2E_REDIS_URL="redis://localhost:6380/0"
-PYTEST_ARGS=("-m" "not accessibility and not reporting and not imms_api")
+PYTEST_ARGS=("-m" "not accessibility and not reporting and not imms_api and not pds_api")
 
 # Argument handling
 
@@ -206,7 +206,7 @@ pushd "$MAVIS_TEST_REPO" > /dev/null
 
 echo "[e2e] Running end-to-end tests:"
 echo "[e2e]   BASE_URL=\"http://localhost:${RAILS_PORT}\" uv run pytest ${PYTEST_ARGS[*]}"
-BASE_URL="http://localhost:${RAILS_PORT}" uv run pytest -m "not accessibility and not reporting and not imms_api" "${PYTEST_ARGS[@]}"
+BASE_URL="http://localhost:${RAILS_PORT}" uv run pytest -m "not accessibility and not reporting and not imms_api and not pds_api" "${PYTEST_ARGS[@]}"
 PYTEST_EXIT_CODE=$?
 
 popd > /dev/null

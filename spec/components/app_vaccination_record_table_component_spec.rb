@@ -29,8 +29,9 @@ describe AppVaccinationRecordTableComponent do
           create(:session, programmes: [programme], date: Date.new(2020, 9, 1))
       )
     ] + create_list(:vaccination_record, 4, programme:) +
-      create_list(:vaccination_record, 5, :not_administered, programme:)
+      create_list(:vaccination_record, count - 5, :not_administered, programme:)
   end
+  let(:count) { 10 }
 
   let(:pagination_result) { pagy_array(all_vaccination_records, page: 1) }
   let(:vaccination_records) { pagination_result[1] }
@@ -71,7 +72,7 @@ describe AppVaccinationRecordTableComponent do
   it "renders the rows" do
     expect(rendered).to have_css(
       ".nhsuk-table__body .nhsuk-table__row",
-      count: 10,
+      count: count,
       visible: :hidden
     )
     expect(rendered).to have_css(
@@ -95,6 +96,26 @@ describe AppVaccinationRecordTableComponent do
       text: "1 September 2020",
       visible: :hidden
     )
+  end
+
+  it "does not render pagination summary text" do
+    expect(rendered).not_to have_content("showing 1 to 10")
+  end
+
+  context "with paginated results" do
+    let(:count) { 55 }
+
+    it "renders 50 rows of data" do
+      expect(rendered).to have_css(
+        ".nhsuk-table__body .nhsuk-table__row",
+        count: 50,
+        visible: :hidden
+      )
+    end
+
+    it "renders pagination summary text" do
+      expect(rendered).to have_content("showing 1 to 50")
+    end
   end
 
   context "with a vaccination record not performed by the team" do

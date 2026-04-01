@@ -1,0 +1,16 @@
+name: Prevent merging in to main
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ensure-source-is-next:
+    name: Ensure source branch is next
+    runs-on: ubuntu-latest
+    if: github.head_ref == 'next'
+    steps:
+      - run: echo "Pull request can be merged in to main"

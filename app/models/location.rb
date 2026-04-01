@@ -32,7 +32,6 @@
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
 class Location < ApplicationRecord
-  self.ignored_columns = %w[alternative_name]
   self.inheritance_column = nil
 
   include AddressConcern

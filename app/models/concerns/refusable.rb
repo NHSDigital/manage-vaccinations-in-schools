@@ -32,6 +32,10 @@ module Refusable
               unless: :can_have_reason_for_refusal?
   end
 
+  def hard_refusal? = response_refused? && !follow_up_requested?
+
+  def refusal_with_follow_up? = response_refused? && follow_up_requested?
+
   def requires_reason_for_refusal?
     response_refused?
   end

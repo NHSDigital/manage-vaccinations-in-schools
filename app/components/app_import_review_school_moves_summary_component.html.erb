@@ -54,3 +54,6 @@
     <% end %>
   <% end %>
 <% end %>
+<% if @pagy %>
+  <%= render AppPaginationComponent.new(pagy: @pagy, anchor: @anchor) if has_results? %>
+<% end %>

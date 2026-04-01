@@ -26,7 +26,7 @@ describe AppPatientTableComponent do
         date_of_birth: Date.new(2000, 5, 28),
         address_postcode: "SW1B 1AA"
       )
-    ] + create_list(:patient, 8)
+    ] + create_list(:patient, count - 2)
   end
 
   let(:pagination_result) { pagy_array(all_patients, page: 1) }
@@ -98,6 +98,26 @@ describe AppPatientTableComponent do
 
   it "doesn't show postcode of restricted patients" do
     expect(rendered).not_to have_text("SW1B 1AA")
+  end
+
+  it "does not render pagination summary text" do
+    expect(rendered).not_to have_content("showing 1 to 10")
+  end
+
+  context "with paginated results" do
+    let(:count) { 55 }
+
+    it "renders 50 rows of data" do
+      expect(rendered).to have_css(
+        ".nhsuk-table__body .nhsuk-table__row",
+        count: 50,
+        visible: :hidden
+      )
+    end
+
+    it "renders pagination summary text" do
+      expect(rendered).to have_content("showing 1 to 50")
+    end
   end
 
   context "with a patient not in the cohort" do

@@ -6,13 +6,15 @@ class StatusGenerator::Consent
     academic_year:,
     patient:,
     consents:,
-    vaccination_records:
+    vaccination_records:,
+    parents:
   )
     @programme_type = programme_type
     @academic_year = academic_year
     @patient = patient
     @consents = consents
     @vaccination_records = vaccination_records
+    @parents = parents
   end
 
   def programme
@@ -24,8 +26,12 @@ class StatusGenerator::Consent
       :given
     elsif status_should_be_refused?
       :refused
+    elsif status_should_be_follow_up_requested?
+      :follow_up_requested
     elsif status_should_be_conflicts?
       :conflicts
+    elsif status_should_be_no_contact_details?
+      :no_contact_details
     elsif status_should_be_no_response?
       :no_response
     else
@@ -55,7 +61,8 @@ class StatusGenerator::Consent
               :academic_year,
               :patient,
               :consents,
-              :vaccination_records
+              :vaccination_records,
+              :parents
 
   def vaccinated?
     return @vaccinated if defined?(@vaccinated)
@@ -84,7 +91,18 @@ class StatusGenerator::Consent
   def status_should_be_refused?
     return false if vaccinated?
 
-    latest_consents.any? && latest_consents.all?(&:response_refused?)
+    latest_consents.any? && latest_consents.all?(&:hard_refusal?)
+  end
+
+  def status_should_be_follow_up_requested?
+    return false if vaccinated?
+
+    # Follow-up is the outcome when there are no outright refusals and at least
+    # one consent has follow_up_requested — including the case where one parent
+    # has given consent and another has asked for a follow-up discussion,
+    # because that discussion could change the outcome to :given.
+    consents_for_status.any? && consents_for_status.none?(&:hard_refusal?) &&
+      consents_for_status.any?(&:refusal_with_follow_up?)
   end
 
   def status_should_be_conflicts?
@@ -93,16 +111,25 @@ class StatusGenerator::Consent
     consents_for_status =
       (self_consents.any? ? self_consents : parental_consents)
 
-    if consents_for_status.any?(&:response_refused?) &&
-         consents_for_status.any?(&:response_given?)
-      return true
-    end
+    has_given = consents_for_status.any?(&:response_given?)
+    has_hard_refusal = consents_for_status.any?(&:hard_refusal?)
+    has_follow_up = consents_for_status.any?(&:refusal_with_follow_up?)
+
+    return true if has_given && has_hard_refusal
+
+    # hard refusal + follow_up is a conflict: even if the follow-up
+    # resolves to given, the outstanding refusal remains unresolved
+    return true if has_hard_refusal && has_follow_up
 
     consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
       (agreed_vaccine_methods.blank? || conflicting_disease_types?)
   end
 
   def status_should_be_no_response? = !vaccinated?
+
+  def status_should_be_no_contact_details?
+    parents.none?(&:contactable?)
+  end
 
   def agreed_vaccine_methods
     @agreed_vaccine_methods ||=

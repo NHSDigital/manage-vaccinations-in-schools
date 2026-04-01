@@ -186,7 +186,9 @@ class Notifier::Patient
       raise "Either session or team_location must be set."
     end
 
-    team = session&.team || team_location&.team
+    team_location ||= session.team_location
+
+    team = team_location.team
 
     return unless send_notification?(team:)
 
@@ -205,7 +207,7 @@ class Notifier::Patient
         sent_by:
       )
 
-    location = session&.location || team_location&.location
+    location = team_location.location
     outbreak = session&.outbreak || false
 
     email_template, sms_template =
@@ -221,25 +223,16 @@ class Notifier::Patient
     disease_types = programmes_to_send_for.flat_map(&:disease_types).presence
 
     parents.each do |parent|
-      EmailDeliveryJob.perform_later(
-        email_template,
-        disease_types:,
-        parent:,
-        patient:,
-        programme_types:,
-        sent_by:,
-        **{ session:, team_location: }.compact
-      )
+      params = { disease_types:, parent:, patient:, programme_types:, sent_by: }
 
-      SMSDeliveryJob.perform_later(
-        sms_template,
-        disease_types:,
-        parent:,
-        patient:,
-        programme_types:,
-        sent_by:,
-        **{ session:, team_location: }.compact
-      )
+      if session
+        params[:session] = session
+      else
+        params[:team_location] = team_location
+      end
+
+      EmailDeliveryJob.perform_later(email_template, **params)
+      SMSDeliveryJob.perform_later(sms_template, **params)
     end
 
     consent_notification

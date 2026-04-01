@@ -34,7 +34,7 @@ VALIDATIONS_TO_CHECK =
 
 VALIDATIONS_TO_CHECK.freeze
 
-RSpec.describe "Validation messages", skip: "To be enabled in a follow-up" do
+RSpec.describe "Validation messages" do
   VALIDATIONS_TO_CHECK.each do |model, attribute, message_key|
     it "#{model.name}##{attribute} has a custom #{message_key} message" do
       scope =

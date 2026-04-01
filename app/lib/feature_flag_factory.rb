@@ -7,7 +7,9 @@ class FeatureFlagFactory
         File.read(Rails.root.join("config/feature_flags.yml"))
       ).keys
 
-    names.each { Flipper.add(it) unless Flipper.exist?(it) }
+    Flipper::Adapters::Strict.with_sync_mode do
+      names.each { Flipper.add(it) unless Flipper.exist?(it) }
+    end
 
     Flipper.features.each do |feature|
       feature.remove unless feature.name.to_s.in?(names)

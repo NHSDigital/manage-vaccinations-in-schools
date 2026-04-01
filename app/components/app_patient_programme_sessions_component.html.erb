@@ -1,0 +1,63 @@
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Sessions" } %>
+
+  <% if sessions.any? %>
+    <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+      <% table.with_head do |head| %>
+        <% head.with_row do |row| %>
+          <% row.with_cell(text: "Location") %>
+          <% row.with_cell(text: "Session dates") %>
+          <% row.with_cell(text: "Session outcome") %>
+        <% end %>
+      <% end %>
+
+      <% table.with_body do |body| %>
+        <% sessions.each do |session| %>
+          <% body.with_row do |row| %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Location</span>
+              <%= link_to session.location.name,
+                          session_patient_programme_path(session, patient, programme_type) %>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Session dates</span>
+              <ul class="nhsuk-list">
+                <% session.dates.each do |date| %>
+                  <li><%= date.to_fs(:long) %></li>
+                <% end %>
+              </ul>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Session outcome</span>
+              <%= session_outcome_tag(session, programme_type) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p>No sessions</p>
+  <% end %>
+
+  <% if can_invite_to_clinic? || can_send_clinic_invitation_reminder? || can_send_consent_request? %>
+    <div class="nhsuk-button-group">
+      <% if can_invite_to_clinic? %>
+        <%= govuk_button_to "Invite to community clinic",
+                            invite_to_clinic_patient_programme_path(patient, programme_type),
+                            secondary: true %>
+      <% elsif can_send_clinic_invitation_reminder? %>
+        <%= govuk_button_to "Send clinic invitation reminder",
+                            invite_to_clinic_patient_programme_path(patient, programme_type),
+                            secondary: true %>
+      <% end %>
+
+      <% if can_send_consent_request? %>
+        <%= govuk_button_to "Send consent request",
+                            send_consent_request_patient_programme_path(patient, programme_type),
+                            secondary: true %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

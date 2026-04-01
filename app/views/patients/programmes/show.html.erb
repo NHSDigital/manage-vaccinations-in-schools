@@ -8,48 +8,27 @@
 <% content_for :page_title, "#{@patient.initials} – #{@programme.name}" %>
 <%= render "patients/header" %>
 
-<%= render AppPatientNavigationComponent.new(@patient, current_user.programmes, active: @programme.type.to_sym) %>
-
-<%= render AppPatientProgrammeVaccinationCardComponent.new(
+<%= render AppPatientNavigationComponent.new(
       @patient,
-      academic_year: AcademicYear.current,
-      show_caption: false,
-      programme: @programme,
+      current_user.programmes,
+      active: @programme.type.to_sym,
     ) %>
 
-<%= render AppCardComponent.new(section: true) do |card| %>
-  <% card.with_heading { "Sessions" } %>
+<%= render AppPatientProgrammeVaccinationComponent.new(
+      @patient,
+      @programme,
+      academic_year: @academic_year,
+    ) %>
 
-  <%= render AppPatientProgrammeSessionTableComponent.new(
-        @patient, current_team:, programme_type: @programme.type,
-      ) %>
+<%= render AppPatientProgrammeSessionsComponent.new(
+      @patient,
+      @programme,
+      academic_year: @academic_year,
+      team: current_team,
+    ) %>
 
-  <% if @can_invite_to_clinic || @can_send_clinic_invitation_reminder || @can_send_consent_request %>
-    <div class="nhsuk-button-group">
-      <% if @can_invite_to_clinic %>
-        <%= govuk_button_to "Invite to community clinic",
-                            invite_to_clinic_patient_programme_path(@patient, @programme.type),
-                            secondary: true %>
-      <% elsif @can_send_clinic_invitation_reminder %>
-        <%= govuk_button_to "Send clinic invitation reminder",
-                            invite_to_clinic_patient_programme_path(@patient, @programme.type),
-                            secondary: true %>
-      <% end %>
-
-      <% if @can_send_consent_request %>
-        <%= govuk_button_to "Send consent request",
-                            send_consent_request_patient_programme_path(@patient, @programme.type),
-                            secondary: true %>
-      <% end %>
-    </div>
-  <% end %>
-<% end %>
-
-<%= render AppCardComponent.new(section: true) do |card| %>
-  <% card.with_heading { "Programme activity" } %>
-  <%= render AppActivityLogComponent.new(
-        patient: @patient,
-        programme_type: @programme.type,
-        team: current_team,
-      ) %>
-<% end %>
+<%= render AppPatientProgrammeActivityComponent.new(
+      @patient,
+      @programme,
+      team: current_team,
+    ) %>

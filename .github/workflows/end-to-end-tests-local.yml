@@ -1,0 +1,98 @@
+name: Local E2E tests
+
+on: [workflow_call]
+
+jobs:
+  end-to-end-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.2
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          - 5432:5432
+    env:
+      MAVIS_TEST_REPO: testing-repository
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      RAILS_ENV: end_to_end
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.base_ref }}
+      - name: Setup Node.js on base branch
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .tool-versions
+          cache: yarn
+      - name: Setup Ruby on base branch
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Install JS dependencies on base branch
+        run: yarn install --frozen-lockfile
+      - name: Setup database
+        run: bin/rails db:setup
+      - name: Checkout head branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Setup Node.js on head branch
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .tool-versions
+          cache: yarn
+      - name: Setup Ruby on head branch
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Install JS dependencies on head branch
+        run: yarn install --frozen-lockfile
+      - name: Migrate database
+        run: bin/rails db:migrate
+      - name: Install Redis
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-server
+      - name: Enable feature flags
+        run: bin/rails feature_flags:enable_for_development
+      - name: Import from GIAS
+        run: bin/mavis gias import --input-file=spec/fixtures/dfe-schools.zip
+      - name: Check if head branch or base branch exists
+        id: check-branch
+        run: |
+          if git ls-remote --exit-code \
+              --heads https://github.com/NHSDigital/manage-vaccinations-in-schools-testing.git \
+              "$HEAD_REF" > /dev/null 2>&1; then
+            echo "test_branch=$HEAD_REF" >> "$GITHUB_OUTPUT"
+          elif git ls-remote --exit-code \
+              --heads https://github.com/NHSDigital/manage-vaccinations-in-schools-testing.git \
+              "$BASE_REF" > /dev/null 2>&1; then
+            echo "test_branch=$BASE_REF" >> "$GITHUB_OUTPUT"
+          else
+            echo "test_branch=main" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+      - name: Clone testing repository
+        uses: actions/checkout@v6
+        with:
+          repository: NHSDigital/manage-vaccinations-in-schools-testing
+          ref: ${{ steps.check-branch.outputs.test_branch }}
+          path: ${{ env.MAVIS_TEST_REPO }}
+      - name: Setup testing repository environment file
+        run: mv ${{ env.MAVIS_TEST_REPO }}/.env.generic ${{ env.MAVIS_TEST_REPO }}/.env
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
+      - name: Setup Playwright
+        working-directory: ${{ env.MAVIS_TEST_REPO }}
+        run: |
+          uv run playwright install --with-deps chromium
+      - name: Run tests
+        run: bin/e2e -n 2 --reruns 2

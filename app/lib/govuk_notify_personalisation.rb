@@ -313,6 +313,10 @@ class GovukNotifyPersonalisation
     )
   end
 
+  def follow_up_discussion
+    consent_form&.follow_up_requested
+  end
+
   def reason_for_refusal
     reason = consent_form&.reason_for_refusal || consent&.reason_for_refusal
     return if reason.nil?

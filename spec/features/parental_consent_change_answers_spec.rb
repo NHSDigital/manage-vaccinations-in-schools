@@ -50,6 +50,9 @@ RSpec.feature "Parental consent change answers" do
 
     when_i_change_my_consent_to_refused
     and_say_the_reason_is_that_the_vaccine_contains_gelatine
+    then_i_see_the_follow_up_question
+
+    when_i_answer_no_to_the_follow_up_question_and_continue
     then_i_see_the_consent_form_confirmation_page
 
     when_i_change_my_consent_to_accepted
@@ -234,6 +237,20 @@ RSpec.feature "Parental consent change answers" do
 
   def and_say_the_reason_is_that_the_vaccine_contains_gelatine
     choose "I’m concerned the nasal vaccine contains gelatine"
+    click_button "Continue"
+  end
+
+  def then_i_see_the_follow_up_question
+    expect(page).to have_content(
+      "Would you like a member of the team to contact you to discuss alternative options?"
+    )
+    expect(page).to have_content(
+      "For example, it may be possible to use a vaccine that does not contain gelatine."
+    )
+  end
+
+  def when_i_answer_no_to_the_follow_up_question_and_continue
+    choose "No"
     click_button "Continue"
   end
 
