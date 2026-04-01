@@ -148,14 +148,6 @@ describe CommitPatientChangesetsJob do
       ).with(location.id).once
     end
 
-    it "calls PatientStatusUpdater for imported patients" do
-      allow(PatientStatusUpdater).to receive(:call)
-      perform_job
-      expect(PatientStatusUpdater).to have_received(:call).with(
-        patient_scope: a_kind_of(ActiveRecord::Relation)
-      )
-    end
-
     it "imports PDS search results when present" do
       changeset = import.changesets.first
       changeset.data["search_results"] = [

@@ -4,55 +4,26 @@ describe ImportDuplicateForm do
   let(:programme) { Programme.sample }
 
   describe "#save" do
-    subject(:save) { form.save }
-
-    let(:form) do
-      described_class.new(apply_changes:, object:, current_team: team)
-    end
-
     context "resolving a vaccination record" do
-      let(:apply_changes) { "apply" }
-      let(:object) { vaccination_record }
+      subject do
+        described_class.new(
+          apply_changes: "apply",
+          object: vaccination_record,
+          current_team: team
+        ).save
+      end
+
       let(:team) { create(:team, programmes: [programme]) }
       let(:vaccination_record) do
         create(:vaccination_record, programme:, team:)
       end
 
       it_behaves_like "a method that updates team cached counts"
-
-      it "does not call PatientStatusUpdater" do
-        expect(PatientStatusUpdater).not_to receive(:call)
-        expect(save).to be(true)
-      end
     end
 
     context "resolving a patient record" do
-      let(:team) { create(:team, programmes: [programme]) }
-      let(:patient) do
-        create(:patient, pending_changes: { "given_name" => "Updated" })
-      end
-
-      context "when applying pending changes" do
-        let(:apply_changes) { "apply" }
-        let(:object) { patient }
-
-        it "calls PatientStatusUpdater" do
-          expect(PatientStatusUpdater).to receive(:call).with(patient:)
-          expect(save).to be(true)
-        end
-      end
-
-      context "when discarding changes" do
-        let(:apply_changes) { "discard" }
-        let(:object) { patient }
-
-        it "does not call PatientStatusUpdater" do
-          expect(PatientStatusUpdater).not_to receive(:call)
-          expect(save).to be(true)
-        end
-      end
-
       context "when a patient import issue includes parent relationships" do
+        let(:team) { create(:team, programmes: [programme]) }
         let(:session) { create(:session, team:, programmes: [programme]) }
         let(:class_import) { create(:class_import, session:) }
         let(:existing_patient) { create(:patient) }
@@ -120,20 +91,6 @@ describe ImportDuplicateForm do
           expect(existing_relationship.reload.patient).to eq(existing_patient)
 
           expect(class_import.patients.reload).to contain_exactly(new_patient)
-        end
-
-        it "calls PatientStatusUpdater with the new patient when keeping both" do
-          form =
-            described_class.new(
-              apply_changes: "keep_both",
-              object: existing_patient,
-              current_team: team
-            )
-
-          expect(PatientStatusUpdater).to receive(:call).with(
-            patient: instance_of(Patient)
-          )
-          expect(form.save).to be(true)
         end
 
         it "keeps imported parent relationships when discarding changes" do

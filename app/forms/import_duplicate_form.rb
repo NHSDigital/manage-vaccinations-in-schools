@@ -55,8 +55,6 @@ class ImportDuplicateForm
     object.patient.apply_pending_changes! if object.respond_to?(:patient)
 
     object.apply_pending_changes!
-
-    PatientStatusUpdater.call(patient: object) if object.is_a?(Patient)
   end
 
   def discard_pending_changes!
@@ -69,11 +67,9 @@ class ImportDuplicateForm
     return unless can_keep_both?
     return unless can_apply?
 
-    new_record =
-      object.apply_pending_changes_to_new_record!(
-        changeset: changeset_for_keep_both
-      )
-    PatientStatusUpdater.call(patient: new_record) if new_record.is_a?(Patient)
+    object.apply_pending_changes_to_new_record!(
+      changeset: changeset_for_keep_both
+    )
   end
 
   def changeset_for_keep_both
