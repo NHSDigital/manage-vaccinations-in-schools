@@ -1,5 +1,6 @@
 ---
 :concurrency: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
 :queues:
   - cache
   - imports
@@ -11,7 +12,9 @@
   - immunisations_api_sync
   - immunisations_api_search
   - third_party_data_imports
+  - metrics
   - default
+
 :scheduler:
   :schedule:
     enqueue_vaccinations_search_in_nhs_job:
