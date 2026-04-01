@@ -546,6 +546,70 @@ describe FHIRMapper::VaccinationRecord do
         end
       end
 
+      describe "the parsed performed_ods_code value" do
+        subject { record.performed_ods_code }
+
+        before do
+          allow(
+            fhir_immunization
+              .performer
+              .find { it.actor&.type == "Organization" }
+              .actor
+              .identifier
+          ).to receive(:value).and_return(ods_code)
+        end
+
+        let(:fixture_file_name) { "fhir/flu/fhir_record_full.json" }
+
+        context "when the org performer ODS code is a real code" do
+          let(:ods_code) { "B0C4P" }
+
+          it { should eq "B0C4P" }
+        end
+
+        context "when the org performer ODS code is a placeholder" do
+          let(:ods_code) { FHIRMapper::Location::UNKNOWN_IDENTIFIER }
+
+          it { should be_nil }
+        end
+      end
+
+      describe "the parsed batch_expiry value" do
+        subject { record.batch_expiry }
+
+        let(:fixture_file_name) { "fhir/flu/fhir_record_full.json" }
+
+        before do
+          allow(fhir_immunization).to receive(:expirationDate).and_return(
+            expiration_date
+          )
+        end
+
+        context "when the expiry date is realistic" do
+          let(:expiration_date) { "2026-07-02" }
+
+          it { should eq Date.new(2026, 7, 2) }
+        end
+
+        context "when the expiry date is after 2100" do
+          let(:expiration_date) { "9999-12-31" }
+
+          it { should be_nil }
+        end
+
+        context "when the expiry date is before 1900" do
+          let(:expiration_date) { "1899-12-31" }
+
+          it { should be_nil }
+        end
+
+        context "when the expiry date is nil" do
+          let(:expiration_date) { nil }
+
+          it { should be_nil }
+        end
+      end
+
       context "with a full fhir record" do
         let(:fixture_file_name) { "fhir/flu/fhir_record_full.json" }
 
@@ -740,7 +804,9 @@ describe FHIRMapper::VaccinationRecord do
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should eq "left_arm_upper_position" }
         its(:full_dose) { should be true }
-        its(:location_name) { should eq "X99999" }
+
+        its(:location_name) { should eq "Unknown" }
+
         its(:outcome) { should eq "administered" }
         its(:performed_ods_code) { should eq "B0C4P" }
         its(:nhs_immunisations_api_primary_source) { should be true }
@@ -907,7 +973,8 @@ describe FHIRMapper::VaccinationRecord do
         its(:nhs_immunisations_api_primary_source) { should be true }
 
         its(:location) { should be_nil }
-        its(:location_name) { should eq "X99999" }
+
+        its(:location_name) { should eq "Unknown" }
 
         its(:notes) { should be_nil }
       end
