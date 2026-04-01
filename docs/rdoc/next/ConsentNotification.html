@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class ConsentNotification: bigint Indexes index_consent_notifications_on_patient_id (patient_id) index_consent_notifications_on_programme_types (programme_types) US"
+      content="class ConsentNotification: bigint not null Indexes index_consent_notifications_on_patient_id (patient_id) index_consent_notifications_on_programme_types ("
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="bigint Indexes index_consent_notifications_on_patient_id (patient_id) index_consent_notifications_on_programme_types (programme_types) US">
+    <meta property="og:description" content="bigint not null Indexes index_consent_notifications_on_patient_id (patient_id) index_consent_notifications_on_programme_types (">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="bigint Indexes index_consent_notifications_on_patient_id (patient_id) index_consent_notifications_on_programme_types (programme_types) US">
+    <meta name="twitter:description" content="bigint not null Indexes index_consent_notifications_on_patient_id (patient_id) index_consent_notifications_on_programme_types (">
 
 
 
@@ -584,8 +584,6 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-academic_year">academic_year</a></li>
-
         <li ><a href="#method-i-automated_reminder-3F">automated_reminder?</a></li>
 
         <li ><a href="#method-i-manual_reminder-3F">manual_reminder?</a></li>
@@ -595,8 +593,6 @@
         <li ><a href="#method-i-sent_by_background_job-3F">sent_by_background_job?</a></li>
 
         <li ><a href="#method-i-sent_by_user-3F">sent_by_user?</a></li>
-
-        <li ><a href="#method-i-team">team</a></li>
 
       </ul>
     </details>
@@ -644,7 +640,7 @@ type             :integer          not null
 patient_id       :bigint           not null
 sent_by_user_id  :bigint
 session_id       :bigint
-team_location_id :bigint</pre>
+team_location_id :bigint           not null</pre>
 
 <p>Indexes</p>
 
@@ -689,56 +685,6 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
        </header>
 
 
-      <div id="method-i-academic_year" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-academic_year" title="Link to this method">
-                <span class="method-name">academic_year</span>
-                <span class="method-args">(= (team_location || session).academic_year)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 71</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">academic_year</span> = (<span class="ruby-identifier">team_location</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>).<span class="ruby-identifier">academic_year</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reminder?</span> = <span class="ruby-identifier">initial_reminder?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">subsequent_reminder?</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sent_by_user?</span> = <span class="ruby-identifier">sent_by</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sent_by_background_job?</span> = <span class="ruby-identifier">sent_by</span>.<span class="ruby-identifier">nil?</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">automated_reminder?</span> = <span class="ruby-identifier">sent_by_background_job?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reminder?</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manual_reminder?</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
       <div id="method-i-automated_reminder-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -758,7 +704,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="automated_reminder-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 79</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">automated_reminder?</span> = <span class="ruby-identifier">sent_by_background_job?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reminder?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manual_reminder?</span> = <span class="ruby-identifier">sent_by_user?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reminder?</span></pre>
@@ -800,7 +746,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="manual_reminder-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 81</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 63</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manual_reminder?</span> = <span class="ruby-identifier">sent_by_user?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reminder?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -841,7 +787,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="reminder-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 73</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reminder?</span> = <span class="ruby-identifier">initial_reminder?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">subsequent_reminder?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sent_by_user?</span> = <span class="ruby-identifier">sent_by</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
@@ -889,7 +835,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="sent_by_background_job-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 77</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sent_by_background_job?</span> = <span class="ruby-identifier">sent_by</span>.<span class="ruby-identifier">nil?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">automated_reminder?</span> = <span class="ruby-identifier">sent_by_background_job?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reminder?</span>
@@ -933,7 +879,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="sent_by_user-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 75</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sent_by_user?</span> = <span class="ruby-identifier">sent_by</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sent_by_background_job?</span> = <span class="ruby-identifier">sent_by</span>.<span class="ruby-identifier">nil?</span>
@@ -941,58 +887,6 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">automated_reminder?</span> = <span class="ruby-identifier">sent_by_background_job?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reminder?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manual_reminder?</span> = <span class="ruby-identifier">sent_by_user?</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-team" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-team" title="Link to this method">
-                <span class="method-name">team</span>
-                <span class="method-args">(= (team_location || session).team)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="team-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 69</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team</span> = (<span class="ruby-identifier">team_location</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>).<span class="ruby-identifier">team</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">academic_year</span> = (<span class="ruby-identifier">team_location</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>).<span class="ruby-identifier">academic_year</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reminder?</span> = <span class="ruby-identifier">initial_reminder?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">subsequent_reminder?</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sent_by_user?</span> = <span class="ruby-identifier">sent_by</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sent_by_background_job?</span> = <span class="ruby-identifier">sent_by</span>.<span class="ruby-identifier">nil?</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">automated_reminder?</span> = <span class="ruby-identifier">sent_by_background_job?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reminder?</span>
-
-<span class="ruby-keyword">def</span></pre>
           </div>
 
 
