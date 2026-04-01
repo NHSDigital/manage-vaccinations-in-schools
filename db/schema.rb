@@ -752,7 +752,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.integer "gender_code", default: 0, null: false
     t.string "given_name", null: false
     t.bigint "gp_practice_id"
-    t.boolean "home_educated"
     t.datetime "invalidated_at"
     t.string "local_authority_mhclg_code"
     t.string "nhs_number"
