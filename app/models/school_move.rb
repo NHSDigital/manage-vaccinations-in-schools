@@ -47,6 +47,11 @@ class SchoolMove < ApplicationRecord
     AND team_locations.academic_year = school_moves.academic_year
   SQL
 
+  scope :joins_teams, -> { joins_team_locations.joins(<<-SQL) }
+    INNER JOIN teams
+    ON teams.id = team_locations.team_id
+  SQL
+
   enum :source,
        { parental_consent_form: 0, class_list_import: 1, cohort_import: 2 },
        prefix: true,
