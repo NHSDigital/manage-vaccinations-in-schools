@@ -218,6 +218,10 @@ describe VaccinationRecord::NHSImmunisationsAPISync do
   describe "#sync_status" do
     subject(:sync_status) { vaccination_record.sync_status }
 
+    let(:vaccination_record) do
+      create(:vaccination_record, outcome:, programme:, session:)
+    end
+
     before { Flipper.enable(:imms_api_sync_job, programme) }
 
     context "when patient has no NHS number" do
@@ -603,6 +607,84 @@ describe VaccinationRecord::NHSImmunisationsAPISync do
         Flipper.disable(:imms_api_sync_job)
         Flipper.enable(:imms_api_sync_job, Programme.hpv)
       end
+
+      it { should be false }
+    end
+  end
+
+  describe "#changes_need_to_be_synced_to_nhs_immunisations_api?" do
+    subject do
+      vaccination_record.changes_need_to_be_synced_to_nhs_immunisations_api?
+    end
+
+    let(:vaccination_record) do
+      create(:vaccination_record, programme:, session:)
+    end
+
+    context "when no attributes have changed" do
+      it { should be false }
+    end
+
+    context "when a FHIR content field changes" do
+      before { vaccination_record.batch_number = "NEWBATCH" }
+
+      it { should be true }
+    end
+
+    context "when outcome changes" do
+      before { vaccination_record.outcome = :refused }
+
+      it { should be true }
+    end
+
+    context "when notify_parents changes" do
+      before { vaccination_record.notify_parents = false }
+
+      it { should be true }
+    end
+
+    context "when discarded_at changes" do
+      before { vaccination_record.discarded_at = Time.current }
+
+      it { should be true }
+    end
+
+    context "when only notes change" do
+      before { vaccination_record.notes = "Some new note" }
+
+      it { should be false }
+    end
+
+    context "when only protocol changes" do
+      before { vaccination_record.protocol = :psd }
+
+      it { should be false }
+    end
+
+    context "when only nhs_immunisations_api_etag changes" do
+      before { vaccination_record.nhs_immunisations_api_etag = "2" }
+
+      it { should be false }
+    end
+
+    context "when only nhs_immunisations_api_sync_pending_at changes" do
+      before do
+        vaccination_record.nhs_immunisations_api_sync_pending_at = Time.current
+      end
+
+      it { should be false }
+    end
+
+    context "when only nhs_immunisations_api_synced_at changes" do
+      before do
+        vaccination_record.nhs_immunisations_api_synced_at = Time.current
+      end
+
+      it { should be false }
+    end
+
+    context "when only nhs_immunisations_api_id changes" do
+      before { vaccination_record.nhs_immunisations_api_id = SecureRandom.uuid }
 
       it { should be false }
     end

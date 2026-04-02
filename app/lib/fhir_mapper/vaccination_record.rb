@@ -18,6 +18,9 @@ module FHIRMapper
       @vaccination_record = vaccination_record
     end
 
+    # If you add or remove fields here, update SYNCED_FIELDS in
+    # VaccinationRecord::NHSImmunisationsAPISync so that changes to those fields
+    # correctly trigger or stop triggering a sync to the NHS Immunisations API.
     def fhir_record
       immunisation = FHIR::Immunization.new(id: nhs_immunisations_api_id)
 
