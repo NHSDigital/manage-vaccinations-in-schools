@@ -6,7 +6,7 @@
 
 <% content_for :page_title, title %>
 
-<% if (cutoff_date = current_team.national_reporting_cut_off_date) && cutoff_date.today? %>
+<% if (cutoff_date = current_team.national_reporting_cut_off_date) && Date.today <= cutoff_date %>
   <%= govuk_notification_banner(title_text: "Important") do %>
     <h3 class="nhsuk-notification-banner__heading">
       Mavis national reporting replaces NIVS on <%= cutoff_date.to_fs(:long) %>

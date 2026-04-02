@@ -56,8 +56,8 @@ describe("National reporting immunisation imports") do
   context "cutoff date banner" do
     let(:cutoff_date) { Date.new(2026, 4, 20) }
 
-    context "when today is not the cutoff date" do
-      around { |example| travel_to(cutoff_date - 1.day) { example.run } }
+    context "when today is after the cutoff date" do
+      around { |example| travel_to(cutoff_date + 1.day) { example.run } }
 
       scenario "banner is not shown" do
         given_mavis_logins_are_configured(
@@ -66,6 +66,22 @@ describe("National reporting immunisation imports") do
         given_i_am_signed_in_as_a_national_reporting_user
         when_i_navigate_to_the_upload_page
         expect(page).not_to have_css(".nhsuk-notification-banner")
+      end
+    end
+
+    context "when today is before the cutoff date" do
+      around { |example| travel_to(cutoff_date - 1.day) { example.run } }
+
+      scenario "banner is shown" do
+        given_mavis_logins_are_configured(
+          national_reporting_cut_off_date: cutoff_date
+        )
+        given_i_am_signed_in_as_a_national_reporting_user
+        when_i_navigate_to_the_upload_page
+        expect(page).to have_css(".nhsuk-notification-banner")
+        expect(page).to have_content(
+          "Mavis national reporting replaces NIVS on 20 April 2026"
+        )
       end
     end
 
