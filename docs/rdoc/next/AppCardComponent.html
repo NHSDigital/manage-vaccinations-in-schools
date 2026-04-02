@@ -629,7 +629,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">( colour: nil, link_to: nil, feature: false, secondary: false, compact: false, filters: false, section: false )</span>
+                <span class="method-args">( colour: nil, link_to: nil, clickable: nil, feature: false, secondary: false, compact: false, filters: false, section: false )</span>
               </a>
             </div>
 
@@ -646,6 +646,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(
   <span class="ruby-value">colour:</span> <span class="ruby-keyword">nil</span>,
   <span class="ruby-value">link_to:</span> <span class="ruby-keyword">nil</span>,
+  <span class="ruby-value">clickable:</span> <span class="ruby-keyword">nil</span>,
   <span class="ruby-value">feature:</span> <span class="ruby-keyword">false</span>,
   <span class="ruby-value">secondary:</span> <span class="ruby-keyword">false</span>,
   <span class="ruby-value">compact:</span> <span class="ruby-keyword">false</span>,
@@ -653,6 +654,7 @@
   <span class="ruby-value">section:</span> <span class="ruby-keyword">false</span>
 )
   <span class="ruby-ivar">@link_to</span> = <span class="ruby-identifier">link_to</span>
+  <span class="ruby-ivar">@clickable</span> = <span class="ruby-identifier">clickable</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">link_to</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">clickable</span>
   <span class="ruby-ivar">@colour</span> = <span class="ruby-identifier">colour</span>
   <span class="ruby-ivar">@feature</span> = <span class="ruby-identifier">filters</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">feature</span>
   <span class="ruby-ivar">@secondary</span> = <span class="ruby-identifier">secondary</span>
