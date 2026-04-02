@@ -2,7 +2,7 @@
   <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<% page_title = if @parent.persisted?
+<% page_title = if @parent&.persisted?
        "Details for #{@draft_consent.parent_relationship.label_with_parent}"
      else
        "Details for parent or guardian"
@@ -10,7 +10,7 @@
 
 <%= h1 page_title: do %>
   <span class="nhsuk-caption-l">
-    <%= @parent.label %>
+    <%= @parent&.label %>
   </span>
   <%= page_title %>
 <% end %>

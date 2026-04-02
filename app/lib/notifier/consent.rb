@@ -63,7 +63,8 @@ class Notifier::Consent
   end
 
   def send_consent_sms(type, consent, params)
-    if consent.parent.phone_receive_updates
+    # TODO: Handle contacts as well as parents
+    if consent.parent&.phone_receive_updates
       template = :"consent_confirmation_#{type}"
       SMSDeliveryJob.perform_later(template, **params)
     end

@@ -242,6 +242,8 @@ class DraftConsent
   def parent
     return nil if via_self_consent?
 
+    return nil if Flipper.enabled?(:patient_contacts)
+
     parent = Parent.find_by(id: parent_id) || Parent.new
 
     parent.email = parent_email
@@ -271,6 +273,8 @@ class DraftConsent
   end
 
   def parent=(value)
+    return if Flipper.enabled?(:patient_contacts)
+
     self.parent_id = value&.id
 
     parent_relationship = value&.parent_relationships&.find_by(patient_id:)

@@ -43,6 +43,8 @@ describe "Verbal consent" do
       and_i_can_see_the_parents_details_on_the_consent_response(
         relationship: "Mum"
       )
+      and_two_contact_records_are_created
+      and_no_parent_records_are_created
     end
 
     scenario "Given by a new other parent contact" do
@@ -54,6 +56,8 @@ describe "Verbal consent" do
       and_i_can_see_the_parents_details_on_the_consent_response(
         relationship: "Other – Carer"
       )
+      and_two_contact_records_are_created
+      and_no_parent_records_are_created
     end
   end
 
@@ -187,5 +191,13 @@ describe "Verbal consent" do
 
   def and_i_a_text_is_sent_to_the_parent_confirming_their_consent
     expect_sms_to("07987 654321", :consent_confirmation_given)
+  end
+
+  def and_two_contact_records_are_created
+    expect(@patient.reload.contacts.count).to eq(2)
+  end
+
+  def and_no_parent_records_are_created
+    expect(@patient.reload.parents.count).to eq(0)
   end
 end

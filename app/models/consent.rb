@@ -104,7 +104,11 @@ class Consent < ApplicationRecord
          allow_nil: true
        }
 
-  validates :parent, presence: true, unless: :via_self_consent?
+  validates :parent,
+            presence: true,
+            unless: -> do
+              via_self_consent? || Flipper.enabled?(:patient_contacts)
+            end
   validates :recorded_by,
             presence: true,
             unless: -> { via_self_consent? || via_website? }
