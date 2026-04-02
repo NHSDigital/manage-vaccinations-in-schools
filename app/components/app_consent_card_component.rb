@@ -8,7 +8,7 @@ class AppConsentCardComponent < ViewComponent::Base
 
   def call
     render AppCardComponent.new(**card_options) do |card|
-      card.with_heading(level: 6) { heading }
+      card.with_heading(level: 6, actions:) { heading }
       render AppConsentSummaryComponent.new(
                consent,
                show_email_address: true,
@@ -28,7 +28,8 @@ class AppConsentCardComponent < ViewComponent::Base
     session_patient_programme_consent_path(session, patient, programme, consent)
   end
 
-  def card_options = { link_to:, colour: "offset", compact: true }
+  def card_options =
+    { link_to:, clickable: false, colour: "offset", compact: true }
 
   def heading
     if consent.via_self_consent?
@@ -36,5 +37,9 @@ class AppConsentCardComponent < ViewComponent::Base
     else
       "#{consent.name} (#{consent.who_responded})"
     end
+  end
+
+  def actions
+    helpers.consent_action_links(consent, session:)
   end
 end

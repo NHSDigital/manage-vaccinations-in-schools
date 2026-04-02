@@ -39,6 +39,50 @@ describe AppConsentCardComponent do
   it { should have_content("Response") }
   it { should have_content("Consent given") }
 
+  describe "actions" do
+    context "when consent is given" do
+      it { should have_link("Withdraw consent") }
+      it { should have_link("Mark as invalid") }
+      it { should_not have_link("Follow up") }
+    end
+
+    context "when follow-up is requested" do
+      let(:consent) do
+        create(
+          :consent,
+          :follow_up_requested,
+          patient:,
+          parent:,
+          programme:,
+          team:,
+          submitted_at: Time.zone.local(2024, 1, 1)
+        )
+      end
+
+      it { should have_link("Follow up") }
+      it { should have_link("Mark as invalid") }
+      it { should_not have_link("Withdraw consent") }
+    end
+
+    context "when consent is invalidated" do
+      let(:consent) do
+        create(
+          :consent,
+          :invalidated,
+          patient:,
+          parent:,
+          programme:,
+          team:,
+          submitted_at: Time.zone.local(2024, 1, 1)
+        )
+      end
+
+      it { should_not have_link("Follow up") }
+      it { should_not have_link("Withdraw consent") }
+      it { should_not have_link("Mark as invalid") }
+    end
+  end
+
   context "with the flu programme" do
     let(:programme) { Programme.flu }
     let(:consent) { create(:consent, programme:, vaccine_methods: %w[nasal]) }
