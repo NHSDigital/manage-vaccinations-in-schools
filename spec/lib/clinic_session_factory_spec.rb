@@ -19,6 +19,7 @@ describe ClinicSessionFactory do
         expect(session.team_location.academic_year).to eq(academic_year)
         expect(session.dates).to contain_exactly(Date.current)
         expect(session.programme_types).to contain_exactly(programme_type)
+        expect(session.requires_registration).to be(false)
       end
     end
 
@@ -98,6 +99,7 @@ describe ClinicSessionFactory do
         expect(session.team_location.academic_year).to eq(academic_year)
         expect(session.dates).to contain_exactly(Date.tomorrow)
         expect(session.programme_types).to contain_exactly(programme_type)
+        expect(session.requires_registration).to be(false)
       end
     end
   end

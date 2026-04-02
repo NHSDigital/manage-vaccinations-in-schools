@@ -200,7 +200,7 @@ class ClassImportsController < ApplicationController
               school: {
                 team_locations: :team
               },
-              school_moves: :school_teams
+              school_moves: :teams
             }
           ]
         )
