@@ -69,7 +69,9 @@ class DraftConsentsController < ApplicationController
     ActiveRecord::Base.transaction do
       @triage = @triage_form&.save! if @draft_consent.response_given?
 
-      if (parent = @consent.parent)
+      if Flipper.enabled?(:patient_contacts)
+        @consent.contacts.each { |contact| contact.save! if contact.changed? }
+      elsif (parent = @consent.parent)
         parent.save! if parent.changed?
         parent.parent_relationships.select(&:changed?).each(&:save!)
       end
