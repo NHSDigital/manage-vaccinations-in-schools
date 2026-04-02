@@ -30,8 +30,11 @@ module MavisCLI
           return
         end
 
-        vaccination_record.update!(
-          nhs_immunisations_api_sync_pending_at: Time.current
+        # Do not trigger the sync through the commit hook as we want to perform
+        # the sync synchronously instead of enqueueing a background job.
+        vaccination_record.update_columns(
+          nhs_immunisations_api_sync_pending_at: Time.current,
+          touch: true
         )
         NHS::ImmunisationsAPI.sync_immunisation(vaccination_record)
         puts "Successfully synced vaccination record #{vaccination_record_id}"
