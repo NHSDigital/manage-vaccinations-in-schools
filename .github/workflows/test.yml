@@ -9,7 +9,7 @@ permissions: {}
 jobs:
   rspec:
     name: RSpec
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     services:
       postgres:
         image: postgres:17.2
@@ -48,7 +48,7 @@ jobs:
 
   seeds:
     name: Seeds
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     services:
       postgres:
         image: postgres:17.2
@@ -75,7 +75,7 @@ jobs:
 
   jest:
     name: Jest
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6

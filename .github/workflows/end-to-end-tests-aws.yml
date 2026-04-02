@@ -25,7 +25,7 @@ permissions: {}
 jobs:
   check-development-image-presence:
     name: Check if mavis docker image already exists
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       id-token: write
     outputs:
@@ -61,7 +61,7 @@ jobs:
   build-and-push-development-image:
     needs: [check-development-image-presence]
     if: ${{ !cancelled() && needs.check-development-image-presence.outputs.build-needed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       id-token: write
     steps:
@@ -90,7 +90,7 @@ jobs:
         # yamllint enable rule:line-length
   check-database-image-presence:
     name: Check if database docker image already exists
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       id-token: write
     outputs:
@@ -145,7 +145,7 @@ jobs:
       (needs.build-and-push-database-image.result == 'success' ||
       (needs.check-database-image-presence.result == 'success' &&
       needs.build-and-push-database-image.result == 'skipped')) }}
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       id-token: write
     outputs:
@@ -217,7 +217,7 @@ jobs:
   wait-for-task-stability:
     needs: launch-dockerized-devimage
     if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success'}}
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       id-token: write
     outputs:
@@ -323,7 +323,7 @@ jobs:
   find-correct-test-branch:
     needs: [wait-for-task-stability]
     if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     outputs:
@@ -362,7 +362,7 @@ jobs:
   stop-docker-environment:
     needs: [call-end-to-end-tests, launch-dockerized-devimage, wait-for-task-stability]
     if: ${{ always() && needs.launch-dockerized-devimage.result != 'skipped'}}
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       id-token: write
     steps:

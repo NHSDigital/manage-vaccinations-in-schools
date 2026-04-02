@@ -19,7 +19,7 @@ permissions:
 jobs:
   setup-development-database:
     name: Setup Development Database
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     env:
       RAILS_ENV: development
       DATABASE_HOST: localhost
