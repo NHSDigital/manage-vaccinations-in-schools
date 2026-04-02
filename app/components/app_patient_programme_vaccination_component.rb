@@ -54,6 +54,6 @@ class AppPatientProgrammeVaccinationComponent < ViewComponent::Base
       return false
     end
 
-    policy(VaccinationRecord.new).new?
+    policy(VaccinationRecord.new(patient:)).new?
   end
 end

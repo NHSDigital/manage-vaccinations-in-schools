@@ -1,5 +1,6 @@
 ---
 :concurrency: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
 :queues:
   - cache
   - imports
@@ -11,7 +12,9 @@
   - immunisations_api_sync
   - immunisations_api_search
   - third_party_data_imports
+  - metrics
   - default
+
 :scheduler:
   :schedule:
     enqueue_vaccinations_search_in_nhs_job:
@@ -26,6 +29,10 @@
       cron: "0 2 * * *"
       class: InvalidateSelfConsentsJob
       description: Invalidate all self-consents and associated triage for the previous day
+    metrics_export_school_moves_count:
+      every: 30m
+      class: Metrics::ExportSchoolMovesCountJob
+      description: Export school moves count metric
     patients_aged_out_of_school:
       cron: "0 5 * * *"
       class: EnqueuePatientsAgedOutOfSchoolsJob
