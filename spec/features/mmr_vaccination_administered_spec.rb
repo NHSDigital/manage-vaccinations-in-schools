@@ -309,7 +309,8 @@ describe "MMR vaccination" do
       ).with_content_including(
         "MMR vaccination",
         "a raised, blotchy rash",
-        "swollen glands around the cheeks, neck and jaw"
+        "swollen glands around the cheeks, neck and jaw",
+        "Your child still needs a second dose of the MMR vaccine"
       )
     )
   end

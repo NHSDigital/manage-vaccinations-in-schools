@@ -273,7 +273,8 @@ describe "MMRV vaccination" do
         "MMRV vaccination",
         "ProQuad",
         "a raised, blotchy rash",
-        "swollen glands around the cheeks, neck and jaw"
+        "swollen glands around the cheeks, neck and jaw",
+        "Your child still needs a second dose of the MMR vaccine"
       )
     )
   end
