@@ -1,13 +1,13 @@
 ---
 template_id: "e37fe0a2-7584-4c25-983a-8f5a11c818a1"
 template_name: vaccination_already_had
-subject: "Cancelled <%= vaccination %> appointment for <%= short_patient_name %>"
+subject: "Cancelled <%= programme_name_for_parents(vaccination_record.programme) %> vaccination appointment for <%= short_patient_name %>"
 ---
-We’re contacting you because our records show that <%= short_patient_name %> was vaccinated at another location <%= today_or_date_of_vaccination %> so we’re cancelling their vaccination appointment at school.
+We’re contacting you because our records show that <%= short_patient_name %> was vaccinated at another location <%= vaccination_record_today_or_date(vaccination_record) %> so we’re cancelling their vaccination appointment at school.
 
-If you think this is wrong, please tell us immediately on <%= subteam_phone %> or <%= subteam_email %>.
+If you think this is wrong, please tell us immediately on <%= team_contact_phone(vaccination_record.session) %> or <%= team_contact_email(vaccination_record.session) %>.
 
-If <%= short_patient_name %> was vaccinated <%= today_or_date_of_vaccination %>, you do not need
+If <%= short_patient_name %> was vaccinated <%= vaccination_record_today_or_date(vaccination_record) %>, you do not need
 to do anything.
 
-<%= subteam_name %>
+<%= team_contact_name(vaccination_record.session) %>
