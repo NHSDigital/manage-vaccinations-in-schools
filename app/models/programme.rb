@@ -155,6 +155,11 @@ class Programme
     @name ||= I18n.t(translation_key, scope: :programme_types)
   end
 
+  def name_on_nhs_uk
+    @name_on_nhs_uk ||=
+      I18n.t(type, scope: :programme_names_on_nhs_uk, default: nil)
+  end
+
   def name_in_sentence
     @name_in_sentence = flu? ? name.downcase : name
   end

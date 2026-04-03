@@ -1204,6 +1204,8 @@ en:
     sessions:
       index:
         title: Sessions
+  programme_names_on_nhs_uk:
+    td_ipv: 3-in-1 teenage booster
   programme_types:
     flu: Flu
     hpv: HPV
