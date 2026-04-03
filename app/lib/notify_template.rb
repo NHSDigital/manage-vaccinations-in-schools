@@ -60,7 +60,7 @@ class NotifyTemplate
 
   def render(personalisation)
     ctx = personalisation.instance_eval { binding }
-    body = ERB.new(@body, trim_mode: nil).result(ctx)
+    body = ERB.new(@body, trim_mode: "-").result(ctx)
     return { body: } if @channel == :sms
 
     { subject: ERB.new(@subject, trim_mode: nil).result(ctx), body: }
