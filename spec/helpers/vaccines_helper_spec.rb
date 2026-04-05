@@ -9,6 +9,26 @@ describe VaccinesHelper do
     it { should eq("Fluenz (Flu)") }
   end
 
+  describe "#vaccine_method" do
+    subject { helper.vaccine_method(vaccine) }
+
+    context "with an injection vaccine" do
+      let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
+
+      it { should eq("injection") }
+    end
+
+    context "with a nasal vaccine" do
+      it { should eq("nasal spray") }
+    end
+
+    context "with nil" do
+      let(:vaccine) { nil }
+
+      it { should be_nil }
+    end
+  end
+
   describe "#vaccine_side_effects_list" do
     subject(:side_effects_list) { helper.vaccine_side_effects_list(vaccine) }
 

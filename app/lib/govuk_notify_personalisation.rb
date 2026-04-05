@@ -6,6 +6,7 @@ class GovukNotifyPersonalisation
   include PhoneHelper
   include ProgrammesHelper
   include VaccinationRecordsHelper
+  include VaccinesHelper
 
   def initialize(
     academic_year: nil,
