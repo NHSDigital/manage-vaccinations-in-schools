@@ -199,7 +199,7 @@ describe GovukNotifyPersonalisation do
     it do
       expect(
         personalisation.vaccination
-      ).to eq "MenACWY and Td/IPV vaccinations"
+      ).to eq "MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations"
     end
   end
 
@@ -855,6 +855,17 @@ describe GovukNotifyPersonalisation do
     end
   end
 
+  context "with a programme that has a different name on NHS.uk" do
+    let(:programmes) { [Programme.td_ipv] }
+
+    it do
+      expect(personalisation).to have_attributes(
+        vaccination: "Td/IPV (3-in-1 teenage booster) vaccination",
+        vaccine: "Td/IPV (3-in-1 teenage booster) vaccine"
+      )
+    end
+  end
+
   context "with the flu programme" do
     let(:programmes) { [Programme.flu] }
 
@@ -869,7 +880,13 @@ describe GovukNotifyPersonalisation do
 
     context "with an administered injected vaccination record" do
       let(:vaccination_record) do
-        create(:vaccination_record, patient:, programme: programmes.first)
+        vaccine = programmes.first.vaccines.find_by!(method: "injection")
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          vaccine:
+        )
       end
 
       it do
@@ -884,10 +901,12 @@ describe GovukNotifyPersonalisation do
 
     context "with an administered nasal spray vaccination record" do
       let(:vaccination_record) do
+        vaccine = programmes.first.vaccines.find_by!(method: "nasal")
         create(
           :vaccination_record,
           patient:,
           programme: programmes.first,
+          vaccine:,
           delivery_method: "nasal_spray"
         )
       end

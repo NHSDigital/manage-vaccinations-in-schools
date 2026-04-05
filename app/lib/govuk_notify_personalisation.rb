@@ -4,6 +4,7 @@ class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
 
   include PhoneHelper
+  include ProgrammesHelper
   include VaccinationRecordsHelper
 
   def initialize(
@@ -518,7 +519,7 @@ class GovukNotifyPersonalisation
   end
 
   def programme_names
-    @programme_names ||= programmes.map(&:name_in_sentence)
+    @programme_names ||= programmes.map { programme_name_for_parents(it) }
   end
 
   def programme_names_and_methods
