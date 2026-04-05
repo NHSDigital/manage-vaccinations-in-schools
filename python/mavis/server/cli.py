@@ -1,6 +1,6 @@
 import argparse
 
-from . import shell
+from . import put_file, shell
 
 
 def main():
@@ -10,6 +10,7 @@ def main():
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
+    put_file.register(subparsers)
     shell.register(subparsers)
 
     args = parser.parse_args()
