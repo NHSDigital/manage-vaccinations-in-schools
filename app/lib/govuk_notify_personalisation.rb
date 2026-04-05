@@ -139,22 +139,6 @@ class GovukNotifyPersonalisation
     end
   end
 
-  def mmr_second_dose_message
-    return unless patient
-    return unless mmr_programme
-
-    programme_status = patient.programme_status(mmr_programme, academic_year:)
-
-    return "" if programme_status.vaccinated?
-
-    [
-      "## Your child still needs a second dose of the MMR vaccine",
-      "To be fully protected against measles, mumps and rubella, your " \
-        "child needs a second dose of the vaccine. Our team will be in " \
-        "touch about this soon."
-    ].join("\n\n")
-  end
-
   def mmr_second_dose_required?
     mmr_programme.present? && patient_on_last_dose?
   end

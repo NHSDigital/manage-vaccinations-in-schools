@@ -703,42 +703,6 @@ describe GovukNotifyPersonalisation do
       )
     end
 
-    context "for the MMR programme" do
-      let(:programmes) { [Programme.mmr] }
-
-      let(:patient) do
-        create(:patient, date_of_birth: Date.new(2018, 2, 1), session:)
-      end
-
-      it do
-        expect(personalisation).to have_attributes(
-          mmr_second_dose_message:
-            "## Your child still needs a second dose of the MMR vaccine\n\n" \
-              "To be fully protected against measles, mumps and rubella, " \
-              "your child needs a second dose of the vaccine. Our team will " \
-              "be in touch about this soon."
-        )
-      end
-
-      context "when fully vaccinated" do
-        before do
-          create(
-            :vaccination_record,
-            :administered,
-            programme: programmes.first,
-            patient:,
-            performed_at: Date.new(2020, 1, 1),
-            vaccine:
-          )
-
-          vaccination_record # ensure second dose exists
-
-          PatientStatusUpdater.call(patient:)
-        end
-
-        it { should have_attributes(mmr_second_dose_message: "") }
-      end
-    end
   end
 
   context "with a not-administered vaccination record" do
