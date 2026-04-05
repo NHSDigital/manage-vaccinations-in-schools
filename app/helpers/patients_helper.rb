@@ -77,4 +77,15 @@ module PatientsHelper
   def patient_parents(patient)
     format_parents_with_relationships(patient.parent_relationships)
   end
+
+  def patient_needs_more_doses?(patient, programme, academic_year)
+    patient.programme_status(programme, academic_year:).needs_more_doses?
+  end
+
+  def patient_next_dose_label(patient, programme, academic_year)
+    patient
+      .programme_status(programme, academic_year:)
+      .dose_sequence
+      &.ordinalize
+  end
 end

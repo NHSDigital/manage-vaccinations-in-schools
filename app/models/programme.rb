@@ -247,6 +247,10 @@ class Programme
 
   def minimum_dose_interval = MINIMUM_DOSE_INTERVALS.fetch(type)
 
+  # TODO: Make this more explicit when other programmes start
+  # administering multiple doses (e.g. immunocompromised schedules).
+  def multi_dose? = minimum_dose_interval.present?
+
   def import_names = IMPORT_NAMES.fetch(type)
 
   def snomed_target_disease_codes = SNOMED_TARGET_DISEASE_CODES.fetch(type)
