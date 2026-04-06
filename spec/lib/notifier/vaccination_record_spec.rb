@@ -26,7 +26,7 @@ describe Notifier::VaccinationRecord do
 
       it "sends an email" do
         expect { send_confirmation }.to have_delivered_email(
-          :vaccination_administered_hpv
+          :vaccination_administered
         ).with(parent:, vaccination_record:, sent_by:)
       end
 
@@ -90,7 +90,7 @@ describe Notifier::VaccinationRecord do
 
         it "sends an email" do
           expect { send_confirmation }.to have_delivered_email(
-            :vaccination_administered_hpv
+            :vaccination_administered
           ).with(parent:, vaccination_record:, sent_by:)
         end
 

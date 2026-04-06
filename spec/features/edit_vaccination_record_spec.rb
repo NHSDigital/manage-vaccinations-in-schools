@@ -1001,7 +1001,7 @@ describe "Edit vaccination record" do
   end
 
   def then_the_parent_receives_an_administered_email
-    expect_email_to(@patient.parents.first.email, :vaccination_administered_hpv)
+    expect_email_to(@patient.parents.first.email, :vaccination_administered)
   end
 
   alias_method :and_the_parent_receives_an_administered_email,
