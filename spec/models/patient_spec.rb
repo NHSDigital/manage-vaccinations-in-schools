@@ -908,6 +908,106 @@ describe Patient do
     it { should eq("JD") }
   end
 
+  describe "#can_self_consent_after_gillick_assessment?" do
+    subject(:can_self_consent_after_gillick_assessment) do
+      patient.can_self_consent_after_gillick_assessment?(
+        session:,
+        programme_type: programme.type
+      )
+    end
+
+    let(:programme) { Programme.sample }
+    let(:session) { create(:session, programmes: [programme]) }
+    let(:patient) { create(:patient) }
+
+    context "when patient has no Gillick assessments" do
+      it { should be(false) }
+    end
+
+    context "when patient has a Gillick assessment for a different programme" do
+      before do
+        create(
+          :gillick_assessment,
+          :competent,
+          patient:,
+          programme_type: "hpv",
+          session:
+        )
+      end
+
+      let(:programme) { Programme.flu }
+
+      it { should be(false) }
+    end
+
+    context "when patient has a Gillick assessment for a different session" do
+      let(:other_session) { create(:session, programmes: [programme]) }
+
+      before do
+        create(
+          :gillick_assessment,
+          :competent,
+          patient:,
+          programme_type: programme.type,
+          session: other_session
+        )
+      end
+
+      it { should be(false) }
+    end
+
+    context "when patient has a not competent Gillick assessment" do
+      before do
+        create(
+          :gillick_assessment,
+          :not_competent,
+          patient:,
+          programme_type: programme.type,
+          session:
+        )
+      end
+
+      it { should be(false) }
+    end
+
+    context "when patient has a competent Gillick assessment" do
+      before do
+        create(
+          :gillick_assessment,
+          :competent,
+          patient:,
+          programme_type: programme.type,
+          session:
+        )
+      end
+
+      it { should be(true) }
+    end
+
+    context "when patient has multiple Gillick assessments" do
+      before do
+        create(
+          :gillick_assessment,
+          :not_competent,
+          patient:,
+          programme_type: programme.type,
+          session:
+        )
+        create(
+          :gillick_assessment,
+          :competent,
+          patient:,
+          programme_type: programme.type,
+          session:
+        )
+      end
+
+      it "returns the result of the most recent assessment" do
+        expect(can_self_consent_after_gillick_assessment).to be(true)
+      end
+    end
+  end
+
   describe "#has_patient_specific_direction?" do
     subject { patient.has_patient_specific_direction?(team:) }
 

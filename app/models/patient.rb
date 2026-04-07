@@ -547,6 +547,15 @@ class Patient < ApplicationRecord
     end
   end
 
+  def can_self_consent_after_gillick_assessment?(session:, programme_type:)
+    gillick_assessments
+      .for_session(session)
+      .where(programme_type:)
+      .order(created_at: :desc)
+      &.first
+      &.gillick_competent? || false
+  end
+
   def programme_status(programme, academic_year:)
     # TODO: Update this method to accept the `programme_type` so that we can
     #  then determine the right programme variant from the `disease_types` on
