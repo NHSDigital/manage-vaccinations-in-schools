@@ -20,74 +20,156 @@ describe "mavis reports send-to-careplus" do
     end
   end
 
-  context "when the request succeeds" do
-    it "prints the response body and a success message" do
-      stub_careplus_request(status: 200, body: "<result>OK</result>")
+  context "without --ods_code (fallback credentials)" do
+    context "when the request succeeds" do
+      it "prints the response body and a success message" do
+        stub_careplus_request(status: 200, body: "<result>OK</result>")
 
-      when_i_run_the_command("--input=#{input_path}")
+        when_i_run_the_command("--input=#{input_path}")
 
-      then_the_output_includes("Success (HTTP 200)")
-      then_the_output_includes("<result>OK</result>")
+        then_the_output_includes("Success (HTTP 200)")
+        then_the_output_includes("<result>OK</result>")
+      end
+
+      it "sends the correct request with fallback credentials and namespace" do
+        stub_careplus_request(status: 200, body: "")
+
+        when_i_run_the_command("--input=#{input_path}")
+
+        expect(WebMock).to have_requested(:post, default_endpoint).with(
+          headers: {
+            "Content-Type" => "text/xml; charset=utf-8"
+          },
+          body: /col1,col2/
+        )
+        expect(WebMock).to have_requested(:post, default_endpoint).with(
+          body: /mavis_user/
+        )
+        expect(WebMock).to have_requested(:post, default_endpoint).with(
+          body: %r{careplus\.syhapp\.thirdparty\.nhs\.uk/MOCK/webservices}
+        )
+      end
     end
 
-    it "sends the CSV payload in the request" do
-      stub_careplus_request(status: 200, body: "")
+    context "when the request fails" do
+      it "warns with the status and response body" do
+        stub_careplus_request(status: 400, body: "<fault>Bad request</fault>")
 
-      when_i_run_the_command("--input=#{input_path}")
+        when_i_run_the_command_and_capture_error("--input=#{input_path}")
 
-      expect(WebMock).to have_requested(:post, default_endpoint).with(
-        body: /col1,col2/
-      )
+        then_the_error_output_includes("Request failed with HTTP 400")
+        then_the_error_output_includes("<fault>Bad request</fault>")
+      end
     end
 
-    it "sends a text/xml content-type header" do
-      stub_careplus_request(status: 200, body: "")
+    context "when a custom endpoint is specified" do
+      it "sends the request to the custom endpoint" do
+        custom_endpoint = "http://custom-host:9090/soap"
+        stub_careplus_request(endpoint: custom_endpoint, status: 200, body: "")
 
-      when_i_run_the_command("--input=#{input_path}")
+        when_i_run_the_command(
+          "--input=#{input_path}",
+          "--endpoint=#{custom_endpoint}"
+        )
 
-      expect(WebMock).to have_requested(:post, default_endpoint).with(
-        headers: {
-          "Content-Type" => "text/xml; charset=utf-8"
-        }
-      )
+        expect(WebMock).to have_requested(:post, custom_endpoint)
+      end
+    end
+
+    context "when the CSV payload contains XML special characters" do
+      it "escapes them before embedding in the envelope" do
+        File.write(input_path, "name\n<Test> & \"School\"\n")
+        stub_careplus_request(status: 200, body: "")
+
+        when_i_run_the_command("--input=#{input_path}")
+
+        expect(WebMock).to have_requested(:post, default_endpoint).with(
+          body: /&lt;Test&gt; &amp; &quot;School&quot;/
+        )
+      end
     end
   end
 
-  context "when the request fails" do
-    it "warns with the status and response body" do
-      stub_careplus_request(status: 400, body: "<fault>Bad request</fault>")
+  context "with --ods_code (team credentials)" do
+    context "when the organisation does not exist" do
+      it "warns and does not make a request" do
+        when_i_run_the_command_and_capture_error(
+          "--input=#{input_path}",
+          "--ods_code=UNKNOWN"
+        )
 
-      when_i_run_the_command_and_capture_error("--input=#{input_path}")
-
-      then_the_error_output_includes("Request failed with HTTP 400")
-      then_the_error_output_includes("<fault>Bad request</fault>")
+        then_the_error_output_includes(
+          "Could not find organisation with ODS code 'UNKNOWN'"
+        )
+        and_no_request_was_made
+      end
     end
-  end
 
-  context "when a custom endpoint is specified" do
-    it "sends the request to the custom endpoint" do
-      custom_endpoint = "http://custom-host:9090/soap"
-      stub_careplus_request(endpoint: custom_endpoint, status: 200, body: "")
+    context "when the organisation has multiple teams and no workgroup is given" do
+      it "warns and does not make a request" do
+        given_an_organisation_with_multiple_teams
 
-      when_i_run_the_command(
-        "--input=#{input_path}",
-        "--endpoint=#{custom_endpoint}"
-      )
+        when_i_run_the_command_and_capture_error(
+          "--input=#{input_path}",
+          "--ods_code=#{@organisation.ods_code}"
+        )
 
-      expect(WebMock).to have_requested(:post, custom_endpoint)
+        then_the_error_output_includes("has multiple teams")
+        and_no_request_was_made
+      end
     end
-  end
 
-  context "when the CSV payload contains XML special characters" do
-    it "escapes them before embedding in the envelope" do
-      File.write(input_path, "name\n<Test> & \"School\"\n")
-      stub_careplus_request(status: 200, body: "")
+    context "when the team has no credentials configured" do
+      it "warns and does not make a request" do
+        given_an_organisation_with_a_team_without_credentials
 
-      when_i_run_the_command("--input=#{input_path}")
+        when_i_run_the_command_and_capture_error(
+          "--input=#{input_path}",
+          "--ods_code=#{@organisation.ods_code}"
+        )
 
-      expect(WebMock).to have_requested(:post, default_endpoint).with(
-        body: /&lt;Test&gt; &amp; &quot;School&quot;/
-      )
+        then_the_error_output_includes(
+          "does not have CarePlus credentials configured"
+        )
+        and_no_request_was_made
+      end
+    end
+
+    context "when the team has credentials configured" do
+      it "sends the correct request using the team's credentials and namespace, and prints a success message" do
+        given_an_organisation_with_a_single_team
+        stub_careplus_request(status: 200, body: "<result>OK</result>")
+
+        when_i_run_the_command(
+          "--input=#{input_path}",
+          "--ods_code=#{@organisation.ods_code}"
+        )
+
+        expect(WebMock).to have_requested(:post, default_endpoint).with(
+          body: /careplus_user/
+        )
+        expect(WebMock).to have_requested(:post, default_endpoint).with(
+          body: %r{careplus\.syhapp\.thirdparty\.nhs\.uk/MOCK/webservices}
+        )
+        then_the_output_includes("Success (HTTP 200)")
+      end
+    end
+
+    context "when a workgroup is specified" do
+      it "sends the request using the matching team's credentials" do
+        given_an_organisation_with_multiple_teams
+        stub_careplus_request(status: 200, body: "")
+
+        when_i_run_the_command(
+          "--input=#{input_path}",
+          "--ods_code=#{@organisation.ods_code}",
+          "--workgroup=#{@team.workgroup}"
+        )
+
+        expect(WebMock).to have_requested(:post, default_endpoint).with(
+          body: /careplus_user/
+        )
+      end
     end
   end
 
@@ -110,6 +192,46 @@ describe "mavis reports send-to-careplus" do
   def command(*args)
     Dry::CLI.new(MavisCLI).call(
       arguments: ["reports", "send-to-careplus", *args]
+    )
+  end
+
+  def given_an_organisation_with_a_team_without_credentials
+    @organisation = create(:organisation)
+    create(
+      :team,
+      :with_careplus_enabled,
+      organisation: @organisation,
+      careplus_username: nil,
+      careplus_password: nil,
+      programmes: Programme.all
+    )
+  end
+
+  def given_an_organisation_with_a_single_team
+    @organisation = create(:organisation)
+    @team =
+      create(
+        :team,
+        :with_careplus_enabled,
+        organisation: @organisation,
+        programmes: Programme.all
+      )
+  end
+
+  def given_an_organisation_with_multiple_teams
+    @organisation = create(:organisation)
+    @team =
+      create(
+        :team,
+        :with_careplus_enabled,
+        organisation: @organisation,
+        programmes: Programme.all
+      )
+    create(
+      :team,
+      :with_careplus_enabled,
+      organisation: @organisation,
+      programmes: Programme.all
     )
   end
 

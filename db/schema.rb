@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_30_075714) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_07_121005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -907,8 +907,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075714) do
   end
 
   create_table "teams", force: :cascade do |t|
+    t.string "careplus_namespace"
+    t.string "careplus_password"
     t.string "careplus_staff_code"
     t.string "careplus_staff_type"
+    t.string "careplus_username"
     t.string "careplus_venue_code"
     t.datetime "created_at", null: false
     t.integer "days_before_consent_reminders", default: 7, null: false
