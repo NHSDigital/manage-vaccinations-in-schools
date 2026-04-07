@@ -96,53 +96,6 @@ module ConsentsHelper
     end
   end
 
-  def consent_action_links(consent, session:)
-    patient = consent.patient
-    programme = consent.programme
-
-    follow_up_link =
-      if consent.can_follow_up?
-        {
-          text: "Follow up",
-          href:
-            follow_up_session_patient_programme_consent_path(
-              session,
-              patient,
-              programme,
-              consent
-            )
-        }
-      end
-    withdraw_link =
-      if consent.can_withdraw?
-        {
-          text: "Withdraw consent",
-          href:
-            withdraw_session_patient_programme_consent_path(
-              session,
-              patient,
-              programme,
-              consent
-            )
-        }
-      end
-    invalidate_link =
-      if consent.can_invalidate?
-        {
-          text: "Mark as invalid",
-          href:
-            invalidate_session_patient_programme_consent_path(
-              session,
-              patient,
-              programme,
-              consent
-            )
-        }
-      end
-
-    [follow_up_link, withdraw_link, invalidate_link].compact
-  end
-
   def consent_parent_name(consentable)
     consentable.parent_full_name.presence ||
       (consentable.respond_to?(:parent) ? consentable.parent&.full_name : nil)
