@@ -15,6 +15,7 @@ module MavisCLI
 
       TARGET_NAMESPACE =
         "https://careplus.syhapp.thirdparty.nhs.uk/MOCK/webservices"
+
       DEFAULT_BASE_URL = ENV.fetch("MOCK_CAREPLUS_URL", "http://localhost:8080")
       DEFAULT_ENDPOINT = "#{DEFAULT_BASE_URL}/MOCK/soap.SchImms.cls".freeze
 
