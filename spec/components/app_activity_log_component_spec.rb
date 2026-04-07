@@ -347,29 +347,6 @@ describe AppActivityLogComponent do
                      programme: "Flu"
   end
 
-  describe "vaccination not administered" do
-    before do
-      create(
-        :vaccination_record,
-        :not_administered,
-        programme: programmes.first,
-        patient:,
-        session:,
-        performed_at: Time.zone.local(2025, 5, 31, 13),
-        performed_by: user,
-        notes: "Some notes.",
-        vaccine: programmes.first.vaccines.find_by!(upload_name: "Gardasil")
-      )
-    end
-
-    include_examples "card",
-                     title: "Vaccination not given: Unwell",
-                     date: "31 May 2025 at 1:00pm",
-                     notes: "Some notes.",
-                     by: "JOY, Nurse",
-                     programme: "HPV"
-  end
-
   describe "historical upload" do
     let(:date_and_time) { Time.zone.local(2026, 3, 4, 11, 30) }
 
@@ -391,32 +368,6 @@ describe AppActivityLogComponent do
                      title: "Vaccination record uploaded",
                      date:
                        "Record added to Mavis 4 March 2026 at 11:30am · Vaccination given 1 January 2026",
-                     programme: "HPV"
-  end
-
-  describe "discarded vaccination" do
-    before do
-      create(
-        :vaccination_record,
-        :discarded,
-        programme: programmes.first,
-        patient:,
-        session:,
-        performed_at: Time.zone.local(2025, 5, 31, 13),
-        discarded_at: Time.zone.local(2025, 5, 31, 14),
-        performed_by: user
-      )
-    end
-
-    include_examples "card",
-                     title: "Vaccinated with Gardasil 9",
-                     date: "31 May 2025 at 1:00pm",
-                     by: "JOY, Nurse",
-                     programme: "HPV"
-
-    include_examples "card",
-                     title: "Vaccination record archived",
-                     date: "31 May 2025 at 2:00pm",
                      programme: "HPV"
   end
 
@@ -708,11 +659,34 @@ describe AppActivityLogComponent do
   end
 
   describe "vaccination records" do
-    context "for the MMRV variant" do
+    let(:programme) { Programme.hpv }
+
+    context "for an administered vaccination record" do
+      before do
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          session:,
+          performed_at: Time.zone.local(2025, 5, 31, 13),
+          performed_by: user,
+          notes: "Some notes.",
+          vaccine: programme.vaccines.find_by!(upload_name: "Gardasil9")
+        )
+      end
+
+      include_examples "card",
+                       title: "Vaccinated with Gardasil 9",
+                       date: "31 May 2025 at 1:00pm",
+                       notes: "Some notes.",
+                       by: "JOY, Nurse",
+                       programme: "HPV"
+    end
+
+    context "for an MMRV variant record" do
       let(:programme) do
         Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
       end
-      let(:programmes) { [programme] }
 
       before do
         create(
@@ -728,6 +702,85 @@ describe AppActivityLogComponent do
                        title: "Vaccinated",
                        date: "31 May 2025 at 1:00pm",
                        programme: "MMRV"
+    end
+
+    context "for a not administered record" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          programme:,
+          patient:,
+          session:,
+          performed_at: Time.zone.local(2025, 5, 31, 13),
+          performed_by: user,
+          notes: "Some notes.",
+          vaccine: programmes.first.vaccines.find_by!(upload_name: "Gardasil")
+        )
+      end
+
+      include_examples "card",
+                       title: "Vaccination not given: Unwell",
+                       date: "31 May 2025 at 1:00pm",
+                       notes: "Some notes.",
+                       by: "JOY, Nurse",
+                       programme: "HPV"
+    end
+
+    context "for a discarded record" do
+      before do
+        create(
+          :vaccination_record,
+          :discarded,
+          programme:,
+          patient:,
+          session:,
+          performed_at: Time.zone.local(2025, 5, 31, 13),
+          discarded_at: Time.zone.local(2025, 5, 31, 14),
+          performed_by: user
+        )
+      end
+
+      include_examples "card",
+                       title: "Vaccinated with Gardasil 9",
+                       date: "31 May 2025 at 1:00pm",
+                       by: "JOY, Nurse",
+                       programme: "HPV"
+
+      include_examples "card",
+                       title: "Vaccination record archived",
+                       date: "31 May 2025 at 2:00pm",
+                       programme: "HPV"
+    end
+
+    context "for a discarded Imms API record" do
+      before do
+        create(
+          :vaccination_record,
+          :discarded,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          patient:,
+          session:,
+          performed_at: Time.zone.local(2025, 5, 31, 13),
+          discarded_at: Time.zone.local(2025, 5, 31, 14),
+          performed_by: user
+        )
+      end
+
+      it "doesn't render card 'vaccinated'" do
+        expect(rendered).not_to have_css(
+          ".app-timeline__header",
+          text: "Vaccinated with"
+        )
+      end
+
+      it "doesn't render card 'archived'" do
+        expect(rendered).not_to have_css(
+          ".app-timeline__header",
+          text: "Vaccination record archived"
+        )
+      end
     end
   end
 
