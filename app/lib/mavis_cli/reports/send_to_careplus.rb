@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "net/http"
-require "cgi"
-
 module MavisCLI
   module Reports
     class SendToCareplus < Dry::CLI::Command
@@ -49,19 +46,20 @@ module MavisCLI
 
         csv_payload = File.read(input)
 
-        soap_body =
-          build_soap_envelope(csv_payload, username:, password:, namespace:)
+        response =
+          ::Reports::CareplusSoapSender.call(
+            csv_payload:,
+            username:,
+            password:,
+            namespace:,
+            endpoint:
+          )
 
-        uri = URI.parse(endpoint)
-        response = post_soap_request(uri, soap_body)
-
-        if response.is_a?(Net::HTTPSuccess)
-          puts "Success (HTTP #{response.code})"
-          puts response.body
-        else
-          warn "Request failed with HTTP #{response.code}: #{response.message}"
-          warn response.body
-        end
+        puts "Success (HTTP #{response.code})"
+        puts response.body
+      rescue ::Reports::CareplusSoapSender::ServerError => e
+        warn "Request failed with HTTP #{e.response.code}: #{e.response.message}"
+        warn e.response.body
       end
 
       private
@@ -109,40 +107,8 @@ module MavisCLI
         [
           team.careplus_username,
           team.careplus_password,
-          team.careplus_namespace || FALLBACK_NAMESPACE
+          team.careplus_namespace
         ]
-      end
-
-      def build_soap_envelope(csv_payload, username:, password:, namespace:)
-        escaped_payload = CGI.escapeHTML(csv_payload)
-        target_namespace =
-          "https://careplus.syhapp.thirdparty.nhs.uk/#{namespace}/webservices"
-
-        <<~XML
-          <?xml version="1.0" encoding="utf-8"?>
-          <soap:Envelope
-              xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-              xmlns:car="#{target_namespace}">
-            <soap:Body>
-              <car:InsertImmsRecord>
-                <car:strUserId>#{username}</car:strUserId>
-                <car:strPwd>#{password}</car:strPwd>
-                <car:strPayload>#{escaped_payload}</car:strPayload>
-              </car:InsertImmsRecord>
-            </soap:Body>
-          </soap:Envelope>
-        XML
-      end
-
-      def post_soap_request(uri, body)
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = uri.scheme == "https"
-
-        request = Net::HTTP::Post.new(uri.request_uri)
-        request["Content-Type"] = "text/xml; charset=utf-8"
-        request.body = body
-
-        http.request(request)
       end
     end
   end

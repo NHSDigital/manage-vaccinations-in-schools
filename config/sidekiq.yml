@@ -2,6 +2,7 @@
 :concurrency: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
 
 :queues:
+  - careplus
   - cache
   - imports
   - consents
@@ -17,6 +18,10 @@
 
 :scheduler:
   :schedule:
+    enqueue_careplus_exports:
+      cron: "0 19 * * *"
+      class: EnqueueCareplusExportsJob
+      description: Export and send today's vaccination records to CarePlus for all configured teams
     enqueue_vaccinations_search_in_nhs_job:
       cron: "0 6 * * *"
       class: EnqueueVaccinationsSearchInNHSJob
@@ -86,4 +91,4 @@
     vaccination_confirmations:
       cron: "0 13,16,19 * * *"
       class: SendVaccinationConfirmationsJob
-      description: Send vaccination confirmation emails to parents
+      description: Send vaccination confirmation notifications to parents
