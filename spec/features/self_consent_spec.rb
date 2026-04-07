@@ -3,11 +3,14 @@
 describe "Self-consent" do
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
+  before { Flipper.enable(:vaccinating_16_plus_year_olds) }
+
   scenario "after Gillick assessment" do
     given_an_hpv_programme_is_underway
     and_there_is_a_child_without_parental_consent
 
-    when_the_nurse_assesses_the_child_as_not_being_gillick_competent
+    when_the_nurse_goes_to_the_child
+    and_the_nurse_assesses_the_child_as_not_being_gillick_competent
     then_the_details_of_the_gillick_non_competence_assessment_are_visible
     and_the_child_cannot_give_their_own_consent
     and_the_child_status_reflects_that_there_is_no_consent
@@ -17,6 +20,20 @@ describe "Self-consent" do
     then_the_details_of_the_gillick_competence_assessment_are_visible
     and_the_activity_log_shows_the_gillick_non_competence
     and_the_activity_log_shows_the_gillick_competence
+    and_the_nurse_records_consent_for_the_child
+    and_the_child_can_give_their_own_consent_that_the_nurse_records
+
+    when_the_nurse_views_the_childs_record
+    then_they_see_that_the_child_has_consent_from_themselves
+    and_the_child_should_be_safe_to_vaccinate
+    and_enqueued_jobs_run_with_no_errors
+  end
+
+  scenario "without Gillick assessment aged 16 or above" do
+    given_an_hpv_programme_is_underway
+    and_there_is_a_child_without_parental_consent_aged_16
+
+    when_the_nurse_goes_to_the_child
     and_the_nurse_records_consent_for_the_child
     and_the_child_can_give_their_own_consent_that_the_nurse_records
 
@@ -61,18 +78,17 @@ describe "Self-consent" do
   end
 
   def and_there_is_a_child_without_parental_consent
-    sign_in @team.users.first
-    visit sessions_path
-    click_on @school.name
-    within ".app-secondary-navigation" do
-      click_on "Children"
-    end
+    @patient = create(:patient, :consent_no_response, session: @session)
+  end
 
-    choose "Needs consent"
-    click_on "Update results"
-
-    expect(page).to have_content("Showing 1 to 1 of 1 children")
-    expect(page).to have_content(@patient.full_name)
+  def and_there_is_a_child_without_parental_consent_aged_16
+    @patient =
+      create(
+        :patient,
+        :consent_no_response,
+        session: @session,
+        date_of_birth: 16.years.ago
+      )
   end
 
   def and_there_is_a_child_with_gillick_competence
@@ -95,8 +111,7 @@ describe "Self-consent" do
     visit session_patient_programme_path(@session, @patient, @programme)
   end
 
-  def when_the_nurse_assesses_the_child_as_not_being_gillick_competent
-    click_on @patient.full_name
+  def and_the_nurse_assesses_the_child_as_not_being_gillick_competent
     click_on "Assess Gillick competence"
 
     within(
@@ -217,7 +232,7 @@ describe "Self-consent" do
     click_on "Record a new consent response"
 
     # who
-    choose "Child (Gillick competent)"
+    choose "Child"
     click_on "Continue"
 
     # record consent
@@ -236,7 +251,7 @@ describe "Self-consent" do
   def and_the_child_can_give_their_own_consent_that_the_nurse_records
     click_on "Change method"
 
-    choose "Child (Gillick competent)"
+    choose "Child"
     4.times { click_on "Continue" }
 
     expect(page).to have_content("Confirmation of vaccination sent to parent")

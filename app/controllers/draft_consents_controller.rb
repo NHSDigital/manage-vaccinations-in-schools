@@ -231,10 +231,15 @@ class DraftConsentsController < ApplicationController
   def set_new_or_existing_contact_options
     @new_or_existing_contact_options = []
 
-    if @patient.can_self_consent_after_gillick_assessment?(
-         location: @session.location,
-         programme_type: @programme.type
-       )
+    if @patient.can_self_consent_without_gillick_competent?
+      @new_or_existing_contact_options << NewOrExistingContactOption.new(
+        value: "patient",
+        label: "Child"
+      )
+    elsif @patient.can_self_consent_after_gillick_assessment?(
+          location: @session.location,
+          programme_type: @programme.type
+        )
       @new_or_existing_contact_options << NewOrExistingContactOption.new(
         value: "patient",
         label: "Child (Gillick competent)"
