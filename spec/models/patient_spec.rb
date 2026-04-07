@@ -707,6 +707,14 @@ describe Patient do
     end
   end
 
+  describe "#initials" do
+    subject { patient.initials }
+
+    let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
+
+    it { should eq("JD") }
+  end
+
   describe "#archived?" do
     let(:patient) { create(:patient) }
     let(:team) { create(:team) }
@@ -900,12 +908,30 @@ describe Patient do
     end
   end
 
-  describe "#initials" do
-    subject { patient.initials }
+  describe "#can_self_consent_without_gillick_competent?" do
+    subject { patient.can_self_consent_without_gillick_competent? }
 
-    let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
+    before { Flipper.enable(:vaccinating_16_plus_year_olds) }
 
-    it { should eq("JD") }
+    let(:patient) { build(:patient, date_of_birth:) }
+
+    context "when patient is 15 years old" do
+      let(:date_of_birth) { 15.years.ago.to_date }
+
+      it { should be(false) }
+    end
+
+    context "when patient is 16 years old" do
+      let(:date_of_birth) { 16.years.ago.to_date }
+
+      it { should be(true) }
+    end
+
+    context "when patient is 17 years old" do
+      let(:date_of_birth) { 17.years.ago.to_date }
+
+      it { should be(true) }
+    end
   end
 
   describe "#can_self_consent_after_gillick_assessment?" do

@@ -555,6 +555,10 @@ class Patient < ApplicationRecord
       &.gillick_competent? || false
   end
 
+  def can_self_consent_without_gillick_competent?
+    Flipper.enabled?(:vaccinating_16_plus_year_olds) && age_years >= 16
+  end
+
   def programme_status(programme, academic_year:)
     # TODO: Update this method to accept the `programme_type` so that we can
     #  then determine the right programme variant from the `disease_types` on
