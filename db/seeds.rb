@@ -74,7 +74,7 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
       .active
       .for_programmes(programmes)
       .find_each
-      .map { |vaccine| FactoryBot.build(:batch, team:, vaccine:) }
+      .map { |vaccine| FactoryBot.build(:batch, :not_expired, team:, vaccine:) }
   )
 
   location = FactoryBot.create(:school, team:, gias_year_groups: year_groups)
