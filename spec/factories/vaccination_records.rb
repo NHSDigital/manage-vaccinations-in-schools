@@ -23,6 +23,8 @@
 #  nhs_immunisations_api_recorded_at           :datetime
 #  nhs_immunisations_api_snomed_procedure_code :string
 #  nhs_immunisations_api_snomed_procedure_term :string
+#  nhs_immunisations_api_snomed_product_code   :string
+#  nhs_immunisations_api_snomed_product_term   :string
 #  nhs_immunisations_api_snomed_reason_code    :string
 #  nhs_immunisations_api_snomed_reason_term    :string
 #  nhs_immunisations_api_sync_pending_at       :datetime
