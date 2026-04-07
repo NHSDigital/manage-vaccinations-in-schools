@@ -26,6 +26,14 @@ class Programme
     "td_ipv" => (9..11).to_a
   }.freeze
 
+  DEFAULT_YEAR_GROUPS_WITH_OVER_16S_BY_TYPE = {
+    "flu" => (0..11).to_a,
+    "hpv" => (8..13).to_a,
+    "menacwy" => (9..13).to_a,
+    "mmr" => (0..13).to_a,
+    "td_ipv" => (9..13).to_a
+  }.freeze
+
   MAXIMUM_DOSE_SEQUENCES = {
     "flu" => 2,
     "hpv" => 3,
@@ -204,7 +212,13 @@ class Programme
 
   def triage_on_vaccination_history? = menacwy? || td_ipv?
 
-  def default_year_groups = DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
+  def default_year_groups
+    if Flipper.enabled?(:vaccinating_16_plus_year_olds)
+      DEFAULT_YEAR_GROUPS_WITH_OVER_16S_BY_TYPE.fetch(type)
+    else
+      DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
+    end
+  end
 
   def is_catch_up?(year_group:)
     return nil if seasonal?
