@@ -31,7 +31,7 @@ describe Contact do
   describe "validations" do
     it { should validate_presence_of(:full_name) }
     it { should validate_presence_of(:source) }
-    it { should validate_presence_of(:type) }
+    it { should validate_presence_of(:contact_method) }
     it { should validate_presence_of(:relationship) }
 
     it { should_not validate_presence_of(:email) }
