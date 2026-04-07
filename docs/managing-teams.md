@@ -22,6 +22,8 @@ team:
   careplus_staff_code: # Staff code used in CarePlus exports
   careplus_staff_type: # Staff type used in CarePlus exports
   careplus_venue_code: # Venue code used in CarePlus exports
+  careplus_username: # Optional username for the CarePlus web service
+  careplus_password: # Optional password for the CarePlus web service
   privacy_notice_url: # URL of a privacy notice shown to parents
   privacy_policy_url: # URL of a privacy policy shown to parents
   reply_to_id: # Optional GOV.UK Notify Reply-To UUID

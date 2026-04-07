@@ -5,8 +5,10 @@
 # Table name: teams
 #
 #  id                              :bigint           not null, primary key
+#  careplus_password               :string
 #  careplus_staff_code             :string
 #  careplus_staff_type             :string
+#  careplus_username               :string
 #  careplus_venue_code             :string
 #  days_before_consent_reminders   :integer          default(7), not null
 #  days_before_consent_requests    :integer          default(21), not null
@@ -76,6 +78,8 @@ class Team < ApplicationRecord
 
   normalizes :email, with: EmailAddressNormaliser.new
   normalizes :phone, with: PhoneNumberNormaliser.new
+
+  encrypts :careplus_username, :careplus_password
 
   enum :type,
        { point_of_care: 0, national_reporting: 1, support: 2 },
