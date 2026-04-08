@@ -189,6 +189,9 @@ jobs:
     name: Pre-deploy
     runs-on: ubuntu-latest
     needs: approve-deployments
+    if:
+      ${{ inputs.run_pre_deploy_migrations || inputs.environment == 'production' ||
+      inputs.environment == 'preview' || inputs.environment == 'training' }}
     permissions:
       id-token: write
     steps:
