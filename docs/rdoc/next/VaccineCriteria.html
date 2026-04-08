@@ -945,7 +945,7 @@
             </details>
           </div>
           <div class="method-source-code" id="apply-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 53</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply</span>(<span class="ruby-identifier">scope</span>)
   <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">with_disease_types</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">disease_types</span>)
 
@@ -1041,6 +1041,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">side_effects</span>
   <span class="ruby-constant">Vaccine</span>
     .<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>)
+    .<span class="ruby-identifier">active</span>
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">method:</span> <span class="ruby-identifier">primary_method</span>)
     .<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:side_effects</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1082,7 +1083,7 @@
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 65</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccine_criteria.rb, line 66</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span>
   <span class="ruby-identifier">parts</span> = []
 
