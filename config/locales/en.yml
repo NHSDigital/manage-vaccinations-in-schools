@@ -1211,6 +1211,38 @@ en:
     mmr_and_mmrv: MMR(V)
     mmrv: MMRV
     td_ipv: Td/IPV
+  careplus_exports:
+    index:
+      title: CarePlus exports
+      subtitle: Vaccination data
+      description: Export vaccination data for CarePlus
+      not_sent: "—"
+      empty: No CarePlus exports found.
+      table:
+        sent_on: Sent on
+        programmes: Programmes
+        status: Status
+        records: Records
+        record: CarePlus export
+    show:
+      title: CarePlus export
+      summary:
+        heading: Export details
+        filename: Filename
+        programme: Programme
+        date_range: Date range
+        status: Status
+        records: Records
+        file: File
+        download: Download CSV
+      table:
+        record: vaccination record
+        name: Name
+        postcode: Postcode
+        school: School
+        date_of_birth: Date of birth
+    download:
+      no_file: No file is available for this export.
   reports:
     index:
       title: Reports

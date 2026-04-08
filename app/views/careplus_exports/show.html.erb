@@ -1,0 +1,110 @@
+<% content_for :navigation do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("careplus_exports.index.title"), href: careplus_exports_path },
+                                          { text: t(".title") },
+                                        ]) %>
+<% end %>
+
+<%= h1 t(".title"), page_title: t(".title") %>
+
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading(level: 2) { t(".summary.heading") } %>
+
+  <dl class="nhsuk-summary-list">
+    <% if @careplus_export.csv_filename.present? %>
+      <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+        <dt class="nhsuk-summary-list__key"><%= t(".summary.filename") %></dt>
+        <dd class="nhsuk-summary-list__value"><%= @careplus_export.csv_filename %></dd>
+      </div>
+    <% end %>
+
+    <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+      <dt class="nhsuk-summary-list__key"><%= t(".summary.programme") %></dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= render AppProgrammeTagsComponent.new(@careplus_export.programmes) %>
+      </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+      <dt class="nhsuk-summary-list__key"><%= t(".summary.date_range") %></dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= @careplus_export.date_from.to_fs(:long) %> to <%= @careplus_export.date_to.to_fs(:long) %>
+      </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+      <dt class="nhsuk-summary-list__key"><%= t(".summary.status") %></dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= render AppStatusTagComponent.new(@careplus_export.status, context: :careplus_export) %>
+      </dd>
+    </div>
+
+    <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+      <dt class="nhsuk-summary-list__key"><%= t(".summary.records") %></dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= @careplus_export.careplus_export_vaccination_records.size %>
+      </dd>
+    </div>
+
+    <% if @careplus_export.csv_data.present? %>
+      <div class="nhsuk-summary-list__row nhsuk-summary-list__row--no-actions">
+        <dt class="nhsuk-summary-list__key"><%= t(".summary.file") %></dt>
+        <dd class="nhsuk-summary-list__value">
+          <%= link_to t(".summary.download"), download_careplus_export_path(@careplus_export) %>
+        </dd>
+      </div>
+    <% end %>
+  </dl>
+<% end %>
+
+<% if @vaccination_records.any? %>
+  <%= render AppCardComponent.new do |card| %>
+    <% card.with_heading(level: 2) do %>
+      <%= pluralize(@pagy.count, t(".table.record")) %>
+    <% end %>
+
+    <%= govuk_table(html_attributes: { class: "nhsuk-table nhsuk-table-responsive" }) do |table| %>
+      <%= table.with_head do |head|
+            head.with_row do |row|
+              row.with_cell(text: t(".table.name"))
+              row.with_cell(text: t(".table.postcode"))
+              row.with_cell(text: t(".table.school"))
+              row.with_cell(text: t(".table.date_of_birth"))
+            end
+          end %>
+
+      <%= table.with_body do |body| %>
+        <% @vaccination_records.each do |record| %>
+          <%= body.with_row do |row| %>
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.name") %></span>
+              <%= record.patient.full_name %>
+              <br>
+              <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">
+                <%= patient_nhs_number(record.patient) %>
+              </span>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.postcode") %></span>
+              <%= record.patient.address_postcode.presence || "—" %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.school") %></span>
+              <%= record.patient.school&.name || "—" %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.date_of_birth") %></span>
+              <%= record.patient.date_of_birth.to_fs(:long) %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render AppPaginationComponent.new(pagy: @pagy) %>
+<% end %>

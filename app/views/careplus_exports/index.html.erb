@@ -1,0 +1,63 @@
+<% content_for :navigation do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t(".title") },
+                                        ]) %>
+<% end %>
+
+<h1 class="nhsuk-heading-l">
+  <span class="nhsuk-caption-l"><%= t(".subtitle") %></span>
+  <%= content_for(:page_title, t(".title")); t(".title") %>
+</h1>
+
+<p class="nhsuk-body"><%= t(".description") %></p>
+
+<% if @exports.any? %>
+  <%= render AppCardComponent.new(feature: true) do |card| %>
+    <% card.with_heading(level: 2) do %>
+      <%= pluralize(@pagy.count, t(".table.record")) %>
+    <% end %>
+
+    <%= govuk_table(html_attributes: { class: "nhsuk-table nhsuk-table-responsive" }) do |table| %>
+      <%= table.with_head do |head|
+            head.with_row do |row|
+              row.with_cell(text: t(".table.sent_on"))
+              row.with_cell(text: t(".table.programmes"))
+              row.with_cell(text: t(".table.status"))
+              row.with_cell(text: t(".table.records"))
+            end
+          end %>
+
+      <%= table.with_body do |body| %>
+        <% @exports.each do |export| %>
+          <%= body.with_row do |row| %>
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.sent_on") %></span>
+              <%= link_to(export.sent_at ? export.sent_at.to_date.to_fs(:long) : t(".not_sent"),
+                          careplus_export_path(export)) %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.programmes") %></span>
+              <%= render AppProgrammeTagsComponent.new(export.programmes) %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.status") %></span>
+              <%= render AppStatusTagComponent.new(export.status, context: :careplus_export) %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.records") %></span>
+              <%= export.careplus_export_vaccination_records.size %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% else %>
+  <p class="nhsuk-body"><%= t(".empty") %></p>
+<% end %>
+
+<%= render AppPaginationComponent.new(pagy: @pagy) %>

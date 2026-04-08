@@ -246,6 +246,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :careplus_exports, path: "careplus-exports", only: %i[index show] do
+    member { get :download }
+  end
+
   resources :reports, only: :index
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
