@@ -255,11 +255,13 @@ describe SendAutomaticSchoolConsentRemindersJob do
       expect(
         consent_notifications.find_by!(patient: patient_not_sent_reminder)
       ).to be_initial_reminder
+
       expect(
         consent_notifications.find_by!(
           patient: patient_not_sent_reminder_joined_after_first_date
         )
       ).to be_initial_reminder
+
       expect(
         consent_notifications.find_by!(
           patient: patient_with_initial_reminder_sent

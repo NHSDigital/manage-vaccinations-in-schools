@@ -3,6 +3,8 @@
 class Notifier::Patient
   extend ActiveSupport::Concern
 
+  CONSENT_REMINDER_TYPES = %i[initial_reminder subsequent_reminder].freeze
+
   def initialize(patient)
     @patient = patient
   end
@@ -246,7 +248,13 @@ class Notifier::Patient
     type:
   )
     is_school = location.gias_school?
-    base_template = :"consent_#{is_school ? "school" : "clinic"}_#{type}"
+
+    base_template =
+      if is_school && CONSENT_REMINDER_TYPES.include?(type)
+        :consent_school_reminder
+      else
+        :"consent_#{is_school ? "school" : "clinic"}_#{type}"
+      end
 
     # We can only handle a single programme group or variant in the template.
     group = ProgrammeGrouper.call(programmes).keys.sole

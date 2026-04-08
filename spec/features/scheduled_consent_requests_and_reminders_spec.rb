@@ -12,21 +12,12 @@ describe "Scheduled consent requests and reminders" do
     ]
   end
 
-  let(:initial_reminder_templates) do
+  let(:reminder_templates) do
     %i[
-      consent_school_initial_reminder_hpv
-      consent_school_initial_reminder_flu
-      consent_school_initial_reminder_mmr
-      consent_school_initial_reminder_doubles
-    ]
-  end
-
-  let(:subsequent_reminder_templates) do
-    %i[
-      consent_school_subsequent_reminder_hpv
-      consent_school_subsequent_reminder_flu
-      consent_school_subsequent_reminder_mmr
-      consent_school_subsequent_reminder_doubles
+      consent_school_reminder_hpv
+      consent_school_reminder_flu
+      consent_school_reminder_mmr
+      consent_school_reminder_doubles
     ]
   end
 
@@ -67,10 +58,10 @@ describe "Scheduled consent requests and reminders" do
     then_all_four_parents_received_all_programme_consent_requests
 
     when_14_more_days_pass
-    then_all_four_parents_received_all_programme_initial_reminders
+    then_all_four_parents_received_all_programme_reminders
 
     when_7_more_days_pass
-    then_all_four_parents_received_all_programme_subsequent_reminders
+    then_all_four_parents_received_all_programme_reminders
   end
 
   def given_my_team_is_running_all_vaccination_programmes
@@ -272,13 +263,13 @@ describe "Scheduled consent requests and reminders" do
     end
   end
 
-  def then_all_four_parents_received_all_programme_initial_reminders
+  def then_all_four_parents_received_all_programme_reminders
     EnqueueSchoolConsentRemindersJob.perform_now
     perform_enqueued_jobs
     Sidekiq::Job.drain_all
 
     parent_emails.each do |email|
-      initial_reminder_templates.each do |template|
+      reminder_templates.each do |template|
         expect(email_deliveries).to include(
           matching_notify_email(to: email, template:)
         )
@@ -293,38 +284,7 @@ describe "Scheduled consent requests and reminders" do
       expect(email_deliveries).to include(
         matching_notify_email(
           to: email,
-          template: :consent_school_initial_reminder_mmrv
-        )
-      )
-    end
-
-    mmrv_parent_phones.each do |phone|
-      expect_sms_to(phone, :consent_school_reminder, :any)
-    end
-  end
-
-  def then_all_four_parents_received_all_programme_subsequent_reminders
-    EnqueueSchoolConsentRemindersJob.perform_now
-    perform_enqueued_jobs
-    Sidekiq::Job.drain_all
-
-    parent_emails.each do |email|
-      subsequent_reminder_templates.each do |template|
-        expect(email_deliveries).to include(
-          matching_notify_email(to: email, template:)
-        )
-      end
-    end
-
-    parent_phones.each do |phone|
-      expect_sms_to(phone, :consent_school_reminder, :any)
-    end
-
-    mmrv_parent_emails.each do |email|
-      expect(email_deliveries).to include(
-        matching_notify_email(
-          to: email,
-          template: :consent_school_subsequent_reminder_mmrv
+          template: :consent_school_reminder_mmrv
         )
       )
     end

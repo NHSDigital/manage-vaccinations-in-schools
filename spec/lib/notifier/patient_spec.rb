@@ -598,7 +598,7 @@ describe Notifier::Patient do
 
       it "enqueues an email per parent with the correct args" do
         expect { send_consent_reminder }.to have_delivered_email(
-          :consent_school_initial_reminder_hpv
+          :consent_school_reminder_hpv
         ).with(
           disease_types:,
           parent: parents.first,
@@ -606,7 +606,7 @@ describe Notifier::Patient do
           programme_types:,
           session:,
           sent_by:
-        ).and have_delivered_email(:consent_school_initial_reminder_hpv).with(
+        ).and have_delivered_email(:consent_school_reminder_hpv).with(
                 disease_types:,
                 parent: parents.second,
                 patient:,
@@ -660,7 +660,7 @@ describe Notifier::Patient do
 
         it "enqueues an email per parent" do
           expect { send_consent_reminder }.to have_delivered_email(
-            :consent_school_initial_reminder_doubles
+            :consent_school_reminder_doubles
           ).twice
         end
 
@@ -676,7 +676,7 @@ describe Notifier::Patient do
 
         it "enqueues an email per parent" do
           expect { send_consent_reminder }.to have_delivered_email(
-            :consent_school_initial_reminder_flu
+            :consent_school_reminder_flu
           ).twice
         end
 
@@ -692,7 +692,7 @@ describe Notifier::Patient do
 
         it "enqueues an email" do
           expect { send_consent_reminder }.to have_delivered_email(
-            :consent_school_initial_reminder_mmr
+            :consent_school_reminder_mmr
           ).twice
         end
 
@@ -709,7 +709,7 @@ describe Notifier::Patient do
 
           it "enqueues an email" do
             expect { send_consent_reminder }.to have_delivered_email(
-              :consent_school_initial_reminder_mmr
+              :consent_school_reminder_mmr
             ).twice
           end
 
@@ -727,7 +727,7 @@ describe Notifier::Patient do
 
           it "enqueues an email" do
             expect { send_consent_reminder }.to have_delivered_email(
-              :consent_school_initial_reminder_mmrv
+              :consent_school_reminder_mmrv
             ).twice
           end
 
@@ -744,7 +744,7 @@ describe Notifier::Patient do
 
             it "enqueues an email" do
               expect { send_consent_reminder }.to have_delivered_email(
-                :consent_school_initial_reminder_mmrv
+                :consent_school_reminder_mmrv
               ).twice
             end
 
@@ -801,7 +801,7 @@ describe Notifier::Patient do
 
       it "enqueues an email per parent" do
         expect { send_consent_reminder }.to have_delivered_email(
-          :consent_school_subsequent_reminder_hpv
+          :consent_school_reminder_hpv
         ).with(
           disease_types:,
           parent: parents.first,
@@ -809,9 +809,7 @@ describe Notifier::Patient do
           programme_types:,
           session:,
           sent_by:
-        ).and have_delivered_email(
-                :consent_school_subsequent_reminder_hpv
-              ).with(
+        ).and have_delivered_email(:consent_school_reminder_hpv).with(
                 disease_types:,
                 parent: parents.second,
                 patient:,
@@ -865,7 +863,7 @@ describe Notifier::Patient do
 
         it "enqueues an email per parent" do
           expect { send_consent_reminder }.to have_delivered_email(
-            :consent_school_subsequent_reminder_doubles
+            :consent_school_reminder_doubles
           ).twice
         end
 
@@ -881,7 +879,7 @@ describe Notifier::Patient do
 
         it "enqueues an email per parent" do
           expect { send_consent_reminder }.to have_delivered_email(
-            :consent_school_subsequent_reminder_flu
+            :consent_school_reminder_flu
           ).twice
         end
 
@@ -902,7 +900,7 @@ describe Notifier::Patient do
 
           it "enqueues an email" do
             expect { send_consent_reminder }.to have_delivered_email(
-              :consent_school_subsequent_reminder_mmr
+              :consent_school_reminder_mmr
             ).twice
           end
 
@@ -919,7 +917,7 @@ describe Notifier::Patient do
 
             it "enqueues an email" do
               expect { send_consent_reminder }.to have_delivered_email(
-                :consent_school_subsequent_reminder_mmr
+                :consent_school_reminder_mmr
               ).twice
             end
 
@@ -938,7 +936,7 @@ describe Notifier::Patient do
 
           it "enqueues an email" do
             expect { send_consent_reminder }.to have_delivered_email(
-              :consent_school_subsequent_reminder_mmrv
+              :consent_school_reminder_mmrv
             ).twice
           end
 
@@ -955,7 +953,7 @@ describe Notifier::Patient do
 
             it "enqueues an email" do
               expect { send_consent_reminder }.to have_delivered_email(
-                :consent_school_subsequent_reminder_mmrv
+                :consent_school_reminder_mmrv
               ).twice
             end
 
