@@ -853,6 +853,36 @@ describe GovukNotifyPersonalisation do
         )
       end
     end
+
+    context "with a vaccination record" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          patient:,
+          programme: hpv_programme,
+          session:
+        )
+      end
+
+      it do
+        expect(personalisation).to have_attributes(
+          vaccine_side_effects:
+            "- generally feeling unwell\n- swelling or pain where the injection was given"
+        )
+      end
+    end
+
+    context "without a patient" do
+      let(:patient) { nil }
+      let(:vaccination_record) { nil }
+
+      it do
+        expect(personalisation).to have_attributes(
+          vaccine_side_effects:
+            "- generally feeling unwell\n- swelling or pain where the injection was given"
+        )
+      end
+    end
   end
 
   context "with the flu programme" do
