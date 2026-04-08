@@ -77,7 +77,13 @@ class NotifyLogEntry < ApplicationRecord
     "38727494-9a81-42b3-9c1f-5c31e55333e7" => :vaccination_administered_menacwy,
     "3abe7ca8-a889-484b-ab9f-07523302eb6a" => :vaccination_administered_td_ipv,
     "7238ee27-5840-40e5-b9b9-3130ba4cd4fa" => :vaccination_administered_flu,
-    "0b1095db-fb38-4105-9f01-a364fa8bbb1c" => :vaccination_administered_mmr
+    "0b1095db-fb38-4105-9f01-a364fa8bbb1c" => :vaccination_administered_mmr,
+    "ea03aada-0912-4373-91e1-80082071a7aa" =>
+      :consent_school_subsequent_reminder_doubles,
+    "c942ce27-590e-4387-9aa8-5b9b4f2796d1" =>
+      :consent_school_subsequent_reminder_flu,
+    "5f70d21d-00b6-41e6-bdc9-e64455972b43" =>
+      :consent_school_subsequent_reminder_hpv
   }.freeze
 
   self.inheritance_column = nil
