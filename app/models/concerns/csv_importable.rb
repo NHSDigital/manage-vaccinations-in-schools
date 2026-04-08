@@ -75,10 +75,12 @@ module CSVImportable
               }
     validates :csv_filename, presence: true
 
-    validate :csv_is_valid
-    validate :csv_has_records
-    validate :csv_is_not_too_large
-    validate :rows_are_valid
+    validate :csv_is_valid, unless: -> { csv_removed? }
+    validate :csv_has_records,
+             if: -> { !csv_removed? && csv_data_object.well_formed? }
+    validate :csv_is_not_too_large,
+             unless: -> { csv_removed? || csv_data_object.empty? }
+    validate :rows_are_valid, if: -> { !csv_removed? && rows }
 
     before_save :ensure_processed_with_count_statistics
   end
@@ -161,16 +163,12 @@ module CSVImportable
   end
 
   def csv_is_not_too_large
-    return unless csv_data
-
     if rows_count > MAX_CSV_ROWS
       errors.add(:csv, :too_many_rows, count: MAX_CSV_ROWS)
     end
   end
 
   def csv_has_records
-    return unless csv_data
-
     csv_has_no_records =
       csv_data_object.empty? ||
         (csv_data_object.count == 1 && csv_data_object.has_instruction_row?)
@@ -178,8 +176,6 @@ module CSVImportable
   end
 
   def rows_are_valid
-    return unless rows
-
     rows.each(&:validate)
 
     check_rows_are_unique
