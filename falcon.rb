@@ -40,7 +40,7 @@ service hostname do
   end
 end
 
-unless ENV["SERVICE_DIRECT_PORT"].to_s.empty?
+unless ENV["SERVICE_CONNECT_PORT"].to_s.empty?
   service "#{hostname}-http" do
     include Falcon::Environment::Rack
 
