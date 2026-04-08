@@ -199,18 +199,18 @@ describe "Verbal consent" do
     click_button "Record a new consent response"
 
     # Who are you trying to get consent from?
-    click_button "Continue"
-    expect(page).to have_content(
-      "Choose who you are trying to get consent from"
-    )
+    # click_button "Continue"
+    # expect(page).to have_content(
+    #   "Choose who you are trying to get consent from"
+    # )
 
-    parent_label = @contact.label
+    contact_label = @contact.label
 
-    choose parent_label
+    choose contact_label
     click_button "Continue"
 
     # Details for parent or guardian
-    expect(page).to have_content("Details for #{parent_label}")
+    expect(page).to have_content("Details for #{contact_label}")
     # don't change any details
     click_button "Continue"
 

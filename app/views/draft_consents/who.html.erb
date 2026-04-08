@@ -23,13 +23,24 @@
                                link_errors: true %>
     <% end %>
 
-    <% if @parent_options.present? %>
+    <% if !Flipper.enabled?(:patient_contacts) && @parent_options.present? %>
       <% @parent_options.each.with_index do |parent_relationship, i| %>
         <% parent = parent_relationship.parent %>
         <%= f.govuk_radio_button :new_or_existing_contact, parent.id,
                                  label: { text: parent_relationship.label_with_parent },
                                  hint: { text: parent.contact_label },
                                  link_errors: !gillick_competent && i == 0 %>
+      <% end %>
+
+      <%= f.govuk_radio_divider %>
+    <% end %>
+
+    <% if Flipper.enabled?(:patient_contacts) && @contact_options.present? %>
+      <% @contact_options.each.with_index do |contact_option, i| %>
+        <% full_name, email_contact, phone_contact = contact_option %>
+        <%= f.govuk_radio_button :new_or_existing_contact, [email_contact&.id, phone_contact&.id].compact,
+                                 label: { text: full_name },
+                                 link_errors: i == 0 %>
       <% end %>
 
       <%= f.govuk_radio_divider %>
