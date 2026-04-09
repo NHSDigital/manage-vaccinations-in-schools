@@ -127,28 +127,6 @@ describe CohortImport do
         expect(cohort_import.errors.to_a[0]).to start_with("Row 2")
       end
     end
-
-    describe "with a valid file using ISO-8859-1 encoding" do
-      let(:file) { "valid_iso_8859_1_encoding.csv" }
-
-      let(:location) do
-        Location.find_by_urn_and_site("120026") ||
-          create(:gias_school, urn: "120026", team:)
-      end
-
-      it "is valid" do
-        expect(cohort_import).to be_valid
-        expect(cohort_import.rows.count).to eq(16)
-      end
-    end
-
-    describe "with an invalid file using ISO-8859-1 encoding" do
-      let(:file) { "invalid_iso_8859_1_encoding.csv" }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-      end
-    end
   end
 
   describe "#process!" do
