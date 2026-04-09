@@ -270,11 +270,16 @@ class TeamMerger
 
     source_teams.each do |source_team|
       source_team.team_locations.find_each do |tl|
-        if TeamLocation.exists?(
-             team_id: merged_team.id,
-             academic_year: tl.academic_year,
-             location_id: tl.location_id
-           )
+        previously_migrated_tl =
+          TeamLocation.find_by(
+            team_id: merged_team.id,
+            academic_year: tl.academic_year,
+            location_id: tl.location_id
+          )
+        if previously_migrated_tl.present?
+          ConsentForm.where(team_location_id: tl.id).update_all(
+            team_location_id: previously_migrated_tl.id
+          )
           tl.destroy!
         else
           tl.update_columns(team_id: merged_team.id)
@@ -341,15 +346,30 @@ class TeamMerger
         source_ids = pairs.map(&:first)
         merged_loc = pairs.first.last
 
-        VaccinationRecord.where(location_id: source_ids).update_all(
-          location_id: merged_loc.id
-        )
+        [
+          AttendanceRecord,
+          GillickAssessment,
+          PreScreening,
+          VaccinationRecord
+        ].each do |model|
+          model.where(location_id: source_ids).update_all(
+            location_id: merged_loc.id
+          )
+        end
 
-        SchoolMove.where(school_id: source_ids).update_all(
-          school_id: merged_loc.id
-        )
+        [
+          ConsentForm,
+          Patient,
+          PatientChangeset,
+          SchoolMove,
+          SchoolMoveLogEntry
+        ].each do |model|
+          model.where(school_id: source_ids).update_all(
+            school_id: merged_loc.id
+          )
+        end
 
-        keep_ids =
+        patient_location_ids_to_keep =
           PatientLocation
             .where(location_id: source_ids)
             .group(:patient_id, :academic_year)
@@ -357,22 +377,10 @@ class TeamMerger
             .values
         PatientLocation
           .where(location_id: source_ids)
-          .where.not(id: keep_ids)
+          .where.not(id: patient_location_ids_to_keep)
           .delete_all
-        PatientLocation.where(id: keep_ids).update_all(
+        PatientLocation.where(id: patient_location_ids_to_keep).update_all(
           location_id: merged_loc.id
-        )
-
-        [AttendanceRecord, GillickAssessment, PreScreening].each do |model|
-          model.where(location_id: source_ids).update_all(
-            location_id: merged_loc.id
-          )
-        end
-        ConsentForm.where(school_id: source_ids).update_all(
-          school_id: merged_loc.id
-        )
-        Patient.where(school_id: source_ids).update_all(
-          school_id: merged_loc.id
         )
       end
 
