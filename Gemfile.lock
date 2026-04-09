@@ -384,7 +384,7 @@ GEM
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (>= 6, < 10)
       view_component (>= 4.0, < 4.7)
-    govuk_design_system_formbuilder (6.0.0)
+    govuk_design_system_formbuilder (6.1.0)
       actionview (>= 6.1)
       activemodel (>= 6.1)
       activesupport (>= 6.1)
