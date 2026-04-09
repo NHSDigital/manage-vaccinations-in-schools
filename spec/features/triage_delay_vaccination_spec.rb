@@ -95,7 +95,7 @@ describe "Triage" do
   end
 
   def when_i_filter_by_delay_vaccination
-    within(".nhsuk-breadcrumb") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children in session" }
     choose "Unable to vaccinate"
     check "Delay vaccination"
     click_on "Update results"

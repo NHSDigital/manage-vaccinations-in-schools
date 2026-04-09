@@ -446,7 +446,7 @@ describe "Triage" do
   end
 
   def when_i_go_to_the_second_patient
-    within(".nhsuk-breadcrumb") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children in session" }
     click_link @patient_nasal_only.full_name, match: :first
   end
 

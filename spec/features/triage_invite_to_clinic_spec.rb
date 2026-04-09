@@ -194,7 +194,7 @@ describe "Triage" do
   end
 
   def when_i_filter_by_invited_to_clinic
-    within(".nhsuk-breadcrumb") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children in session" }
     choose "Needs triage"
     click_on "Update results"
   end

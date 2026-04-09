@@ -558,7 +558,7 @@ describe "Offline vaccination" do
     expect(page).to have_content("SiteLeft arm (upper position)")
 
     visit patient_url
-    within(".nhsuk-breadcrumb") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children in session" }
     choose "Unable to vaccinate"
     click_on "Update results"
 
@@ -568,7 +568,7 @@ describe "Offline vaccination" do
     expect(page).to have_content("Unwell")
 
     visit patient_url
-    within(".nhsuk-breadcrumb") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children in session" }
     choose "Vaccinated", match: :first
     click_on "Update results"
 
