@@ -14,6 +14,7 @@ class DraftConsent
   attr_accessor :triage_form_valid
 
   attribute :academic_year, :integer
+  attribute :contact_ids, array: true, default: []
   attribute :disease_types, array: true, default: []
   attribute :health_answers, array: true, default: []
   attribute :injection_alternative, :boolean
@@ -180,16 +181,22 @@ class DraftConsent
     if value == "new"
       self.route = nil
       self.parent = nil
+      self.contacts = []
     elsif value == "patient"
       self.route = "self_consent"
       self.parent = nil
+      self.contacts = []
     else
       self.route = nil
-      self.parent =
-        patient.parents.find_by(id: value) ||
-          Parent.where(
-            consents: patient.consents.for_programme(programme)
-          ).find_by(id: value)
+      if Flipper.enabled?(:patient_contacts)
+        self.contacts = patient.contacts.where(id: value.split(" ").map(&:to_i))
+      else
+        self.parent =
+          patient.parents.find_by(id: value) ||
+            Parent.where(
+              consents: patient.consents.for_programme(programme)
+            ).find_by(id: value)
+      end
     end
   end
 
@@ -242,6 +249,8 @@ class DraftConsent
   def parent
     return nil if via_self_consent?
 
+    return nil if Flipper.enabled?(:patient_contacts)
+
     parent = Parent.find_by(id: parent_id) || Parent.new
 
     parent.email = parent_email
@@ -270,7 +279,42 @@ class DraftConsent
     parent
   end
 
+  def contacts
+    return nil unless Flipper.enabled?(:patient_contacts)
+
+    contacts = []
+
+    if parent_email.present?
+      contact =
+        Contact.find_by(id: contact_ids, contact_method: :email) ||
+          Contact.new(contact_method: :email)
+      contact.email = parent_email
+      contact.full_name = parent_full_name
+      contact.relationship = parent_relationship_type
+      contact.relationship_other_name = parent_relationship_other_name
+      contact.patient = patient # acts as preload
+      contacts << contact
+    end
+
+    if parent_phone.present?
+      contact =
+        Contact.find_by(id: contact_ids, contact_method: :phone) ||
+          Contact.new(contact_method: :phone)
+      contact.phone = parent_phone
+      contact.phone_receive_updates = parent_phone_receive_updates
+      contact.full_name = parent_full_name
+      contact.relationship = parent_relationship_type
+      contact.relationship_other_name = parent_relationship_other_name
+      contact.patient = patient # acts as preload
+      contacts << contact
+    end
+
+    contacts
+  end
+
   def parent=(value)
+    return if Flipper.enabled?(:patient_contacts)
+
     self.parent_id = value&.id
 
     parent_relationship = value&.parent_relationships&.find_by(patient_id:)
@@ -282,6 +326,45 @@ class DraftConsent
     self.parent_relationship_type = parent_relationship&.type
     self.parent_relationship_other_name = parent_relationship&.other_name
     self.parent_responsibility = value ? true : nil
+  end
+
+  def contacts=(value)
+    return unless Flipper.enabled?(:patient_contacts)
+
+    self.contact_ids = value.map(&:id)
+
+    value.each do |contact|
+      if contact.phone?
+        self.parent_phone = patient.restricted? ? "" : contact.phone
+        self.parent_phone_receive_updates = contact.phone_receive_updates
+      end
+      if contact.email?
+        self.parent_email = patient.restricted? ? "" : contact.email
+      end
+      self.parent_full_name ||= contact.full_name
+      self.parent_relationship_type = parent_relationship&.type
+      self.parent_relationship_other_name = parent_relationship&.other_name
+    end
+  end
+
+  def source_label
+    if parent_relationship_type == "other"
+      "Other – #{other_name}"
+    else
+      human_enum_name(:parent_relationship_type).capitalize
+    end
+  end
+
+  def contact_label
+    parent_full_name.presence || "Parent or guardian (name unknown)"
+  end
+
+  def label_with_contact
+    if parent_relationship_type == "unknown"
+      contact_label
+    else
+      "#{contact_label} (#{source_label.downcase_first})"
+    end
   end
 
   def patient
@@ -335,7 +418,7 @@ class DraftConsent
 
     if triage_allowed? && requires_triage?
       triage_form.add_patient_specific_direction =
-        triage_add_patient_specific_direction
+        triage_add_patient_bespecific_direction
       triage_form.current_user = recorded_by
       triage_form.delay_vaccination_until = triage_delay_vaccination_until
       triage_form.notes = triage_notes || ""

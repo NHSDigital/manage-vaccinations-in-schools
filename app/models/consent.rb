@@ -104,7 +104,11 @@ class Consent < ApplicationRecord
          allow_nil: true
        }
 
-  validates :parent, presence: true, unless: :via_self_consent?
+  validates :parent,
+            presence: true,
+            unless: -> do
+              via_self_consent? || Flipper.enabled?(:patient_contacts)
+            end
   validates :recorded_by,
             presence: true,
             unless: -> { via_self_consent? || via_website? }
@@ -195,6 +199,36 @@ class Consent < ApplicationRecord
 
   def parent_relationship
     patient.parent_relationships.find { it.parent_id == parent_id }
+  end
+
+  def contacts
+    return [] unless Flipper.enabled?(:patient_contacts)
+
+    # TODO: Handle existing contacts as well as new ones
+
+    [].tap do |contacts|
+      if parent_email.present?
+        contacts << patient.contacts.build(
+          contact_method: :email,
+          email: parent_email,
+          full_name: parent_full_name,
+          relationship: parent_relationship_type,
+          relationship_other_name: parent_relationship_other_name,
+          source: :consent_response
+        )
+      end
+      if parent_phone.present?
+        contacts << patient.contacts.build(
+          contact_method: :phone,
+          phone: parent_phone,
+          phone_receive_updates: parent_phone_receive_updates,
+          full_name: parent_full_name,
+          relationship: parent_relationship_type,
+          relationship_other_name: parent_relationship_other_name,
+          source: :consent_response
+        )
+      end
+    end
   end
 
   def matched_manually?

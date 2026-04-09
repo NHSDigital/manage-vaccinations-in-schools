@@ -8,12 +8,14 @@ class DraftConsentsController < ApplicationController
   before_action :set_session
   before_action :set_programme
   before_action :set_parent
+  before_action :set_contacts
   before_action :set_consent
 
   include WizardControllerConcern
 
   before_action :set_triage_form, if: :includes_triage_step?
   before_action :set_parent_options, if: -> { current_step == :who }
+  before_action :set_contact_options, if: -> { current_step == :who }
   before_action :set_back_link_path
 
   def show
@@ -69,7 +71,9 @@ class DraftConsentsController < ApplicationController
     ActiveRecord::Base.transaction do
       @triage = @triage_form&.save! if @draft_consent.response_given?
 
-      if (parent = @consent.parent)
+      if Flipper.enabled?(:patient_contacts)
+        @consent.contacts.each { |contact| contact.save! if contact.changed? }
+      elsif (parent = @consent.parent)
         parent.save! if parent.changed?
         parent.parent_relationships.select(&:changed?).each(&:save!)
       end
@@ -205,6 +209,12 @@ class DraftConsentsController < ApplicationController
     @parent = @draft_consent.parent
   end
 
+  def set_contacts
+    return unless Flipper.enabled?(:patient_contacts)
+
+    @contacts = @draft_consent.contacts
+  end
+
   def set_consent
     @consent = @draft_consent.consent || Consent.new
   end
@@ -244,6 +254,21 @@ class DraftConsentsController < ApplicationController
             .select { it.programme_type == @programme.type }
             .filter_map(&:parent_relationship)
       ).compact.uniq.sort_by(&:label)
+  end
+
+  def set_contact_options
+    grouped_contacts = @patient.contacts.group_by(&:full_name)
+
+    options = []
+    grouped_contacts.each do |full_name, contacts|
+      phone_contacts = contacts.select(&:phone?)
+      email_contacts = contacts.select(&:email?)
+      paired_contacts = email_contacts.zip(phone_contacts)
+      paired_contacts.each do |email_contact, phone_contact|
+        options << [full_name, email_contact, phone_contact]
+      end
+    end
+    @contact_options = options
   end
 
   def set_back_link_path

@@ -30,15 +30,13 @@
   <%= render AppConsentPatientSummaryComponent.new(@draft_consent) %>
 <% end %>
 
-<% if @draft_consent.parent_relationship.present? %>
-  <%= render AppParentCardComponent.new(@draft_consent,
-                                        change_links: {
-                                          name: wizard_path("parent-details"),
-                                          relationship: wizard_path("parent-details"),
-                                          email: wizard_path("parent-details"),
-                                          phone: wizard_path("parent-details"),
-                                        }) %>
-<% end %>
+<%= render AppParentCardComponent.new(@draft_consent,
+                                      change_links: {
+                                        name: wizard_path("parent-details"),
+                                        relationship: wizard_path("parent-details"),
+                                        email: wizard_path("parent-details"),
+                                        phone: wizard_path("parent-details"),
+                                      }) %>
 
 <% if @draft_consent.response_given? %>
   <%= render AppHealthAnswersCardComponent.new(@draft_consent, heading: "Health questions") %>

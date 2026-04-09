@@ -65,4 +65,8 @@ class Contact < ApplicationRecord
          consent_response: "consent_response",
          sais: "sais"
        }
+
+  def label
+    full_name.presence || "Parent or guardian (name unknown)"
+  end
 end

@@ -1,5 +1,7 @@
 basic_auth: Require users to sign in with basic authentication before they can use the service.
 
+patient_contacts: Replaces the parent model with patient contacts.
+
 dev_tools: Developer tools useful for testing and debugging.
 
 ethnicity_capture: Enable optional ethnicity capture after parent consent

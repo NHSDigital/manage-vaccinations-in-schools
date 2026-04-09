@@ -2,15 +2,19 @@
   <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<% page_title = if @parent.persisted?
-       "Details for #{@draft_consent.parent_relationship.label_with_parent}"
+<% page_title = if (@parent&.persisted? || @contacts&.any?(&:persisted?))
+       if Flipper.enabled?(:patient_contacts)
+         "Details for #{@draft_consent.label_with_contact}"
+       else
+         "Details for #{@draft_consent.parent_relationship.label_with_parent}"
+       end
      else
        "Details for parent or guardian"
      end %>
 
 <%= h1 page_title: do %>
   <span class="nhsuk-caption-l">
-    <%= @parent.label %>
+    <%= @parent&.label %>
   </span>
   <%= page_title %>
 <% end %>

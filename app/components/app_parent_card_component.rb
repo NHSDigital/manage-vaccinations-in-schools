@@ -13,6 +13,11 @@ class AppParentCardComponent < ViewComponent::Base
     end
   end
 
+  def render?
+    @consentable.parent_relationship.present? ||
+      Flipper.enabled?(:patient_contacts)
+  end
+
   private
 
   attr_reader :change_links

@@ -26,9 +26,7 @@
   <%= render AppConsentPatientSummaryComponent.new(@consent) %>
 <% end %>
 
-<% if @consent.parent_relationship.present? %>
-  <%= render AppParentCardComponent.new(@consent) %>
-<% end %>
+<%= render AppParentCardComponent.new(@consent) %>
 
 <% if @consent.response_given? %>
   <%= render AppHealthAnswersCardComponent.new(@consent) %>
