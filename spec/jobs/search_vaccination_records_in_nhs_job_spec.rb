@@ -21,7 +21,7 @@ describe SearchVaccinationRecordsInNHSJob do
   describe "#extract_vaccination_records" do
     let(:bundle) do
       FHIR.from_contents(
-        file_fixture("fhir/search_response_2_results.json").read
+        file_fixture("fhir/search_responses/2_results.json").read
       )
     end
 
@@ -710,12 +710,12 @@ describe SearchVaccinationRecordsInNHSJob do
       }
     end
     let(:status) { 200 }
-    let(:body) { file_fixture("fhir/search_response_2_results.json").read }
+    let(:body) { file_fixture("fhir/search_responses/2_results.json").read }
     let(:headers) { { "content-type" => "application/fhir+json" } }
 
     let(:existing_bundle) do
       FHIR.from_contents(
-        file_fixture("fhir/search_response_0_results.json").read
+        file_fixture("fhir/search_responses/0_results.json").read
       )
     end
     let!(:existing_records) do
@@ -768,7 +768,7 @@ describe SearchVaccinationRecordsInNHSJob do
     context "with 1 existing record and 1 new incoming record" do
       let(:existing_bundle) do
         FHIR.from_contents(
-          file_fixture("fhir/search_response_1_result.json").read
+          file_fixture("fhir/search_responses/1_result.json").read
         )
       end
 
@@ -789,10 +789,10 @@ describe SearchVaccinationRecordsInNHSJob do
     context "with 2 existing records and only 1 incoming (edited) record" do
       let(:existing_bundle) do
         FHIR.from_contents(
-          file_fixture("fhir/search_response_2_results.json").read
+          file_fixture("fhir/search_responses/2_results.json").read
         )
       end
-      let(:body) { file_fixture("fhir/search_response_1_result.json").read }
+      let(:body) { file_fixture("fhir/search_responses/1_result.json").read }
 
       it "deletes the record that is no longer present, and edits the existing record" do
         expect { perform }.to change { patient.vaccination_records.count }.by(
@@ -815,7 +815,7 @@ describe SearchVaccinationRecordsInNHSJob do
       context "with the same 2 records returned again" do
         let(:existing_bundle) do
           FHIR.from_contents(
-            file_fixture("fhir/search_response_2_results.json").read
+            file_fixture("fhir/search_responses/2_results.json").read
           )
         end
 
@@ -837,15 +837,15 @@ describe SearchVaccinationRecordsInNHSJob do
       end
 
       context "with the same record returned but with updated attributes" do
-        # search_response_1_result_old_date.json and search_response_1_result.json
+        # 1_result_old_date.json and 1_result.json
         # have the same nhs_immunisations_api_id but different occurrenceDateTimes
         # (2025-08-22 vs 2025-08-23), simulating a record being corrected in the API.
         let(:existing_bundle) do
           FHIR.from_contents(
-            file_fixture("fhir/search_response_1_result_old_date.json").read
+            file_fixture("fhir/search_responses/1_result_old_date.json").read
           )
         end
-        let(:body) { file_fixture("fhir/search_response_1_result.json").read }
+        let(:body) { file_fixture("fhir/search_responses/1_result.json").read }
 
         it "does not create a new record" do
           expect { perform }.not_to(change(VaccinationRecord, :count))
@@ -874,7 +874,7 @@ describe SearchVaccinationRecordsInNHSJob do
         # as it would have been after the first search run.
         let(:existing_bundle) do
           FHIR.from_contents(
-            file_fixture("fhir/search_response_0_results.json").read
+            file_fixture("fhir/search_responses/0_results.json").read
           )
         end
         let!(:existing_api_record) do
@@ -890,7 +890,7 @@ describe SearchVaccinationRecordsInNHSJob do
         end
         let(:body) do
           file_fixture(
-            "fhir/search_response_2_results_mavis_duplicate.json"
+            "fhir/search_responses/2_results_mavis_duplicate.json"
           ).read
         end
         let!(:mavis_record) do
@@ -933,10 +933,10 @@ describe SearchVaccinationRecordsInNHSJob do
         # be updated in-place with no new records created.
         let(:existing_bundle) do
           FHIR.from_contents(
-            file_fixture("fhir/search_response_duplicate.json").read
+            file_fixture("fhir/search_responses/duplicate.json").read
           )
         end
-        let(:body) { file_fixture("fhir/search_response_duplicate.json").read }
+        let(:body) { file_fixture("fhir/search_responses/duplicate.json").read }
 
         it "does not create any new records" do
           expect { perform }.not_to(change(VaccinationRecord, :count))
@@ -1007,7 +1007,7 @@ describe SearchVaccinationRecordsInNHSJob do
         "3IN1,FLU,HPV,MENACWY,MMR,MMRV"
       end
       let(:body) do
-        file_fixture("fhir/search_response_all_programmes.json").read
+        file_fixture("fhir/search_responses/all_programmes.json").read
       end
 
       before { Flipper.disable(:imms_api_search_job) }
@@ -1051,7 +1051,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
       context "with a Mavis-identifier record in the search results" do
         let(:body) do
-          file_fixture("fhir/search_response_1_result_mavis.json").read
+          file_fixture("fhir/search_responses/1_result_mavis.json").read
         end
 
         it "does not create any API record" do
@@ -1069,7 +1069,7 @@ describe SearchVaccinationRecordsInNHSJob do
       context "with a Mavis-identifier record and a non-Mavis duplicate in the search results" do
         let(:body) do
           file_fixture(
-            "fhir/search_response_2_results_mavis_duplicate.json"
+            "fhir/search_responses/2_results_mavis_duplicate.json"
           ).read
         end
 
@@ -1098,7 +1098,7 @@ describe SearchVaccinationRecordsInNHSJob do
       context "with a Mavis-identifier record and a non-Mavis primary source duplicate in the search results" do
         let(:body) do
           file_fixture(
-            "fhir/search_response_2_results_mavis_duplicate_primary_source.json"
+            "fhir/search_responses/2_results_mavis_duplicate_primary_source.json"
           ).read
         end
 
@@ -1183,7 +1183,7 @@ describe SearchVaccinationRecordsInNHSJob do
         context "when a record falls on the cutoff date" do
           let(:body) do
             file_fixture(
-              "fhir/search_response_1_result_in_academic_year_2025.json"
+              "fhir/search_responses/1_result_in_academic_year_2025.json"
             ).read
           end
 
@@ -1200,7 +1200,7 @@ describe SearchVaccinationRecordsInNHSJob do
         context "when pre-cutoff records were already imported" do
           let(:existing_bundle) do
             FHIR.from_contents(
-              file_fixture("fhir/search_response_2_results.json").read
+              file_fixture("fhir/search_responses/2_results.json").read
             )
           end
 
@@ -1259,7 +1259,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
       let(:existing_bundle) do
         FHIR.from_contents(
-          file_fixture("fhir/search_response_2_results.json").read
+          file_fixture("fhir/search_responses/2_results.json").read
         )
       end
 
@@ -1296,7 +1296,7 @@ describe SearchVaccinationRecordsInNHSJob do
 
     context "with duplicates" do
       context "with one primary and one non-primary source record" do
-        let(:body) { file_fixture("fhir/search_response_duplicate.json").read }
+        let(:body) { file_fixture("fhir/search_responses/duplicate.json").read }
 
         it "adds both vaccination records to the database" do
           expect { perform }.to change {
@@ -1344,7 +1344,7 @@ describe SearchVaccinationRecordsInNHSJob do
       before { Flipper.enable(:imms_api_sentry_warnings) }
 
       let(:body) do
-        file_fixture("fhir/search_response_mismatching_bundle_link.json").read
+        file_fixture("fhir/search_responses/mismatching_bundle_link.json").read
       end
 
       it "raises a warning, and sends to Sentry" do
