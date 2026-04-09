@@ -1,0 +1,124 @@
+{
+  "type": "searchset",
+  "total": 1,
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://api.service.nhs.uk/immunisation-fhir-api/Immunization?-immunization.target=FLU,HPV,MENACWY,3IN1,MMR,MMRV&patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "https://api.service.nhs.uk/immunisation-fhir-api/Immunization/322a54c7-acd8-4eb7-adbc-4006938df8f2",
+      "resource": {
+        "id": "322a54c7-acd8-4eb7-adbc-4006938df8f2",
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "884861000000100",
+                  "display": "Administration of first intranasal seasonal influenza vaccination"
+                }
+              ]
+            }
+          }
+        ],
+        "identifier": [
+          {
+            "use": "official",
+            "system": "YGA",
+            "value": "TPP_V_429814877"
+          }
+        ],
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "46233009",
+              "display": "Influenza vaccine"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "urn:uuid:c3e7be44-bb52-4df7-8232-7500ed90c137",
+          "type": "Patient",
+          "identifier": {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9449308357"
+          }
+        },
+        "occurrenceDateTime": "2025-09-24T00:00:00+00:00",
+        "recorded": "2025-10-02",
+        "primarySource": false,
+        "location": {
+          "identifier": {
+            "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+            "value": "100001"
+          }
+        },
+        "lotNumber": "BU5086",
+        "site": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "279549004",
+              "display": "Nasal cavity structure"
+            }
+          ]
+        },
+        "performer": [
+          {
+            "actor": {
+              "type": "Organization",
+              "identifier": {
+                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                "value": "R1L"
+              }
+            }
+          }
+        ],
+        "protocolApplied": [
+          {
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "6142004",
+                    "display": "Influenza caused by seasonal influenza virus (disorder)"
+                  }
+                ]
+              }
+            ],
+            "doseNumberPositiveInt": 1
+          }
+        ],
+        "resourceType": "Immunization"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:c3e7be44-bb52-4df7-8232-7500ed90c137",
+      "resource": {
+        "id": "7101120547",
+        "identifier": [
+          {
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "7101120547"
+          }
+        ],
+        "resourceType": "Patient"
+      },
+      "search": {
+        "mode": "include"
+      }
+    }
+  ],
+  "resourceType": "Bundle"
+}

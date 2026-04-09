@@ -964,8 +964,71 @@ describe SearchVaccinationRecordsInNHSJob do
           expect(non_primary).to be_discarded
         end
 
+        it "points the non-primary-source record at the primary source record" do
+          perform
+          primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: true
+            )
+          non_primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: false
+            )
+          expect(non_primary.duplicate_of_vaccination_record).to eq(primary)
+        end
+
         include_examples "sends discovery comms if required n times", 0
         include_examples "calls StatusUpdater"
+      end
+
+      context "when a single non-primary source record exists, but a primary source record has been added" do
+        # The first run created a kept (non-primary) record. When another search is completed, where there is now
+        # also a primary record, then the outcome should be the same as if the first search had never happened
+
+        let(:existing_bundle_body) do
+          file_fixture(
+            "fhir/search_responses/1_result_primary_source_false.json"
+          ).read
+        end
+        let(:body) { file_fixture("fhir/search_responses/duplicate.json").read }
+
+        it "creates 1 new record" do
+          expect { perform }.to(change(VaccinationRecord, :count).by(1))
+        end
+
+        it "retains the existing record ID" do
+          perform
+          expect(VaccinationRecord.all.map(&:id)).to include(
+            existing_records.map(&:id).sole
+          )
+        end
+
+        it "sets the existing record as discarded" do
+          perform
+          expect(existing_records.sole.reload).to be_discarded
+        end
+
+        it "doesn't set the new record as discarded" do
+          perform
+          primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: true
+            )
+          expect(primary).not_to be_discarded
+        end
+
+        it "points the non-primary-source record at the primary source record" do
+          perform
+          primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: true
+            )
+          non_primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: false
+            )
+          expect(non_primary.duplicate_of_vaccination_record).to eq(primary)
+        end
       end
     end
 
