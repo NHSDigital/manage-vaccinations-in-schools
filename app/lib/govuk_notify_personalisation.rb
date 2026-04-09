@@ -109,6 +109,8 @@ class GovukNotifyPersonalisation
            :patient_on_last_dose?,
            to: :mmr_details_presenter
 
+  delegate :delay_vaccination_review_context, to: :triage_details_presenter
+
   delegate :privacy_notice_url, :privacy_policy_url, to: :team, prefix: true
 
   def full_and_preferred_patient_name
@@ -130,24 +132,6 @@ class GovukNotifyPersonalisation
       vaccination_record_location(vaccination_record)
     else
       session&.location&.name
-    end
-  end
-
-  def delay_vaccination_review_context
-    return if patient.nil? || session.nil?
-
-    latest_delayed_triage =
-      patient.latest_delayed_triage(programme_types: session.programme_types)
-
-    return if latest_delayed_triage.nil?
-
-    session_date = session.next_date(include_today: true)
-    triage_date = latest_delayed_triage.created_at.to_date
-
-    if session_date && triage_date == session_date
-      "assessed #{short_patient_name} in the vaccination session"
-    else
-      "reviewed the answers you gave to the health questions about #{short_patient_name}"
     end
   end
 
@@ -193,5 +177,9 @@ class GovukNotifyPersonalisation
 
   def mmr_details_presenter
     @mmr_details_presenter ||= MmrDetailsPresenter.new(self)
+  end
+
+  def triage_details_presenter
+    @triage_details_presenter ||= TriageDetailsPresenter.new(self)
   end
 end
