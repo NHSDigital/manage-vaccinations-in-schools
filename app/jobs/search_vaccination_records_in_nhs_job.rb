@@ -104,6 +104,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     @existing_vaccination_records ||=
       patient
         .vaccination_records
+        .with_discarded
         .includes(:identity_check)
         .sourced_from_nhs_immunisations_api
         .for_programmes(programmes)
