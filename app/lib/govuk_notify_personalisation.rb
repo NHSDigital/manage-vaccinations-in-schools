@@ -65,6 +65,20 @@ class GovukNotifyPersonalisation
               :team_location,
               :vaccination_record
 
+  delegate :has_multiple_dates?,
+           :next_or_today_session_date,
+           :next_or_today_session_dates,
+           :next_or_today_session_dates_or,
+           :next_session_date,
+           :next_session_dates,
+           :next_session_dates_or,
+           :subsequent_session_dates_offered_message,
+           to: :session_dates_presenter
+
+  def batch_name
+    vaccination_record&.batch_number
+  end
+
   def consent_deadline
     session&.consent_deadline_date&.to_fs(:short_day_of_week)
   end
@@ -226,51 +240,6 @@ class GovukNotifyPersonalisation
     end
   end
 
-  def next_or_today_session_date
-    return "" unless session_dates_are_accurate?
-
-    session&.next_date(include_today: true)&.to_fs(:short_day_of_week)
-  end
-
-  def next_or_today_session_dates
-    return "" unless session_dates_are_accurate?
-
-    session
-      &.today_or_future_dates
-      &.map { it.to_fs(:short_day_of_week) }
-      &.to_sentence
-  end
-
-  def next_or_today_session_dates_or
-    return "" unless session_dates_are_accurate?
-
-    session
-      &.today_or_future_dates
-      &.map { it.to_fs(:short_day_of_week) }
-      &.to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
-  end
-
-  def next_session_date
-    return "" unless session_dates_are_accurate?
-
-    session&.next_date(include_today: false)&.to_fs(:short_day_of_week)
-  end
-
-  def next_session_dates
-    return "" unless session_dates_are_accurate?
-
-    session&.future_dates&.map { it.to_fs(:short_day_of_week) }&.to_sentence
-  end
-
-  def next_session_dates_or
-    return "" unless session_dates_are_accurate?
-
-    session
-      &.future_dates
-      &.map { it.to_fs(:short_day_of_week) }
-      &.to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
-  end
-
   def outcome_not_administered?
     vaccination_record.nil? || !outcome_administered?
   end
@@ -312,17 +281,6 @@ class GovukNotifyPersonalisation
 
   def show_additional_instructions? =
     vaccination_record.present? && !vaccination_record.already_had?
-
-  def subsequent_session_dates_offered_message
-    return nil if session.nil?
-
-    dates = session.future_dates.drop(1)
-    return "" if dates.empty?
-
-    "If they’re not seen, they’ll be offered the vaccination on #{
-      dates.map { it.to_fs(:short_day_of_week) }.to_sentence
-    }."
-  end
 
   def subteam_email = (subteam || team).email
 
@@ -459,12 +417,6 @@ class GovukNotifyPersonalisation
       programmes.any? { it.is_catch_up?(year_group: patient_year_group) }
   end
 
-  def has_multiple_dates?
-    return false if session.nil?
-
-    session.future_dates.length > 1
-  end
-
   def outcome_administered?
     vaccination_record.nil? || vaccination_record.administered?
   end
@@ -506,5 +458,9 @@ class GovukNotifyPersonalisation
           programme.name_in_sentence
         end
       end
+  end
+
+  def session_dates_presenter
+    @session_dates_presenter ||= SessionDatesPresenter.new(self)
   end
 end

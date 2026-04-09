@@ -4,60 +4,7 @@
 # read the instructions in spec/fixtures/notify_template.txt
 
 describe GovukNotifyPersonalisation do
-  subject(:personalisation) do
-    described_class.new(
-      patient:,
-      session:,
-      consent:,
-      consent_form:,
-      programme_types:,
-      team_location:,
-      vaccination_record:
-    )
-  end
-
-  let(:hpv_programme) { Programme.hpv }
-  let(:flu_programme) { Programme.flu }
-  let(:programmes) { [hpv_programme] }
-  let(:programme_types) { programmes.map(&:type) }
-  let(:ods_code) { "ABC" }
-  let(:team) do
-    create(
-      :team,
-      name: "Team",
-      email: "team@example.com",
-      phone: "01234 567890",
-      phone_instructions: "option 1",
-      programmes:,
-      ods_code:
-    )
-  end
-  let(:subteam) do
-    create(
-      :subteam,
-      name: "Team",
-      email: "team@example.com",
-      phone: "01234 567890",
-      phone_instructions: "option 1",
-      team:
-    )
-  end
-  let(:patient) do
-    create(
-      :patient,
-      given_name: "John",
-      family_name: "Smith",
-      date_of_birth: Date.new(2013, 2, 1)
-    )
-  end
-  let(:location) { create(:gias_school, name: "Hogwarts", subteam:) }
-  let(:session) do
-    create(:session, location:, team:, programmes:, date: Date.new(2026, 1, 1))
-  end
-  let(:team_location) { nil }
-  let(:consent) { nil }
-  let(:consent_form) { nil }
-  let(:vaccination_record) { nil }
+  include_context "govuk notify personalisation context"
 
   context "when session is in the future" do
     around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
@@ -84,16 +31,9 @@ describe GovukNotifyPersonalisation do
           "They can have this vaccination at a community clinic. If you’d like " \
             "to book a clinic appointment, please contact us using the details " \
             "below.",
-        next_or_today_session_date: "Thursday 1 January",
-        next_or_today_session_dates: "Thursday 1 January",
-        next_or_today_session_dates_or: "Thursday 1 January",
-        next_session_date: "Thursday 1 January",
-        next_session_dates: "Thursday 1 January",
-        next_session_dates_or: "Thursday 1 January",
         patient_date_of_birth: "1 February 2013",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
-        subsequent_session_dates_offered_message: "",
         subteam_email: "team@example.com",
         subteam_name: "Team",
         subteam_phone: "01234 567890 (option 1)",
@@ -174,25 +114,6 @@ describe GovukNotifyPersonalisation do
     end
   end
 
-  context "when the session is today" do
-    let(:session) do
-      create(
-        :session,
-        location:,
-        team:,
-        programmes:,
-        dates: [Date.current, Date.tomorrow]
-      )
-    end
-
-    it "doesn't show today's date in next date" do
-      expect(personalisation).to have_attributes(
-        next_or_today_session_date: Date.current.to_fs(:short_day_of_week),
-        next_session_date: Date.tomorrow.to_fs(:short_day_of_week)
-      )
-    end
-  end
-
   context "with multiple programmes" do
     let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
@@ -203,120 +124,67 @@ describe GovukNotifyPersonalisation do
     end
   end
 
-  context "with multiple dates" do
-    let(:session) do
-      create(
-        :session,
-        location:,
-        team:,
-        programmes:,
-        dates: [Date.new(2026, 1, 1), Date.new(2026, 1, 2)]
-      )
-    end
+  context "delayed triage" do
+    context "created on day of session" do
+      let(:session) { create(:session, :today, location:, team:, programmes:) }
 
-    context "when today is before the session starts" do
-      around { |example| travel_to(Date.new(2025, 9, 1)) { example.run } }
+      before do
+        create(
+          :triage,
+          :delay_vaccination,
+          patient:,
+          programme: programmes.first
+        )
+      end
 
       it do
         expect(personalisation).to have_attributes(
-          consent_deadline: "Wednesday 31 December",
-          next_or_today_session_date: "Thursday 1 January",
-          next_or_today_session_dates:
-            "Thursday 1 January and Friday 2 January",
-          next_or_today_session_dates_or:
-            "Thursday 1 January or Friday 2 January",
-          next_session_date: "Thursday 1 January",
-          next_session_dates: "Thursday 1 January and Friday 2 January",
-          next_session_dates_or: "Thursday 1 January or Friday 2 January",
-          subsequent_session_dates_offered_message:
-            "If they’re not seen, they’ll be offered the vaccination on Friday 2 January."
+          delay_vaccination_review_context:
+            "assessed John in the vaccination session"
         )
       end
     end
 
-    context "when today is the first date" do
-      around { |example| travel_to(Date.new(2026, 1, 1)) { example.run } }
+    context "created before session starts" do
+      let(:session) { create(:session, :today, location:, team:, programmes:) }
+
+      before do
+        create(
+          :triage,
+          :delay_vaccination,
+          patient:,
+          created_at: Date.yesterday,
+          programme: programmes.first
+        )
+      end
 
       it do
         expect(personalisation).to have_attributes(
-          consent_deadline: "Thursday 1 January",
-          next_or_today_session_date: "Thursday 1 January",
-          next_or_today_session_dates:
-            "Thursday 1 January and Friday 2 January",
-          next_or_today_session_dates_or:
-            "Thursday 1 January or Friday 2 January",
-          next_session_date: "Friday 2 January",
-          subsequent_session_dates_offered_message: ""
+          delay_vaccination_review_context:
+            "reviewed the answers you gave to the health questions about John"
         )
       end
     end
 
-    context "delayed triage" do
-      context "created on day of session" do
-        let(:session) do
-          create(:session, :today, location:, team:, programmes:)
-        end
-
-        before do
-          create(
-            :triage,
-            :delay_vaccination,
-            patient:,
-            programme: programmes.first
-          )
-        end
-
-        it do
-          expect(personalisation).to have_attributes(
-            delay_vaccination_review_context:
-              "assessed John in the vaccination session"
-          )
-        end
+    context "created after session starts" do
+      let(:session) do
+        create(:session, :yesterday, location:, team:, programmes:)
       end
 
-      context "created before session starts" do
-        let(:session) do
-          create(:session, :today, location:, team:, programmes:)
-        end
-
-        before do
-          create(
-            :triage,
-            :delay_vaccination,
-            patient:,
-            created_at: Date.yesterday,
-            programme: programmes.first
-          )
-        end
-
-        it do
-          expect(personalisation).to have_attributes(
-            delay_vaccination_review_context:
-              "reviewed the answers you gave to the health questions about John"
-          )
-        end
+      before do
+        create(
+          :triage,
+          :delay_vaccination,
+          patient:,
+          programme: programmes.first
+        )
       end
 
-      context "created after session starts" do
-        let(:session) do
-          create(:session, :yesterday, location:, team:, programmes:)
-        end
-
-        before do
-          create(
-            :triage,
-            :delay_vaccination,
-            patient:,
-            programme: programmes.first
-          )
-        end
-
-        it do
-          expect(personalisation).to have_attributes(
-            delay_vaccination_review_context:
-              "reviewed the answers you gave to the health questions about John"
-          )
-        end
+      it do
+        expect(personalisation).to have_attributes(
+          delay_vaccination_review_context:
+            "reviewed the answers you gave to the health questions about John"
+        )
       end
     end
   end
