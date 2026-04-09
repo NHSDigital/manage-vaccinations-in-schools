@@ -762,7 +762,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/team_merger.rb, line 27</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/team_merger.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">source_teams:</span>, <span class="ruby-value">new_team_attrs:</span>)
   <span class="ruby-ivar">@source_teams</span> = <span class="ruby-identifier">source_teams</span>
   <span class="ruby-ivar">@new_team_attrs</span> = <span class="ruby-identifier">new_team_attrs</span>
@@ -825,7 +825,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/team_merger.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/team_merger.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call!</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">Error</span>, <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;; &quot;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid?</span>
 
@@ -896,7 +896,7 @@
             </details>
           </div>
           <div class="method-source-code" id="dry_run-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/team_merger.rb, line 42</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/team_merger.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dry_run</span>
   <span class="ruby-ivar">@dry_run_report</span> = []
   <span class="ruby-identifier">append_migration_counts</span>
@@ -950,7 +950,7 @@
             </details>
           </div>
           <div class="method-source-code" id="valid-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/team_merger.rb, line 32</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/team_merger.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">valid?</span>
   <span class="ruby-ivar">@errors</span> = []
   <span class="ruby-identifier">validate_minimum_teams</span>
