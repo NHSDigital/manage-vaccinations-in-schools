@@ -269,20 +269,20 @@ class TeamMerger
     Rails.logger.debug "Migrating team locations..."
 
     source_teams.each do |source_team|
-      source_team.team_locations.find_each do |tl|
+      source_team.team_locations.find_each do |source_tl|
         previously_migrated_tl =
           TeamLocation.find_by(
             team_id: merged_team.id,
-            academic_year: tl.academic_year,
-            location_id: tl.location_id
+            academic_year: source_tl.academic_year,
+            location_id: source_tl.location_id
           )
         if previously_migrated_tl.present?
-          ConsentForm.where(team_location_id: tl.id).update_all(
+          ConsentForm.where(team_location_id: source_tl.id).update_all(
             team_location_id: previously_migrated_tl.id
           )
-          tl.destroy!
+          source_tl.destroy!
         else
-          tl.update_columns(team_id: merged_team.id)
+          source_tl.update_columns(team_id: merged_team.id)
         end
       end
     end
