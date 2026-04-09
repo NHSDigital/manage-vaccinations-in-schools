@@ -5,8 +5,11 @@
 # Table name: teams
 #
 #  id                              :bigint           not null, primary key
+#  careplus_namespace              :string
+#  careplus_password               :string
 #  careplus_staff_code             :string
 #  careplus_staff_type             :string
+#  careplus_username               :string
 #  careplus_venue_code             :string
 #  days_before_consent_reminders   :integer          default(7), not null
 #  days_before_consent_requests    :integer          default(21), not null
@@ -90,9 +93,12 @@ FactoryBot.define do
     end
 
     trait :with_careplus_enabled do
+      careplus_namespace { "MOCK" }
       careplus_staff_code { "LW5PM" }
       careplus_staff_type { "IN" }
       careplus_venue_code { identifier.to_s }
+      careplus_username { "careplus_user" }
+      careplus_password { "careplus_password" }
     end
 
     after(:create) do |team|

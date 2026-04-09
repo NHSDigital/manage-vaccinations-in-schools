@@ -24,8 +24,11 @@ class Onboarding
 
   TEAM_ATTRIBUTES = {
     point_of_care: %i[
+      careplus_namespace
+      careplus_password
       careplus_staff_code
       careplus_staff_type
+      careplus_username
       careplus_venue_code
       days_before_consent_reminders
       days_before_consent_requests
