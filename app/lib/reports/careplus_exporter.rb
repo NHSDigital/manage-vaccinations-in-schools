@@ -30,19 +30,15 @@ class Reports::CareplusExporter
     team:,
     programmes:,
     academic_year:,
-    start_date:,
-    end_date:,
+    vaccination_records:,
     include_gender:,
-    include_missing_nhs_number:,
     vaccine_columns:
   )
     @team = team
     @programmes = programmes
     @academic_year = academic_year
-    @start_date = start_date
-    @end_date = end_date
+    @vaccination_records = vaccination_records
     @include_gender = include_gender
-    @include_missing_nhs_number = include_missing_nhs_number
     @vaccine_columns = vaccine_columns
   end
 
@@ -57,7 +53,53 @@ class Reports::CareplusExporter
     end
   end
 
-  def self.call(...) = new(...).call
+  def self.call(
+    team:,
+    programmes:,
+    academic_year:,
+    start_date:,
+    end_date:,
+    include_gender:,
+    include_missing_nhs_number:,
+    vaccine_columns:
+  )
+    vaccination_records =
+      vaccination_records_scope(
+        team:,
+        programmes:,
+        academic_year:,
+        start_date:,
+        end_date:,
+        include_missing_nhs_number:
+      ).includes(:patient, :vaccine, session: %i[location team_location])
+
+    from_records(
+      vaccination_records:,
+      team:,
+      programmes:,
+      academic_year:,
+      include_gender:,
+      vaccine_columns:
+    )
+  end
+
+  def self.from_records(
+    vaccination_records:,
+    team:,
+    programmes:,
+    academic_year:,
+    include_gender:,
+    vaccine_columns:
+  )
+    new(
+      vaccination_records:,
+      team:,
+      programmes:,
+      academic_year:,
+      include_gender:,
+      vaccine_columns:
+    ).call
+  end
 
   def self.vaccination_records_scope(
     team:,
@@ -126,10 +168,8 @@ class Reports::CareplusExporter
   attr_reader :team,
               :programmes,
               :academic_year,
-              :start_date,
-              :end_date,
+              :vaccination_records,
               :include_gender,
-              :include_missing_nhs_number,
               :vaccine_columns
 
   def headers
@@ -171,20 +211,6 @@ class Reports::CareplusExporter
 
   def gender_row_value(patient)
     include_gender ? [GENDER_CODE_MAPPINGS[patient.gender_code]] : []
-  end
-
-  def vaccination_records
-    self
-      .class
-      .vaccination_records_scope(
-        team:,
-        programmes:,
-        academic_year:,
-        start_date:,
-        end_date:,
-        include_missing_nhs_number:
-      )
-      .includes(:patient, :vaccine, session: %i[location team_location])
   end
 
   def consents

@@ -31,6 +31,11 @@ describe Reports::CareplusExporter do
     ]
   end
 
+  let(:programme) { Programme.hpv }
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:location) { create(:gias_school) }
+  let(:session) { create(:session, team:, programmes: [programme], location:) }
+
   let(:parsed_csv) { CSV.parse(csv) }
   let(:headers) { parsed_csv.first }
   let(:data_rows) { parsed_csv[1..] }
@@ -406,13 +411,6 @@ describe Reports::CareplusExporter do
   end
 
   context "include_missing_nhs_number parameter" do
-    let(:programme) { Programme.hpv }
-    let(:team) { create(:team, programmes: [programme]) }
-    let(:location) { create(:gias_school) }
-    let(:session) do
-      create(:session, team:, programmes: [programme], location:)
-    end
-
     context "when true" do
       let(:include_missing_nhs_number) { true }
 
@@ -482,13 +480,6 @@ describe Reports::CareplusExporter do
   end
 
   context "include_gender parameter" do
-    let(:programme) { Programme.hpv }
-    let(:team) { create(:team, programmes: [programme]) }
-    let(:location) { create(:gias_school) }
-    let(:session) do
-      create(:session, team:, programmes: [programme], location:)
-    end
-
     context "when true" do
       let(:include_gender) { true }
 
@@ -527,13 +518,7 @@ describe Reports::CareplusExporter do
   end
 
   context "vaccine_columns parameter" do
-    let(:programme) { Programme.hpv }
     let(:vaccine) { programme.vaccines.first }
-    let(:team) { create(:team, programmes: [programme]) }
-    let(:location) { create(:gias_school) }
-    let(:session) do
-      create(:session, team:, programmes: [programme], location:)
-    end
 
     context "with a subset of columns" do
       let(:vaccine_columns) { %i[vaccine dose] }
@@ -735,9 +720,93 @@ describe Reports::CareplusExporter do
     end
   end
 
+  describe ".call" do
+    it "delegates to from_records with the built scope" do
+      scope =
+        described_class.vaccination_records_scope(
+          team:,
+          programmes: [programme],
+          academic_year:,
+          start_date: nil,
+          end_date: nil,
+          include_missing_nhs_number: true
+        )
+      allow(described_class).to receive(:vaccination_records_scope).and_return(
+        scope
+      )
+
+      expect(described_class).to receive(:from_records).with(
+        vaccination_records:
+          scope.includes(
+            :patient,
+            :vaccine,
+            session: %i[location team_location]
+          ),
+        team:,
+        programmes: [programme],
+        academic_year:,
+        include_gender: true,
+        vaccine_columns: %i[vaccine vaccine_code]
+      )
+
+      described_class.call(
+        team:,
+        programmes: [programme],
+        academic_year:,
+        start_date: nil,
+        end_date: nil,
+        include_gender: true,
+        include_missing_nhs_number: true,
+        vaccine_columns: %i[vaccine vaccine_code]
+      )
+    end
+  end
+
+  describe ".from_records" do
+    it "produces the same CSV as call when given the same records" do
+      patient = create(:patient, session:)
+      create(
+        :vaccination_record,
+        programme:,
+        patient:,
+        session:,
+        performed_at: 2.weeks.ago
+      )
+
+      call_args = {
+        team:,
+        programmes: [programme],
+        academic_year:,
+        include_gender: false,
+        vaccine_columns: %i[vaccine dose site]
+      }
+
+      csv_via_call =
+        described_class.call(
+          **call_args,
+          start_date: 1.month.ago.to_date,
+          end_date: Date.current,
+          include_missing_nhs_number: true
+        )
+
+      vaccination_records =
+        described_class.vaccination_records_scope(
+          team:,
+          programmes: [programme],
+          academic_year:,
+          start_date: 1.month.ago.to_date,
+          end_date: Date.current,
+          include_missing_nhs_number: true
+        ).includes(:patient, :vaccine, session: %i[location team_location])
+
+      expect(
+        described_class.from_records(**call_args, vaccination_records:)
+      ).to eq(csv_via_call)
+    end
+  end
+
   describe ".vaccination_records_scope" do
     let(:programme) { Programme.hpv }
-    let(:academic_year) { AcademicYear.current }
     let(:team) { create(:team, programmes: [programme]) }
     let(:session) { create(:session, team:, programmes: [programme]) }
     let(:patient) { create(:patient, session:) }

@@ -52,4 +52,34 @@ describe Reports::AutomatedCareplusExporter do
       end_date:
     )
   end
+
+  it "passes the correct parameters to CareplusExporter.from_records" do
+    team = create(:team)
+    academic_year = AcademicYear.current
+    vaccination_records = instance_double(ActiveRecord::Relation)
+    eager_loaded = instance_double(ActiveRecord::Relation)
+    allow(vaccination_records).to receive(:includes).with(
+      :patient,
+      :vaccine,
+      session: %i[location team_location]
+    ).and_return(eager_loaded)
+
+    expect(Reports::CareplusExporter).to receive(:from_records).with(
+      vaccination_records: eager_loaded,
+      team:,
+      programmes: team.programmes,
+      academic_year:,
+      include_gender: false,
+      vaccine_columns: %i[
+        vaccine
+        dose
+        reason_not_given
+        site
+        manufacturer
+        batch_number
+      ]
+    )
+
+    described_class.from_records(vaccination_records:, team:, academic_year:)
+  end
 end
