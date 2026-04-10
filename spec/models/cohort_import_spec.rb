@@ -42,7 +42,9 @@ describe CohortImport do
   let(:team) { create(:team, programmes:) }
 
   let(:file) { "valid.csv" }
-  let(:csv_data) { file_fixture("cohort_import/#{file}").read }
+  let(:csv_source) { file_fixture("cohort_import/#{file}") }
+  let(:csv_data) { csv_source.read }
+  # Used by shared examples in CSVImportable to test setting csv from an uploaded file
   let(:uploaded_csv_file) { nil }
 
   # Ensure location URN matches the URN in our fixture files
