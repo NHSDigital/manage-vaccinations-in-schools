@@ -48,7 +48,9 @@ describe ClassImport do
   let(:session) { create(:session, location:, programmes:, team:) }
 
   let(:file) { "valid.csv" }
-  let(:csv_data) { file_fixture("class_import/#{file}").read }
+  let(:csv_source) { file_fixture("class_import/#{file}") }
+  let(:csv_data) { csv_source.read }
+  # Used by shared examples in CSVImportable to test setting csv from an uploaded file
   let(:uploaded_csv_file) { nil }
 
   # This is used by validation tests in the CSFVImportable shared specs.
@@ -60,18 +62,6 @@ describe ClassImport do
     subject(:parse_rows!) { class_import.parse_rows! }
 
     before { parse_rows! }
-
-    describe "with a BOM" do
-      let(:csv_data) { nil }
-      let(:uploaded_csv_file) do
-        fixture_file_upload("class_import/#{file}", filename: file)
-      end
-      let(:file) { "valid_with_bom.csv" }
-
-      it "removes the BOM" do
-        expect(class_import).to be_valid
-      end
-    end
 
     describe "with invalid fields" do
       let(:file) { "invalid_fields.csv" }

@@ -51,15 +51,26 @@ shared_examples_for "a CSVImportable model" do
     end
   end
 
-  # TODO: This needs to set `csv`, it currently doesn't trigger it the way it's
-  #       done here.
   describe "#csv=" do
+    let(:csv_data) { nil }
+    let(:uploaded_csv_file) { fixture_file_upload(csv_source) }
+
     it "sets the data" do
-      expect(subject.csv_data).not_to be_empty
+      expect(subject.csv_data).to eq uploaded_csv_file.read
     end
 
     it "sets the filename" do
-      expect(subject.csv_filename).not_to be_empty
+      expect(subject.csv_filename).to eq uploaded_csv_file.original_filename
+    end
+
+    context "with a payload with a BOM" do
+      # This requires that each test using these shared example have a file with
+      # a BOM in their fixtures directory
+      let(:file) { "valid_with_bom.csv" }
+
+      it "results in a valid import" do
+        expect(subject).to be_valid
+      end
     end
   end
 

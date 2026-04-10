@@ -35,7 +35,13 @@
 
 describe ImmunisationImport do
   subject(:immunisation_import) do
-    create(:immunisation_import, team:, csv_data:, uploaded_by:)
+    create(
+      :immunisation_import,
+      team:,
+      csv_data:,
+      uploaded_by:,
+      uploaded_csv_file:
+    )
   end
 
   before do
@@ -56,7 +62,9 @@ describe ImmunisationImport do
   let(:school) { create(:gias_school, urn: "123456") }
 
   let(:file) { "valid_flu.csv" }
-  let(:csv_data) { file_fixture("immunisation_import/#{type}/#{file}").read }
+  let(:csv_source) { file_fixture("immunisation_import/#{type}/#{file}") }
+  let(:csv_data) { csv_source.read }
+  # Used by shared examples in CSVImportable to test setting csv from an uploaded file
   let(:uploaded_csv_file) { nil }
   let(:uploaded_by) { create(:user, team:) }
 
