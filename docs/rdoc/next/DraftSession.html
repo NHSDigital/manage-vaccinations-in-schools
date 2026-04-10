@@ -1131,7 +1131,7 @@
   <span class="ruby-constant">LocationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
     .<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@current_user</span>, <span class="ruby-constant">Location</span>)
     .<span class="ruby-identifier">resolve</span>
-    .<span class="ruby-identifier">school</span>
+    .<span class="ruby-identifier">gias_school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
     .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:&quot;locations.id&quot;</span>)
@@ -1551,7 +1551,7 @@
   <span class="ruby-constant">LocationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
     .<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@current_user</span>, <span class="ruby-constant">Location</span>)
     .<span class="ruby-identifier">resolve</span>
-    .<span class="ruby-identifier">school</span>
+    .<span class="ruby-identifier">gias_school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
     .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:&quot;locations.id&quot;</span>)
@@ -2220,7 +2220,7 @@
   <span class="ruby-constant">LocationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
     .<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@current_user</span>, <span class="ruby-constant">Location</span>)
     .<span class="ruby-identifier">resolve</span>
-    .<span class="ruby-identifier">school</span>
+    .<span class="ruby-identifier">gias_school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
     .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:&quot;locations.id&quot;</span>)
@@ -2663,7 +2663,7 @@
   <span class="ruby-constant">LocationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
     .<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@current_user</span>, <span class="ruby-constant">Location</span>)
     .<span class="ruby-identifier">resolve</span>
-    .<span class="ruby-identifier">school</span>
+    .<span class="ruby-identifier">gias_school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
     .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:&quot;locations.id&quot;</span>)
@@ -2966,7 +2966,7 @@
   <span class="ruby-constant">LocationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
     .<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@current_user</span>, <span class="ruby-constant">Location</span>)
     .<span class="ruby-identifier">resolve</span>
-    .<span class="ruby-identifier">school</span>
+    .<span class="ruby-identifier">gias_school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
     .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:&quot;locations.id&quot;</span>)
@@ -3023,7 +3023,7 @@
             <div class="method-heading">
               <a href="#method-i-school-3F" title="Link to this method">
                 <span class="method-name">school?</span>
-                <span class="method-args">(= location&amp;.school?)</span>
+                <span class="method-args">(= location&amp;.gias_school?)</span>
               </a>
             </div>
 
@@ -3037,7 +3037,7 @@
           </div>
           <div class="method-source-code" id="school-3F-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/draft_session.rb, line 131</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school?</span> = <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">school?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school?</span> = <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">gias_school?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generic_clinic?</span> = <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">generic_clinic?</span>
 
@@ -3238,7 +3238,7 @@
   <span class="ruby-constant">LocationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
     .<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@current_user</span>, <span class="ruby-constant">Location</span>)
     .<span class="ruby-identifier">resolve</span>
-    .<span class="ruby-identifier">school</span>
+    .<span class="ruby-identifier">gias_school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
     .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:&quot;locations.id&quot;</span>)
@@ -3630,7 +3630,7 @@
   <span class="ruby-constant">LocationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
     .<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@current_user</span>, <span class="ruby-constant">Location</span>)
     .<span class="ruby-identifier">resolve</span>
-    .<span class="ruby-identifier">school</span>
+    .<span class="ruby-identifier">gias_school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
     .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:&quot;locations.id&quot;</span>)

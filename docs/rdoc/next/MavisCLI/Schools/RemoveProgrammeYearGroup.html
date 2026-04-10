@@ -674,7 +674,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">urn:</span>, <span class="ruby-value">programme_type:</span>, <span class="ruby-value">year_groups:</span>, <span class="ruby-operator">**</span>)
   <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">load_rails</span>
 
-  <span class="ruby-identifier">location</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>)
+  <span class="ruby-identifier">location</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>)
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Could not find school.&quot;</span>

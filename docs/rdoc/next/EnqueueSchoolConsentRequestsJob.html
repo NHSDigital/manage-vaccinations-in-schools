@@ -651,7 +651,7 @@
             <pre class="ruby"><span class="ruby-comment"># File app/jobs/enqueue_school_consent_requests_job.rb, line 6</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>
   <span class="ruby-identifier">sessions</span> =
-    <span class="ruby-constant">Session</span>.<span class="ruby-identifier">send_consent_requests</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:location</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>)
+    <span class="ruby-constant">Session</span>.<span class="ruby-identifier">send_consent_requests</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:location</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>)
 
   <span class="ruby-identifier">sessions</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">session</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">SendSchoolConsentRequestsJob</span>.<span class="ruby-identifier">perform_later</span>(<span class="ruby-identifier">session</span>)

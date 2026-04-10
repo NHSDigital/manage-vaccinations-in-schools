@@ -747,7 +747,7 @@
           <div class="method-source-code" id="care_setting-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/export_formatters.rb, line 20</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">care_setting</span>(<span class="ruby-value">location:</span>)
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">school?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">gias_school?</span>
     <span class="ruby-constant">ImmunisationImportRow</span><span class="ruby-operator">::</span><span class="ruby-constant">CARE_SETTING_SCHOOL</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-constant">ImmunisationImportRow</span><span class="ruby-operator">::</span><span class="ruby-constant">CARE_SETTING_COMMUNITY</span>
@@ -793,7 +793,7 @@
           <div class="method-source-code" id="clinic_name-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/export_formatters.rb, line 28</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clinic_name</span>(<span class="ruby-value">location:</span>, <span class="ruby-value">vaccination_record:</span>)
-  <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">school?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">location_name</span>
+  <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">location_name</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1227,7 +1227,7 @@
           <div class="method-source-code" id="school_name-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/export_formatters.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_name</span>(<span class="ruby-value">location:</span>, <span class="ruby-value">patient:</span>)
-  <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">school?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>&amp;.<span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>
+  <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>&amp;.<span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1269,7 +1269,7 @@
           <div class="method-source-code" id="school_urn-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/export_formatters.rb, line 6</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_urn</span>(<span class="ruby-value">location:</span>, <span class="ruby-value">patient:</span>)
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">school?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">gias_school?</span>
     <span class="ruby-identifier">location</span>.<span class="ruby-identifier">urn</span>
   <span class="ruby-keyword">elsif</span> (<span class="ruby-identifier">school</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>)
     <span class="ruby-identifier">school</span>.<span class="ruby-identifier">urn</span>

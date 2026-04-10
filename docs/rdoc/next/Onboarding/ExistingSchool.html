@@ -746,7 +746,7 @@
             </details>
           </div>
           <div class="method-source-code" id="attach_to_team-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 317</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 318</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">attach_to_team!</span>(<span class="ruby-value">academic_year:</span>)
   <span class="ruby-identifier">location</span>.<span class="ruby-identifier">attach_to_team!</span>(<span class="ruby-identifier">team</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">subteam:</span>)
   <span class="ruby-identifier">location</span>.<span class="ruby-identifier">import_year_groups_from_gias!</span>(<span class="ruby-value">academic_year:</span>)
@@ -793,9 +793,9 @@
             </details>
           </div>
           <div class="method-source-code" id="location-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 306</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 307</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location</span>
-  <span class="ruby-ivar">@location</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>)
+  <span class="ruby-ivar">@location</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -835,7 +835,7 @@
             </details>
           </div>
           <div class="method-source-code" id="save-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 313</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 314</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save!</span>
   <span class="ruby-comment"># Does nothing</span>
 <span class="ruby-keyword">end</span></pre>

@@ -674,10 +674,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">index</span>
   <span class="ruby-identifier">authorize</span> <span class="ruby-constant">Location</span>, <span class="ruby-value">policy_class:</span> <span class="ruby-constant">SchoolPolicy</span>
 
-  <span class="ruby-identifier">locations</span> =
-    <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">apply</span>(
-      <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">Location</span>).<span class="ruby-identifier">school</span>.<span class="ruby-identifier">or</span>(<span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">Location</span>).<span class="ruby-identifier">generic_school</span>)
-    )
+  <span class="ruby-identifier">locations</span> = <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">apply</span>(<span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">Location</span>).<span class="ruby-identifier">school</span>)
 
   <span class="ruby-ivar">@pagy</span>, <span class="ruby-ivar">@locations</span> = <span class="ruby-identifier">pagy</span>(<span class="ruby-identifier">locations</span>)
 

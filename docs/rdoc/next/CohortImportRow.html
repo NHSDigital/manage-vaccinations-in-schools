@@ -795,7 +795,7 @@
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">schools</span>
     <span class="ruby-constant">Location</span>
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">type:</span> <span class="ruby-node">%w[school generic_school]</span>)
+      .<span class="ruby-identifier">school</span>
       .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
       .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
   <span class="ruby-keyword">end</span>
@@ -902,7 +902,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">schools</span>
   <span class="ruby-constant">Location</span>
-    .<span class="ruby-identifier">where</span>(<span class="ruby-value">type:</span> <span class="ruby-node">%w[school generic_school]</span>)
+    .<span class="ruby-identifier">school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
 <span class="ruby-keyword">end</span>
@@ -994,7 +994,7 @@
             <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 24</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">schools</span>
   <span class="ruby-constant">Location</span>
-    .<span class="ruby-identifier">where</span>(<span class="ruby-value">type:</span> <span class="ruby-node">%w[school generic_school]</span>)
+    .<span class="ruby-identifier">school</span>
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
 <span class="ruby-keyword">end</span></pre>

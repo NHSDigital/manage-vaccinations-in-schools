@@ -752,7 +752,7 @@
           <div class="method-source-code" id="fhir_reference-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/fhir_mapper/location.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_reference</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">school?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_school?</span>
     <span class="ruby-identifier">value</span> = <span class="ruby-identifier">urn</span> <span class="ruby-operator">||</span> <span class="ruby-constant">UNKNOWN_IDENTIFIER</span>
     <span class="ruby-identifier">system</span> = <span class="ruby-string">&quot;https://fhir.hl7.org.uk/Id/urn-school-number&quot;</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">clinic?</span>

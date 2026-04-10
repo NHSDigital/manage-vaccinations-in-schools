@@ -662,7 +662,7 @@
     <span class="ruby-value">existing:</span>
       <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>(
         <span class="ruby-constant">Location</span>
-          .<span class="ruby-identifier">school</span>
+          .<span class="ruby-identifier">gias_school</span>
           .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:sessions</span>)
           .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Session</span>.<span class="ruby-identifier">scheduled</span>)
           .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:urn</span>)
@@ -683,12 +683,12 @@
     }
   }
 
-  <span class="ruby-identifier">existing_schools</span> = <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:urn</span>))
+  <span class="ruby-identifier">existing_schools</span> = <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:urn</span>))
   <span class="ruby-identifier">team_schools</span> =
     <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>(
       <span class="ruby-constant">TeamLocation</span>
         .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:location</span>)
-        .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>)
+        .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>)
         .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:&quot;locations.urn&quot;</span>)
     )
 
@@ -900,7 +900,7 @@
       <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_establishment_number</span>.<span class="ruby-identifier">blank?</span>
 
       <span class="ruby-identifier">schools</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Location</span>.<span class="ruby-identifier">new</span>(
-        <span class="ruby-value">type:</span> <span class="ruby-value">:school</span>,
+        <span class="ruby-value">type:</span> <span class="ruby-string">&quot;gias_school&quot;</span>,
         <span class="ruby-value">urn:</span> <span class="ruby-identifier">row</span>[<span class="ruby-string">&quot;URN&quot;</span>],
         <span class="ruby-value">gias_local_authority_code:</span> <span class="ruby-identifier">row</span>[<span class="ruby-string">&quot;LA (code)&quot;</span>],
         <span class="ruby-value">gias_establishment_number:</span>,

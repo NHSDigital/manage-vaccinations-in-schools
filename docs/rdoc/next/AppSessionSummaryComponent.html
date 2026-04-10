@@ -804,7 +804,7 @@
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_urn_row</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_location</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_location</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">gias_school?</span>
 
     {
       <span class="ruby-value">key:</span> {
@@ -1548,7 +1548,7 @@
           <div class="method-source-code" id="school_urn_row-source">
             <pre class="ruby"><span class="ruby-comment"># File app/components/app_session_summary_component.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_urn_row</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_location</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_location</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">gias_school?</span>
 
   {
     <span class="ruby-value">key:</span> {

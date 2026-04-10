@@ -728,7 +728,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 288</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 289</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme</span>
   <span class="ruby-ivar">@programme</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">type</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -770,7 +770,7 @@
             </details>
           </div>
           <div class="method-source-code" id="save-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 292</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 293</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save!</span>
   <span class="ruby-identifier">team</span>.<span class="ruby-identifier">update!</span>(<span class="ruby-value">programme_types:</span> (<span class="ruby-identifier">team</span>.<span class="ruby-identifier">programme_types</span> <span class="ruby-operator">+</span> [<span class="ruby-identifier">type</span>]).<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">uniq</span>)
 <span class="ruby-keyword">end</span></pre>

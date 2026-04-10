@@ -677,7 +677,10 @@
   <span class="ruby-identifier">academic_year</span> = <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>
 
   <span class="ruby-identifier">school</span> =
-    <span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:location_year_groups</span>).<span class="ruby-identifier">find_by</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">school_id</span>)
+    <span class="ruby-constant">Location</span>
+      .<span class="ruby-identifier">gias_school</span>
+      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:location_year_groups</span>)
+      .<span class="ruby-identifier">find_by</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">school_id</span>)
 
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">school</span>.<span class="ruby-identifier">nil?</span>
 

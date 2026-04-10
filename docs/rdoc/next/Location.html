@@ -627,6 +627,8 @@
 
         <li ><a href="#method-i-programmes">programmes</a></li>
 
+        <li ><a href="#method-i-school-3F">school?</a></li>
+
         <li ><a href="#method-i-teams_for_academic_year">teams_for_academic_year</a></li>
 
         <li ><a href="#method-i-to_param">to_param</a></li>
@@ -776,7 +778,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="find_by_urn_and_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 204</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 206</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find_by_urn_and_site</span>(<span class="ruby-identifier">urn_and_site</span>)
   <span class="ruby-identifier">where_urn_and_site</span>(<span class="ruby-identifier">urn_and_site</span>).<span class="ruby-identifier">take</span>
 <span class="ruby-keyword">end</span></pre>
@@ -818,7 +820,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="find_by_urn_and_site-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 208</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 210</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find_by_urn_and_site!</span>(<span class="ruby-identifier">urn_and_site</span>)
   <span class="ruby-identifier">where_urn_and_site</span>(<span class="ruby-identifier">urn_and_site</span>).<span class="ruby-identifier">take!</span>
 <span class="ruby-keyword">end</span></pre>
@@ -874,7 +876,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="as_json-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 244</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 248</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">as_json</span>
   <span class="ruby-keyword">super</span>.<span class="ruby-identifier">except</span>(<span class="ruby-string">&quot;created_at&quot;</span>, <span class="ruby-string">&quot;systm_one_code&quot;</span>, <span class="ruby-string">&quot;updated_at&quot;</span>).<span class="ruby-identifier">merge</span>(
     <span class="ruby-string">&quot;is_attached_to_team&quot;</span> <span class="ruby-operator">=&gt;</span>
@@ -924,7 +926,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="attach_to_team-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 255</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 259</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">attach_to_team!</span>(<span class="ruby-identifier">team</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">subteam:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">team_locations</span>
     .<span class="ruby-identifier">find_or_initialize_by</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>)
@@ -968,11 +970,499 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="clinic-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 230</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 232</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clinic?</span> = <span class="ruby-identifier">generic_clinic?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">community_clinic?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school?</span> = <span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">generic_school?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dfe_number</span>
-  <span class="ruby-node">&quot;#{gias_local_authority_code}#{gias_establishment_number}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">school?</span>
+  <span class="ruby-node">&quot;#{gias_local_authority_code}#{gias_establishment_number}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_school?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">phase</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_phase</span>
+    <span class="ruby-constant">GIAS_PHASE_MAPPINGS</span>
+      .<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">_</span>, <span class="ruby-identifier">values</span><span class="ruby-operator">|</span> <span class="ruby-identifier">values</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">gias_phase</span>) }
+      &amp;.<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">as_json</span>
+  <span class="ruby-keyword">super</span>.<span class="ruby-identifier">except</span>(<span class="ruby-string">&quot;created_at&quot;</span>, <span class="ruby-string">&quot;systm_one_code&quot;</span>, <span class="ruby-string">&quot;updated_at&quot;</span>).<span class="ruby-identifier">merge</span>(
+    <span class="ruby-string">&quot;is_attached_to_team&quot;</span> <span class="ruby-operator">=&gt;</span>
+      <span class="ruby-identifier">team_locations</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">academic_year</span> <span class="ruby-operator">==</span> <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span> }
+  )
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">teams_for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
+  <span class="ruby-identifier">team_locations</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">includes</span>(<span class="ruby-value">:team</span>).<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:team</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">attach_to_team!</span>(<span class="ruby-identifier">team</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">subteam:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">team_locations</span>
+    .<span class="ruby-identifier">find_or_initialize_by</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>)
+    .<span class="ruby-identifier">tap</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">update!</span>(<span class="ruby-value">subteam:</span>) }
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_year_groups!</span>(<span class="ruby-identifier">values</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">source:</span>)
+  <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">YearGroup</span>.<span class="ruby-identifier">import!</span>(
+    <span class="ruby-node">%i[location_id academic_year value source]</span>,
+    <span class="ruby-identifier">values</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">id</span>, <span class="ruby-identifier">academic_year</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">source</span>] },
+    <span class="ruby-value">on_duplicate_key_ignore:</span> <span class="ruby-keyword">true</span>
+  )
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_year_groups_from_gias!</span>(<span class="ruby-value">academic_year:</span>)
+  <span class="ruby-identifier">import_year_groups!</span>(<span class="ruby-identifier">gias_year_groups</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">source:</span> <span class="ruby-string">&quot;gias&quot;</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_default_programme_year_groups!</span>(<span class="ruby-identifier">programmes</span>, <span class="ruby-value">academic_year:</span>)
+  <span class="ruby-identifier">year_group_ids</span> =
+    <span class="ruby-identifier">location_year_groups</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:value</span>, <span class="ruby-value">:id</span>).<span class="ruby-identifier">to_h</span>
+
+  <span class="ruby-identifier">rows</span> =
+    <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">default_year_groups</span>.<span class="ruby-identifier">filter_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">year_group</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">if</span> (<span class="ruby-identifier">year_group_id</span> = <span class="ruby-identifier">year_group_ids</span>[<span class="ruby-identifier">year_group</span>])
+          [<span class="ruby-identifier">year_group_id</span>, <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>]
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>.<span class="ruby-identifier">import!</span>(
+    <span class="ruby-node">%i[location_year_group_id programme_type]</span>,
+    <span class="ruby-identifier">rows</span>,
+    <span class="ruby-value">on_duplicate_key_ignore:</span> <span class="ruby-keyword">true</span>
+  )
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">organisation_ods_codes</span> = <span class="ruby-constant">Organisation</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:ods_code</span>)
+
+<span class="ruby-constant">GIAS_PHASE_MAPPINGS</span> = {
+  <span class="ruby-string">&quot;nursery&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[nursery]</span>,
+  <span class="ruby-string">&quot;primary&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[primary middle_deemed_primary]</span>,
+  <span class="ruby-string">&quot;secondary&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[secondary middle_deemed_secondary]</span>,
+  <span class="ruby-string">&quot;other&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[sixteen_plus all_through not_applicable]</span>
+}.<span class="ruby-identifier">freeze</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Location</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
+</pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-dfe_number" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-dfe_number" title="Link to this method">
+                <span class="method-name">dfe_number</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="dfe_number-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 236</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dfe_number</span>
+  <span class="ruby-node">&quot;#{gias_local_authority_code}#{gias_establishment_number}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_school?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-fhir_mapper" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-fhir_mapper" title="Link to this method">
+                <span class="method-name">fhir_mapper</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="fhir_mapper-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 308</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Location</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-import_default_programme_year_groups-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-import_default_programme_year_groups-21" title="Link to this method">
+                <span class="method-name">import_default_programme_year_groups!</span>
+                <span class="method-args">(programmes, academic_year:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="import_default_programme_year_groups-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 277</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_default_programme_year_groups!</span>(<span class="ruby-identifier">programmes</span>, <span class="ruby-value">academic_year:</span>)
+  <span class="ruby-identifier">year_group_ids</span> =
+    <span class="ruby-identifier">location_year_groups</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:value</span>, <span class="ruby-value">:id</span>).<span class="ruby-identifier">to_h</span>
+
+  <span class="ruby-identifier">rows</span> =
+    <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">default_year_groups</span>.<span class="ruby-identifier">filter_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">year_group</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">if</span> (<span class="ruby-identifier">year_group_id</span> = <span class="ruby-identifier">year_group_ids</span>[<span class="ruby-identifier">year_group</span>])
+          [<span class="ruby-identifier">year_group_id</span>, <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>]
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>.<span class="ruby-identifier">import!</span>(
+    <span class="ruby-node">%i[location_year_group_id programme_type]</span>,
+    <span class="ruby-identifier">rows</span>,
+    <span class="ruby-value">on_duplicate_key_ignore:</span> <span class="ruby-keyword">true</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-import_year_groups-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-import_year_groups-21" title="Link to this method">
+                <span class="method-name">import_year_groups!</span>
+                <span class="method-args">(values, academic_year:, source:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="import_year_groups-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 265</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_year_groups!</span>(<span class="ruby-identifier">values</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">source:</span>)
+  <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">YearGroup</span>.<span class="ruby-identifier">import!</span>(
+    <span class="ruby-node">%i[location_id academic_year value source]</span>,
+    <span class="ruby-identifier">values</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">id</span>, <span class="ruby-identifier">academic_year</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">source</span>] },
+    <span class="ruby-value">on_duplicate_key_ignore:</span> <span class="ruby-keyword">true</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-import_year_groups_from_gias-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-import_year_groups_from_gias-21" title="Link to this method">
+                <span class="method-name">import_year_groups_from_gias!</span>
+                <span class="method-args">(academic_year:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="import_year_groups_from_gias-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 273</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_year_groups_from_gias!</span>(<span class="ruby-value">academic_year:</span>)
+  <span class="ruby-identifier">import_year_groups!</span>(<span class="ruby-identifier">gias_year_groups</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">source:</span> <span class="ruby-string">&quot;gias&quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-organisation_ods_codes" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-organisation_ods_codes" title="Link to this method">
+                <span class="method-name">organisation_ods_codes</span>
+                <span class="method-args">(= Organisation.pluck(:ods_code))</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="organisation_ods_codes-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 299</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">organisation_ods_codes</span> = <span class="ruby-constant">Organisation</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:ods_code</span>)
+
+  <span class="ruby-constant">GIAS_PHASE_MAPPINGS</span> = {
+    <span class="ruby-string">&quot;nursery&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[nursery]</span>,
+    <span class="ruby-string">&quot;primary&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[primary middle_deemed_primary]</span>,
+    <span class="ruby-string">&quot;secondary&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[secondary middle_deemed_secondary]</span>,
+    <span class="ruby-string">&quot;other&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[sixteen_plus all_through not_applicable]</span>
+  }.<span class="ruby-identifier">freeze</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+    <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Location</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-phase" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-phase" title="Link to this method">
+                <span class="method-name">phase</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="phase-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 240</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">phase</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_phase</span>
+    <span class="ruby-constant">GIAS_PHASE_MAPPINGS</span>
+      .<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">_</span>, <span class="ruby-identifier">values</span><span class="ruby-operator">|</span> <span class="ruby-identifier">values</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">gias_phase</span>) }
+      &amp;.<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-programmes" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-programmes" title="Link to this method">
+                <span class="method-name">programmes</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="programmes-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 228</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes</span>
+  <span class="ruby-identifier">location_programme_year_groups</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme</span>).<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">uniq</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-school-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-school-3F" title="Link to this method">
+                <span class="method-name">school?</span>
+                <span class="method-args">(= gias_school? || generic_school?)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="school-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 234</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school?</span> = <span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">generic_school?</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dfe_number</span>
+  <span class="ruby-node">&quot;#{gias_local_authority_code}#{gias_establishment_number}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_school?</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">phase</span>
@@ -1065,376 +1555,6 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
       </div>
 
 
-      <div id="method-i-dfe_number" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-dfe_number" title="Link to this method">
-                <span class="method-name">dfe_number</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="dfe_number-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 232</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dfe_number</span>
-  <span class="ruby-node">&quot;#{gias_local_authority_code}#{gias_establishment_number}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">school?</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-fhir_mapper" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-fhir_mapper" title="Link to this method">
-                <span class="method-name">fhir_mapper</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 304</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Location</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-import_default_programme_year_groups-21" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-import_default_programme_year_groups-21" title="Link to this method">
-                <span class="method-name">import_default_programme_year_groups!</span>
-                <span class="method-args">(programmes, academic_year:)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="import_default_programme_year_groups-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 273</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_default_programme_year_groups!</span>(<span class="ruby-identifier">programmes</span>, <span class="ruby-value">academic_year:</span>)
-  <span class="ruby-identifier">year_group_ids</span> =
-    <span class="ruby-identifier">location_year_groups</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:value</span>, <span class="ruby-value">:id</span>).<span class="ruby-identifier">to_h</span>
-
-  <span class="ruby-identifier">rows</span> =
-    <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">default_year_groups</span>.<span class="ruby-identifier">filter_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">year_group</span><span class="ruby-operator">|</span>
-        <span class="ruby-keyword">if</span> (<span class="ruby-identifier">year_group_id</span> = <span class="ruby-identifier">year_group_ids</span>[<span class="ruby-identifier">year_group</span>])
-          [<span class="ruby-identifier">year_group_id</span>, <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>]
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>.<span class="ruby-identifier">import!</span>(
-    <span class="ruby-node">%i[location_year_group_id programme_type]</span>,
-    <span class="ruby-identifier">rows</span>,
-    <span class="ruby-value">on_duplicate_key_ignore:</span> <span class="ruby-keyword">true</span>
-  )
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-import_year_groups-21" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-import_year_groups-21" title="Link to this method">
-                <span class="method-name">import_year_groups!</span>
-                <span class="method-args">(values, academic_year:, source:)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="import_year_groups-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 261</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_year_groups!</span>(<span class="ruby-identifier">values</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">source:</span>)
-  <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">YearGroup</span>.<span class="ruby-identifier">import!</span>(
-    <span class="ruby-node">%i[location_id academic_year value source]</span>,
-    <span class="ruby-identifier">values</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">id</span>, <span class="ruby-identifier">academic_year</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">source</span>] },
-    <span class="ruby-value">on_duplicate_key_ignore:</span> <span class="ruby-keyword">true</span>
-  )
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-import_year_groups_from_gias-21" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-import_year_groups_from_gias-21" title="Link to this method">
-                <span class="method-name">import_year_groups_from_gias!</span>
-                <span class="method-args">(academic_year:)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="import_year_groups_from_gias-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 269</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_year_groups_from_gias!</span>(<span class="ruby-value">academic_year:</span>)
-  <span class="ruby-identifier">import_year_groups!</span>(<span class="ruby-identifier">gias_year_groups</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">source:</span> <span class="ruby-string">&quot;gias&quot;</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-organisation_ods_codes" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-organisation_ods_codes" title="Link to this method">
-                <span class="method-name">organisation_ods_codes</span>
-                <span class="method-args">(= Organisation.pluck(:ods_code))</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="organisation_ods_codes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 295</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">organisation_ods_codes</span> = <span class="ruby-constant">Organisation</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:ods_code</span>)
-
-  <span class="ruby-constant">GIAS_PHASE_MAPPINGS</span> = {
-    <span class="ruby-string">&quot;nursery&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[nursery]</span>,
-    <span class="ruby-string">&quot;primary&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[primary middle_deemed_primary]</span>,
-    <span class="ruby-string">&quot;secondary&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[secondary middle_deemed_secondary]</span>,
-    <span class="ruby-string">&quot;other&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[sixteen_plus all_through not_applicable]</span>
-  }.<span class="ruby-identifier">freeze</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-    <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Location</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-phase" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-phase" title="Link to this method">
-                <span class="method-name">phase</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="phase-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 236</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">phase</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_phase</span>
-    <span class="ruby-constant">GIAS_PHASE_MAPPINGS</span>
-      .<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">_</span>, <span class="ruby-identifier">values</span><span class="ruby-operator">|</span> <span class="ruby-identifier">values</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">gias_phase</span>) }
-      &amp;.<span class="ruby-identifier">first</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-programmes" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-programmes" title="Link to this method">
-                <span class="method-name">programmes</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="programmes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 226</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes</span>
-  <span class="ruby-identifier">location_programme_year_groups</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme</span>).<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">uniq</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
       <div id="method-i-teams_for_academic_year" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1454,7 +1574,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="teams_for_academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 251</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 255</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">teams_for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
   <span class="ruby-identifier">team_locations</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">includes</span>(<span class="ruby-value">:team</span>).<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:team</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1496,7 +1616,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 212</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 214</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span>
   <span class="ruby-comment"># ODS code and URN+site are uniquely indexed.</span>
   <span class="ruby-identifier">ods_code</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">urn_and_site</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">id</span>
@@ -1539,7 +1659,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="urn_and_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 217</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 219</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">urn_and_site</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">urn</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">site</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">site</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">urn</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">urn</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">site</span>
@@ -1582,7 +1702,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 222</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 224</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>
   <span class="ruby-ivar">@year_groups</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">location_year_groups</span>.<span class="ruby-identifier">pluck_values</span>
 <span class="ruby-keyword">end</span></pre>

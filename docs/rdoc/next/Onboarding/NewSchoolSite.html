@@ -842,7 +842,7 @@
             </details>
           </div>
           <div class="method-source-code" id="attach_to_team-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 373</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 374</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">attach_to_team!</span>(<span class="ruby-value">academic_year:</span>)
   <span class="ruby-identifier">location</span>.<span class="ruby-identifier">attach_to_team!</span>(<span class="ruby-identifier">team</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">subteam:</span>)
   <span class="ruby-identifier">location</span>.<span class="ruby-identifier">import_year_groups_from_gias!</span>(<span class="ruby-value">academic_year:</span>)
@@ -889,7 +889,7 @@
             </details>
           </div>
           <div class="method-source-code" id="location-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 350</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 351</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">original_location</span>
 
@@ -945,9 +945,9 @@
             </details>
           </div>
           <div class="method-source-code" id="original_location-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 346</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/onboarding.rb, line 347</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">original_location</span>
-  <span class="ruby-ivar">@original_location</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>)
+  <span class="ruby-ivar">@original_location</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 

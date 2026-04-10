@@ -890,7 +890,7 @@
 )
   <span class="ruby-ivar">@team</span> = <span class="ruby-identifier">team</span>
   <span class="ruby-ivar">@programmes</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">programmes</span>
-  <span class="ruby-ivar">@urns</span> = <span class="ruby-identifier">urns</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@team</span>.<span class="ruby-identifier">schools</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:urn</span>)
+  <span class="ruby-ivar">@urns</span> = <span class="ruby-identifier">urns</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@team</span>.<span class="ruby-identifier">gias_schools</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:urn</span>)
   <span class="ruby-ivar">@school_year_groups</span> = <span class="ruby-identifier">school_year_groups</span>
   <span class="ruby-ivar">@patient_count</span> = <span class="ruby-identifier">patient_count</span>
   <span class="ruby-ivar">@progress_bar</span> = <span class="ruby-identifier">progress_bar</span>

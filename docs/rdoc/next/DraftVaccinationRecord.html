@@ -1572,7 +1572,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_is_school</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">location_id</span>.<span class="ruby-identifier">blank?</span>
 
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">school?</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">gias_school?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:location_id</span>, <span class="ruby-string">&quot;The location must be a school&quot;</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
@@ -2352,7 +2352,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_is_school</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">location_id</span>.<span class="ruby-identifier">blank?</span>
 
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">school?</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">gias_school?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:location_id</span>, <span class="ruby-string">&quot;The location must be a school&quot;</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>

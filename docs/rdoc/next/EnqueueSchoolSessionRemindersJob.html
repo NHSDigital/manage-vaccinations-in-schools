@@ -655,7 +655,7 @@
       .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:session_programme_year_groups</span>)
       .<span class="ruby-identifier">has_date</span>(<span class="ruby-constant">Date</span>.<span class="ruby-identifier">tomorrow</span>)
       .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:location</span>)
-      .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>)
+      .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>)
 
   <span class="ruby-identifier">sessions</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">session</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">SendSchoolSessionRemindersJob</span>.<span class="ruby-identifier">perform_later</span>(<span class="ruby-identifier">session</span>)

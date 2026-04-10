@@ -692,7 +692,7 @@
 
   <span class="ruby-identifier">locations</span> =
     <span class="ruby-identifier">urns</span>.<span class="ruby-identifier">filter_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">urn</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">location</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>)
+      <span class="ruby-identifier">location</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>)
 
       <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;Could not find school with URN #{urn}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-identifier">location</span>

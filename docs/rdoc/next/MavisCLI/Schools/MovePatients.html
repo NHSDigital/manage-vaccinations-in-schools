@@ -676,8 +676,8 @@
 
   <span class="ruby-identifier">academic_year</span> = <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>
 
-  <span class="ruby-identifier">old_loc</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">source_urn</span>)
-  <span class="ruby-identifier">new_loc</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">target_urn</span>)
+  <span class="ruby-identifier">old_loc</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">source_urn</span>)
+  <span class="ruby-identifier">new_loc</span> = <span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">target_urn</span>)
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">old_loc</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">new_loc</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Could not find one or both schools.&quot;</span>

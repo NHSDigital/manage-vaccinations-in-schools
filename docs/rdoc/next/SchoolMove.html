@@ -615,14 +615,12 @@ school_id     :bigint           not null</pre>
 
 <pre>index_school_moves_on_patient_id                (patient_id) UNIQUE
 index_school_moves_on_patient_id_and_school_id  (patient_id,school_id)
-index_school_moves_on_school_id                 (school_id)
-index_school_moves_on_team_id                   (team_id)</pre>
+index_school_moves_on_school_id                 (school_id)</pre>
 
 <p>Foreign Keys</p>
 
 <pre>fk_rails_...  (patient_id =&gt; patients.id)
-fk_rails_...  (school_id =&gt; locations.id)
-fk_rails_...  (team_id =&gt; teams.id)</pre>
+fk_rails_...  (school_id =&gt; locations.id)</pre>
 
   </section>
 
@@ -672,7 +670,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="confirm-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 62</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 58</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">confirm!</span>(<span class="ruby-value">user:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">move_across_teams</span> = <span class="ruby-identifier">from_another_team?</span>
@@ -732,7 +730,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="from_another_team-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 88</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 84</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_another_team?</span>
   <span class="ruby-identifier">current_teams</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">teams_via_patient_locations</span>
 
@@ -778,7 +776,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="ignore-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 84</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">ignore!</span>
   <span class="ruby-identifier">destroy!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">persisted?</span>
 <span class="ruby-keyword">end</span></pre>

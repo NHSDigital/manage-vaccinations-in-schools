@@ -743,8 +743,8 @@
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">calculate_school_total</span>(<span class="ruby-identifier">programme</span>)
     <span class="ruby-constant">Team</span>
       .<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">teams</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:id</span>))
-      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:schools</span>)
-      .<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:schools</span>)
+      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:gias_schools</span>)
+      .<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:gias_schools</span>)
       .<span class="ruby-identifier">uniq</span>
       .<span class="ruby-identifier">count</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">location</span><span class="ruby-operator">|</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">programme</span>) }
   <span class="ruby-keyword">end</span>
@@ -1293,8 +1293,8 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">calculate_school_total</span>(<span class="ruby-identifier">programme</span>)
   <span class="ruby-constant">Team</span>
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">teams</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:id</span>))
-    .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:schools</span>)
-    .<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:schools</span>)
+    .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:gias_schools</span>)
+    .<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:gias_schools</span>)
     .<span class="ruby-identifier">uniq</span>
     .<span class="ruby-identifier">count</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">location</span><span class="ruby-operator">|</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">programme</span>) }
 <span class="ruby-keyword">end</span></pre>

@@ -710,7 +710,7 @@
                 <span class="ruby-value">:session_programme_year_groups</span>,
                 <span class="ruby-value">:team_location</span>
               )
-              .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>)
+              .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>)
               .<span class="ruby-identifier">has_all_programmes_of</span>([<span class="ruby-identifier">programme</span>])
           <span class="ruby-keyword">end</span>
 
@@ -741,7 +741,7 @@
         .<span class="ruby-identifier">joins</span>(
           <span class="ruby-string">&quot;INNER JOIN locations ON locations.id = team_locations.location_id&quot;</span>
         )
-        .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>)
+        .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>)
         .<span class="ruby-identifier">has_all_programmes_of</span>([<span class="ruby-identifier">programme</span>])
         .<span class="ruby-identifier">sample</span>
   <span class="ruby-keyword">end</span>
@@ -759,7 +759,8 @@
 
     <span class="ruby-identifier">consent_forms</span> =
       <span class="ruby-identifier">available_patient_sessions</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span>, <span class="ruby-identifier">session</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>
+        <span class="ruby-identifier">school</span> =
+          <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>
 
         <span class="ruby-ivar">@updated_patients</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">patient</span>
 
@@ -786,7 +787,7 @@
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">elsif</span> <span class="ruby-constant">Session</span>
           .<span class="ruby-identifier">has_any_programmes_of</span>([<span class="ruby-identifier">programme</span>])
-          .<span class="ruby-identifier">none?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span> }
+          .<span class="ruby-identifier">none?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">gias_school?</span> }
       <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Programme #{programme.type} does not have a school session&quot;</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
@@ -960,7 +961,8 @@
 
   <span class="ruby-identifier">consent_forms</span> =
     <span class="ruby-identifier">available_patient_sessions</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span>, <span class="ruby-identifier">session</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>
+      <span class="ruby-identifier">school</span> =
+        <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>
 
       <span class="ruby-ivar">@updated_patients</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">patient</span>
 
@@ -1032,7 +1034,7 @@
               <span class="ruby-value">:session_programme_year_groups</span>,
               <span class="ruby-value">:team_location</span>
             )
-            .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>)
+            .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>)
             .<span class="ruby-identifier">has_all_programmes_of</span>([<span class="ruby-identifier">programme</span>])
         <span class="ruby-keyword">end</span>
 
@@ -1139,7 +1141,7 @@
       .<span class="ruby-identifier">joins</span>(
         <span class="ruby-string">&quot;INNER JOIN locations ON locations.id = team_locations.location_id&quot;</span>
       )
-      .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">school</span>)
+      .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Location</span>.<span class="ruby-identifier">gias_school</span>)
       .<span class="ruby-identifier">has_all_programmes_of</span>([<span class="ruby-identifier">programme</span>])
       .<span class="ruby-identifier">sample</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1181,7 +1183,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_programme_and_session-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/consents.rb, line 120</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/generate/consents.rb, line 121</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_programme_and_session</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-identifier">session</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">exclude?</span>(<span class="ruby-identifier">programme</span>)
@@ -1189,7 +1191,7 @@
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-constant">Session</span>
         .<span class="ruby-identifier">has_any_programmes_of</span>([<span class="ruby-identifier">programme</span>])
-        .<span class="ruby-identifier">none?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span> }
+        .<span class="ruby-identifier">none?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">gias_school?</span> }
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Programme #{programme.type} does not have a school session&quot;</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
