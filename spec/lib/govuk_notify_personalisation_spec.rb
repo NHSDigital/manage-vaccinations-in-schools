@@ -79,7 +79,7 @@ describe GovukNotifyPersonalisation do
         full_and_preferred_patient_name: "John Smith",
         location_name: "Hogwarts",
         invitation_to_clinic_custom_mmr_message: "",
-        mmr_second_dose_required: false,
+        mmr_second_dose_required?: false,
         invitation_to_clinic_generic_message:
           "They can have this vaccination at a community clinic. If you’d like " \
             "to book a clinic appointment, please contact us using the details " \
@@ -199,7 +199,7 @@ describe GovukNotifyPersonalisation do
     it do
       expect(
         personalisation.vaccination
-      ).to eq "MenACWY and Td/IPV vaccinations"
+      ).to eq "MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations"
     end
   end
 
@@ -432,7 +432,7 @@ describe GovukNotifyPersonalisation do
       context "generic message inviting patient to generic clinic" do
         it do
           expect(personalisation).to have_attributes(
-            mmr_second_dose_required: false,
+            mmr_second_dose_required?: false,
             vaccination: "MMR vaccination",
             invitation_to_clinic_generic_message:
               "They can have this vaccination at a community clinic. " \
@@ -448,7 +448,7 @@ describe GovukNotifyPersonalisation do
 
         it do
           expect(personalisation).to have_attributes(
-            mmr_second_dose_required: false,
+            mmr_second_dose_required?: false,
             vaccination: "MMR vaccination",
             invitation_to_clinic_custom_mmr_message: ""
           )
@@ -461,7 +461,7 @@ describe GovukNotifyPersonalisation do
 
         it do
           expect(personalisation).to have_attributes(
-            mmr_second_dose_required: false,
+            mmr_second_dose_required?: false,
             vaccination: "MMR vaccination",
             invitation_to_clinic_custom_mmr_message: ""
           )
@@ -485,7 +485,7 @@ describe GovukNotifyPersonalisation do
         context "generic message inviting patient to generic clinic for their 2nd dose" do
           it do
             expect(personalisation).to have_attributes(
-              mmr_second_dose_required: true,
+              mmr_second_dose_required?: true,
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_generic_message:
                 "If you would like your local GP surgery to give John their 2nd dose, " \
@@ -506,7 +506,7 @@ describe GovukNotifyPersonalisation do
 
           it do
             expect(personalisation).to have_attributes(
-              mmr_second_dose_required: true,
+              mmr_second_dose_required?: true,
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
                 "It’s important to wait at least 28 days after the 1st dose of an MMR or " \
@@ -524,7 +524,7 @@ describe GovukNotifyPersonalisation do
 
           it do
             expect(personalisation).to have_attributes(
-              mmr_second_dose_required: true,
+              mmr_second_dose_required?: true,
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
                 "It’s important to wait at least 28 days after the 1st dose of an MMR " \
@@ -696,48 +696,8 @@ describe GovukNotifyPersonalisation do
 
     it do
       expect(personalisation).to have_attributes(
-        day_month_year_of_vaccination: "01/01/2024",
-        today_or_date_of_vaccination: "on 1 January 2024",
-        vaccine_and_dose: "HPV 1st dose",
-        vaccine_brand: "Gardasil 9"
+        vaccine_and_dose: "HPV 1st dose"
       )
-    end
-
-    context "for the MMR programme" do
-      let(:programmes) { [Programme.mmr] }
-
-      let(:patient) do
-        create(:patient, date_of_birth: Date.new(2018, 2, 1), session:)
-      end
-
-      it do
-        expect(personalisation).to have_attributes(
-          mmr_second_dose_message:
-            "## Your child still needs a second dose of the MMR vaccine\n\n" \
-              "To be fully protected against measles, mumps and rubella, " \
-              "your child needs a second dose of the vaccine. Our team will " \
-              "be in touch about this soon."
-        )
-      end
-
-      context "when fully vaccinated" do
-        before do
-          create(
-            :vaccination_record,
-            :administered,
-            programme: programmes.first,
-            patient:,
-            performed_at: Date.new(2020, 1, 1),
-            vaccine:
-          )
-
-          vaccination_record # ensure second dose exists
-
-          PatientStatusUpdater.call(patient:)
-        end
-
-        it { should have_attributes(mmr_second_dose_message: "") }
-      end
     end
   end
 
@@ -753,9 +713,7 @@ describe GovukNotifyPersonalisation do
 
     it do
       expect(personalisation).to have_attributes(
-        day_month_year_of_vaccination: "01/01/2024",
-        reason_did_not_vaccinate: "the nurse decided John was not well",
-        today_or_date_of_vaccination: "on 1 January 2024"
+        reason_did_not_vaccinate: "the nurse decided John was not well"
       )
     end
   end
@@ -915,6 +873,17 @@ describe GovukNotifyPersonalisation do
     end
   end
 
+  context "with a programme that has a different name on NHS.uk" do
+    let(:programmes) { [Programme.td_ipv] }
+
+    it do
+      expect(personalisation).to have_attributes(
+        vaccination: "Td/IPV (3-in-1 teenage booster) vaccination",
+        vaccine: "Td/IPV (3-in-1 teenage booster) vaccine"
+      )
+    end
+  end
+
   context "with the flu programme" do
     let(:programmes) { [Programme.flu] }
 
@@ -929,7 +898,13 @@ describe GovukNotifyPersonalisation do
 
     context "with an administered injected vaccination record" do
       let(:vaccination_record) do
-        create(:vaccination_record, patient:, programme: programmes.first)
+        vaccine = programmes.first.vaccines.find_by!(method: "injection")
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          vaccine:
+        )
       end
 
       it do
@@ -944,10 +919,12 @@ describe GovukNotifyPersonalisation do
 
     context "with an administered nasal spray vaccination record" do
       let(:vaccination_record) do
+        vaccine = programmes.first.vaccines.find_by!(method: "nasal")
         create(
           :vaccination_record,
           patient:,
           programme: programmes.first,
+          vaccine:,
           delivery_method: "nasal_spray"
         )
       end

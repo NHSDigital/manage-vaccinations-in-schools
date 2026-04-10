@@ -155,6 +155,11 @@ class Programme
     @name ||= I18n.t(translation_key, scope: :programme_types)
   end
 
+  def name_on_nhs_uk
+    @name_on_nhs_uk ||=
+      I18n.t(type, scope: :programme_names_on_nhs_uk, default: nil)
+  end
+
   def name_in_sentence
     @name_in_sentence = flu? ? name.downcase : name
   end
@@ -241,6 +246,10 @@ class Programme
   def maximum_dose_sequence = MAXIMUM_DOSE_SEQUENCES.fetch(type)
 
   def minimum_dose_interval = MINIMUM_DOSE_INTERVALS.fetch(type)
+
+  # TODO: Make this more explicit when other programmes start
+  # administering multiple doses (e.g. immunocompromised schedules).
+  def multi_dose? = minimum_dose_interval.present?
 
   def import_names = IMPORT_NAMES.fetch(type)
 

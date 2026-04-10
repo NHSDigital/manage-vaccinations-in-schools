@@ -135,14 +135,14 @@ describe "MenACWY and Td/IPV vaccination" do
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
-        template: :vaccination_administered_menacwy
+        template: :vaccination_administered
       ).with_content_including("MenACWY vaccination", "MenQuadfi")
     )
 
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
-        template: :vaccination_administered_td_ipv
+        template: :vaccination_administered
       ).with_content_including("3-in-1 teenage booster", "Revaxis")
     )
   end

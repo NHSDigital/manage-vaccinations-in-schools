@@ -3,8 +3,12 @@
 class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
 
+  include PatientsHelper
   include PhoneHelper
+  include ProgrammesHelper
+  include TeamsHelper
   include VaccinationRecordsHelper
+  include VaccinesHelper
 
   def initialize(
     academic_year: nil,
@@ -61,10 +65,6 @@ class GovukNotifyPersonalisation
               :team_location,
               :vaccination_record
 
-  def batch_name
-    vaccination_record&.batch_number
-  end
-
   def consent_deadline
     session&.consent_deadline_date&.to_fs(:short_day_of_week)
   end
@@ -109,10 +109,6 @@ class GovukNotifyPersonalisation
     "You’ve agreed for #{short_patient_name} to have the #{consented_vaccine_methods}."
   end
 
-  def day_month_year_of_vaccination
-    vaccination_record&.performed_at&.to_date&.to_fs(:uk_short)
-  end
-
   def full_and_preferred_patient_name
     (consent_form || patient).full_name_with_known_as(context: :parents)
   end
@@ -135,47 +131,27 @@ class GovukNotifyPersonalisation
     end
   end
 
-  def mmr_second_dose_message
-    return unless patient
-    return unless mmr_programme
-
-    programme_status = patient.programme_status(mmr_programme, academic_year:)
-
-    return "" if programme_status.vaccinated?
-
-    [
-      "## Your child still needs a second dose of the MMR vaccine",
-      "To be fully protected against measles, mumps and rubella, your " \
-        "child needs a second dose of the vaccine. Our team will be in " \
-        "touch about this soon."
-    ].join("\n\n")
-  end
-
   def mmr_second_dose_required?
     mmr_programme.present? && patient_on_last_dose?
-  end
-
-  def mmr_second_dose_required
-    mmr_second_dose_required?
   end
 
   def invitation_to_clinic_generic_message
     [
       (
-        if mmr_second_dose_required
+        if mmr_second_dose_required?
           "If you would like your local GP surgery to give #{short_patient_name} " \
             "their 2nd dose, contact the surgery in the usual way."
         end
       ),
-      "#{mmr_second_dose_required ? "Alternatively, they" : "They"} can have this vaccination " \
+      "#{mmr_second_dose_required? ? "Alternatively, they" : "They"} can have this vaccination " \
         "at a community clinic. If you’d like to book a clinic appointment, please contact " \
         "us using the details below.",
-      (mmr_second_dose_waiting_period_message if mmr_second_dose_required)
+      (mmr_second_dose_waiting_period_message if mmr_second_dose_required?)
     ].compact.join("\n\n")
   end
 
   def invitation_to_clinic_custom_mmr_message
-    return "" unless mmr_second_dose_required
+    return "" unless mmr_second_dose_required?
 
     case team&.organisation&.ods_code
     when "RT5" # Leicestershire Partnership Trust (LPT)
@@ -380,16 +356,6 @@ class GovukNotifyPersonalisation
 
   delegate :privacy_notice_url, :privacy_policy_url, to: :team, prefix: true
 
-  def today_or_date_of_vaccination
-    return if vaccination_record.nil?
-
-    if vaccination_record.performed_at.today?
-      "today"
-    else
-      "on #{vaccination_record.performed_at.to_date.to_fs(:long)}"
-    end
-  end
-
   def vaccination
     if vaccination_record.present?
       # We're sending communication about a specific vaccination that took place.
@@ -400,7 +366,7 @@ class GovukNotifyPersonalisation
       # We're sending about a vaccination that will take place.
       names = programme_names
 
-      if mmr_second_dose_required
+      if mmr_second_dose_required?
         names = names.map { it == "MMR" ? "2nd dose of the MMR" : it }
       end
 
@@ -447,10 +413,6 @@ class GovukNotifyPersonalisation
     "#{programme_names_and_methods.to_sentence} vaccine".pluralize(
       programme_names_and_methods.length
     )
-  end
-
-  def vaccine_brand
-    vaccination_record&.vaccine&.brand
   end
 
   def vaccine_is?(method)
@@ -518,7 +480,7 @@ class GovukNotifyPersonalisation
   end
 
   def programme_names
-    @programme_names ||= programmes.map(&:name_in_sentence)
+    @programme_names ||= programmes.map { programme_name_for_parents(it) }
   end
 
   def programme_names_and_methods

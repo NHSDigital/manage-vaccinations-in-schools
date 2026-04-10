@@ -1204,6 +1204,16 @@ en:
     sessions:
       index:
         title: Sessions
+  # Only MMR/MMRV disease types are mapped for now. I18n.t! is used
+  # intentionally so that adding a new multi-dose programme forces you
+  # to add parent-friendly disease names here.
+  disease_types:
+    measles: measles
+    mumps: mumps
+    rubella: rubella
+    varicella: varicella
+  programme_names_on_nhs_uk:
+    td_ipv: 3-in-1 teenage booster
   programme_types:
     flu: Flu
     hpv: HPV

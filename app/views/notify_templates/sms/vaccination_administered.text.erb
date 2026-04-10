@@ -4,7 +4,7 @@ template_name: vaccination_administered
 ---
 <%= short_patient_name %> had their <%= vaccination_and_method %> today. They might have some of the following side effects:
 
-<%= vaccine_side_effects %>
+<%= vaccine_side_effects_list(vaccination_record.vaccine) %>
 
 If you're concerned, contact your GP in the usual way.
 

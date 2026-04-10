@@ -371,7 +371,7 @@ describe "Flu vaccination" do
       matching_notify_email(
         to: @patient.consents.last.parent.email,
         subject: "Your child had their flu vaccination today",
-        template: :vaccination_administered_flu
+        template: :vaccination_administered
       ).with_content_including("Vaccination: flu", *method_and_side_effects)
     )
   end

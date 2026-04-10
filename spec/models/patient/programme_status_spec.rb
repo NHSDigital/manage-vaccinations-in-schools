@@ -37,6 +37,73 @@ describe Patient::ProgrammeStatus do
     it { should belong_to(:patient) }
   end
 
+  describe "#needs_more_doses?" do
+    subject(:needs_more_doses) do
+      patient.programme_status(
+        Programme.mmr,
+        academic_year: session.academic_year
+      ).needs_more_doses?
+    end
+
+    let(:programme) { Programme.mmr }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:session) do
+      create(
+        :session,
+        team:,
+        programmes: [programme],
+        date: Date.new(2024, 10, 1)
+      )
+    end
+    let(:patient) { create(:patient, session:, year_group: 9) }
+
+    context "with no vaccinations" do
+      before { PatientStatusUpdater.call(patient:) }
+
+      it { should be(true) }
+    end
+
+    context "with one vaccination" do
+      before do
+        create(
+          :vaccination_record,
+          :administered,
+          programme:,
+          patient:,
+          session:,
+          performed_at: Date.new(2024, 10, 1)
+        )
+        PatientStatusUpdater.call(patient:)
+      end
+
+      it { should be(true) }
+    end
+
+    context "with two vaccinations" do
+      before do
+        create(
+          :vaccination_record,
+          :administered,
+          programme:,
+          patient:,
+          session:,
+          performed_at: Date.new(2024, 10, 1)
+        )
+        create(
+          :vaccination_record,
+          :administered,
+          programme:,
+          patient:,
+          session:,
+          performed_at: Date.new(2024, 11, 1)
+        )
+        PatientStatusUpdater.call(patient:)
+      end
+
+      it { should be(false) }
+    end
+  end
+
   describe "#assign" do
     subject(:assign) { patient_programme_status.assign }
 

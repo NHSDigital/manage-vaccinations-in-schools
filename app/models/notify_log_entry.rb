@@ -72,7 +72,12 @@ class NotifyLogEntry < ApplicationRecord
     "fa3c8dd5-4688-4b93-960a-1d422c4e5597" => :triage_vaccination_will_happen,
     "6e4c514d-fcc9-4bc8-b7eb-e222a1445681" => :session_school_reminder,
     "604ee667-c996-471e-b986-79ab98d0767c" => :consent_confirmation_triage,
-    "f2921e23-4b73-4e44-abbb-38b0e235db8e" => :consent_confirmation_clinic
+    "f2921e23-4b73-4e44-abbb-38b0e235db8e" => :consent_confirmation_clinic,
+    "8a65d7b5-045c-4f26-8f76-6e593c14cb6d" => :vaccination_administered_hpv,
+    "38727494-9a81-42b3-9c1f-5c31e55333e7" => :vaccination_administered_menacwy,
+    "3abe7ca8-a889-484b-ab9f-07523302eb6a" => :vaccination_administered_td_ipv,
+    "7238ee27-5840-40e5-b9b9-3130ba4cd4fa" => :vaccination_administered_flu,
+    "0b1095db-fb38-4105-9f01-a364fa8bbb1c" => :vaccination_administered_mmr
   }.freeze
 
   self.inheritance_column = nil
