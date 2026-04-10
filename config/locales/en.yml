@@ -467,6 +467,7 @@ en:
           aching: an aching body
           dizziness: dizziness
           drowsy: feeling drowsy
+          feeling_or_being_sick: feeling or being sick
           feeling_sick: feeling sick
           headache: a headache
           high_temperature: a high temperature
@@ -483,7 +484,7 @@ en:
           swollen_glands: >-
             swollen glands around the cheeks, neck and jaw, and aching joints (similar to a mild
             form of mumps) around 2 to 3 weeks after the vaccination
-          tiredness: general tiredness
+          tiredness: tiredness
           unwell: generally feeling unwell
     errors:
       models:

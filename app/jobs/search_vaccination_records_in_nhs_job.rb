@@ -41,14 +41,18 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       end
     end
 
-    # Remaining incoming_vaccination_records are new
-    incoming_vaccination_records.each(&:save!)
+    # Remaining incoming_vaccination_records are new.
+    # Save non-discarded records first so they have IDs before discarded
+    # duplicates reference them via duplicate_of_vaccination_record_id.
+    incoming_vaccination_records.sort_by { it.discarded? ? 1 : 0 }.each(&:save!)
 
     update_vaccination_search_timestamps if patient.nhs_number.present?
 
     PatientStatusUpdater.call(patient:)
 
     incoming_vaccination_records.each do |vaccination_record|
+      next if vaccination_record.discarded?
+
       AlreadyHadNotificationSender.call(vaccination_record:)
     end
   end
@@ -58,6 +62,15 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   def select_programme_feature_flagged_records(vaccination_records)
     vaccination_records.select do
       Flipper.enabled?(:imms_api_search_job, it.programme)
+    end
+  end
+
+  def reject_service_sourced_records(vaccination_records)
+    vaccination_records.reject do |vaccination_record|
+      [
+        FHIRMapper::VaccinationRecord::MAVIS_SYSTEM_NAME,
+        FHIRMapper::VaccinationRecord::MAVIS_NATIONAL_REPORTING_SYSTEM_NAME
+      ].include?(vaccination_record.nhs_immunisations_api_identifier_system)
     end
   end
 
@@ -80,6 +93,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
         extract_fhir_vaccination_records(fhir_bundle)
           .then { convert_to_vaccination_records(it) }
+          .then { reject_service_sourced_records(it) }
           .then { deduplicate_vaccination_records(it) }
           .then { select_programme_feature_flagged_records(it) }
           .then { reject_pre_cutoff_records(it) }
@@ -109,35 +123,47 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
   end
 
   def deduplicate_vaccination_records(incoming_vaccination_records)
-    vaccination_records =
-      incoming_vaccination_records +
-        patient
-          .vaccination_records
-          .with_correct_source_for_nhs_immunisations_api
-          .includes(:team)
+    service_vaccination_records =
+      patient
+        .vaccination_records
+        .with_correct_source_for_nhs_immunisations_api
+        .includes(:team)
+
+    all_vaccination_records =
+      incoming_vaccination_records + service_vaccination_records
 
     grouped_vaccination_records =
-      vaccination_records.group_by { [it.performed_at_date, it.programme_type] }
-
-    deduplicated_vaccination_records = []
+      all_vaccination_records.group_by do
+        [it.performed_at_date, it.programme_type]
+      end
 
     grouped_vaccination_records.each_value do |records|
-      deduplicated_vaccination_records +=
-        if records.any?(&:correct_source_for_nhs_immunisations_api?)
-          # If there exists a Mavis record, discard all incoming records
-          []
-        elsif records.none?(&:nhs_immunisations_api_primary_source)
-          # If no records are primary sources, keep all of them
-          records
-        else
-          # Otherwise prefer primary sources
-          records.select(&:nhs_immunisations_api_primary_source)
-        end
+      if records.any?(&:sourced_from_service?)
+        # If there exists a Mavis record, set `discarded_at` for all incoming API records,
+        # pointing each at the canonical Mavis record
+        canonical = records.find(&:sourced_from_service?)
+        records
+          .select(&:sourced_from_nhs_immunisations_api?)
+          .each do |record|
+            record.discarded_at = Time.current
+            record.duplicate_of_vaccination_record = canonical
+          end
+      elsif records.any?(&:nhs_immunisations_api_primary_source)
+        # If some records have `primarySource: true`, set `discarded_at` for all `primarySource: false` records,
+        # pointing each at the first `primarySource: true` record
+        canonical = records.find(&:nhs_immunisations_api_primary_source)
+        records
+          .select(&:sourced_from_nhs_immunisations_api?)
+          .reject(&:nhs_immunisations_api_primary_source)
+          .each do |record|
+            record.discarded_at = Time.current
+            record.duplicate_of_vaccination_record = canonical
+          end
+      end
+      # If no records are primary sources, keep all of them
     end
 
-    deduplicated_vaccination_records.select(
-      &:sourced_from_nhs_immunisations_api?
-    )
+    incoming_vaccination_records
   end
 
   def update_vaccination_search_timestamps

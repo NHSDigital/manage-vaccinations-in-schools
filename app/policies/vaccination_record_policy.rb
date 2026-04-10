@@ -7,6 +7,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
     return true if user.is_nurse? || user.is_prescriber?
     return false unless user.is_healthcare_assistant?
     return true if patient.nil?
+    return false if session.nil?
 
     vaccine_criteria = patient.vaccine_criteria(programme:, academic_year:)
 
@@ -16,11 +17,6 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def show? = team.is_sais_team?
-
-  def record_already_vaccinated?
-    (user.is_nurse? || user.is_prescriber?) && !session.today? &&
-      !patient.programme_status(programme, academic_year:).vaccinated?
-  end
 
   def update?
     if team.has_point_of_care_access?

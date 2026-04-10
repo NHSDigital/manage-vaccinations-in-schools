@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-describe SyncableToNHSImmunisationsAPI do
+describe VaccinationRecord::NHSImmunisationsAPISync do
   let(:vaccination_record) do
-    build(:vaccination_record, outcome:, programme:, session:)
+    build(:vaccination_record, outcome:, programme:, session:, created_at:)
   end
   let(:outcome) { "administered" }
   let(:programme) { Programme.flu }
   let(:session) { create(:session, programmes: [programme]) }
+  let(:created_at) { Date.new(2025, 1, 1) }
 
   describe "#sync_to_nhs_immunisations_api!" do
     before { Flipper.enable(:imms_api_sync_job, programme) }
@@ -217,6 +218,10 @@ describe SyncableToNHSImmunisationsAPI do
   describe "#sync_status" do
     subject(:sync_status) { vaccination_record.sync_status }
 
+    let(:vaccination_record) do
+      create(:vaccination_record, outcome:, programme:, session:)
+    end
+
     before { Flipper.enable(:imms_api_sync_job, programme) }
 
     context "when patient has no NHS number" do
@@ -419,6 +424,269 @@ describe SyncableToNHSImmunisationsAPI do
       it "returns `not_synced`" do
         expect(sync_status).to eq(:not_synced)
       end
+    end
+
+    context "when the record was created before the API integration was enabled for that programme" do
+      let(:programme) { Programme.td_ipv }
+
+      before do
+        Flipper.enable(:imms_api_sync_job, programme)
+        vaccination_record.update!(
+          nhs_immunisations_api_sync_pending_at: nil,
+          nhs_immunisations_api_synced_at: nil,
+          created_at: Date.new(2026, 3, 1)
+        )
+      end
+
+      it "returns :not_synced" do
+        expect(sync_status).to eq(:not_synced)
+      end
+
+      context "when the record has since been synced (e.g. due to an edit after integration was enabled)" do
+        before do
+          vaccination_record.update!(
+            nhs_immunisations_api_sync_pending_at: 2.hours.ago,
+            nhs_immunisations_api_synced_at: 1.hour.ago
+          )
+        end
+
+        it "returns :synced" do
+          expect(sync_status).to eq(:synced)
+        end
+      end
+    end
+
+    context "when the record was created on the cut-off date for the programme" do
+      let(:programme) { Programme.td_ipv }
+
+      before do
+        Flipper.enable(:imms_api_sync_job, programme)
+        vaccination_record.update!(
+          nhs_immunisations_api_sync_pending_at: nil,
+          nhs_immunisations_api_synced_at: nil,
+          created_at: Date.new(2026, 3, 2)
+        )
+      end
+
+      it "returns :pending (not treated as pre-integration)" do
+        expect(sync_status).to eq(:pending)
+      end
+    end
+
+    context "when the programme has no cut-off date (flu)" do
+      before do
+        vaccination_record.update!(
+          nhs_immunisations_api_sync_pending_at: nil,
+          nhs_immunisations_api_synced_at: nil,
+          created_at: Date.new(2025, 1, 1)
+        )
+      end
+
+      it "returns :pending (no pre-integration limit for flu)" do
+        expect(sync_status).to eq(:pending)
+      end
+    end
+  end
+
+  describe "#created_before_api_integration?" do
+    subject { vaccination_record.created_before_api_integration? }
+
+    context "when programme has no cut-off (flu)" do
+      it { should be false }
+    end
+
+    context "when programme has no cut-off (hpv)" do
+      let(:programme) { Programme.hpv }
+
+      it { should be false }
+    end
+
+    context "when programme has a cut-off (td_ipv)" do
+      let(:programme) { Programme.td_ipv }
+
+      before { Flipper.enable(:imms_api_sync_job, programme) }
+
+      context "and record was created before the cut-off" do
+        let(:created_at) { Date.new(2026, 3, 1) }
+
+        it { should be true }
+      end
+
+      context "and record was created on the cut-off date" do
+        let(:created_at) { Date.new(2026, 3, 2) }
+
+        it { should be false }
+      end
+
+      context "and record was created after the cut-off" do
+        let(:created_at) { Date.new(2026, 3, 3) }
+
+        it { should be false }
+      end
+    end
+  end
+
+  describe "#should_be_in_nhs_immunisations_api?" do
+    subject { vaccination_record.should_be_in_nhs_immunisations_api? }
+
+    let(:patient) { create(:patient, session:) }
+    let(:notify_parents) { true }
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        outcome:,
+        programme:,
+        session:,
+        patient:,
+        notify_parents:
+      )
+    end
+
+    before { Flipper.enable(:imms_api_sync_job, programme) }
+
+    context "when all conditions are met" do
+      it { should be true }
+    end
+
+    context "when the vaccination record has been discarded" do
+      before { vaccination_record.discard! }
+
+      it { should be false }
+    end
+
+    context "when the vaccination record doesn't have the correct source" do
+      before do
+        allow(vaccination_record).to receive(
+          :correct_source_for_nhs_immunisations_api?
+        ).and_return(false)
+      end
+
+      it { should be false }
+    end
+
+    VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
+      next if outcome == "administered"
+
+      context "the vaccination record outcome is #{outcome}" do
+        let(:vaccination_record) do
+          create(:vaccination_record, outcome:, programme:, session:, patient:)
+        end
+
+        it { should be false }
+      end
+    end
+
+    context "when the patient has no NHS number" do
+      before { patient.update(nhs_number: nil) }
+
+      it { should be true }
+    end
+
+    context "when the patient has requested that their parents aren't notified" do
+      let(:notify_parents) { false }
+
+      it { should be false }
+    end
+
+    context "when notify_parents is not set" do
+      let(:notify_parents) { nil }
+
+      it { should be true }
+    end
+
+    context "when the patient is invalidated" do
+      before { patient.update(invalidated_at: Time.current) }
+
+      it { should be false }
+    end
+
+    context "when the programme type is not enabled in the feature flag" do
+      let(:programme) { Programme.menacwy }
+
+      before do
+        Flipper.disable(:imms_api_sync_job)
+        Flipper.enable(:imms_api_sync_job, Programme.hpv)
+      end
+
+      it { should be false }
+    end
+  end
+
+  describe "#changes_need_to_be_synced_to_nhs_immunisations_api?" do
+    subject do
+      vaccination_record.changes_need_to_be_synced_to_nhs_immunisations_api?
+    end
+
+    let(:vaccination_record) do
+      create(:vaccination_record, programme:, session:)
+    end
+
+    context "when no attributes have changed" do
+      it { should be false }
+    end
+
+    context "when a FHIR content field changes" do
+      before { vaccination_record.batch_number = "NEWBATCH" }
+
+      it { should be true }
+    end
+
+    context "when outcome changes" do
+      before { vaccination_record.outcome = :refused }
+
+      it { should be true }
+    end
+
+    context "when notify_parents changes" do
+      before { vaccination_record.notify_parents = false }
+
+      it { should be true }
+    end
+
+    context "when discarded_at changes" do
+      before { vaccination_record.discarded_at = Time.current }
+
+      it { should be true }
+    end
+
+    context "when only notes change" do
+      before { vaccination_record.notes = "Some new note" }
+
+      it { should be false }
+    end
+
+    context "when only protocol changes" do
+      before { vaccination_record.protocol = :psd }
+
+      it { should be false }
+    end
+
+    context "when only nhs_immunisations_api_etag changes" do
+      before { vaccination_record.nhs_immunisations_api_etag = "2" }
+
+      it { should be false }
+    end
+
+    context "when only nhs_immunisations_api_sync_pending_at changes" do
+      before do
+        vaccination_record.nhs_immunisations_api_sync_pending_at = Time.current
+      end
+
+      it { should be false }
+    end
+
+    context "when only nhs_immunisations_api_synced_at changes" do
+      before do
+        vaccination_record.nhs_immunisations_api_synced_at = Time.current
+      end
+
+      it { should be false }
+    end
+
+    context "when only nhs_immunisations_api_id changes" do
+      before { vaccination_record.nhs_immunisations_api_id = SecureRandom.uuid }
+
+      it { should be false }
     end
   end
 end

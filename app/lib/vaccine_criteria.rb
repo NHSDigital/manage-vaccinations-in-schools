@@ -46,6 +46,7 @@ class VaccineCriteria
   def side_effects
     Vaccine
       .for_programme(programme)
+      .active
       .where(method: primary_method)
       .flat_map(&:side_effects)
   end

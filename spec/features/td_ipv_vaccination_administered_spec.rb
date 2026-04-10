@@ -78,6 +78,8 @@ describe "Td/IPV vaccination" do
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
+        given_name: "John",
+        family_name: "Doe",
         programmes: [programme],
         session: @session
       )
@@ -214,8 +216,20 @@ describe "Td/IPV vaccination" do
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
+        subject:
+          "Your child had their Td/IPV (3-in-1 teenage booster) vaccination today",
         template: :vaccination_administered_td_ipv
-      ).with_content_including("3-in-1 teenage booster", "Revaxis")
+      ).with_content_including(
+        "John Doe had their Td/IPV (3-in-1 teenage booster) vaccination at #{@session.location.name} today",
+        "Vaccination: Td/IPV",
+        "Vaccine: Revaxis",
+        "Date of vaccination: 01/02/2024",
+        "dizziness",
+        "feeling or being sick",
+        "a headache",
+        "a high temperature",
+        "swelling or pain where the injection was given"
+      )
     )
   end
 

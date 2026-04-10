@@ -69,6 +69,52 @@ class Patients::ProgrammesController < Patients::BaseController
                 )
   end
 
+  def record_already_vaccinated
+    authorize VaccinationRecord.new(patient: @patient), :create?
+
+    draft_vaccination_record =
+      DraftVaccinationRecord.new(request_session: session, current_user:)
+
+    draft_vaccination_record.clear_attributes
+
+    dose_sequence =
+      @patient.programme_status(
+        @programme,
+        academic_year: @academic_year
+      ).dose_sequence
+
+    first_active_wizard_step =
+      if @programme.mmr? && @patient.eligible_for_mmrv?
+        :mmr_or_mmrv
+      else
+        :date_and_time
+      end
+
+    programme =
+      if @programme.mmr? && !@patient.eligible_for_mmrv?
+        Programme::Variant.new(@programme, variant_type: "mmr")
+      else
+        @programme
+      end
+
+    draft_vaccination_record.update!(
+      dose_sequence:,
+      first_active_wizard_step:,
+      location_id: nil,
+      location_name: "Unknown",
+      outcome: "administered",
+      patient: @patient,
+      performed_ods_code: current_team.organisation.ods_code,
+      programme:,
+      reported_by_id: current_user.id,
+      source: "manual_report"
+    )
+
+    redirect_to draft_vaccination_record_path(
+                  first_active_wizard_step.to_s.dasherize
+                )
+  end
+
   def send_consent_request
     authorize @patient
 

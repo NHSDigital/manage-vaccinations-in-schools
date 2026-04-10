@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-RSpec::Matchers.define :matching_notify_email do |to:, template:|
+RSpec::Matchers.define :matching_notify_email do |to:, template:, subject: nil|
   description do
     desc = "an email to #{to} with template :#{template}"
+    desc += " with subject #{subject.inspect}" if subject
     desc +=
       " containing #{@expected_content_strings.map(&:inspect).join(", ")}" if @expected_content_strings
     desc
@@ -18,9 +19,13 @@ RSpec::Matchers.define :matching_notify_email do |to:, template:|
     next false unless actual[:email_address] == to
     expected_template_id = EmailDeliveryJob::PASSTHROUGH_TEMPLATE_ID
     next false unless actual[:template_id] == expected_template_id
-    next true if @expected_content_strings.blank?
 
     personalisation = actual[:personalisation] || {}
+
+    next false if subject && personalisation[:subject] != subject
+
+    next true if @expected_content_strings.blank?
+
     next false unless personalisation.key?(:body)
 
     content = [personalisation[:subject], personalisation[:body]].compact.join(

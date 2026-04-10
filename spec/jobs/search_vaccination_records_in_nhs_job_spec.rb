@@ -60,6 +60,47 @@ describe SearchVaccinationRecordsInNHSJob do
     end
   end
 
+  describe "#reject_service_sourced_records" do
+    subject(:reject_service_sourced) do
+      described_class.new.send(
+        :reject_service_sourced_records,
+        vaccination_records
+      )
+    end
+
+    let(:service_record) do
+      build(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        nhs_immunisations_api_identifier_system:
+          FHIRMapper::VaccinationRecord::MAVIS_SYSTEM_NAME
+      )
+    end
+    let(:national_reporting_record) do
+      build(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        nhs_immunisations_api_identifier_system:
+          FHIRMapper::VaccinationRecord::MAVIS_NATIONAL_REPORTING_SYSTEM_NAME
+      )
+    end
+    let(:third_party_record) do
+      build(
+        :vaccination_record,
+        :sourced_from_nhs_immunisations_api,
+        nhs_immunisations_api_identifier_system: "SomeOtherSystem"
+      )
+    end
+
+    let(:vaccination_records) do
+      [service_record, national_reporting_record, third_party_record]
+    end
+
+    it "keeps only records with a third-party identifier system" do
+      expect(reject_service_sourced).to contain_exactly(third_party_record)
+    end
+  end
+
   describe "#deduplicate_vaccination_records" do
     subject(:deduplicate) do
       described_class
@@ -78,13 +119,39 @@ describe SearchVaccinationRecordsInNHSJob do
             second_vaccination_record
           )
         end
+
+        it "does not discard either record" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).to be_nil
+          expect(second_vaccination_record.discarded_at).to be_nil
+        end
       end
 
       context "one primary source" do
         let(:nhs_immunisations_api_primary_source) { false }
 
-        it "returns only the primary source record" do
-          expect(deduplicate).to contain_exactly(first_vaccination_record)
+        it "returns both records" do
+          expect(deduplicate).to contain_exactly(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+
+        it "discards the non-primary-source record" do
+          deduplicate
+          expect(second_vaccination_record.discarded_at).not_to be_nil
+        end
+
+        it "does not discard the primary source record" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).to be_nil
+        end
+
+        it "points the non-primary-source record at the primary source record" do
+          deduplicate
+          expect(
+            second_vaccination_record.duplicate_of_vaccination_record
+          ).to eq(first_vaccination_record)
         end
       end
 
@@ -98,12 +165,17 @@ describe SearchVaccinationRecordsInNHSJob do
             second_vaccination_record
           )
         end
+
+        it "does not discard either record" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).to be_nil
+          expect(second_vaccination_record.discarded_at).to be_nil
+        end
       end
 
       context "record duplicates a Mavis record" do
         let(:nhs_immunisations_api_primary_source) { true }
-
-        before do
+        let!(:mavis_record) do
           create(
             :vaccination_record,
             session:,
@@ -113,8 +185,27 @@ describe SearchVaccinationRecordsInNHSJob do
           )
         end
 
-        it "returns no records" do
-          expect(deduplicate).to be_empty
+        it "returns all incoming records" do
+          expect(deduplicate).to contain_exactly(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+
+        it "discards all incoming records" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).not_to be_nil
+          expect(second_vaccination_record.discarded_at).not_to be_nil
+        end
+
+        it "points all incoming records at the Mavis record" do
+          deduplicate
+          expect(
+            first_vaccination_record.duplicate_of_vaccination_record
+          ).to eq(mavis_record)
+          expect(
+            second_vaccination_record.duplicate_of_vaccination_record
+          ).to eq(mavis_record)
         end
       end
     end
@@ -248,8 +339,23 @@ describe SearchVaccinationRecordsInNHSJob do
         let(:second_primary_source) { false }
         let(:third_primary_source) { false }
 
-        it "returns the first record only" do
-          expect(deduplicate).to contain_exactly(first_vaccination_record)
+        it "returns all three records" do
+          expect(deduplicate).to contain_exactly(
+            first_vaccination_record,
+            second_vaccination_record,
+            third_vaccination_record
+          )
+        end
+
+        it "discards the non-primary-source records" do
+          deduplicate
+          expect(second_vaccination_record.discarded_at).not_to be_nil
+          expect(third_vaccination_record.discarded_at).not_to be_nil
+        end
+
+        it "does not discard the primary source record" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).to be_nil
         end
       end
 
@@ -257,11 +363,23 @@ describe SearchVaccinationRecordsInNHSJob do
         let(:second_primary_source) { true }
         let(:third_primary_source) { false }
 
-        it "returns the first and second records" do
+        it "returns all three records" do
           expect(deduplicate).to contain_exactly(
             first_vaccination_record,
-            second_vaccination_record
+            second_vaccination_record,
+            third_vaccination_record
           )
+        end
+
+        it "discards the non-primary-source record" do
+          deduplicate
+          expect(third_vaccination_record.discarded_at).not_to be_nil
+        end
+
+        it "does not discard the primary source records" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).to be_nil
+          expect(second_vaccination_record.discarded_at).to be_nil
         end
       end
 
@@ -275,6 +393,13 @@ describe SearchVaccinationRecordsInNHSJob do
             second_vaccination_record,
             third_vaccination_record
           )
+        end
+
+        it "does not discard any record" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).to be_nil
+          expect(second_vaccination_record.discarded_at).to be_nil
+          expect(third_vaccination_record.discarded_at).to be_nil
         end
       end
     end
@@ -337,8 +462,21 @@ describe SearchVaccinationRecordsInNHSJob do
       context "one primary source" do
         let(:second_primary_source) { false }
 
-        it "returns only the primary source record" do
-          expect(deduplicate).to include(first_vaccination_record)
+        it "returns the primary and non-primary source records" do
+          expect(deduplicate).to include(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+
+        it "discards the non-primary-source record" do
+          deduplicate
+          expect(second_vaccination_record.discarded_at).not_to be_nil
+        end
+
+        it "does not discard the primary source record" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).to be_nil
         end
 
         include_examples "contains the unrelated record"
@@ -378,8 +516,13 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      it "returns an empty array, discarding the incoming duplicate" do
-        expect(deduplicate).to eq([])
+      it "returns the incoming record" do
+        expect(deduplicate).to eq([first_vaccination_record])
+      end
+
+      it "discards the incoming record" do
+        deduplicate
+        expect(first_vaccination_record.discarded_at).not_to be_nil
       end
     end
 
@@ -396,8 +539,113 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      it "returns an empty array, discarding the incoming duplicate" do
-        expect(deduplicate).to eq([])
+      it "returns the incoming record" do
+        expect(deduplicate).to eq([first_vaccination_record])
+      end
+
+      it "doesn't discard the incoming record" do
+        deduplicate
+        expect(first_vaccination_record.discarded_at).to be_nil
+      end
+
+      it "does not set duplicate_of_vaccination_record" do
+        deduplicate
+        expect(
+          first_vaccination_record.duplicate_of_vaccination_record
+        ).to be_nil
+      end
+    end
+
+    context "with both a service record and a national reporting record" do
+      let!(:service_record) do
+        create(
+          :vaccination_record,
+          session:,
+          programme:,
+          patient:,
+          performed_at:
+        )
+      end
+
+      before do
+        Flipper.enable(:sync_national_reporting_to_imms_api)
+
+        create(
+          :vaccination_record,
+          :sourced_from_national_reporting,
+          patient:,
+          performed_at:,
+          programme:
+        )
+      end
+
+      it "discards the incoming record" do
+        deduplicate
+        expect(first_vaccination_record.discarded_at).not_to be_nil
+      end
+
+      it "points the incoming record at the service record, not the national reporting record" do
+        deduplicate
+        expect(first_vaccination_record.duplicate_of_vaccination_record).to eq(
+          service_record
+        )
+      end
+    end
+
+    context "with a mix of service and nhs_immunisations_api records in the same group" do
+      let(:second_vaccination_record) do
+        build(
+          :vaccination_record,
+          :sourced_from_nhs_immunisations_api,
+          programme:,
+          patient:,
+          nhs_immunisations_api_primary_source: false,
+          performed_at:
+        )
+      end
+      let!(:service_record) do
+        create(
+          :vaccination_record,
+          session:,
+          programme:,
+          patient:,
+          performed_at:
+        )
+      end
+
+      it "does not discard the service record" do
+        deduplicate
+        expect(service_record.reload.discarded_at).to be_nil
+        expect(service_record.reload.duplicate_of_vaccination_record).to be_nil
+      end
+
+      it "discards all nhs_immunisations_api records (service record exists)" do
+        deduplicate
+        expect(first_vaccination_record.discarded_at).not_to be_nil
+        expect(second_vaccination_record.discarded_at).not_to be_nil
+      end
+    end
+
+    context "with only a service record and a non-primary nhs_immunisations_api record (no primary API record)" do
+      let(:first_primary_source) { false }
+      let!(:service_record) do
+        create(
+          :vaccination_record,
+          session:,
+          programme:,
+          patient:,
+          performed_at:
+        )
+      end
+
+      it "does not discard the service record" do
+        deduplicate
+        expect(service_record.reload.discarded_at).to be_nil
+      end
+
+      it "discards the incoming API record (because the service record exists)" do
+        deduplicate
+        expect(first_vaccination_record.discarded_at).not_to be_nil
       end
     end
   end
@@ -563,6 +811,167 @@ describe SearchVaccinationRecordsInNHSJob do
       include_examples "calls StatusUpdater"
     end
 
+    context "when re-running after a previous search (patient already has API records in the DB)" do
+      context "with the same 2 records returned again" do
+        let(:existing_bundle) do
+          FHIR.from_contents(
+            file_fixture("fhir/search_response_2_results.json").read
+          )
+        end
+
+        it "does not create any new records on the second run" do
+          expect { perform }.not_to(change(VaccinationRecord, :count))
+        end
+
+        it "retains the same record IDs on the second run" do
+          perform # first run
+          ids_after_first_run = patient.vaccination_records.map(&:id)
+          perform # second run
+          expect(patient.vaccination_records.reload.map(&:id)).to match_array(
+            ids_after_first_run
+          )
+        end
+
+        include_examples "sends discovery comms if required n times", 0
+        include_examples "calls StatusUpdater"
+      end
+
+      context "with the same record returned but with updated attributes" do
+        # search_response_1_result_old_date.json and search_response_1_result.json
+        # have the same nhs_immunisations_api_id but different occurrenceDateTimes
+        # (2025-08-22 vs 2025-08-23), simulating a record being corrected in the API.
+        let(:existing_bundle) do
+          FHIR.from_contents(
+            file_fixture("fhir/search_response_1_result_old_date.json").read
+          )
+        end
+        let(:body) { file_fixture("fhir/search_response_1_result.json").read }
+
+        it "does not create a new record" do
+          expect { perform }.not_to(change(VaccinationRecord, :count))
+        end
+
+        it "updates the existing record in-place" do
+          expect(existing_records.first.reload.performed_at).to eq(
+            Time.parse("2025-08-22T00:00:00+01:00")
+          )
+          perform
+          expect(existing_records.first.reload.performed_at).to eq(
+            Time.parse("2025-08-23T14:16:03+01:00")
+          )
+        end
+
+        include_examples "sends discovery comms if required n times", 0
+        include_examples "calls StatusUpdater"
+      end
+
+      context "when a Mavis service record has since been created for the same date and programme" do
+        # The first run imported the API record as kept. Now a Mavis record
+        # exists, so on re-run the existing API record should be updated to
+        # discarded and point at the Mavis record.
+
+        # Seed just the non-Mavis API record that the fixture will return,
+        # as it would have been after the first search run.
+        let(:existing_bundle) do
+          FHIR.from_contents(
+            file_fixture("fhir/search_response_0_results.json").read
+          )
+        end
+        let!(:existing_api_record) do
+          create(
+            :vaccination_record,
+            :sourced_from_nhs_immunisations_api,
+            patient:,
+            programme:,
+            performed_at: Time.zone.parse("2025-08-22T14:16:03+01:00"),
+            nhs_immunisations_api_id: "abcdefgh-a14d-4139-bbcf-859e998d2028",
+            nhs_immunisations_api_primary_source: false
+          )
+        end
+        let(:body) do
+          file_fixture(
+            "fhir/search_response_2_results_mavis_duplicate.json"
+          ).read
+        end
+        let!(:mavis_record) do
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at: Time.zone.parse("2025-08-22T14:16:03+01:00"),
+            session:
+          )
+        end
+
+        it "does not create any new API records" do
+          expect { perform }.not_to(
+            change do
+              VaccinationRecord.sourced_from_nhs_immunisations_api.count
+            end
+          )
+        end
+
+        it "marks the existing API record as discarded" do
+          perform
+          expect(existing_api_record.reload).to be_discarded
+        end
+
+        it "points the existing API record at the Mavis record" do
+          perform
+          expect(
+            existing_api_record.reload.duplicate_of_vaccination_record
+          ).to eq(mavis_record)
+        end
+
+        include_examples "sends discovery comms if required n times", 0
+        include_examples "calls StatusUpdater"
+      end
+
+      context "when a duplicate pair was previously imported and is returned again" do
+        # The first run created a kept (primary) record and a discarded
+        # (non-primary) record. On re-run with the same response, both should
+        # be updated in-place with no new records created.
+        let(:existing_bundle) do
+          FHIR.from_contents(
+            file_fixture("fhir/search_response_duplicate.json").read
+          )
+        end
+        let(:body) { file_fixture("fhir/search_response_duplicate.json").read }
+
+        it "does not create any new records" do
+          expect { perform }.not_to(change(VaccinationRecord, :count))
+        end
+
+        it "retains the same record IDs" do
+          perform
+          expect(VaccinationRecord.all.map(&:id)).to match_array(
+            existing_records.map(&:id)
+          )
+        end
+
+        it "keeps the primary-source record as not discarded" do
+          perform
+          primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: true
+            )
+          expect(primary).not_to be_discarded
+        end
+
+        it "keeps the non-primary-source record as discarded" do
+          perform
+          non_primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: false
+            )
+          expect(non_primary).to be_discarded
+        end
+
+        include_examples "sends discovery comms if required n times", 0
+        include_examples "calls StatusUpdater"
+      end
+    end
+
     context "with a record for each programme (total 6)" do
       shared_examples "ingests all 6 vaccination record types" do
         it "creates new vaccination records for incoming Immunizations" do
@@ -630,7 +1039,7 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     context "with a mavis record in the database" do
-      before do
+      let!(:service_vaccination_record) do
         create(
           :vaccination_record,
           patient:,
@@ -640,14 +1049,16 @@ describe SearchVaccinationRecordsInNHSJob do
         )
       end
 
-      context "with a mavis record in the search results" do
+      context "with a Mavis-identifier record in the search results" do
         let(:body) do
           file_fixture("fhir/search_response_1_result_mavis.json").read
         end
 
-        it "does not create a new record" do
+        it "does not create any API record" do
           expect { perform }.not_to(
-            change { patient.vaccination_records.count }
+            change do
+              VaccinationRecord.sourced_from_nhs_immunisations_api.count
+            end
           )
         end
 
@@ -655,16 +1066,28 @@ describe SearchVaccinationRecordsInNHSJob do
         include_examples "calls StatusUpdater"
       end
 
-      context "with a mavis record and a duplicate in the search results" do
+      context "with a Mavis-identifier record and a non-Mavis duplicate in the search results" do
         let(:body) do
           file_fixture(
             "fhir/search_response_2_results_mavis_duplicate.json"
           ).read
         end
 
-        it "does not create a new record" do
-          expect { perform }.not_to(
-            change { patient.vaccination_records.count }
+        it "creates only the non-Mavis API record, in a discarded state" do
+          expect { perform }.to change {
+            VaccinationRecord.sourced_from_nhs_immunisations_api.count
+          }.by(1)
+          expect(
+            VaccinationRecord.sourced_from_nhs_immunisations_api.first
+          ).to be_discarded
+        end
+
+        it "points the discarded record at the Mavis record" do
+          perform
+          api_record =
+            VaccinationRecord.sourced_from_nhs_immunisations_api.first
+          expect(api_record.duplicate_of_vaccination_record).to eq(
+            service_vaccination_record
           )
         end
 
@@ -672,16 +1095,28 @@ describe SearchVaccinationRecordsInNHSJob do
         include_examples "calls StatusUpdater"
       end
 
-      context "with a mavis record and a primary source duplicate in the search results" do
+      context "with a Mavis-identifier record and a non-Mavis primary source duplicate in the search results" do
         let(:body) do
           file_fixture(
             "fhir/search_response_2_results_mavis_duplicate_primary_source.json"
           ).read
         end
 
-        it "does not create a new record, ignoring the other primary source record" do
-          expect { perform }.not_to(
-            change { patient.vaccination_records.count }
+        it "creates only the non-Mavis API record, in a discarded state" do
+          expect { perform }.to change {
+            VaccinationRecord.sourced_from_nhs_immunisations_api.count
+          }.by(1)
+          expect(
+            VaccinationRecord.sourced_from_nhs_immunisations_api.first
+          ).to be_discarded
+        end
+
+        it "points the discarded record at the Mavis record" do
+          perform
+          api_record =
+            VaccinationRecord.sourced_from_nhs_immunisations_api.first
+          expect(api_record.duplicate_of_vaccination_record).to eq(
+            service_vaccination_record
           )
         end
 
@@ -860,13 +1295,44 @@ describe SearchVaccinationRecordsInNHSJob do
     end
 
     context "with duplicates" do
-      context "with a mavis record in the search results" do
+      context "with one primary and one non-primary source record" do
         let(:body) { file_fixture("fhir/search_response_duplicate.json").read }
 
-        it "only adds 1 vaccination record" do
-          expect { perform }.to change { patient.vaccination_records.count }.by(
-            1
-          )
+        it "adds both vaccination records to the database" do
+          expect { perform }.to change {
+            VaccinationRecord.sourced_from_nhs_immunisations_api.count
+          }.by(2)
+        end
+
+        it "discards the non-primary-source record" do
+          perform
+          non_primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: false
+            )
+          expect(non_primary).to be_discarded
+        end
+
+        it "does not discard the primary source record" do
+          perform
+          primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: true
+            )
+          expect(primary).not_to be_discarded
+        end
+
+        it "points the non-primary-source record at the primary source record" do
+          perform
+          primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: true
+            )
+          non_primary =
+            VaccinationRecord.find_by(
+              nhs_immunisations_api_primary_source: false
+            )
+          expect(non_primary.duplicate_of_vaccination_record).to eq(primary)
         end
 
         include_examples "sends discovery comms if required n times", 1

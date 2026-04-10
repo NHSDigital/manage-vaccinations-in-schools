@@ -78,6 +78,8 @@ describe "MenACWY vaccination" do
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
+        given_name: "John",
+        family_name: "Doe",
         programmes: [programme],
         session: @session
       )
@@ -214,8 +216,22 @@ describe "MenACWY vaccination" do
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
+        subject: "Your child had their MenACWY vaccination today",
         template: :vaccination_administered_menacwy
-      ).with_content_including("MenACWY vaccination", "MenQuadfi")
+      ).with_content_including(
+        "John Doe had their MenACWY vaccination at #{@session.location.name} today",
+        "Vaccination: MenACWY",
+        "Vaccine: MenQuadfi",
+        "Date of vaccination: 01/02/2024",
+        "swelling or pain where the injection was given",
+        "feeling drowsy",
+        "feeling sick",
+        "a headache",
+        "feeling irritable",
+        "loss of appetite",
+        "a rash",
+        "generally feeling unwell"
+      )
     )
   end
 

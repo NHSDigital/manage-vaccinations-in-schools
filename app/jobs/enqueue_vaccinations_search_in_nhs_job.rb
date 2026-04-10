@@ -36,7 +36,7 @@ class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
     Session
       .has_any_programme_types_of(programme_types)
       .scheduled
-      .where("sessions.send_consent_requests_at <= ?", 2.days.from_now)
+      .where("sessions.send_consent_requests_at <= ?", 2.days.from_now.to_date)
       .find_each
       .flat_map { |session| session.patients.with_nhs_number.ids }
   end

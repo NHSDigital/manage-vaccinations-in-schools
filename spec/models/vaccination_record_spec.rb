@@ -37,6 +37,7 @@
 #  uuid                                    :uuid             not null
 #  created_at                              :datetime         not null
 #  updated_at                              :datetime         not null
+#  duplicate_of_vaccination_record_id      :bigint
 #  local_patient_id                        :string
 #  location_id                             :bigint
 #  next_dose_delay_triage_id               :bigint
@@ -50,6 +51,7 @@
 #
 # Indexes
 #
+#  idx_on_duplicate_of_vaccination_record_id_5071adce87            (duplicate_of_vaccination_record_id)
 #  idx_on_patient_id_programme_type_outcome_453b557b54             (patient_id,programme_type,outcome) WHERE (discarded_at IS NULL)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
@@ -69,6 +71,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (duplicate_of_vaccination_record_id => vaccination_records.id)
 #  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
@@ -460,77 +463,6 @@ describe VaccinationRecord do
       it "raises an error" do
         expect { delivery_method_snomed_term }.to raise_error(StandardError)
       end
-    end
-  end
-
-  describe "#changes_need_to_be_synced_to_nhs_immunisations_api?" do
-    subject do
-      vaccination_record.send(
-        :changes_need_to_be_synced_to_nhs_immunisations_api?
-      )
-    end
-
-    let(:vaccination_record) { create(:vaccination_record) }
-
-    context "when the update doesn't change any attributes" do
-      it { should be(false) }
-    end
-
-    context "when regular fields have been changed" do
-      before { vaccination_record.notes = "Updated notes" }
-
-      it { should be(true) }
-    end
-
-    context "when only nhs_immunisations_api_etag has been changed" do
-      before { vaccination_record.nhs_immunisations_api_etag = "new-etag" }
-
-      it { should be(false) }
-    end
-
-    context "when only nhs_immunisations_api_sync_pending_at has been changed" do
-      before do
-        vaccination_record.nhs_immunisations_api_sync_pending_at = Time.current
-      end
-
-      it { should be(false) }
-    end
-
-    context "when only nhs_immunisations_api_synced_at has been changed" do
-      before do
-        vaccination_record.nhs_immunisations_api_synced_at = Time.current
-      end
-
-      it { should be(false) }
-    end
-
-    context "when only nhs_immunisations_api_id has been changed" do
-      before { vaccination_record.nhs_immunisations_api_id = "new-id" }
-
-      it { should be(false) }
-    end
-
-    context "when both regular fields and nhs_immunisations_api fields have been changed" do
-      before do
-        vaccination_record.assign_attributes(
-          notes: "Updated notes",
-          nhs_immunisations_api_etag: "new-etag"
-        )
-      end
-
-      it { should be(false) }
-    end
-
-    context "when a regular field and multiple nhs_immunisations_api fields have been changed" do
-      before do
-        vaccination_record.assign_attributes(
-          outcome: :refused,
-          nhs_immunisations_api_etag: "new-etag",
-          nhs_immunisations_api_sync_pending_at: Time.current
-        )
-      end
-
-      it { should be(false) }
     end
   end
 

@@ -53,13 +53,6 @@
          ) %>
     <% end %>
   <% end %>
-
-  <% if @programme && policy(VaccinationRecord.new(patient: @patient, session: @session, programme: @programme)).record_already_vaccinated? %>
-    <% action_list.with_item(
-         text: already_vaccinated_link_label(session: @session, patient: @patient, programme: @programme),
-         href: session_patient_programme_record_already_vaccinated_path(@session, @patient, @programme),
-       ) %>
-  <% end %>
 <% end %>
 
 <%= render AppStickyNavigationComponent.new do %>

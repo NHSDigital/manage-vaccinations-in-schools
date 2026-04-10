@@ -276,22 +276,4 @@ module CSVImportable
       on_duplicate_key_ignore: true
     )
   end
-
-  def remaining_time
-    rows_per_second = 30.0 # 2024/10/10: Based on a 1000 row upload on test env.
-    total_seconds = rows_count / rows_per_second
-    elapsed_seconds = Time.current - created_at
-    remaining_seconds = [total_seconds - elapsed_seconds, 0].max.round
-
-    hours, remaining = remaining_seconds.divmod(3600)
-    minutes, = remaining.divmod(60)
-
-    if hours.positive?
-      "#{hours} hour#{"s" if hours != 1} #{minutes} minute#{"s" if minutes != 1} remaining"
-    elsif minutes.positive?
-      "#{minutes} minute#{"s" if minutes != 1} remaining"
-    else
-      "Less than 1 minute remaining"
-    end
-  end
 end

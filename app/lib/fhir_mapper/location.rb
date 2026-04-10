@@ -8,15 +8,17 @@ module FHIRMapper
       @location = location
     end
 
+    UNKNOWN_IDENTIFIER = "X99999"
+
     class UnknownValueError < StandardError
     end
 
     def fhir_reference
       if school?
-        value = urn || "X99999"
+        value = urn || UNKNOWN_IDENTIFIER
         system = "https://fhir.hl7.org.uk/Id/urn-school-number"
       elsif clinic?
-        value = ods_code || "X99999"
+        value = ods_code || UNKNOWN_IDENTIFIER
         system = "https://fhir.nhs.uk/Id/ods-organization-code"
       else
         raise UnknownValueError, "Unsupported location type: #{type}"

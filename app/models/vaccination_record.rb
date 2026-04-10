@@ -37,6 +37,7 @@
 #  uuid                                    :uuid             not null
 #  created_at                              :datetime         not null
 #  updated_at                              :datetime         not null
+#  duplicate_of_vaccination_record_id      :bigint
 #  local_patient_id                        :string
 #  location_id                             :bigint
 #  next_dose_delay_triage_id               :bigint
@@ -50,6 +51,7 @@
 #
 # Indexes
 #
+#  idx_on_duplicate_of_vaccination_record_id_5071adce87            (duplicate_of_vaccination_record_id)
 #  idx_on_patient_id_programme_type_outcome_453b557b54             (patient_id,programme_type,outcome) WHERE (discarded_at IS NULL)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
@@ -69,6 +71,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (duplicate_of_vaccination_record_id => vaccination_records.id)
 #  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
@@ -82,11 +85,11 @@ class VaccinationRecord < ApplicationRecord
   include Confirmable
   include Discard::Model
   include HasDoseVolume
+  include NHSImmunisationsAPISync
   include Notable
   include PendingChangesConcern
   include PerformableAtDateAndTime
   include PerformableBy
-  include SyncableToNHSImmunisationsAPI
 
   audited associated_with: :patient
 
@@ -118,6 +121,9 @@ class VaccinationRecord < ApplicationRecord
              optional: true
 
   belongs_to :next_dose_delay_triage, class_name: "Triage", optional: true
+  belongs_to :duplicate_of_vaccination_record,
+             class_name: "VaccinationRecord",
+             optional: true
 
   has_and_belongs_to_many :immunisation_imports
 

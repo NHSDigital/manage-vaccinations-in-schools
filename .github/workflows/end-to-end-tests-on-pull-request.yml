@@ -30,11 +30,10 @@ jobs:
     name: Ensure E2E tests ran successfully
     runs-on: ubuntu-latest
     needs: [aws-e2e-flow, local-e2e-flow]
-    if: |
-      !cancelled() && (
-        needs.aws-e2e-flow.result == 'success' ||
-        needs.local-e2e-flow.result == 'success'
-      )
+    if: always()
     steps:
-      - name: Output result
-        run: echo "E2E tests ran successfully"
+      - name: Fail if neither end-to-end job succeeded
+        if: |
+          needs.aws-e2e-flow.result != 'success' &&
+          needs.local-e2e-flow.result != 'success'
+        run: exit 1

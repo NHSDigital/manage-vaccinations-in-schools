@@ -264,9 +264,18 @@ describe "MMRV vaccination" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
-    expect_email_to(
-      @patient.consents.last.parent.email,
-      :vaccination_administered_mmr
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @patient.consents.last.parent.email,
+        subject: "Your child had their MMRV vaccination today",
+        template: :vaccination_administered_mmr
+      ).with_content_including(
+        "MMRV vaccination",
+        "ProQuad",
+        "a raised, blotchy rash",
+        "swollen glands around the cheeks, neck and jaw",
+        "Your child still needs a second dose of the MMR vaccine"
+      )
     )
   end
 

@@ -68,18 +68,6 @@ describe PatientTeamUpdater do
       end
     end
 
-    context "with a vaccination record by organisation" do
-      before do
-        create(:vaccination_record, patient:, team:)
-        PatientTeam.delete_all
-      end
-
-      it "adds the patient to the team" do
-        expect(patient.teams).to be_empty
-        expect { call }.not_to change(PatientTeam, :count)
-      end
-    end
-
     context "with a vaccination record by session" do
       before do
         create(

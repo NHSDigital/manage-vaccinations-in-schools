@@ -1,7 +1,35 @@
 # frozen_string_literal: true
 
-module SyncableToNHSImmunisationsAPI
+module VaccinationRecord::NHSImmunisationsAPISync
   extend ActiveSupport::Concern
+
+  # Fields whose changes trigger a sync. Keep in sync with:
+  #   - FHIRMapper::VaccinationRecord#fhir_record (fields that affect the FHIR payload)
+  #   - #should_be_in_nhs_immunisations_api? (fields that affect eligibility)
+  SYNCED_FIELDS = %w[
+    uuid
+    source
+    outcome
+    performed_at_date
+    performed_at_time
+    created_at
+    batch_number
+    batch_expiry
+    delivery_site
+    delivery_method
+    performed_ods_code
+    dose_sequence
+    programme_type
+    full_dose
+    vaccine_id
+    patient_id
+    location_id
+    performed_by_user_id
+    performed_by_given_name
+    performed_by_family_name
+    discarded_at
+    notify_parents
+  ].freeze
 
   included do
     scope :with_correct_source_for_nhs_immunisations_api,
@@ -52,27 +80,52 @@ module SyncableToNHSImmunisationsAPI
       )
   end
 
+  def should_be_in_nhs_immunisations_api?
+    kept? && correct_source_for_nhs_immunisations_api? && administered? &&
+      Flipper.enabled?(:imms_api_sync_job, programme) &&
+      notify_parents != false && patient.not_invalidated?
+  end
+
   def sync_status
-    should_be_synced =
-      NHS::ImmunisationsAPI.should_be_in_immunisations_api?(self)
+    should_be_synced = should_be_in_nhs_immunisations_api?
     return :not_synced unless should_be_synced
 
     synced_at = nhs_immunisations_api_synced_at
     pending_at = nhs_immunisations_api_sync_pending_at
+
     if synced_at.present? && (pending_at.nil? || synced_at > pending_at)
       return :synced
     end
+
+    return :not_synced if created_before_api_integration?
 
     return :failed if pending_at.present? && 24.hours.ago > pending_at
 
     :pending
   end
 
+  API_INTEGRATION_CUT_OFF_DATES = {
+    "flu" => nil,
+    "hpv" => nil,
+    "menacwy" => Date.new(2026, 3, 2),
+    "mmr" => Date.new(2026, 3, 2),
+    "td_ipv" => Date.new(2026, 3, 2)
+  }.freeze
+
+  def created_before_api_integration?
+    cut_off = API_INTEGRATION_CUT_OFF_DATES.fetch(programme_type)
+
+    return false if cut_off.nil?
+
+    created_at.to_date < cut_off
+  end
+
+  def api_integration_cutoff_date
+    API_INTEGRATION_CUT_OFF_DATES.fetch(programme_type)
+  end
+
   def changes_need_to_be_synced_to_nhs_immunisations_api?
-    changes.present? && !nhs_immunisations_api_etag_changed? &&
-      !nhs_immunisations_api_sync_pending_at_changed? &&
-      !nhs_immunisations_api_synced_at_changed? &&
-      !nhs_immunisations_api_id_changed?
+    (changes.keys & SYNCED_FIELDS).any?
   end
 
   def touch_nhs_immunisations_api_sync_pending_at

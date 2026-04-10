@@ -18,7 +18,6 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(ImmunisationImport.where(team:))
     log_destroy(ClassImport.where(team:))
 
-    log_destroy(SchoolMove.where(team:))
     log_destroy(Consent.where(team:))
     log_destroy(ArchiveReason.where(team:))
     log_destroy(ImportantNotice.where(team:))

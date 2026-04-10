@@ -6,16 +6,15 @@ This is a service used within the NHS for managing and recording school-aged vac
 
 | Name                                                                                         | URL                                                                                                      | Purpose                      | Care Identity login | Code                           | Deployment | `RAILS_ENV`                                       |
 | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------- | ------------------------------ | ---------- | ------------------------------------------------- |
-| [Heroku](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/heroku)         | mavis-pr-xxxx.herokuapp.com                                                                              | PR review apps               | ❌                  | pull request branch            | automated  | [`staging`](config/environments/staging.rb)       |
 | [Test](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/test)             | [test.mavistesting.com](https://test.mavistesting.com)                                                   | Internal testing (manual)    | ✅                  | `main` branch (latest)         | automated  | [`staging`](config/environments/staging.rb)       |
 | [QA](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/qa)                 | [qa.mavistesting.com](https://qa.mavistesting.com)                                                       | Internal testing (automated) | ❌                  | `main` branch (latest)         | automated  | [`staging`](config/environments/staging.rb)       |
 | [Preview](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/Preview)       | [preview.mavistesting.com](https://preview.mavistesting.com)                                             | External testing             | ❌                  | `release` or release candidate | manual     | [`staging`](config/environments/staging.rb)       |
 | [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [training.manage-vaccinations-in-schools.nhs.uk](https://training.manage-vaccinations-in-schools.nhs.uk) | External training            | ❌                  | `release` branch               | manual     | [`staging`](config/environments/staging.rb)       |
 | [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [www.manage-vaccinations-in-schools.nhs.uk](https://www.manage-vaccinations-in-schools.nhs.uk)           | Live service                 | ✅                  | `release` branch               | manual     | [`production`](config/environments/production.rb) |
 
-## Documentation
+## API Documentation
 
-We have two Rdoc versions:
+We have two RDoc versions:
 
 1. [next](https://nhsuk.github.io/manage-vaccinations-in-schools/rdoc/next) - useful for dev work (based off the `next` branch).
 2. [release](https://nhsuk.github.io/manage-vaccinations-in-schools/rdoc/release) - useful for ops to debug live issues (based off the `release` branch).
@@ -47,9 +46,7 @@ We use `rladr` to generate the boilerplate for new records:
 bin/bundle exec rladr new title
 ```
 
-### Development toolchain
-
-#### Mise
+### Installing dependencies
 
 This project uses `mise`. Use the following to set up (replace `brew` and
 package names depending on your platform):
@@ -84,20 +81,46 @@ Then to install the required tools (or update, following a change to
 mise install
 ```
 
-After installing Postgres via `mise`, run the database in the background, and
-connect to it to create a user:
+### Background services
+
+For the application to start successfully, PostgreSQL and Redis/Valkey must be
+running.
+
+#### PostgreSQL
+
+If using `brew`, the simplest option is to run `brew services start postgresql`.
+
+Alternatively, you can run the server manually:
 
 ```shell
 pg_ctl start
 psql -U postgres -c "CREATE USER $(whoami); ALTER USER $(whoami) WITH SUPERUSER;"
 ```
 
-### Local development
+#### Redis/Valkey
 
-To run the project locally:
+If using `brew`, the simplest option is to run `brew services start redis`.
+
+Alternatively, you can run the server manually:
 
 ```shell
-bin/setup
+redis-server
+```
+
+### Running locally
+
+When running for the first time, `bin/setup` will automatically install Ruby
+dependencies and set up the database.
+
+This application also comes with a `Procfile.dev` for use with `foreman` in
+development environments. Use the script `bin/dev` to run it:
+
+```shell
+$ bin/dev
+13:07:31 web.1  | started with pid 73965
+13:07:31 css.1  | started with pid 73966
+13:07:31 js.1   | started with pid 73967
+...
 ```
 
 ### Branching strategy
@@ -141,39 +164,7 @@ You'll also need to configure your editor's `solargraph` plugin to
 +  "solargraph.useBundler": true,
 ```
 
-### PostgreSQL
-
-The script `bin/db` is included to start up PostgreSQL for setups that don't use
-system-started services. Note that this is meant to be a handy script to manage
-PostgreSQL, not run a console like `rails db` does.
-
-```shell
-$ bin/db
-pg_ctl: no server running
-$ bin/db start
-waiting for server to start.... done
-server started
-$ bin/db
-pg_ctl: server is running (PID: 79113)
-```
-
-This script attempts to be installation agnostic by relying on `pg_config` to
-determine postgres's installation directory and setting up logging accordingly.
-
-### Development server
-
-This application comes with a `Procfile.dev` for use with `foreman` in
-development environments. Use the script `bin/dev` to run it:
-
-```shell
-$ bin/dev
-13:07:31 web.1  | started with pid 73965
-13:07:31 css.1  | started with pid 73966
-13:07:31 js.1   | started with pid 73967
-...
-```
-
-#### Debugging with `binding.pry`
+### Debugging with `binding.pry`
 
 TTY echo can get mangled when using `binding.pry` in `bin/dev`. To work around
 this, you can run `rails s` directly if you're not working with any JS or CSS
@@ -235,7 +226,7 @@ RAILS_ENV=end_to_end bin/mavis gias import --input-file=spec/fixtures/dfe-school
 
 You can generate an example programme by seeding the database with `rails db:seed:replant`.
 
-#### Adding a test user
+### Adding a test user
 
 You can add a new user to an environment using the `users:create` [rake task](docs/rake-tasks.md#userscreateemailpasswordgiven_namefamily_nameteam_ods_code):
 
@@ -259,11 +250,6 @@ rails users:create\[user@example.com,password123,John,Doe,R1L\]
     http://localhost:4000/rails/view_components
 
 The previews are defined in `spec/components/previews`.
-
-### Deploying
-
-This app can be deployed to AWS using the relevant [github workflow](.github/workflows/deploy.yml). The infrastructure
-configuration is located in [its own repository](https://github.com/NHSDigital/manage-vaccinations-in-schools-infrastructure)
 
 ### Notify
 
@@ -331,11 +317,11 @@ The `private_key` will automatically be used to generate a JWK on the
 `/oidc/jwks` endpoint, which is used by CIS2 to validate the JWT we use to
 request the access token from CIS2.
 
-### Reporting
+## Reporting
 
 See [docs/reporting.md](docs/reporting.md).
 
-#### Key Rotation
+### Key Rotation
 
 Keys should be rotated regularly. When a new key is introduced it's JWK will
 automatically be added to the JWKS generated for `/oidc/jwks`, but the old

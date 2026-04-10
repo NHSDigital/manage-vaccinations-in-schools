@@ -5,12 +5,7 @@ describe AppImportStatusComponent do
 
   let(:component) { described_class.new(import:, break_tag:) }
   let(:import) do
-    instance_double(
-      ClassImport,
-      status:,
-      pending_import?: pending_import,
-      remaining_time: "2 minutes"
-    )
+    instance_double(ClassImport, status:, pending_import?: pending_import)
   end
   let(:break_tag) { false }
   let(:pending_import) { false }
@@ -20,46 +15,29 @@ describe AppImportStatusComponent do
     let(:pending_import) { true }
 
     it { should have_css(".nhsuk-tag--blue", text: "Processing") }
-    it { should have_css(".nhsuk-u-secondary-text-colour", text: "2 minutes") }
-
-    context "when break_tag is true" do
-      let(:break_tag) { true }
-
-      it { should have_css("br") }
-    end
-
-    context "when break_tag is false" do
-      let(:break_tag) { false }
-
-      it { should_not have_css("br") }
-    end
   end
 
   context "when status is rows_are_invalid" do
     let(:status) { "rows_are_invalid" }
 
     it { should have_css(".nhsuk-tag--red", text: "Invalid") }
-    it { should_not have_content("2 minutes") }
   end
 
   context "when status is changesets_are_invalid" do
     let(:status) { "changesets_are_invalid" }
 
     it { should have_css(".nhsuk-tag--red", text: "Failed") }
-    it { should_not have_content("2 minutes") }
   end
 
   context "when status is processed" do
     let(:status) { "processed" }
 
     it { should have_css(".nhsuk-tag--green", text: "Completed") }
-    it { should_not have_content("2 minutes") }
   end
 
   context "when status is removing_parent_relationships" do
     let(:status) { "removing_parent_relationships" }
 
     it { should have_css(".nhsuk-tag--green", text: "Completed") }
-    it { should_not have_content("2 minutes") }
   end
 end

@@ -49,10 +49,14 @@
     <% end %>
   <% end %>
 
-  <% if can_record_new_vaccination? %>
+  <% if can_record_vaccination? %>
     <div class="nhsuk-button-group">
       <%= govuk_button_to "Record a vaccination in clinic",
                           record_new_vaccination_patient_programme_path(patient, programme_type),
+                          secondary: true %>
+
+      <%= govuk_button_to record_already_vaccinated_text(patient:, programme:, academic_year:),
+                          record_already_vaccinated_patient_programme_path(patient, programme_type),
                           secondary: true %>
     </div>
   <% end %>

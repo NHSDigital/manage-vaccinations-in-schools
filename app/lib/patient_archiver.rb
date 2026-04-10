@@ -37,11 +37,9 @@ class PatientArchiver
   end
 
   def destroy_school_moves!
-    patient.school_moves.where(team:).destroy_all
-
     patient
       .school_moves
-      .joins_team_locations_for_school
+      .joins_team_locations
       .where("team_locations.team_id = ?", team.id)
       .destroy_all
   end

@@ -11,7 +11,7 @@
 #  patient_id       :bigint           not null
 #  sent_by_user_id  :bigint
 #  session_id       :bigint
-#  team_location_id :bigint
+#  team_location_id :bigint           not null
 #
 # Indexes
 #
@@ -31,6 +31,6 @@ describe ConsentNotification do
   describe "associations" do
     it { should belong_to(:patient) }
     it { should belong_to(:session).optional(true) }
-    it { should belong_to(:team_location).optional(true) }
+    it { should belong_to(:team_location) }
   end
 end

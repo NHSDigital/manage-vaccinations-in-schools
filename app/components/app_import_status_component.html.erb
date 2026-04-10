@@ -1,7 +1,1 @@
 <%= govuk_tag(text: status_text, colour: status_color) %>
-<% if @import.pending_import? %>
-  <% if @break_tag %><br /><% end %>
-  <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">
-    <%= @import.remaining_time %>
-  </span>
-<% end %>

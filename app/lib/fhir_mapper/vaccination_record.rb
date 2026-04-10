@@ -11,10 +11,16 @@ module FHIRMapper
 
     MILLILITER_SUB_STRINGS = %w[ml millilitre milliliter].freeze
 
+    BATCH_EXPIRY_MIN = Date.new(Date.current.year - 100, 1, 1)
+    BATCH_EXPIRY_MAX = Date.new(Date.current.year + 100, 1, 1)
+
     def initialize(vaccination_record)
       @vaccination_record = vaccination_record
     end
 
+    # If you add or remove fields here, update SYNCED_FIELDS in
+    # VaccinationRecord::NHSImmunisationsAPISync so that changes to those fields
+    # correctly trigger or stop triggering a sync to the NHS Immunisations API.
     def fhir_record
       immunisation = FHIR::Immunization.new(id: nhs_immunisations_api_id)
 
@@ -84,7 +90,7 @@ module FHIRMapper
 
       location_system = fhir_record.location.identifier.system
       location_value = fhir_record.location.identifier.value
-      unless location_value == "X99999"
+      unless location_value == FHIRMapper::Location::UNKNOWN_IDENTIFIER
         case location_system
         when "https://fhir.hl7.org.uk/Id/urn-school-number"
           attrs[:location] = ::Location.find_by(urn: location_value)
@@ -94,10 +100,19 @@ module FHIRMapper
       end
 
       if attrs[:location].nil?
-        attrs[:location_name] = fhir_record.location.identifier.value
+        attrs[:location_name] = (
+          if location_value == FHIRMapper::Location::UNKNOWN_IDENTIFIER
+            "Unknown"
+          else
+            location_value
+          end
+        )
       end
 
-      attrs[:performed_ods_code] = org_performer_ods_code_from_fhir(fhir_record)
+      performer_ods_code = org_performer_ods_code_from_fhir(fhir_record)
+      unless performer_ods_code == FHIRMapper::Location::UNKNOWN_IDENTIFIER
+        attrs[:performed_ods_code] = performer_ods_code
+      end
 
       user_performer_name = user_performer_name_from_fhir(fhir_record)
       attrs[:performed_by_given_name] = user_performer_name&.given&.first
@@ -116,7 +131,11 @@ module FHIRMapper
 
       attrs[:vaccine] = Vaccine.from_fhir_record(fhir_record)
       attrs[:batch_number] = fhir_record.lotNumber&.to_s
-      attrs[:batch_expiry] = fhir_record.expirationDate&.to_date
+
+      batch_expiry = fhir_record.expirationDate&.to_date
+      attrs[:batch_expiry] = batch_expiry if (
+        BATCH_EXPIRY_MIN...BATCH_EXPIRY_MAX
+      ).cover?(batch_expiry)
 
       if attrs[:vaccine]
         attrs[:disease_types] = attrs[:vaccine].disease_types

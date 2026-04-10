@@ -1,5 +1,4 @@
-web:     RAILS_ENV=end_to_end bin/falcon serve -b http://localhost:4100
+web: RAILS_ENV=end_to_end bin/falcon serve -b http://localhost:4100
 sidekiq: RAILS_ENV=end_to_end bin/sidekiq
-css:     yarn build:css --watch
-js:      yarn build --watch=forever
-redis:   redis-server --port 6380
+css: yarn build:css --watch
+js: yarn build --watch=forever

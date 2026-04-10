@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_30_075714) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -295,7 +295,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.bigint "sent_by_user_id"
     t.bigint "session_id"
-    t.bigint "team_location_id"
+    t.bigint "team_location_id", null: false
     t.integer "type", null: false
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
     t.index ["programme_types"], name: "index_consent_notifications_on_programme_types", using: :gin
@@ -752,7 +752,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.integer "gender_code", default: 0, null: false
     t.string "given_name", null: false
     t.bigint "gp_practice_id"
-    t.boolean "home_educated"
     t.datetime "invalidated_at"
     t.string "local_authority_mhclg_code"
     t.string "nhs_number"
@@ -837,7 +836,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.datetime "created_at", null: false
     t.boolean "home_educated"
     t.bigint "patient_id", null: false
-    t.bigint "school_id"
+    t.bigint "school_id", null: false
     t.integer "source", null: false
     t.bigint "team_id"
     t.datetime "updated_at", null: false
@@ -996,6 +995,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.datetime "discarded_at"
     t.enum "disease_types", null: false, array: true, enum_type: "disease_type"
     t.integer "dose_sequence"
+    t.bigint "duplicate_of_vaccination_record_id"
     t.boolean "full_dose"
     t.string "local_patient_id"
     t.string "local_patient_id_uri"
@@ -1030,6 +1030,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "vaccine_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
+    t.index ["duplicate_of_vaccination_record_id"], name: "idx_on_duplicate_of_vaccination_record_id_5071adce87"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
     t.index ["next_dose_delay_triage_id"], name: "index_vaccination_records_on_next_dose_delay_triage_id"
@@ -1046,8 +1047,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
   end
-
-  add_check_constraint "vaccination_records", "session_id IS NULL AND source <> 0 AND source <> 5 OR session_id IS NOT NULL AND (source = 0 OR source = 5)", name: "source_check", validate: false
 
   create_table "vaccines", force: :cascade do |t|
     t.text "brand", null: false
@@ -1199,6 +1198,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_075335) do
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "users", column: "reported_by_id"
   add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
+  add_foreign_key "vaccination_records", "vaccination_records", column: "duplicate_of_vaccination_record_id"
   add_foreign_key "vaccination_records", "vaccines"
 
   create_view "reporting_api_totals", materialized: true, sql_definition: <<-SQL

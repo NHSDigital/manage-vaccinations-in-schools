@@ -6,7 +6,6 @@ RAILS_ENV="end_to_end"
 RAILS_PORT="4100"
 HEALTH_CHECK_URL="http://localhost:${RAILS_PORT}/up"
 MAVIS_TEST_REPO="${MAVIS_TEST_REPO:-"../manage-vaccinations-in-schools-testing"}"
-E2E_REDIS_URL="redis://localhost:6380/0"
 PYTEST_ARGS=("-m" "not accessibility and not reporting and not imms_api and not pds_api")
 
 # Argument handling
@@ -145,7 +144,7 @@ else
 fi
 
 echo "[e2e] Starting rails server with foreman. Logs will be written to /tmp/e2e-foreman.log"
-RAILS_ENV="$RAILS_ENV" SIDEKIQ_REDIS_URL="$E2E_REDIS_URL" "${START_FOREMAN[@]}" >/tmp/e2e-foreman.log 2>&1 &
+RAILS_ENV="$RAILS_ENV" "${START_FOREMAN[@]}" >/tmp/e2e-foreman.log 2>&1 &
 E2E_PGID=$!
 
 

@@ -56,8 +56,6 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class Patient < ApplicationRecord
-  self.ignored_columns = %w[home_educated]
-
   include AddressConcern
   include AgeConcern
   include EthnicityConcern
@@ -715,10 +713,8 @@ class Patient < ApplicationRecord
       school_moves.each do |school_move|
         new_patient.school_moves.build(
           academic_year: school_move.academic_year,
-          home_educated: school_move.home_educated,
           school_id: school_move.school_id,
-          source: school_move.source,
-          team_id: school_move.team_id
+          source: school_move.source
         )
       end
 
@@ -726,9 +722,7 @@ class Patient < ApplicationRecord
         # Patients that have been duplicated from another won't have any
         #  vaccination records or imports, therefore we need to filter the
         #  sources.
-        sources =
-          patient_team.sources &
-            %w[patient_location school_move_school school_move_team]
+        sources = patient_team.sources & %w[patient_location school_move_school]
 
         new_patient.patient_teams.build(team_id: patient_team.team_id, sources:)
       end

@@ -14,6 +14,7 @@ class AppPatientProgrammeVaccinationComponent < ViewComponent::Base
   delegate :govuk_button_to,
            :govuk_table,
            :policy,
+           :record_already_vaccinated_text,
            :vaccination_record_source,
            to: :helpers
 
@@ -46,13 +47,13 @@ class AppPatientProgrammeVaccinationComponent < ViewComponent::Base
     )
   end
 
-  def can_record_new_vaccination?
+  def can_record_vaccination?
     programme_status = patient.programme_status(programme, academic_year:)
 
     if programme_status.not_eligible? || programme_status.vaccinated?
       return false
     end
 
-    policy(VaccinationRecord.new).new?
+    policy(VaccinationRecord.new(patient:)).new?
   end
 end

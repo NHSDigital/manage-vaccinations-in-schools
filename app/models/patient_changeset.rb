@@ -46,7 +46,6 @@ class PatientChangeset < ApplicationRecord
                 parent_2: {
                 },
                 academic_year: nil,
-                home_educated: nil,
                 school_move_source: nil
               },
               search_results: [],
@@ -178,8 +177,6 @@ class PatientChangeset < ApplicationRecord
 
   def birth_academic_year = child_attributes["birth_academic_year"]
 
-  def home_educated = data["upload"]["home_educated"]
-
   def school_move_source = data["upload"]["school_move_source"]
 
   def nhs_number = child_attributes["nhs_number"]
@@ -282,24 +279,12 @@ class PatientChangeset < ApplicationRecord
              patient.not_in_team?(team:, academic_year:) ||
              patient.archived?(team:) || patient.school_moves.any?
           school_move =
-            patient.school_moves.includes(:school_teams).first ||
+            patient.school_moves.includes(:teams).first ||
               SchoolMove.new(patient:)
 
-          # TODO: Simplify this once we no longer have changesets with
-          #  `school_id` set to `nil`.
           school_move.assign_attributes(
             academic_year:,
-            home_educated: nil,
-            school:
-              school ||
-                (
-                  if home_educated
-                    team.home_educated_school
-                  else
-                    team.unknown_school
-                  end
-                ),
-            team_id: nil,
+            school:,
             source: school_move_source
           )
 
@@ -315,8 +300,7 @@ class PatientChangeset < ApplicationRecord
 
     from_known_school =
       patient.school && patient.school&.urn != Location::URN_UNKNOWN
-    to_known_school =
-      home_educated || (school && school&.urn != Location::URN_UNKNOWN)
+    to_known_school = school && school&.urn != Location::URN_UNKNOWN
 
     moving_to_unknown_school = from_known_school && !to_known_school
 
@@ -337,7 +321,7 @@ class PatientChangeset < ApplicationRecord
 
     matches =
       PatientMatcher.from_relation(
-        Patient.includes(:patient_locations, school_moves: :school_teams),
+        Patient.includes(:patient_locations, school_moves: :teams),
         nhs_number: child_attributes["nhs_number"],
         given_name: child_attributes["given_name"],
         family_name: child_attributes["family_name"],
@@ -506,7 +490,6 @@ class PatientChangeset < ApplicationRecord
     if school_move.present? &&
          !has_auto_confirmable_school_move?(school_move, import)
       data["review"]["school_move"]["school_id"] = school_move.school_id
-      data["review"]["school_move"]["home_educated"] = school_move.home_educated
     end
 
     save!

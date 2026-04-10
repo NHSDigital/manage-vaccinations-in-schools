@@ -30,8 +30,8 @@
         "identifier": [
           {
             "use": "official",
-            "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
-            "value": "71f538d8-1171-4204-aee4-17ff0b0ba0b0"
+            "system": "https://nivs.ardengemcsu.nhs.uk/FluSAIS",
+            "value": "https://nivs.ardengemcsu.nhs.uk/FluSAIS71f538d8"
           }
         ],
         "status": "completed",
@@ -154,8 +154,8 @@
         "identifier": [
           {
             "use": "official",
-            "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
-            "value": "18441e7b-b652-4d8c-980c-b60009f95942"
+            "system": "https://nivs.ardengemcsu.nhs.uk/FluSAIS",
+            "value": "https://nivs.ardengemcsu.nhs.uk/FluSAIS18441e7b"
           }
         ],
         "status": "completed",

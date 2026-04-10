@@ -22,9 +22,9 @@
 #
 FactoryBot.define do
   factory :patient_team do
-    # Required associations – these will be created automatically if not overridden
     patient
     team
+
     sources { %i[patient_location] }
 
     trait :patient_location do
@@ -37,14 +37,6 @@ FactoryBot.define do
 
     trait :vaccination_record_session do
       sources { %i[vaccination_record_session] }
-    end
-
-    trait :vaccination_record_organisation do
-      sources { %i[vaccination_record_organisation] }
-    end
-
-    trait :school_move_team do
-      sources { %i[school_move_team] }
     end
 
     trait :school_move_school do

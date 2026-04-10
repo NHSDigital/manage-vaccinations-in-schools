@@ -132,6 +132,8 @@ describe "HPV vaccination" do
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
+        given_name: "John",
+        family_name: "Doe",
         programmes: [programme],
         session: @session
       )
@@ -302,8 +304,20 @@ describe "HPV vaccination" do
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
+        subject: "Your child had their HPV vaccination today",
         template: :vaccination_administered_hpv
-      ).with_content_including("HPV vaccination", "Gardasil 9")
+      ).with_content_including(
+        "John Doe had their HPV vaccination at #{@session.location.name} today",
+        "Vaccination: HPV",
+        "Vaccine: Gardasil 9",
+        "Date of vaccination: 01/02/2024",
+        "swelling or pain where the injection was given",
+        "a headache",
+        "a high temperature",
+        "dizziness",
+        "feeling sick",
+        "tiredness"
+      )
     )
   end
 

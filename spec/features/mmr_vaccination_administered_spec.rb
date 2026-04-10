@@ -304,8 +304,14 @@ describe "MMR vaccination" do
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @patient.consents.last.parent.email,
+        subject: "Your child had their MMR vaccination today",
         template: :vaccination_administered_mmr
-      ).with_content_including("blotchy rash", "swollen glands")
+      ).with_content_including(
+        "MMR vaccination",
+        "a raised, blotchy rash",
+        "swollen glands around the cheeks, neck and jaw",
+        "Your child still needs a second dose of the MMR vaccine"
+      )
     )
   end
 

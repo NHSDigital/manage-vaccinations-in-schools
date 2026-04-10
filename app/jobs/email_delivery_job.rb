@@ -44,7 +44,13 @@ class EmailDeliveryJob < NotifyDeliveryJob
           personalisation.parent&.email
       end
 
-    return if email_address.nil?
+    if email_address.nil?
+      Rails.logger.warn(
+        "Failed to find email address for template #{template_name_sym}, " \
+          "parent #{personalisation.parent&.id}"
+      )
+      return
+    end
 
     template = NotifyTemplate.find(template_name_sym, channel: :email)
     raise UnknownTemplate if template.nil?

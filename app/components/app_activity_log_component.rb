@@ -485,55 +485,63 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def vaccination_events
-    vaccination_records.flat_map do |vaccination_record|
-      title =
-        if vaccination_record.administered?
-          if (vaccine = vaccination_record.vaccine)
-            "Vaccinated with #{vaccine.brand}"
-          elsif vaccination_record.sourced_from_manual_report?
-            "Vaccination record added manually"
-          elsif vaccination_record.sourced_from_historical_upload?
-            "Vaccination record uploaded"
+    events =
+      vaccination_records.flat_map do |vaccination_record|
+        if vaccination_record.sourced_from_nhs_immunisations_api? &&
+             vaccination_record.discarded?
+          next
+        end
+
+        title =
+          if vaccination_record.administered?
+            if (vaccine = vaccination_record.vaccine)
+              "Vaccinated with #{vaccine.brand}"
+            elsif vaccination_record.sourced_from_manual_report?
+              "Vaccination record added manually"
+            elsif vaccination_record.sourced_from_historical_upload?
+              "Vaccination record uploaded"
+            else
+              "Vaccinated"
+            end
           else
-            "Vaccinated"
+            "Vaccination not given: #{vaccination_record.human_enum_name(:outcome)}"
           end
-        else
-          "Vaccination not given: #{vaccination_record.human_enum_name(:outcome)}"
-        end
 
-      subtitle =
-        if historical_vaccination_event?(vaccination_record)
-          "Record added to Mavis #{vaccination_record.created_at.to_fs(:long)} · " \
-            "Vaccination given #{vaccination_record.performed_at.to_date.to_fs(:long)}"
-        end
+        subtitle =
+          if historical_vaccination_event?(vaccination_record)
+            "Record added to Mavis #{vaccination_record.created_at.to_fs(:long)} · " \
+              "Vaccination given #{vaccination_record.performed_at.to_date.to_fs(:long)}"
+          end
 
-      at =
-        if historical_vaccination_event?(vaccination_record)
-          vaccination_record.created_at
-        else
-          vaccination_record.performed_at
-        end
+        at =
+          if historical_vaccination_event?(vaccination_record)
+            vaccination_record.created_at
+          else
+            vaccination_record.performed_at
+          end
 
-      kept = {
-        title:,
-        body: vaccination_record.notes,
-        at:,
-        by: vaccination_record.performed_by,
-        programmes: [vaccination_record.programme],
-        subtitle:
-      }
+        kept = {
+          title:,
+          body: vaccination_record.notes,
+          at:,
+          by: vaccination_record.performed_by,
+          programmes: [vaccination_record.programme],
+          subtitle:
+        }
 
-      discarded =
-        if vaccination_record.discarded?
-          {
-            title: "Vaccination record archived",
-            at: vaccination_record.discarded_at,
-            programmes: [vaccination_record.programme]
-          }
-        end
+        discarded =
+          if vaccination_record.discarded?
+            {
+              title: "Vaccination record archived",
+              at: vaccination_record.discarded_at,
+              programmes: [vaccination_record.programme]
+            }
+          end
 
-      [kept, discarded].compact
-    end
+        [kept, discarded].compact
+      end
+
+    events.compact
   end
 
   def historical_vaccination_event?(vaccination_record)

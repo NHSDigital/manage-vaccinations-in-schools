@@ -14,9 +14,8 @@ class SchoolMovesController < ApplicationController
 
     school_moves =
       policy_scope(SchoolMove).includes(
-        :team,
         :school,
-        :school_teams,
+        :teams,
         patient: :school
       ).order(:updated_at)
 
@@ -62,9 +61,7 @@ class SchoolMovesController < ApplicationController
     @patient_with_changes =
       @patient.dup.tap do |patient|
         patient.clear_changes_information
-        # TODO: Switch this to `school` once `home_educated` and `team_id`
-        #  columns have been removed.
-        patient.school = @school_move.send(:destination_school)
+        patient.school = @school_move.school
       end
   end
 end

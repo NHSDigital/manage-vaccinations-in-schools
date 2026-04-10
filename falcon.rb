@@ -39,3 +39,41 @@ service hostname do
     Async::HTTP::Endpoint.parse("#{scheme}://0.0.0.0:#{port}").with(**options)
   end
 end
+
+unless ENV["SERVICE_CONNECT_PORT"].to_s.empty?
+  service "#{hostname}-http" do
+    include Falcon::Environment::Rack
+
+    preload "preload.rb"
+
+    count 1
+
+    protocol { Async::HTTP::Protocol::HTTP11 }
+    scheme { "http" }
+
+    rack_app do
+      app = super()
+      allowed_paths = %w[/api/reporting/ /up]
+
+      ->(env) do
+        if allowed_paths.any? { |path| env["PATH_INFO"].start_with?(path) }
+          app.call(env)
+        else
+          [
+            403,
+            { "content-type" => "text/plain" },
+            [
+              "Path #{env["PATH_INFO"]} is not allowed. Allowed paths: #{allowed_paths.join(", ")}"
+            ]
+          ]
+        end
+      end
+    end
+
+    endpoint do
+      Async::HTTP::Endpoint.parse(
+        "http://0.0.0.0:#{ENV["SERVICE_CONNECT_PORT"]}"
+      ).with(protocol: protocol)
+    end
+  end
+end

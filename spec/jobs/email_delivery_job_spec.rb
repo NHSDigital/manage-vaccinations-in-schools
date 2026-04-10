@@ -165,6 +165,13 @@ describe EmailDeliveryJob do
         expect(notifications_client).not_to receive(:send_email)
         perform_now
       end
+
+      it "writes a warning to the logs" do
+        expect(Rails.logger).to receive(:warn).with(
+          /Failed to find email address for template #{template_name}/
+        )
+        perform_now
+      end
     end
 
     context "with a consent form" do
