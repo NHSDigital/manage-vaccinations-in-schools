@@ -26,15 +26,7 @@ describe GovukNotifyPersonalisation do
         subteam_name: "Team",
         subteam_phone: "01234 567890 (option 1)",
         team_privacy_notice_url: "https://example.com/privacy-notice",
-        team_privacy_policy_url: "https://example.com/privacy-policy",
-        vaccination: "HPV vaccination",
-        vaccination_and_dates: "HPV vaccination on Thursday 1 January",
-        vaccination_and_dates_sms: "HPV vaccination on Thursday 1 January",
-        vaccination_and_method: "HPV vaccination",
-        vaccine: "HPV vaccine",
-        vaccine_and_dose: "HPV",
-        vaccine_and_method: "HPV vaccine",
-        vaccine_side_effects: ""
+        team_privacy_policy_url: "https://example.com/privacy-policy"
       )
     end
   end
@@ -46,14 +38,6 @@ describe GovukNotifyPersonalisation do
     context "when it's an MMR programme and patient is eligible for MMRV" do
       let(:programmes) { [Programme.mmr] }
       let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
-
-      it { should have_attributes(vaccination: "MMRV vaccination") }
-
-      it do
-        expect(personalisation).to have_attributes(
-          vaccination_and_dates_sms: "MMRV vaccination"
-        )
-      end
 
       it { should have_attributes(mmr_or_mmrv_vaccine: "MMR or MMRV vaccine") }
       it { expect(personalisation.outbreak?).to be false }
@@ -76,16 +60,6 @@ describe GovukNotifyPersonalisation do
 
         it { expect(personalisation.outbreak?).to be true }
       end
-    end
-  end
-
-  context "with multiple programmes" do
-    let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
-
-    it do
-      expect(
-        personalisation.vaccination
-      ).to eq "MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations"
     end
   end
 
@@ -191,28 +165,10 @@ describe GovukNotifyPersonalisation do
         )
       end
 
-      it { should have_attributes(vaccination: "MMR vaccination") }
-
-      context "when receiving their first dose" do
-        let(:vaccination_record) do
-          create(
-            :vaccination_record,
-            :administered,
-            programme: programmes.first,
-            patient:,
-            session:,
-            performed_at: Date.new(2020, 1, 1)
-          )
-        end
-
-        it { should have_attributes(vaccination: "MMR vaccination") }
-      end
-
       context "generic message inviting patient to generic clinic" do
         it do
           expect(personalisation).to have_attributes(
             mmr_second_dose_required?: false,
-            vaccination: "MMR vaccination",
             invitation_to_clinic_generic_message:
               "They can have this vaccination at a community clinic. " \
                 "If you’d like to book a clinic appointment, please contact us using " \
@@ -228,7 +184,6 @@ describe GovukNotifyPersonalisation do
         it do
           expect(personalisation).to have_attributes(
             mmr_second_dose_required?: false,
-            vaccination: "MMR vaccination",
             invitation_to_clinic_custom_mmr_message: ""
           )
         end
@@ -241,7 +196,6 @@ describe GovukNotifyPersonalisation do
         it do
           expect(personalisation).to have_attributes(
             mmr_second_dose_required?: false,
-            vaccination: "MMR vaccination",
             invitation_to_clinic_custom_mmr_message: ""
           )
         end
@@ -265,7 +219,6 @@ describe GovukNotifyPersonalisation do
           it do
             expect(personalisation).to have_attributes(
               mmr_second_dose_required?: true,
-              vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_generic_message:
                 "If you would like your local GP surgery to give John their 2nd dose, " \
                   "contact the surgery in the usual way.\n\n" \
@@ -286,7 +239,6 @@ describe GovukNotifyPersonalisation do
           it do
             expect(personalisation).to have_attributes(
               mmr_second_dose_required?: true,
-              vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
                 "It’s important to wait at least 28 days after the 1st dose of an MMR or " \
                   "MMRV vaccination before getting the 2nd dose. John should not get the 2nd " \
@@ -304,7 +256,6 @@ describe GovukNotifyPersonalisation do
           it do
             expect(personalisation).to have_attributes(
               mmr_second_dose_required?: true,
-              vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
                 "It’s important to wait at least 28 days after the 1st dose of an MMR " \
                   "or MMRV vaccination before getting the 2nd dose. John should not get the 2nd " \
@@ -352,270 +303,7 @@ describe GovukNotifyPersonalisation do
 
       it do
         expect(personalisation).to have_attributes(
-          location_name: "Waterloo Road",
-          vaccination: "HPV vaccination",
-          vaccination_and_dates: "HPV vaccination"
-        )
-      end
-    end
-  end
-
-  context "with an administered vaccination record" do
-    let(:vaccine) { Vaccine.find_by!(brand: "Gardasil 9") }
-
-    let(:vaccination_record) do
-      create(
-        :vaccination_record,
-        :administered,
-        programme: programmes.first,
-        dose_sequence: 1,
-        patient:,
-        performed_at: Date.new(2024, 1, 1),
-        vaccine:
-      )
-    end
-
-    it do
-      expect(personalisation).to have_attributes(
-        vaccine_and_dose: "HPV 1st dose"
-      )
-    end
-  end
-
-  context "with a not-administered vaccination record" do
-    let(:vaccination_record) do
-      create(
-        :vaccination_record,
-        :not_administered,
-        programme: programmes.first,
-        performed_at: Date.new(2024, 1, 1)
-      )
-    end
-
-    it do
-      expect(personalisation).to have_attributes(
-        reason_did_not_vaccinate: "the nurse decided John was not well"
-      )
-    end
-  end
-
-  context "with vaccine methods" do
-    subject(:personalisation) do
-      described_class.new(
-        patient:,
-        session:,
-        programme_types: programmes.map(&:type)
-      )
-    end
-
-    context "and an injection-only programme" do
-      before do
-        create(
-          :patient_programme_status,
-          :due_injection,
-          patient:,
-          academic_year: session.academic_year,
-          programme: programmes.first
-        )
-      end
-
-      it { expect(personalisation.vaccine_is?("injection")).to be true }
-      it { expect(personalisation.vaccine_is?("nasal")).to be false }
-    end
-
-    context "and a nasal spray programme" do
-      let(:programmes) { [Programme.flu] }
-
-      before do
-        create(
-          :patient_programme_status,
-          :due_nasal_injection,
-          patient:,
-          programme: programmes.first,
-          academic_year: session.academic_year
-        )
-      end
-
-      it { expect(personalisation.vaccine_is?("injection")).to be false }
-      it { expect(personalisation.vaccine_is?("nasal")).to be true }
-    end
-
-    context "and multiple programmes" do
-      let(:programmes) { [hpv_programme, flu_programme] }
-
-      before do
-        create(
-          :patient_programme_status,
-          :due_nasal_injection,
-          patient:,
-          programme: flu_programme,
-          academic_year: session.academic_year
-        )
-        create(
-          :patient_programme_status,
-          :due_injection,
-          patient:,
-          programme: hpv_programme,
-          academic_year: session.academic_year
-        )
-      end
-
-      it { expect(personalisation.vaccine_is?("injection")).to be true }
-      it { expect(personalisation.vaccine_is?("nasal")).to be true }
-    end
-  end
-
-  context "with vaccine side effects" do
-    before do
-      Vaccine
-        .for_programme(hpv_programme)
-        .each { it.update!(side_effects: %w[swelling unwell]) }
-    end
-
-    it { should have_attributes(vaccine_side_effects: "") }
-
-    context "with injection as an approved vaccine method" do
-      before do
-        create(
-          :patient_programme_status,
-          :due_injection,
-          patient:,
-          programme: hpv_programme,
-          academic_year: session.academic_year
-        )
-      end
-
-      it do
-        expect(personalisation).to have_attributes(
-          vaccine_side_effects:
-            "- generally feeling unwell\n- swelling or pain where the injection was given"
-        )
-      end
-
-      context "when a vaccine is discontinued" do
-        before do
-          Vaccine
-            .for_programme(hpv_programme)
-            .first
-            .update!(discontinued: true, side_effects: %w[headache])
-        end
-
-        it "excludes side effects from the discontinued vaccine" do
-          expect(personalisation).not_to have_attributes(
-            vaccine_side_effects: a_string_matching("headache")
-          )
-        end
-      end
-    end
-
-    context "with a vaccination record" do
-      let(:vaccination_record) do
-        create(
-          :vaccination_record,
-          patient:,
-          programme: hpv_programme,
-          session:
-        )
-      end
-
-      it do
-        expect(personalisation).to have_attributes(
-          vaccine_side_effects:
-            "- generally feeling unwell\n- swelling or pain where the injection was given"
-        )
-      end
-    end
-
-    context "without a patient" do
-      let(:patient) { nil }
-      let(:vaccination_record) { nil }
-
-      it do
-        expect(personalisation).to have_attributes(
-          vaccine_side_effects:
-            "- generally feeling unwell\n- swelling or pain where the injection was given"
-        )
-      end
-
-      context "when a vaccine is discontinued" do
-        before do
-          Vaccine
-            .for_programme(hpv_programme)
-            .first
-            .update!(discontinued: true, side_effects: %w[headache])
-        end
-
-        it "excludes side effects from the discontinued vaccine" do
-          expect(personalisation).not_to have_attributes(
-            vaccine_side_effects: a_string_matching("headache")
-          )
-        end
-      end
-    end
-  end
-
-  context "with a programme that has a different name on NHS.uk" do
-    let(:programmes) { [Programme.td_ipv] }
-
-    it do
-      expect(personalisation).to have_attributes(
-        vaccination: "Td/IPV (3-in-1 teenage booster) vaccination",
-        vaccine: "Td/IPV (3-in-1 teenage booster) vaccine"
-      )
-    end
-  end
-
-  context "with the flu programme" do
-    let(:programmes) { [Programme.flu] }
-
-    it do
-      expect(personalisation).to have_attributes(
-        vaccination: "flu vaccination",
-        vaccination_and_method: "flu vaccination",
-        vaccine: "flu vaccine",
-        vaccine_and_method: "flu vaccine"
-      )
-    end
-
-    context "with an administered injected vaccination record" do
-      let(:vaccination_record) do
-        vaccine = programmes.first.vaccines.find_by!(method: "injection")
-        create(
-          :vaccination_record,
-          patient:,
-          programme: programmes.first,
-          vaccine:
-        )
-      end
-
-      it do
-        expect(personalisation).to have_attributes(
-          vaccination: "flu vaccination",
-          vaccination_and_method: "injected flu vaccination",
-          vaccine: "flu vaccine",
-          vaccine_and_method: "injected flu vaccine"
-        )
-      end
-    end
-
-    context "with an administered nasal spray vaccination record" do
-      let(:vaccination_record) do
-        vaccine = programmes.first.vaccines.find_by!(method: "nasal")
-        create(
-          :vaccination_record,
-          patient:,
-          programme: programmes.first,
-          vaccine:,
-          delivery_method: "nasal_spray"
-        )
-      end
-
-      it do
-        expect(personalisation).to have_attributes(
-          vaccination: "flu vaccination",
-          vaccination_and_method: "nasal spray flu vaccination",
-          vaccine: "flu vaccine",
-          vaccine_and_method: "nasal spray flu vaccine"
+          location_name: "Waterloo Road"
         )
       end
     end
