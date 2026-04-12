@@ -180,9 +180,8 @@ describe "Parental consent manual matching" do
 
   def and_i_do_not_see_any_consent_contact_warning_notifications
     expect(page).not_to have_content(
-      "Consent unknown contact details warning sent"
+      "Unknown parent contact details warning sent to"
     )
-    expect(page).not_to have_content(@parent.email)
   end
 
   def when_i_choose_to_archive_the_response

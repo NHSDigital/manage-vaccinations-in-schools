@@ -330,14 +330,15 @@ describe AppActivityLogComponent do
                      date: "29 May 2025 at 12:00pm"
 
     include_examples "card",
-                     title: "Consent school request hpv sent",
+                     title: "Consent request sent to Jane Doe (mum)",
                      date: "10 May 2025 at 12:00am",
                      notes: "test@example.com",
                      by: "JOY, Nurse",
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Consent confirmation refused sent",
+                     title:
+                       "Confirmation of consent refused sent to Alex Smith (dad)",
                      date: "10 May 2025 at 2:00pm",
                      notes: "alex@example.net",
                      by: "JOY, Nurse"
