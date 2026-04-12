@@ -2,12 +2,8 @@
 
 class AppPatientSummaryComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h3 class="nhsuk-heading-s nhsuk-u-margin-top-1">
-      <%= patient.full_name %>
-    </h3>
-    
     <%= govuk_summary_list(rows:, classes:) %>
-    
+
     <p>
       <%= link_to "View full child record", patient_path(patient) %>
     </p>
@@ -35,11 +31,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
   end
 
   def classes
-    %w[
-      nhsuk-summary-list--no-border
-      app-summary-list--full-width
-      nhsuk-u-margin-bottom-2
-    ]
+    %w[app-summary-list--full-width nhsuk-u-margin-bottom-2]
   end
 
   def nhs_number_row
@@ -68,7 +60,14 @@ class AppPatientSummaryComponent < ViewComponent::Base
       },
       value: {
         text: patient.date_of_birth.to_fs(:long)
-      }
+      },
+      **(
+        if patient.restricted?
+          { classes: %w[nhsuk-summary-list__row--no-border] }
+        else
+          {}
+        end
+      )
     }
   end
 
@@ -79,7 +78,8 @@ class AppPatientSummaryComponent < ViewComponent::Base
       },
       value: {
         text: format_address_multi_line(patient)
-      }
+      },
+      classes: %w[nhsuk-summary-list__row--no-border]
     }
   end
 end

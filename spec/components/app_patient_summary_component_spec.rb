@@ -17,8 +17,6 @@ describe AppPatientSummaryComponent do
 
   let(:href) { "/patients/#{patient.id}" }
 
-  it { should have_content("SELDON, Hari") }
-
   it { should have_content("NHS number") }
 
   context "when patient has an NHS number" do
