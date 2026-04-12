@@ -199,7 +199,7 @@ describe "Parental consent" do
   end
 
   def when_they_check_triage
-    click_on @session.location.name
+    click_on "#{@session.programmes.map(&:name).to_sentence} session at #{@session.location.name}"
     within(".app-secondary-navigation") { click_on "Children" }
     choose "Due vaccination", match: :first
     click_on "Update results"

@@ -1,75 +1,45 @@
 <% content_for :page_title, @patient.initials %>
 
-<% content_for :navigation do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: "Home", href: dashboard_path },
-                                          { text: t("sessions.index.title"), href: sessions_path },
-                                          { text: @session.location.name, href: session_path(@session) },
-                                          @breadcrumb_item,
-                                        ].compact) %>
-<% end %>
-
 <% if (outstanding_programmes = patient_outstanding_programmes(@patient, session: @session)).any? %>
   <% programmes_can_record_vaccination = outstanding_programmes.filter do |programme|
        policy(VaccinationRecord.new(patient: @patient, session: @session, programme:)).new?
      end %>
 
-  <%= govuk_notification_banner(title_text: "Important") do |notification_banner| %>
-    <% notification_banner.with_heading(text: "You still need to record an outcome for #{programmes_can_record_vaccination.map(&:name).to_sentence}.") %>
-  <% end %>
-<% end %>
-
-<h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">
-  <%= @patient.full_name %>
-</h1>
-
-<p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
-  <%= patient_year_group(@patient, academic_year: @academic_year) %>
-</p>
-
-<%= render AppActionListComponent.new do |action_list| %>
-  <% if @programme && @session.psd_enabled? %>
-    <% action_list.with_item do %>
-      <% if @patient.has_patient_specific_direction?(academic_year: @academic_year, programme_type: @programme.type, team: current_team) %>
-        <%= render AppStatusTagComponent.new(:added, context: :patient_specific_direction) %>
-      <% else %>
-        <%= render AppStatusTagComponent.new(:not_added, context: :patient_specific_direction) %>
-      <% end %>
-    <% end %>
-  <% end %>
-
-  <% if @session.requires_registration? && (date = @session.dates.find(&:today?)) %>
-    <% attendance_record = @patient.attendance_records.find_or_initialize_by(location: @session.location, date:) %>
-
-    <% action_list.with_item do %>
-      <%= render AppStatusTagComponent.new(@patient.registration_status(session: @session)&.status || "unknown", context: :registration) %>
-    <% end %>
-
-    <% attendance_record.session = @session %>
-    <% if policy(attendance_record).edit? %>
-      <% action_list.with_item(
-           text: "Update attendance",
-           href: edit_session_patient_attendance_path(@session, @patient),
-         ) %>
+  <% content_for :before_content do %>
+    <%= govuk_notification_banner(title_text: "Important") do |notification_banner| %>
+      <% notification_banner.with_heading(text: "You still need to record an outcome for #{programmes_can_record_vaccination.map(&:name).to_sentence}.") %>
     <% end %>
   <% end %>
 <% end %>
 
-<%= render AppStickyNavigationComponent.new do %>
-  <%= render AppSecondaryNavigationComponent.new do |nav|
-        @session.programmes_for(patient: @patient).each do |programme|
-          nav.with_item(
-            href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
-            text: programme.name,
-            selected: @programme == programme,
-            ticked: @patient.programme_status(programme, academic_year: @academic_year).vaccinated?,
-          )
-        end
-      
-        nav.with_item(
-          href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
-          text: "Session activity and notes",
-          selected: request.path.ends_with?("/activity"),
-        )
-      end %>
+<% content_for :main_content do %>
+  <div class="app-session-banner" data-module="app-sticky">
+    <div class="nhsuk-width-container">
+        <%= render AppBreadcrumbComponent.new(items: [
+                                                { text: session_title(@session, include_dates: false), href: session_path(@session) },
+                                                @breadcrumb_item,
+                                              ].compact, reverse: true) %>
+
+      <div class="nhsuk-main-wrapper app-main-wrapper--xs">
+        <%= h1 @patient.full_name %>
+      </div>
+
+      <%= render AppSecondaryNavigationComponent.new(reverse: true) do |nav|
+            @session.programmes_for(patient: @patient).each do |programme|
+              nav.with_item(
+                href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
+                text: programme.name,
+                selected: @programme == programme,
+                ticked: @patient.programme_status(programme, academic_year: @academic_year).vaccinated?,
+              )
+            end
+          
+            nav.with_item(
+              href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
+              text: "Session activity and notes",
+              selected: request.path.ends_with?("/activity"),
+            )
+          end %>
+    </div>
+  </div>
 <% end %>

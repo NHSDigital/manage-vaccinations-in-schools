@@ -658,7 +658,7 @@ describe "Manage children" do
   end
 
   def then_i_see_the_community_clinic_session
-    expect(page).to have_content("Community clinic")
+    expect(page).to have_content("community clinic")
   end
 
   def when_i_go_to_the_dashboard

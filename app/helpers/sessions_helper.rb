@@ -56,9 +56,14 @@ module SessionsHelper
     end
   end
 
-  def session_title(session)
+  def session_title(session, include_dates: true)
     programmes = session.programmes.map(&:name).to_sentence
-    dates = ("on #{session_dates(session)}" if session.dates.present?)
+    dates =
+      (
+        if session.dates.present? && include_dates
+          "on #{session_dates(session)}"
+        end
+      )
 
     items =
       if session.generic_clinic?
