@@ -16,6 +16,8 @@
 
     <%= render AppPatientSessionPsdComponent.new(patient: @patient, session: @session, programme: @programme) %>
 
-    <%= render AppPatientSessionRecordComponent.new(patient: @patient, session: @session, programme: @programme, current_user:, vaccinate_form: @vaccinate_form) %>
+    <%= render AppPatientSessionRegistrationComponent.new(patient: @patient, session: @session) %>
+  
+    <%= render AppPatientSessionRecordComponent.new(patient: @patient, session: @session, programme: @programme, current_user:, vaccinate_form: @vaccinate_form) %> 
   </div>
 </div>

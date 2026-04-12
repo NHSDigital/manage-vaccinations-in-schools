@@ -22,13 +22,13 @@ describe "Manage attendance" do
     then_the_patient_is_not_registered_yet
     and_i_am_not_able_to_vaccinate
 
-    when_i_choose_the_patient_has_not_been_registered_yet
-    then_the_patient_is_not_registered_yet
-    and_i_see_the_not_registered_flash
-
     when_i_choose_the_patient_is_absent
     then_the_patient_is_absent
     and_i_see_the_absent_flash
+
+    when_i_choose_the_patient_has_not_been_registered_yet
+    then_the_patient_is_not_registered_yet
+    and_i_see_the_not_registered_flash
 
     when_i_choose_the_patient_is_attending
     then_the_patient_is_attending
@@ -192,7 +192,7 @@ describe "Manage attendance" do
   end
 
   def then_the_patient_is_not_registered_yet
-    expect(page).to have_content("Not registered yet")
+    expect(page).to have_content("registered yet")
   end
 
   def and_i_am_not_able_to_vaccinate
@@ -210,13 +210,12 @@ describe "Manage attendance" do
   end
 
   def when_i_choose_the_patient_is_absent
-    click_link "Update attendance"
-    choose "No, they are absent"
-    click_button "Save changes"
+    choose "No, they are absent from today's session"
+    click_button "Update attendance"
   end
 
   def then_the_patient_is_absent
-    expect(page).to have_content("Absent from session")
+    expect(page).to have_content("is absent from today’s session")
   end
 
   def and_i_see_the_absent_flash
@@ -225,13 +224,12 @@ describe "Manage attendance" do
   alias_method :then_i_see_the_absent_flash, :and_i_see_the_absent_flash
 
   def when_i_choose_the_patient_is_attending
-    click_link "Update attendance"
     choose "Yes, they are attending"
-    click_button "Save changes"
+    click_button "Update attendance"
   end
 
   def then_the_patient_is_attending
-    expect(page).to have_content("Attending session")
+    expect(page).to have_content("is attending today’s session")
   end
 
   def and_i_see_the_attending_flash

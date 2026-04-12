@@ -1,0 +1,44 @@
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading(level: 2) { "Register attendance" } %>
+
+  <% if registration_status == "completed" %>
+    <p><%= patient.given_name %> has completed this session.</p>
+  <% elsif registration_status == "unknown" %>
+    <p><%= t("attendance_flash.not_registered", name: patient.full_name) %></p>
+    <% if can_edit? %>
+      <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--m">
+      <%= form_with model: attendance_record,
+                    url: session_patient_attendance_path(session, patient),
+                    method: :put,
+                    builder: MavisFormBuilder do |f| %>
+        <%= f.govuk_radio_buttons_fieldset(
+              :attending,
+              legend: { size: "s", text: "Is #{patient.full_name} attending today's session?" },
+            ) do %>
+          <%= f.govuk_radio_button(:attending, true,
+                                   label: { text: "Yes, they are attending today's session" },
+                                   link_errors: true) %>
+          <%= f.govuk_radio_button(:attending, false,
+                                   label: { text: "No, they are absent from today's session" }) %>
+        <% end %>
+        <%= f.govuk_submit "Update attendance", class: "nhsuk-u-margin-bottom-0" %>
+      <% end %>
+    <% end %>
+  <% elsif registration_status == "attending" %>
+    <p><%= t("attendance_flash.present", name: patient.full_name) %></p>
+    <% if can_edit? %>
+      <%= render AppActionLinkComponent.new(
+            text: "Update attendance",
+            href: edit_session_patient_attendance_path(session, patient),
+          ) %>
+    <% end %>
+  <% elsif registration_status == "not_attending" %>
+    <p><%= t("attendance_flash.absent", name: patient.full_name) %></p>
+    <% if can_edit? %>
+      <%= render AppActionLinkComponent.new(
+            text: "Update attendance",
+            href: edit_session_patient_attendance_path(session, patient),
+          ) %>
+    <% end %>
+  <% end %>
+<% end %>
