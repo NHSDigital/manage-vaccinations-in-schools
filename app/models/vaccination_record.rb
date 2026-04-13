@@ -161,6 +161,36 @@ class VaccinationRecord < ApplicationRecord
           order("performed_at_date DESC, performed_at_time DESC NULLS LAST")
         end
 
+  scope :created_or_updated_between,
+        ->(start_date, end_date) do
+          scope = all
+          if start_date.present?
+            scope =
+              scope.where(
+                "vaccination_records.created_at >= ?",
+                start_date.beginning_of_day
+              ).or(
+                scope.where(
+                  "vaccination_records.updated_at >= ?",
+                  start_date.beginning_of_day
+                )
+              )
+          end
+          if end_date.present?
+            scope =
+              scope.where(
+                "vaccination_records.created_at <= ?",
+                end_date.end_of_day
+              ).or(
+                scope.where(
+                  "vaccination_records.updated_at <= ?",
+                  end_date.end_of_day
+                )
+              )
+          end
+          scope
+        end
+
   enum :protocol, { pgd: 0, psd: 1, national: 2 }, validate: { allow_nil: true }
 
   enum :delivery_method,
