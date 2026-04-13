@@ -34,7 +34,7 @@ describe "mavis reports export-automated-careplus" do
   end
 
   context "when there are matching vaccination records" do
-    it "links them to the export" do
+    it "links them to the export and sets programme_types from the records" do
       given_an_organisation_with_a_single_team
       programme = Programme.hpv
       session = create(:session, team: @team, programmes: [programme])
@@ -45,9 +45,9 @@ describe "mavis reports export-automated-careplus" do
         "--output=#{output_path}"
       )
 
-      expect(CareplusExport.last.vaccination_records).to include(
-        vaccination_record
-      )
+      export = CareplusExport.last
+      expect(export.vaccination_records).to include(vaccination_record)
+      expect(export.programme_types).to eq([programme.type])
     end
   end
 

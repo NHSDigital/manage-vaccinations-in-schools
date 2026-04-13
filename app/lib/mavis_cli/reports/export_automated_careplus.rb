@@ -104,6 +104,9 @@ module MavisCLI
             end_date: parsed_end_date
           )
 
+        programme_types =
+          records.unscope(:order).distinct.pluck(:programme_type)
+
         csv =
           ::Reports::AutomatedCareplusExporter.from_records(
             team:,
@@ -116,6 +119,7 @@ module MavisCLI
         # we'll create the export with status "sent" for now
         # in the future we'll change this to "pending" or
         # prevent this tool from creating database entries at all
+
         ActiveRecord::Base.transaction do
           careplus_export =
             CareplusExport.create!(
@@ -123,7 +127,7 @@ module MavisCLI
               academic_year: academic_year_value,
               date_from: parsed_start_date,
               date_to: parsed_end_date,
-              programme_types: team.programme_types,
+              programme_types: programme_types,
               scheduled_at: now,
               sent_at: now,
               status: :sent,
