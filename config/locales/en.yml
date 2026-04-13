@@ -695,6 +695,22 @@ en:
           attributes:
             type:
               inclusion: Choose a notification type
+        contact:
+          attributes:
+            contact_method:
+              blank: Choose a contact method
+            email:
+              taken: This email address is already assigned to the parent
+              blank: Enter an email address
+            full_name:
+              blank: Enter a full name
+            phone:
+              taken: This phone number is already assigned to the parent
+              blank: Enter a phone number
+            relationship:
+              blank: Choose a relationship
+            source:
+              blank: Choose a source
         flipper:
           adapters:
             active_record:

@@ -95,6 +95,7 @@ class Patient < ApplicationRecord
   has_many :session_notifications
   has_many :triages
   has_many :vaccination_records, -> { kept }
+  has_many :contacts
 
   has_many :locations, through: :patient_locations
   has_many :parents, through: :parent_relationships

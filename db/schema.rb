@@ -18,6 +18,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_130232) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "contact_method", ["phone", "email"]
+  create_enum "contact_relationship", ["father", "guardian", "mother", "other", "unknown"]
+  create_enum "contact_source", ["child_record", "class_list", "consent_response", "sais"]
   create_enum "disease_type", ["diphtheria", "human_papillomavirus", "influenza", "measles", "meningitis_a", "meningitis_c", "meningitis_w", "meningitis_y", "mumps", "polio", "rubella", "tetanus", "varicella"]
   create_enum "programme_type", ["flu", "hpv", "menacwy", "mmr", "td_ipv"]
 
@@ -347,7 +350,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_130232) do
     t.index ["team_id"], name: "index_consents_on_team_id"
   end
 
-  create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
+  create_table "contacts", force: :cascade do |t|
+    t.enum "contact_method", null: false, enum_type: "contact_method"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "full_name", null: false
+    t.bigint "patient_id", null: false
+    t.string "phone"
+    t.boolean "phone_receive_updates", default: false, null: false
+    t.enum "relationship", null: false, enum_type: "contact_relationship"
+    t.string "relationship_other_name"
+    t.enum "source", null: false, enum_type: "contact_source"
+    t.datetime "updated_at", null: false
+    t.index ["patient_id", "email"], name: "index_contacts_on_patient_id_and_email", unique: true
+    t.index ["patient_id", "phone"], name: "index_contacts_on_patient_id_and_phone", unique: true
+    t.index ["patient_id"], name: "index_contacts_on_patient_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -1115,6 +1132,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_130232) do
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "teams"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
+  add_foreign_key "contacts", "patients"
   add_foreign_key "gillick_assessments", "locations"
   add_foreign_key "gillick_assessments", "patients"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
