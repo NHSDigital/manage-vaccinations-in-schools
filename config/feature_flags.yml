@@ -36,6 +36,12 @@ import_bulk_remove_parents: Allow user to bulk remove parent relationships from 
 import_choose_academic_year: >-
   Add an option to choose the academic year when importing patients during the preparation period.
 
+one_patient_per_parent_writes: >-
+  Changes the assocation between parent and patient from many-many to many-one. This flag switches on writes to the new (and old) models.
+
+one_patient_per_parent_reads: >-
+  Changes the assocation between parent and patient from many-many to many-one. This flag switches on reads from the new model and removes writes to the old model.
+
 ops_tools: Enable the operational support tools; timeline and graph.
 
 pds: Main switch for PDS integration. Turning this off will disable all PDS-related features.
