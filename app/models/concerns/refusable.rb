@@ -20,7 +20,8 @@ module Refusable
            will_be_vaccinated_elsewhere: 2,
            medical_reasons: 3,
            personal_choice: 4,
-           other: 5
+           other: 5,
+           do_not_want_vaccination_at_school: 6
          },
          prefix: true,
          validate: {

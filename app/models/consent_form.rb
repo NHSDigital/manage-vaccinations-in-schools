@@ -329,6 +329,7 @@ class ConsentForm < ApplicationRecord
   ETHNICITY_STEPS = %i[ethnicity ethnic_group ethnic_background].freeze
   FOLLOW_UP_REQUIRED_REASONS = %w[
     contains_gelatine
+    do_not_want_vaccination_at_school
     medical_reasons
     personal_choice
     other
