@@ -13,6 +13,9 @@ on:
         required: true
         type: string
     secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS:
+        description: HTTP Basic Auth token for the environment under test
+        required: false
       IMMS_API_KEY_FOR_TESTS:
         description: API key to use NHS Immunisations API
         required: false
@@ -32,6 +35,7 @@ jobs:
       github_ref: ${{ inputs.github_ref }}
       endpoint: ${{ inputs.endpoint }}
     secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
       IMMS_API_KEY: ${{ secrets.IMMS_API_KEY_FOR_TESTS }}
       IMMS_API_KID: ${{ secrets.IMMS_API_KID_FOR_TESTS }}
       IMMS_API_PEM: ${{ secrets.IMMS_API_PEM_FOR_TESTS }}
