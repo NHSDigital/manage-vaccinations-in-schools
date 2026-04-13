@@ -25,6 +25,13 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     patient_school_name: "School Name"
   }.freeze
 
+  SCHOOL_LOCATION_TYPES = %w[gias_school generic_school].freeze
+  COMMUNITY_LOCATION_TYPES = %w[
+    generic_clinic
+    community_clinic
+    gp_practice
+  ].freeze
+
   METRIC_HEADERS = {
     cohort: "Cohort",
     no_consent: "No Consent",
@@ -179,7 +186,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   def team_vaccination_records_scope
     VaccinationRecord
       .where(discarded_at: nil, outcome: :administered)
-      .joins(session: :team_location)
+      .joins(session: { team_location: :location })
       .where(
         team_locations: {
           team_id: @team&.id || current_user.team_ids,
@@ -205,24 +212,50 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
   end
 
   def team_vaccinations_given_count
-    team_vaccination_records_scope.count
+    pivot_location_counts(
+      team_vaccination_records_scope.group("locations.type").count
+    )
   end
 
   def team_monthly_vaccinations_given
-    counts =
-      team_vaccination_records_scope
-        .group(
-          Arel.sql(
-            "EXTRACT(YEAR FROM vaccination_records.performed_at_date)::integer"
-          ),
-          Arel.sql(
-            "EXTRACT(MONTH FROM vaccination_records.performed_at_date)::integer"
-          )
-        )
-        .count
-        .map do |(year, month), count|
-          { year:, month: Date::MONTHNAMES[month], count: }
-        end
-    counts.sort_by! { [it[:year], Date::MONTHNAMES.index(it[:month])] }
+    counts_by_key =
+      team_vaccination_records_scope.group(
+        Arel.sql(
+          "EXTRACT(YEAR FROM vaccination_records.performed_at_date)::integer"
+        ),
+        Arel.sql(
+          "EXTRACT(MONTH FROM vaccination_records.performed_at_date)::integer"
+        ),
+        "locations.type"
+      ).count
+
+    grouped = Hash.new { |h, k| h[k] = { school_count: 0, community_count: 0 } }
+
+    counts_by_key.each do |(year, month, loc_type), count|
+      key = [year, month]
+      if SCHOOL_LOCATION_TYPES.include?(loc_type)
+        grouped[key][:school_count] += count
+      elsif COMMUNITY_LOCATION_TYPES.include?(loc_type)
+        grouped[key][:community_count] += count
+      end
+    end
+
+    result =
+      grouped.map do |(year, month), counts|
+        { year:, month: Date::MONTHNAMES[month], **counts }
+      end
+    result.sort_by! { [it[:year], Date::MONTHNAMES.index(it[:month])] }
+  end
+
+  def pivot_location_counts(counts_by_type)
+    school_count =
+      counts_by_type.sum do |type, count|
+        SCHOOL_LOCATION_TYPES.include?(type) ? count : 0
+      end
+    community_count =
+      counts_by_type.sum do |type, count|
+        COMMUNITY_LOCATION_TYPES.include?(type) ? count : 0
+      end
+    { school_count:, community_count: }
   end
 end
