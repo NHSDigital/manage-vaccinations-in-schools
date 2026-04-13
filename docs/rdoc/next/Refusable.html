@@ -702,7 +702,7 @@
             </details>
           </div>
           <div class="method-source-code" id="hard_refusal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 35</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 36</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">hard_refusal?</span> = <span class="ruby-identifier">response_refused?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">follow_up_requested?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">refusal_with_follow_up?</span> = <span class="ruby-identifier">response_refused?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">follow_up_requested?</span>
@@ -756,7 +756,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal_requires_notes-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 43</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 44</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal_requires_notes?</span>
   <span class="ruby-identifier">reason_for_refusal</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-constant">REASON_FOR_REFUSAL_REQUIRES_NOTES</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -798,7 +798,7 @@
             </details>
           </div>
           <div class="method-source-code" id="refusal_with_follow_up-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 38</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">refusal_with_follow_up?</span> = <span class="ruby-identifier">response_refused?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">follow_up_requested?</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_reason_for_refusal?</span>
@@ -851,7 +851,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_notes-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 47</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_notes?</span>
   <span class="ruby-identifier">requires_reason_for_refusal?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reason_for_refusal_requires_notes?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -893,7 +893,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_reason_for_refusal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 39</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/refusable.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_reason_for_refusal?</span>
   <span class="ruby-identifier">response_refused?</span>
 <span class="ruby-keyword">end</span></pre>

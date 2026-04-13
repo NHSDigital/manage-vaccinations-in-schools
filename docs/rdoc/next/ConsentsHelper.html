@@ -664,7 +664,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_action_links-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 99</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 108</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_action_links</span>(<span class="ruby-identifier">consent</span>, <span class="ruby-value">session:</span>)
   <span class="ruby-identifier">patient</span> = <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">patient</span>
   <span class="ruby-identifier">programme</span> = <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">programme</span>
@@ -749,7 +749,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_parent_email-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 151</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 160</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_parent_email</span>(<span class="ruby-identifier">consentable</span>)
   <span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">parent_email</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
     (<span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:parent</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">parent</span>&amp;.<span class="ruby-identifier">email</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>)
@@ -792,7 +792,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_parent_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 146</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 155</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_parent_name</span>(<span class="ruby-identifier">consentable</span>)
   <span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">parent_full_name</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
     (<span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:parent</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">parent</span>&amp;.<span class="ruby-identifier">full_name</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>)
@@ -835,7 +835,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_parent_phone-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 156</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_parent_phone</span>(<span class="ruby-identifier">consentable</span>)
   <span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">parent_phone</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
     (<span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:parent</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">parent</span>&amp;.<span class="ruby-identifier">phone</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>)
@@ -878,7 +878,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_parent_phone_receive_updates-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 161</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 170</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_parent_phone_receive_updates</span>(<span class="ruby-identifier">consentable</span>)
   <span class="ruby-identifier">value</span> = <span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">parent_phone_receive_updates</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">consentable</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:parent</span>)
@@ -939,10 +939,19 @@
     <span class="ruby-identifier">reasons</span>.<span class="ruby-identifier">insert</span>(<span class="ruby-value">0</span>, <span class="ruby-string">&quot;contains_gelatine&quot;</span>)
   <span class="ruby-keyword">end</span>
 
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:location</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">location</span>&amp;.<span class="ruby-identifier">school?</span>
+    <span class="ruby-identifier">reasons</span>.<span class="ruby-identifier">insert</span>(<span class="ruby-value">-2</span>, <span class="ruby-string">&quot;do_not_want_vaccination_at_school&quot;</span>)
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">reasons</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">label</span> = <span class="ruby-identifier">refusal_reason_label</span>(<span class="ruby-identifier">consent</span>, <span class="ruby-identifier">value</span>)
+    <span class="ruby-identifier">hint</span> =
+      <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(
+        <span class="ruby-node">&quot;activerecord.attributes.consent.reason_for_refusal_hints.#{value}&quot;</span>,
+        <span class="ruby-value">default:</span> <span class="ruby-keyword">nil</span>
+      )
 
-    <span class="ruby-constant">ConsentRefusalOption</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">value:</span>, <span class="ruby-value">label:</span>, <span class="ruby-value">divider:</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;other&quot;</span>)
+    <span class="ruby-constant">ConsentRefusalOption</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">value:</span>, <span class="ruby-value">label:</span>, <span class="ruby-value">hint:</span>, <span class="ruby-value">divider:</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;other&quot;</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -983,7 +992,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_response_tag-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 53</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_response_tag</span>(<span class="ruby-identifier">consent</span>)
   <span class="ruby-identifier">text</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">withdrawn?</span>
@@ -1067,7 +1076,7 @@
             </details>
           </div>
           <div class="method-source-code" id="refusal_reason_label-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 26</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/consents_helper.rb, line 35</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">refusal_reason_label</span>(<span class="ruby-identifier">consent</span>, <span class="ruby-identifier">reason_value</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">value</span> = <span class="ruby-identifier">reason_value</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">consent</span>&amp;.<span class="ruby-identifier">reason_for_refusal</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">blank?</span>
