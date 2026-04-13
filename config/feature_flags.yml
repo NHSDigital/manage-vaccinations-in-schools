@@ -41,6 +41,9 @@ import_concurrency_per_server: >-
 
 import_search_pds: Perform PDS lookups as part of the patient import processing.
 
+one_patient_per_parent: >-
+  Changes the assocation between parent and patient from many-many to many-one.
+
 ops_tools: Enable the operational support tools; timeline and graph.
 
 sync_national_reporting_to_imms_api: >-
