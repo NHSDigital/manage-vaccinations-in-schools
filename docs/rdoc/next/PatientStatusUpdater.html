@@ -585,6 +585,8 @@
 
         <li ><a href="#method-i-patient_statuses_to_import">patient_statuses_to_import</a></li>
 
+        <li ><a href="#method-i-preload_location_programme_year_groups">preload_location_programme_year_groups</a></li>
+
         <li ><a href="#method-i-programme_statuses_to_import">programme_statuses_to_import</a></li>
 
         <li ><a href="#method-i-programme_types_per_session_id_and_year_group">programme_types_per_session_id_and_year_group</a></li>
@@ -708,12 +710,19 @@
         <span class="ruby-value">:attendance_record</span>,
         <span class="ruby-value">:consents</span>,
         <span class="ruby-value">:patient</span>,
-        <span class="ruby-value">:patient_locations</span>,
         <span class="ruby-value">:triages</span>,
         <span class="ruby-value">:vaccination_records</span>,
-        <span class="ruby-value">:parents</span>
+        <span class="ruby-value">:parents</span>,
+        <span class="ruby-value">:consent_notifications</span>,
+        <span class="ruby-value">patient_locations:</span> {
+          <span class="ruby-value">location:</span> [
+            { <span class="ruby-value">team_locations:</span> { <span class="ruby-value">sessions:</span> <span class="ruby-value">:session_programme_year_groups</span> } }
+          ]
+        }
       )
       .<span class="ruby-identifier">find_in_batches</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">batch</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">preload_location_programme_year_groups</span>(<span class="ruby-identifier">batch</span>)
+
         <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:assign</span>)
 
         <span class="ruby-constant">Patient</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeStatus</span>.<span class="ruby-identifier">import!</span>(
@@ -841,6 +850,25 @@
           <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">session_id</span>][<span class="ruby-identifier">year_group</span>] <span class="ruby-operator">||=</span> []
           <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">session_id</span>][<span class="ruby-identifier">year_group</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">programme_type</span>
         <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># We preload this association separately because including it in the nested</span>
+  <span class="ruby-comment"># `patient_locations` preload (see includes above) caused the updater process</span>
+  <span class="ruby-comment"># to be killed, even with very small batches. The likely cause is memory pressure</span>
+  <span class="ruby-comment"># from eager loading a deeply nested association graph.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># Preloading it here for the distinct `Location` records in each batch keeps</span>
+  <span class="ruby-comment"># `StatusGenerator::Programme` query-free without incurring the cost of the</span>
+  <span class="ruby-comment"># larger nested preload.</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preload_location_programme_year_groups</span>(<span class="ruby-identifier">batch</span>)
+    <span class="ruby-identifier">locations</span> = <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:patient_locations</span>).<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:location</span>).<span class="ruby-identifier">uniq</span>
+
+    <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Associations</span><span class="ruby-operator">::</span><span class="ruby-constant">Preloader</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-value">records:</span> <span class="ruby-identifier">locations</span>,
+      <span class="ruby-value">associations:</span> {
+        <span class="ruby-value">location_programme_year_groups:</span> <span class="ruby-value">:location_year_group</span>
+      }
+    ).<span class="ruby-identifier">call</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -986,7 +1014,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_location_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 131</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 138</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_location_statuses_to_import</span>
   <span class="ruby-identifier">merge_patient_scope</span>(<span class="ruby-constant">PatientLocation</span>)
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>)
@@ -1049,7 +1077,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 101</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 108</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_statuses_to_import</span>
   <span class="ruby-ivar">@patient_statuses_to_import</span> <span class="ruby-operator">||=</span>
     (<span class="ruby-identifier">patient_scope</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">all</span>)
@@ -1085,6 +1113,57 @@
       </div>
 
 
+      <div id="method-i-preload_location_programme_year_groups" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-preload_location_programme_year_groups" title="Link to this method">
+                <span class="method-name">preload_location_programme_year_groups</span>
+                <span class="method-args">(batch)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="preload_location_programme_year_groups-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 199</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preload_location_programme_year_groups</span>(<span class="ruby-identifier">batch</span>)
+  <span class="ruby-identifier">locations</span> = <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:patient_locations</span>).<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:location</span>).<span class="ruby-identifier">uniq</span>
+
+  <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Associations</span><span class="ruby-operator">::</span><span class="ruby-constant">Preloader</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-value">records:</span> <span class="ruby-identifier">locations</span>,
+    <span class="ruby-value">associations:</span> {
+      <span class="ruby-value">location_programme_year_groups:</span> <span class="ruby-value">:location_year_group</span>
+    }
+  ).<span class="ruby-identifier">call</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>We preload this association separately because including it in the nested <code>patient_locations</code> preload (see includes above) caused the updater process to be killed, even with very small batches. The likely cause is memory pressure from eager loading a deeply nested association graph.</p>
+
+<p>Preloading it here for the distinct <a href="Location.html"><code>Location</code></a> records in each batch keeps <a href="StatusGenerator/Programme.html"><code>StatusGenerator::Programme</code></a> query-free without incurring the cost of the larger nested preload.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-programme_statuses_to_import" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1104,7 +1183,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 118</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_statuses_to_import</span>
   <span class="ruby-ivar">@programme_statuses_to_import</span> <span class="ruby-operator">||=</span>
     (<span class="ruby-identifier">patient_scope</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">all</span>)
@@ -1155,7 +1234,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_types_per_session_id_and_year_group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 169</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types_per_session_id_and_year_group</span>
   <span class="ruby-ivar">@programme_types_per_session_id_and_year_group</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Session</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
@@ -1208,7 +1287,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_types_per_year_group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 156</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 163</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types_per_year_group</span>
   <span class="ruby-ivar">@programme_types_per_year_group</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
@@ -1273,12 +1352,19 @@
       <span class="ruby-value">:attendance_record</span>,
       <span class="ruby-value">:consents</span>,
       <span class="ruby-value">:patient</span>,
-      <span class="ruby-value">:patient_locations</span>,
       <span class="ruby-value">:triages</span>,
       <span class="ruby-value">:vaccination_records</span>,
-      <span class="ruby-value">:parents</span>
+      <span class="ruby-value">:parents</span>,
+      <span class="ruby-value">:consent_notifications</span>,
+      <span class="ruby-value">patient_locations:</span> {
+        <span class="ruby-value">location:</span> [
+          { <span class="ruby-value">team_locations:</span> { <span class="ruby-value">sessions:</span> <span class="ruby-value">:session_programme_year_groups</span> } }
+        ]
+      }
     )
     .<span class="ruby-identifier">find_in_batches</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">batch</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">preload_location_programme_year_groups</span>(<span class="ruby-identifier">batch</span>)
+
       <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:assign</span>)
 
       <span class="ruby-constant">Patient</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeStatus</span>.<span class="ruby-identifier">import!</span>(
@@ -1338,7 +1424,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update_registration_statuses-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 77</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 84</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_registration_statuses!</span>
   <span class="ruby-constant">Patient</span><span class="ruby-operator">::</span><span class="ruby-constant">RegistrationStatus</span>.<span class="ruby-identifier">import!</span>(
     <span class="ruby-node">%i[patient_id session_id]</span>,

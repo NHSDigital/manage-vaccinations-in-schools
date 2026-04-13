@@ -812,7 +812,7 @@
             </details>
           </div>
           <div class="method-source-code" id="associate_triage_with_vaccination_record-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 263</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 265</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">associate_triage_with_vaccination_record</span>(<span class="ruby-identifier">next_dose_delay_triage</span>)
   <span class="ruby-identifier">vaccination_record</span> =
     <span class="ruby-identifier">patient</span>
@@ -861,7 +861,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_create_patient_specific_directions-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 187</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 189</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_create_patient_specific_directions?</span>
   <span class="ruby-constant">PatientSpecificDirectionPolicy</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-identifier">current_user</span>,
@@ -915,7 +915,9 @@
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> []
+      <span class="ruby-value">parents:</span> [],
+      <span class="ruby-value">sessions:</span> [],
+      <span class="ruby-value">consent_notifications:</span> []
     )
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1003,7 +1005,9 @@
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> []
+      <span class="ruby-value">parents:</span> [],
+      <span class="ruby-value">sessions:</span> [],
+      <span class="ruby-value">consent_notifications:</span> []
     )
 <span class="ruby-keyword">end</span>
 
@@ -1232,7 +1236,9 @@
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> []
+      <span class="ruby-value">parents:</span> [],
+      <span class="ruby-value">sessions:</span> [],
+      <span class="ruby-value">consent_notifications:</span> []
     )
 <span class="ruby-keyword">end</span>
 
@@ -1507,7 +1513,7 @@
             </details>
           </div>
           <div class="method-source-code" id="create_patient_specific_direction-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 202</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 204</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create_patient_specific_direction!</span>
   <span class="ruby-identifier">vaccine_method</span> = <span class="ruby-string">&quot;nasal&quot;</span>
 
@@ -1596,7 +1602,9 @@
         <span class="ruby-value">patient:</span>,
         <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
         <span class="ruby-value">vaccination_records:</span> [],
-        <span class="ruby-value">parents:</span> []
+        <span class="ruby-value">parents:</span> [],
+        <span class="ruby-value">sessions:</span> [],
+        <span class="ruby-value">consent_notifications:</span> []
       )
   <span class="ruby-keyword">end</span>
 
@@ -1824,7 +1832,7 @@
             </details>
           </div>
           <div class="method-source-code" id="handle_patient_specific_direction-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 194</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">handle_patient_specific_direction</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">add_patient_specific_direction</span>
     <span class="ruby-identifier">create_patient_specific_direction!</span>
@@ -1870,7 +1878,7 @@
             </details>
           </div>
           <div class="method-source-code" id="invalidate_patient_specific_directions-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 227</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 229</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
   <span class="ruby-identifier">patient</span>
     .<span class="ruby-identifier">patient_specific_directions</span>
@@ -2051,7 +2059,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_on_last_dose-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 274</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 276</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_on_last_dose?</span>
   <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
     <span class="ruby-identifier">programme</span>,
@@ -2126,7 +2134,9 @@
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> []
+      <span class="ruby-value">parents:</span> [],
+      <span class="ruby-value">sessions:</span> [],
+      <span class="ruby-value">consent_notifications:</span> []
     )
 <span class="ruby-keyword">end</span>
 
@@ -2311,7 +2321,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_add_patient_specific_direction-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 183</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 185</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_add_patient_specific_direction?</span>
   <span class="ruby-identifier">show_add_patient_specific_direction?</span>(<span class="ruby-identifier">status_option</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2381,7 +2391,9 @@
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> []
+      <span class="ruby-value">parents:</span> [],
+      <span class="ruby-value">sessions:</span> [],
+      <span class="ruby-value">consent_notifications:</span> []
     )
 <span class="ruby-keyword">end</span>
 
@@ -2748,7 +2760,7 @@
             </details>
           </div>
           <div class="method-source-code" id="status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 153</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 155</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">status</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">status_option</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;safe_to_vaccinate&quot;</span>, <span class="ruby-string">&quot;safe_to_vaccinate_injection&quot;</span>,
@@ -2889,7 +2901,7 @@
             </details>
           </div>
           <div class="method-source-code" id="triage_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 137</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 139</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_attributes</span>
   {
     <span class="ruby-value">academic_year:</span>,
@@ -2943,7 +2955,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 163</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">status_option</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;safe_to_vaccinate&quot;</span>, <span class="ruby-string">&quot;safe_to_vaccinate_without_gelatine&quot;</span>
@@ -2992,7 +3004,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_delay_vaccination_until_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 235</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 237</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_delay_vaccination_until_date</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">delay_vaccination_until</span>.<span class="ruby-identifier">nil?</span>
 
@@ -3058,7 +3070,7 @@
             </details>
           </div>
           <div class="method-source-code" id="without_gelatine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 174</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/triage_form.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">without_gelatine</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">status_option</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;safe_to_vaccinate_injection&quot;</span>, <span class="ruby-string">&quot;safe_to_vaccinate_without_gelatine&quot;</span>

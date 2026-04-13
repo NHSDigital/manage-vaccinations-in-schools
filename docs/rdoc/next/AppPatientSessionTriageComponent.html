@@ -675,6 +675,13 @@
   <span class="ruby-ivar">@current_user</span> = <span class="ruby-identifier">current_user</span>
   <span class="ruby-ivar">@triage_form</span> = <span class="ruby-identifier">triage_form</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">default_triage_form</span>
   <span class="ruby-ivar">@parents</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">parents</span>
+  <span class="ruby-ivar">@patient_locations</span> =
+    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">patient_locations</span>.<span class="ruby-identifier">includes</span>(
+      <span class="ruby-value">location:</span> [
+        <span class="ruby-value">:location_programme_year_groups</span>,
+        { <span class="ruby-value">team_locations:</span> { <span class="ruby-value">sessions:</span> <span class="ruby-value">:session_programme_year_groups</span> } }
+      ]
+    )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -728,7 +735,7 @@
             </details>
           </div>
           <div class="method-source-code" id="render-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_patient_session_triage_component.rb, line 19</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_patient_session_triage_component.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render?</span>
   <span class="ruby-identifier">consent_status_generator</span>.<span class="ruby-identifier">status</span> <span class="ruby-operator">==</span> <span class="ruby-value">:given</span> <span class="ruby-operator">||</span>
     <span class="ruby-identifier">triage_status_generator</span>.<span class="ruby-identifier">status</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:not_required</span>

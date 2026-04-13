@@ -682,7 +682,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">( programme_type:, academic_year:, patient:, patient_locations:, consents:, triages:, attendance_record:, vaccination_records:, parents: )</span>
+                <span class="method-args">( programme_type:, academic_year:, patient:, patient_locations:, consents:, triages:, attendance_record:, vaccination_records:, parents:, consent_notifications: )</span>
               </a>
             </div>
 
@@ -705,7 +705,8 @@
   <span class="ruby-value">triages:</span>,
   <span class="ruby-value">attendance_record:</span>,
   <span class="ruby-value">vaccination_records:</span>,
-  <span class="ruby-value">parents:</span>
+  <span class="ruby-value">parents:</span>,
+  <span class="ruby-value">consent_notifications:</span>
 )
   <span class="ruby-ivar">@programme_type</span> = <span class="ruby-identifier">programme_type</span>
   <span class="ruby-ivar">@academic_year</span> = <span class="ruby-identifier">academic_year</span>
@@ -716,6 +717,8 @@
   <span class="ruby-ivar">@attendance_record</span> = <span class="ruby-identifier">attendance_record</span>
   <span class="ruby-ivar">@vaccination_records</span> = <span class="ruby-identifier">vaccination_records</span>
   <span class="ruby-ivar">@parents</span> = <span class="ruby-identifier">parents</span>
+  <span class="ruby-ivar">@consent_notifications</span> =
+    <span class="ruby-identifier">find_matching_consent_notifications</span>(<span class="ruby-identifier">consent_notifications</span>)
 
   <span class="ruby-ivar">@vaccination_criteria</span> =
     <span class="ruby-constant">VaccinationCriteria</span>.<span class="ruby-identifier">new</span>(
@@ -779,7 +782,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 157</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 160</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_status</span>
   <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">status</span>
 <span class="ruby-keyword">end</span></pre>
@@ -821,7 +824,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 161</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_vaccine_methods</span>
   <span class="ruby-identifier">consent_generator</span>.<span class="ruby-identifier">vaccine_methods</span>
 <span class="ruby-keyword">end</span></pre>
@@ -863,7 +866,7 @@
             </details>
           </div>
           <div class="method-source-code" id="date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 138</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 141</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">date</span>
   <span class="ruby-keyword">if</span> (
        <span class="ruby-identifier">delay_vaccination_until_date</span> =
@@ -916,7 +919,7 @@
             </details>
           </div>
           <div class="method-source-code" id="disease_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 87</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 90</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">not_eligible?</span>
 
@@ -964,7 +967,7 @@
             </details>
           </div>
           <div class="method-source-code" id="dose_sequence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 97</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 100</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">is_eligible?</span>
 
@@ -1011,7 +1014,7 @@
             </details>
           </div>
           <div class="method-source-code" id="location_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 153</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 156</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_id</span>
   <span class="ruby-identifier">vaccinated_vaccination_record</span>&amp;.<span class="ruby-identifier">location_id</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1053,7 +1056,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 41</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 44</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme</span>
   <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>, <span class="ruby-value">disease_types:</span>, <span class="ruby-value">patient:</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1095,7 +1098,7 @@
             </details>
           </div>
           <div class="method-source-code" id="status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 45</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">status</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_be_vaccinated_already?</span>
     <span class="ruby-value">:vaccinated_already</span>
@@ -1175,7 +1178,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 120</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_methods</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">not_eligible?</span> <span class="ruby-operator">||</span>
        <span class="ruby-identifier">triage_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(
@@ -1231,7 +1234,7 @@
             </details>
           </div>
           <div class="method-source-code" id="without_gelatine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 106</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/programme.rb, line 109</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">without_gelatine</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">not_eligible?</span> <span class="ruby-operator">||</span>
        <span class="ruby-identifier">triage_generator</span>.<span class="ruby-identifier">status</span>.<span class="ruby-identifier">in?</span>(
