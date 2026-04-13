@@ -793,48 +793,20 @@
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_records</span>
-    <span class="ruby-identifier">scope</span> =
-      <span class="ruby-identifier">team</span>
-        .<span class="ruby-identifier">vaccination_records</span>
-        .<span class="ruby-identifier">sourced_from_service</span>
-        .<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>)
-        .<span class="ruby-identifier">for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
-        .<span class="ruby-identifier">includes</span>(
-          <span class="ruby-value">:location</span>,
-          <span class="ruby-value">:performed_by_user</span>,
-          <span class="ruby-value">:session</span>,
-          <span class="ruby-value">:supplied_by</span>,
-          <span class="ruby-value">:vaccine</span>,
-          <span class="ruby-value">patient:</span> <span class="ruby-node">%i[programme_statuses gp_practice school]</span>
-        )
-
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-identifier">scope</span> =
-        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;vaccination_records.created_at &gt;= ?&quot;</span>,
-          <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">beginning_of_day</span>
-        ).<span class="ruby-identifier">or</span>(
-          <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-            <span class="ruby-string">&quot;vaccination_records.updated_at &gt;= ?&quot;</span>,
-            <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">beginning_of_day</span>
-          )
-        )
-    <span class="ruby-keyword">end</span>
-
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-identifier">scope</span> =
-        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;vaccination_records.created_at &lt;= ?&quot;</span>,
-          <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">end_of_day</span>
-        ).<span class="ruby-identifier">or</span>(
-          <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-            <span class="ruby-string">&quot;vaccination_records.updated_at &lt;= ?&quot;</span>,
-            <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">end_of_day</span>
-          )
-        )
-    <span class="ruby-keyword">end</span>
-
-    <span class="ruby-identifier">scope</span>
+    <span class="ruby-identifier">team</span>
+      .<span class="ruby-identifier">vaccination_records</span>
+      .<span class="ruby-identifier">sourced_from_service</span>
+      .<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>)
+      .<span class="ruby-identifier">for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
+      .<span class="ruby-identifier">created_or_updated_between</span>(<span class="ruby-identifier">start_date</span>, <span class="ruby-identifier">end_date</span>)
+      .<span class="ruby-identifier">includes</span>(
+        <span class="ruby-value">:location</span>,
+        <span class="ruby-value">:performed_by_user</span>,
+        <span class="ruby-value">:session</span>,
+        <span class="ruby-value">:supplied_by</span>,
+        <span class="ruby-value">:vaccine</span>,
+        <span class="ruby-value">patient:</span> <span class="ruby-node">%i[programme_statuses gp_practice school]</span>
+      )
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consents</span>
@@ -1145,7 +1117,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consents-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 135</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 107</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consents</span>
   <span class="ruby-ivar">@consents</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Consent</span>
@@ -1200,7 +1172,7 @@
             </details>
           </div>
           <div class="method-source-code" id="gillick_assessments-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 152</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 124</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gillick_assessments</span>
   <span class="ruby-ivar">@gillick_assessments</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">GillickAssessment</span>
@@ -1259,7 +1231,7 @@
             </details>
           </div>
           <div class="method-source-code" id="gillick_notify_parents-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 271</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 243</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gillick_notify_parents</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">gillick_assessment:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">gillick_assessment</span>.<span class="ruby-identifier">nil?</span>
 
@@ -1403,7 +1375,7 @@
             </details>
           </div>
           <div class="method-source-code" id="nhs_number_status_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 258</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 230</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">nhs_number_status_code</span>(<span class="ruby-value">patient:</span>)
   <span class="ruby-identifier">present</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span>
   <span class="ruby-identifier">verified</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">updated_from_pds_at</span>.<span class="ruby-identifier">present?</span>
@@ -1454,7 +1426,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_for_inclusion-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 281</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 253</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_inclusion</span>(<span class="ruby-value">vaccination_record:</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">created_at</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">start_date</span>
     <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;updated&quot;</span>
@@ -1500,7 +1472,7 @@
             </details>
           </div>
           <div class="method-source-code" id="record_created_at-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 289</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 261</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">record_created_at</span>(<span class="ruby-value">vaccination_record:</span>)
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">iso8601</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1542,7 +1514,7 @@
             </details>
           </div>
           <div class="method-source-code" id="record_updated_at-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 293</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 265</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">record_updated_at</span>(<span class="ruby-value">vaccination_record:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">created_at</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">updated_at</span>
 
@@ -1586,7 +1558,7 @@
             </details>
           </div>
           <div class="method-source-code" id="row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 189</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 161</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">row</span>(<span class="ruby-value">vaccination_record:</span>)
   <span class="ruby-identifier">location</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">location</span>
   <span class="ruby-identifier">patient</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">patient</span>
@@ -1693,7 +1665,7 @@
             </details>
           </div>
           <div class="method-source-code" id="triages-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 173</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 145</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triages</span>
   <span class="ruby-ivar">@triages</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Triage</span>
@@ -1749,48 +1721,20 @@
           <div class="method-source-code" id="vaccination_records-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/programme_vaccinations_exporter.rb, line 90</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_records</span>
-  <span class="ruby-identifier">scope</span> =
-    <span class="ruby-identifier">team</span>
-      .<span class="ruby-identifier">vaccination_records</span>
-      .<span class="ruby-identifier">sourced_from_service</span>
-      .<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>)
-      .<span class="ruby-identifier">for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
-      .<span class="ruby-identifier">includes</span>(
-        <span class="ruby-value">:location</span>,
-        <span class="ruby-value">:performed_by_user</span>,
-        <span class="ruby-value">:session</span>,
-        <span class="ruby-value">:supplied_by</span>,
-        <span class="ruby-value">:vaccine</span>,
-        <span class="ruby-value">patient:</span> <span class="ruby-node">%i[programme_statuses gp_practice school]</span>
-      )
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">scope</span> =
-      <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-        <span class="ruby-string">&quot;vaccination_records.created_at &gt;= ?&quot;</span>,
-        <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">beginning_of_day</span>
-      ).<span class="ruby-identifier">or</span>(
-        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;vaccination_records.updated_at &gt;= ?&quot;</span>,
-          <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">beginning_of_day</span>
-        )
-      )
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">scope</span> =
-      <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-        <span class="ruby-string">&quot;vaccination_records.created_at &lt;= ?&quot;</span>,
-        <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">end_of_day</span>
-      ).<span class="ruby-identifier">or</span>(
-        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;vaccination_records.updated_at &lt;= ?&quot;</span>,
-          <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">end_of_day</span>
-        )
-      )
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">scope</span>
+  <span class="ruby-identifier">team</span>
+    .<span class="ruby-identifier">vaccination_records</span>
+    .<span class="ruby-identifier">sourced_from_service</span>
+    .<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>)
+    .<span class="ruby-identifier">for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
+    .<span class="ruby-identifier">created_or_updated_between</span>(<span class="ruby-identifier">start_date</span>, <span class="ruby-identifier">end_date</span>)
+    .<span class="ruby-identifier">includes</span>(
+      <span class="ruby-value">:location</span>,
+      <span class="ruby-value">:performed_by_user</span>,
+      <span class="ruby-value">:session</span>,
+      <span class="ruby-value">:supplied_by</span>,
+      <span class="ruby-value">:vaccine</span>,
+      <span class="ruby-value">patient:</span> <span class="ruby-node">%i[programme_statuses gp_practice school]</span>
+    )
 <span class="ruby-keyword">end</span></pre>
           </div>
 

@@ -564,6 +564,10 @@
 
         <li ><a href="#method-c-call">call</a></li>
 
+        <li ><a href="#method-c-from_records">from_records</a></li>
+
+        <li ><a href="#method-c-vaccination_records_scope">vaccination_records_scope</a></li>
+
       </ul>
     </details>
   </div>
@@ -626,6 +630,23 @@
 
 
 
+    <section class="constants-list">
+      <header>
+        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="VACCINE_COLUMNS">VACCINE_COLUMNS</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
+
 
 
 
@@ -658,24 +679,117 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/automated_careplus_exporter.rb, line 4</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/automated_careplus_exporter.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">start_date:</span>, <span class="ruby-value">end_date:</span>)
   <span class="ruby-constant">Reports</span><span class="ruby-operator">::</span><span class="ruby-constant">CareplusExporter</span>.<span class="ruby-identifier">call</span>(
+    <span class="ruby-operator">**</span><span class="ruby-identifier">shared_args</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>),
+    <span class="ruby-value">start_date:</span>,
+    <span class="ruby-value">end_date:</span>,
+    <span class="ruby-value">include_missing_nhs_number:</span> <span class="ruby-keyword">false</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-from_records" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-from_records" title="Link to this method">
+                <span class="method-name">from_records</span>
+                <span class="method-args">(vaccination_records:, team:, academic_year:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="from_records-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/automated_careplus_exporter.rb, line 22</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_records</span>(<span class="ruby-value">vaccination_records:</span>, <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>)
+  <span class="ruby-constant">Reports</span><span class="ruby-operator">::</span><span class="ruby-constant">CareplusExporter</span>.<span class="ruby-identifier">from_records</span>(
+    <span class="ruby-operator">**</span><span class="ruby-identifier">shared_args</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>),
+    <span class="ruby-value">vaccination_records:</span>
+      <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">includes</span>(
+        <span class="ruby-value">:patient</span>,
+        <span class="ruby-value">:vaccine</span>,
+        <span class="ruby-value">session:</span> <span class="ruby-node">%i[location team_location]</span>
+      )
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-vaccination_records_scope" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-vaccination_records_scope" title="Link to this method">
+                <span class="method-name">vaccination_records_scope</span>
+                <span class="method-args">( team:, academic_year:, start_date:, end_date: )</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="vaccination_records_scope-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/automated_careplus_exporter.rb, line 34</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">vaccination_records_scope</span>(
+  <span class="ruby-value">team:</span>,
+  <span class="ruby-value">academic_year:</span>,
+  <span class="ruby-value">start_date:</span>,
+  <span class="ruby-value">end_date:</span>
+)
+  <span class="ruby-constant">Reports</span><span class="ruby-operator">::</span><span class="ruby-constant">CareplusExporter</span>.<span class="ruby-identifier">vaccination_records_scope</span>(
     <span class="ruby-value">team:</span>,
     <span class="ruby-value">programmes:</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">programmes</span>,
     <span class="ruby-value">academic_year:</span>,
     <span class="ruby-value">start_date:</span>,
     <span class="ruby-value">end_date:</span>,
-    <span class="ruby-value">include_gender:</span> <span class="ruby-keyword">false</span>,
-    <span class="ruby-value">include_missing_nhs_number:</span> <span class="ruby-keyword">false</span>,
-    <span class="ruby-value">vaccine_columns:</span> <span class="ruby-node">%i[
-      vaccine
-      dose
-      reason_not_given
-      site
-      manufacturer
-      batch_number
-    ]</span>
+    <span class="ruby-value">include_missing_nhs_number:</span> <span class="ruby-keyword">false</span>
   )
 <span class="ruby-keyword">end</span></pre>
           </div>

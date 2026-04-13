@@ -564,7 +564,9 @@
 
         <li ><a href="#method-c-call">call</a></li>
 
-        <li ><a href="#method-c-new">new</a></li>
+        <li ><a href="#method-c-from_records">from_records</a></li>
+
+        <li ><a href="#method-c-vaccination_records_scope">vaccination_records_scope</a></li>
 
       </ul>
     </details>
@@ -585,33 +587,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-blank_vaccine_fields">blank_vaccine_fields</a></li>
-
         <li ><a href="#method-i-call">call</a></li>
-
-        <li ><a href="#method-i-coded_site">coded_site</a></li>
-
-        <li ><a href="#method-i-consents">consents</a></li>
-
-        <li ><a href="#method-i-dose_sequence_code">dose_sequence_code</a></li>
-
-        <li ><a href="#method-i-gender_headers">gender_headers</a></li>
-
-        <li ><a href="#method-i-gender_row_value">gender_row_value</a></li>
-
-        <li ><a href="#method-i-headers">headers</a></li>
-
-        <li ><a href="#method-i-rows">rows</a></li>
-
-        <li ><a href="#method-i-vaccination_records">vaccination_records</a></li>
-
-        <li ><a href="#method-i-vaccine_code">vaccine_code</a></li>
-
-        <li ><a href="#method-i-vaccine_column_headers">vaccine_column_headers</a></li>
-
-        <li ><a href="#method-i-vaccine_field_value">vaccine_field_value</a></li>
-
-        <li ><a href="#method-i-vaccine_fields">vaccine_fields</a></li>
 
       </ul>
     </details>
@@ -725,7 +701,7 @@
             <div class="method-heading">
               <a href="#method-c-call" title="Link to this method">
                 <span class="method-name">call</span>
-                <span class="method-args">(...)</span>
+                <span class="method-args">( team:, programmes:, academic_year:, start_date:, end_date:, include_gender:, include_missing_nhs_number:, vaccine_columns: )</span>
               </a>
             </div>
 
@@ -738,271 +714,35 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 60</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">call</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 56</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(
+  <span class="ruby-value">team:</span>,
+  <span class="ruby-value">programmes:</span>,
+  <span class="ruby-value">academic_year:</span>,
+  <span class="ruby-value">start_date:</span>,
+  <span class="ruby-value">end_date:</span>,
+  <span class="ruby-value">include_gender:</span>,
+  <span class="ruby-value">include_missing_nhs_number:</span>,
+  <span class="ruby-value">vaccine_columns:</span>
+)
+  <span class="ruby-identifier">vaccination_records</span> =
+    <span class="ruby-identifier">vaccination_records_scope</span>(
+      <span class="ruby-value">team:</span>,
+      <span class="ruby-value">programmes:</span>,
+      <span class="ruby-value">academic_year:</span>,
+      <span class="ruby-value">start_date:</span>,
+      <span class="ruby-value">end_date:</span>,
+      <span class="ruby-value">include_missing_nhs_number:</span>
+    ).<span class="ruby-identifier">includes</span>(<span class="ruby-value">:patient</span>, <span class="ruby-value">:vaccine</span>, <span class="ruby-value">session:</span> <span class="ruby-node">%i[location team_location]</span>)
 
-  <span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
-
-  <span class="ruby-identifier">private</span>
-
-  <span class="ruby-constant">GENDER_CODE_MAPPINGS</span> = {
-    <span class="ruby-value">female:</span> <span class="ruby-string">&quot;F&quot;</span>,
-    <span class="ruby-value">male:</span> <span class="ruby-string">&quot;M&quot;</span>,
-    <span class="ruby-value">not_known:</span> <span class="ruby-string">&quot;U&quot;</span>,
-    <span class="ruby-value">not_specified:</span> <span class="ruby-string">&quot;I&quot;</span>
-  }.<span class="ruby-identifier">with_indifferent_access</span>.<span class="ruby-identifier">freeze</span>
-
-  <span class="ruby-identifier">attr_reader</span> <span class="ruby-value">:team</span>,
-              <span class="ruby-value">:programmes</span>,
-              <span class="ruby-value">:academic_year</span>,
-              <span class="ruby-value">:start_date</span>,
-              <span class="ruby-value">:end_date</span>,
-              <span class="ruby-value">:include_gender</span>,
-              <span class="ruby-value">:include_missing_nhs_number</span>,
-              <span class="ruby-value">:vaccine_columns</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">headers</span>
-    [
-      <span class="ruby-string">&quot;NHS Number&quot;</span>,
-      <span class="ruby-string">&quot;Surname&quot;</span>,
-      <span class="ruby-string">&quot;Forename&quot;</span>,
-      <span class="ruby-string">&quot;Date of Birth&quot;</span>,
-      <span class="ruby-string">&quot;Address Line 1&quot;</span>,
-      <span class="ruby-string">&quot;Person Giving Consent&quot;</span>,
-      <span class="ruby-string">&quot;Ethnicity&quot;</span>,
-      <span class="ruby-string">&quot;Date Attended&quot;</span>,
-      <span class="ruby-string">&quot;Time Attended&quot;</span>,
-      <span class="ruby-string">&quot;Venue Type&quot;</span>,
-      <span class="ruby-string">&quot;Venue Code&quot;</span>,
-      <span class="ruby-string">&quot;Staff Type&quot;</span>,
-      <span class="ruby-string">&quot;Staff Code&quot;</span>,
-      <span class="ruby-string">&quot;Attended&quot;</span>,
-      <span class="ruby-string">&quot;Reason Not Attended&quot;</span>,
-      <span class="ruby-string">&quot;Suspension End Date&quot;</span>,
-      <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">1</span>),
-      <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">2</span>),
-      <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">3</span>),
-      <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">4</span>),
-      <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">5</span>),
-      <span class="ruby-operator">*</span><span class="ruby-identifier">gender_headers</span>
-    ]
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_column_headers</span>(<span class="ruby-identifier">number</span>)
-    <span class="ruby-identifier">vaccine_columns</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">column</span><span class="ruby-operator">|</span>
-      <span class="ruby-node">&quot;#{VACCINE_COLUMN_HEADINGS.fetch(column)} #{number}&quot;</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gender_headers</span>
-    <span class="ruby-identifier">include_gender</span> <span class="ruby-operator">?</span> [<span class="ruby-string">&quot;Gender&quot;</span>] <span class="ruby-operator">:</span> []
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gender_row_value</span>(<span class="ruby-identifier">patient</span>)
-    <span class="ruby-identifier">include_gender</span> <span class="ruby-operator">?</span> [<span class="ruby-constant">GENDER_CODE_MAPPINGS</span>[<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">gender_code</span>]] <span class="ruby-operator">:</span> []
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_records</span>
-    <span class="ruby-identifier">scope</span> =
-      <span class="ruby-constant">VaccinationRecord</span>
-        .<span class="ruby-identifier">kept</span>
-        .<span class="ruby-identifier">sourced_from_service</span>
-        .<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>)
-        .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_location:</span> { <span class="ruby-value">team_id:</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">id</span> })
-        .<span class="ruby-identifier">for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
-        .<span class="ruby-identifier">administered</span>
-        .<span class="ruby-identifier">order_by_performed_at</span>
-        .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:patient</span>, <span class="ruby-value">:vaccine</span>, <span class="ruby-value">session:</span> <span class="ruby-node">%i[location team_location]</span>)
-
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-identifier">scope</span> =
-        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;vaccination_records.created_at &gt;= ?&quot;</span>,
-          <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">beginning_of_day</span>
-        ).<span class="ruby-identifier">or</span>(
-          <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-            <span class="ruby-string">&quot;vaccination_records.updated_at &gt;= ?&quot;</span>,
-            <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">beginning_of_day</span>
-          )
-        )
-    <span class="ruby-keyword">end</span>
-
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-identifier">scope</span> =
-        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;vaccination_records.created_at &lt;= ?&quot;</span>,
-          <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">end_of_day</span>
-        ).<span class="ruby-identifier">or</span>(
-          <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-            <span class="ruby-string">&quot;vaccination_records.updated_at &lt;= ?&quot;</span>,
-            <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">end_of_day</span>
-          )
-        )
-    <span class="ruby-keyword">end</span>
-
-    <span class="ruby-identifier">scope</span> =
-      <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>).<span class="ruby-identifier">merge</span>(
-        <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">with_nhs_number</span>
-      ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">include_missing_nhs_number</span>
-
-    <span class="ruby-identifier">scope</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consents</span>
-    <span class="ruby-ivar">@consents</span> <span class="ruby-operator">||=</span>
-      <span class="ruby-constant">Consent</span>
-        .<span class="ruby-identifier">select</span>(<span class="ruby-string">&quot;DISTINCT ON (patient_id) consents.*&quot;</span>)
-        .<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>)
-        .<span class="ruby-identifier">where</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span>(<span class="ruby-value">:patient_id</span>), <span class="ruby-value">academic_year:</span>)
-        .<span class="ruby-identifier">not_invalidated</span>
-        .<span class="ruby-identifier">response_given</span>
-        .<span class="ruby-identifier">order</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-value">created_at:</span> <span class="ruby-value">:desc</span>)
-        .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:parent</span>, <span class="ruby-value">:patient</span>)
-        .<span class="ruby-identifier">group_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:patient_id</span>)
-        .<span class="ruby-identifier">transform_values</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:first</span>)
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rows</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">vaccination_records:</span>)
-    <span class="ruby-identifier">vaccination_records</span>
-      .<span class="ruby-identifier">group_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:session</span>)
-      .<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">session</span>, <span class="ruby-identifier">records_in_same_session</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">records_in_same_session</span>
-          .<span class="ruby-identifier">group_by</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">to_date</span> }
-          .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">date</span>, <span class="ruby-identifier">records</span><span class="ruby-operator">|</span>
-            [
-              <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>,
-              <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">family_name</span>,
-              <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">given_name</span>,
-              <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d/%m/%Y&quot;</span>),
-              <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">restricted?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">address_line_1</span>,
-              <span class="ruby-identifier">consents</span>[<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">id</span>]&amp;.<span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>,
-              <span class="ruby-comment"># We use an empty value for ethnicity, rather than the official unknown value of 99,</span>
-              <span class="ruby-comment"># to prevent overwriting existing values in CarePlus</span>
-              <span class="ruby-string">&quot;&quot;</span>,
-              <span class="ruby-identifier">date</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d/%m/%Y&quot;</span>),
-              <span class="ruby-identifier">records</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%H:%M&quot;</span>),
-              <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;SC&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;CL&quot;</span>, <span class="ruby-comment"># Venue Type</span>
-              <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">dfe_number</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_venue_code</span>, <span class="ruby-comment"># Venue Code</span>
-              <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_staff_type</span>,
-              <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_staff_code</span>,
-              <span class="ruby-string">&quot;Y&quot;</span>, <span class="ruby-comment"># Attended; Did not attends do not get recorded on GP systems</span>
-              <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-comment"># Reason Not Attended; Always blank</span>
-              <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-comment"># Suspension End Date; Doesn&#39;t need to be used</span>
-              <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">0</span>),
-              <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">1</span>),
-              <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">2</span>),
-              <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">3</span>),
-              <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">4</span>),
-              <span class="ruby-operator">*</span><span class="ruby-identifier">gender_row_value</span>(<span class="ruby-identifier">patient</span>)
-            ]
-          <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blank_vaccine_fields</span>
-    <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">vaccine_columns</span>.<span class="ruby-identifier">length</span>, <span class="ruby-string">&quot;&quot;</span>)
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_fields</span>(<span class="ruby-identifier">vaccination_records</span>, <span class="ruby-identifier">index</span>)
-    <span class="ruby-identifier">record</span> = <span class="ruby-identifier">vaccination_records</span>[<span class="ruby-identifier">index</span>]
-    <span class="ruby-keyword">return</span> <span class="ruby-identifier">blank_vaccine_fields</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">record</span>
-
-    <span class="ruby-identifier">vaccine_columns</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">column</span><span class="ruby-operator">|</span> <span class="ruby-identifier">vaccine_field_value</span>(<span class="ruby-identifier">column</span>, <span class="ruby-identifier">record</span>) }
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_field_value</span>(<span class="ruby-identifier">column</span>, <span class="ruby-identifier">record</span>)
-    <span class="ruby-keyword">case</span> <span class="ruby-identifier">column</span>
-    <span class="ruby-keyword">when</span> <span class="ruby-value">:vaccine</span>
-      <span class="ruby-identifier">record</span>.<span class="ruby-identifier">vaccine</span>.<span class="ruby-identifier">snomed_product_code</span>
-    <span class="ruby-keyword">when</span> <span class="ruby-value">:vaccine_code</span>
-      <span class="ruby-identifier">vaccine_code</span>(<span class="ruby-identifier">record</span>)
-    <span class="ruby-keyword">when</span> <span class="ruby-value">:dose</span>
-      <span class="ruby-identifier">dose_sequence_code</span>(<span class="ruby-identifier">record</span>)
-    <span class="ruby-keyword">when</span> <span class="ruby-value">:reason_not_given</span>
-      <span class="ruby-string">&quot;&quot;</span>
-    <span class="ruby-keyword">when</span> <span class="ruby-value">:site</span>
-      <span class="ruby-identifier">coded_site</span>(<span class="ruby-identifier">record</span>.<span class="ruby-identifier">delivery_site</span>)
-    <span class="ruby-keyword">when</span> <span class="ruby-value">:manufacturer</span>
-      <span class="ruby-identifier">record</span>.<span class="ruby-identifier">vaccine</span>.<span class="ruby-identifier">manufacturer</span>
-    <span class="ruby-keyword">when</span> <span class="ruby-value">:batch_number</span>
-      <span class="ruby-identifier">record</span>.<span class="ruby-identifier">batch_number</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unknown vaccine column: #{column}&quot;</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-comment"># Official list of Careplus codes</span>
-  <span class="ruby-comment"># AB: Abdomen</span>
-  <span class="ruby-comment"># ALT: Anterolateral Thigh</span>
-  <span class="ruby-comment"># L: Left</span>
-  <span class="ruby-comment"># LA: Left Arm</span>
-  <span class="ruby-comment"># LALT: Left Upper Anterolateral Thigh</span>
-  <span class="ruby-comment"># LB: Left Buttock</span>
-  <span class="ruby-comment"># LL: Left Leg</span>
-  <span class="ruby-comment"># LLIF: Left Lower Inside Forearm</span>
-  <span class="ruby-comment"># LT: Left Thigh</span>
-  <span class="ruby-comment"># MOU: Mouth</span>
-  <span class="ruby-comment"># N: Nasal</span>
-  <span class="ruby-comment"># NA: Not Applicable</span>
-  <span class="ruby-comment"># NK: Not Known</span>
-  <span class="ruby-comment"># O: Other</span>
-  <span class="ruby-comment"># R: Right</span>
-  <span class="ruby-comment"># RA: Right Arm</span>
-  <span class="ruby-comment"># RALT: Right Upper Anterolateral Thigh</span>
-  <span class="ruby-comment"># RB: Right Buttock</span>
-  <span class="ruby-comment"># RL: Right Leg</span>
-  <span class="ruby-comment"># RLIF: Right Lower Inside Forearm</span>
-  <span class="ruby-comment"># RT: Right Thigh</span>
-  <span class="ruby-comment"># U: Unconfirmed</span>
-  <span class="ruby-comment"># UA: Upper Arm</span>
-  <span class="ruby-comment"># ULA: Upper Left Arm</span>
-  <span class="ruby-comment"># URA: Upper Right Arm</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">coded_site</span>(<span class="ruby-identifier">site</span>)
-    {
-      <span class="ruby-value">left_arm_upper_position:</span> <span class="ruby-string">&quot;ULA&quot;</span>,
-      <span class="ruby-value">left_arm_lower_position:</span> <span class="ruby-string">&quot;ULA&quot;</span>,
-      <span class="ruby-value">right_arm_upper_position:</span> <span class="ruby-string">&quot;URA&quot;</span>,
-      <span class="ruby-value">right_arm_lower_position:</span> <span class="ruby-string">&quot;URA&quot;</span>,
-      <span class="ruby-value">left_thigh:</span> <span class="ruby-string">&quot;LT&quot;</span>,
-      <span class="ruby-value">right_thigh:</span> <span class="ruby-string">&quot;RT&quot;</span>,
-      <span class="ruby-value">left_buttock:</span> <span class="ruby-string">&quot;LB&quot;</span>,
-      <span class="ruby-value">right_buttock:</span> <span class="ruby-string">&quot;RB&quot;</span>,
-      <span class="ruby-value">nose:</span> <span class="ruby-string">&quot;N&quot;</span>
-      <span class="ruby-comment"># We don&#39;t implement the other codes currently</span>
-    }.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">site</span>.<span class="ruby-identifier">to_sym</span>)
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_code</span>(<span class="ruby-identifier">record</span>)
-    <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">dose_sequence</span>.<span class="ruby-identifier">blank?</span>
-
-    <span class="ruby-keyword">if</span> (<span class="ruby-identifier">dose_codes</span> = <span class="ruby-constant">DOSE_CODES</span>[<span class="ruby-identifier">record</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>])
-      <span class="ruby-identifier">dose_codes</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">record</span>.<span class="ruby-identifier">dose_sequence</span>) <span class="ruby-keyword">do</span>
-        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unexpected dose sequence: #{record.dose_sequence}&quot;</span>
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-node">&quot;#{record.dose_sequence}P&quot;</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_code</span>(<span class="ruby-identifier">vaccination_record</span>)
-    <span class="ruby-identifier">programme</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">programme</span>
-
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">delivery_method_nasal_spray?</span>
-      <span class="ruby-string">&quot;FLUENZ&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span>
-      <span class="ruby-string">&quot;FLU&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">hpv?</span>
-      <span class="ruby-string">&quot;HPV&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">menacwy?</span>
-      <span class="ruby-string">&quot;ACWYX4&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
-      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmrv_variant?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;MMRV&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;MMR&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">td_ipv?</span>
-      <span class="ruby-string">&quot;3IN1&quot;</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unknown programme: #{programme.type}&quot;</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">from_records</span>(
+    <span class="ruby-value">vaccination_records:</span>,
+    <span class="ruby-value">team:</span>,
+    <span class="ruby-value">programmes:</span>,
+    <span class="ruby-value">academic_year:</span>,
+    <span class="ruby-value">include_gender:</span>,
+    <span class="ruby-value">vaccine_columns:</span>
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1023,13 +763,13 @@
       </div>
 
 
-      <div id="method-c-new" class="method-detail anchor-link ">
+      <div id="method-c-from_records" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-c-new" title="Link to this method">
-                <span class="method-name">new</span>
-                <span class="method-args">( team:, programmes:, academic_year:, start_date:, end_date:, include_gender:, include_missing_nhs_number:, vaccine_columns: )</span>
+              <a href="#method-c-from_records" title="Link to this method">
+                <span class="method-name">from_records</span>
+                <span class="method-args">( vaccination_records:, team:, programmes:, academic_year:, include_gender:, vaccine_columns: )</span>
               </a>
             </div>
 
@@ -1041,26 +781,88 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 29</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(
+          <div class="method-source-code" id="from_records-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_records</span>(
+  <span class="ruby-value">vaccination_records:</span>,
+  <span class="ruby-value">team:</span>,
+  <span class="ruby-value">programmes:</span>,
+  <span class="ruby-value">academic_year:</span>,
+  <span class="ruby-value">include_gender:</span>,
+  <span class="ruby-value">vaccine_columns:</span>
+)
+  <span class="ruby-identifier">new</span>(
+    <span class="ruby-value">vaccination_records:</span>,
+    <span class="ruby-value">team:</span>,
+    <span class="ruby-value">programmes:</span>,
+    <span class="ruby-value">academic_year:</span>,
+    <span class="ruby-value">include_gender:</span>,
+    <span class="ruby-value">vaccine_columns:</span>
+  ).<span class="ruby-identifier">call</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-vaccination_records_scope" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-vaccination_records_scope" title="Link to this method">
+                <span class="method-name">vaccination_records_scope</span>
+                <span class="method-args">( team:, programmes:, academic_year:, start_date:, end_date:, include_missing_nhs_number: )</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="vaccination_records_scope-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">vaccination_records_scope</span>(
   <span class="ruby-value">team:</span>,
   <span class="ruby-value">programmes:</span>,
   <span class="ruby-value">academic_year:</span>,
   <span class="ruby-value">start_date:</span>,
   <span class="ruby-value">end_date:</span>,
-  <span class="ruby-value">include_gender:</span>,
-  <span class="ruby-value">include_missing_nhs_number:</span>,
-  <span class="ruby-value">vaccine_columns:</span>
+  <span class="ruby-value">include_missing_nhs_number:</span>
 )
-  <span class="ruby-ivar">@team</span> = <span class="ruby-identifier">team</span>
-  <span class="ruby-ivar">@programmes</span> = <span class="ruby-identifier">programmes</span>
-  <span class="ruby-ivar">@academic_year</span> = <span class="ruby-identifier">academic_year</span>
-  <span class="ruby-ivar">@start_date</span> = <span class="ruby-identifier">start_date</span>
-  <span class="ruby-ivar">@end_date</span> = <span class="ruby-identifier">end_date</span>
-  <span class="ruby-ivar">@include_gender</span> = <span class="ruby-identifier">include_gender</span>
-  <span class="ruby-ivar">@include_missing_nhs_number</span> = <span class="ruby-identifier">include_missing_nhs_number</span>
-  <span class="ruby-ivar">@vaccine_columns</span> = <span class="ruby-identifier">vaccine_columns</span>
+  <span class="ruby-identifier">scope</span> =
+    <span class="ruby-identifier">team</span>
+      .<span class="ruby-identifier">vaccination_records</span>
+      .<span class="ruby-identifier">sourced_from_service</span>
+      .<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>)
+      .<span class="ruby-identifier">for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
+      .<span class="ruby-identifier">administered</span>
+      .<span class="ruby-identifier">order_by_performed_at</span>
+      .<span class="ruby-identifier">created_or_updated_between</span>(<span class="ruby-identifier">start_date</span>, <span class="ruby-identifier">end_date</span>)
+
+  <span class="ruby-identifier">scope</span> =
+    <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>).<span class="ruby-identifier">merge</span>(
+      <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">with_nhs_number</span>
+    ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">include_missing_nhs_number</span>
+
+  <span class="ruby-identifier">scope</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1095,48 +897,6 @@
        </header>
 
 
-      <div id="method-i-blank_vaccine_fields" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-blank_vaccine_fields" title="Link to this method">
-                <span class="method-name">blank_vaccine_fields</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="blank_vaccine_fields-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 220</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blank_vaccine_fields</span>
-  <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">vaccine_columns</span>.<span class="ruby-identifier">length</span>, <span class="ruby-string">&quot;&quot;</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
       <div id="method-i-call" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1156,7 +916,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 49</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>
   <span class="ruby-constant">CSV</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-value">headers:</span>, <span class="ruby-value">write_headers:</span> <span class="ruby-keyword">true</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">csv</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">vaccination_records</span>
@@ -1166,675 +926,6 @@
         <span class="ruby-identifier">rows</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">vaccination_records:</span>).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span> <span class="ruby-identifier">csv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">row</span> }
       <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-coded_site" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-coded_site" title="Link to this method">
-                <span class="method-name">coded_site</span>
-                <span class="method-args">(site)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="coded_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 278</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">coded_site</span>(<span class="ruby-identifier">site</span>)
-  {
-    <span class="ruby-value">left_arm_upper_position:</span> <span class="ruby-string">&quot;ULA&quot;</span>,
-    <span class="ruby-value">left_arm_lower_position:</span> <span class="ruby-string">&quot;ULA&quot;</span>,
-    <span class="ruby-value">right_arm_upper_position:</span> <span class="ruby-string">&quot;URA&quot;</span>,
-    <span class="ruby-value">right_arm_lower_position:</span> <span class="ruby-string">&quot;URA&quot;</span>,
-    <span class="ruby-value">left_thigh:</span> <span class="ruby-string">&quot;LT&quot;</span>,
-    <span class="ruby-value">right_thigh:</span> <span class="ruby-string">&quot;RT&quot;</span>,
-    <span class="ruby-value">left_buttock:</span> <span class="ruby-string">&quot;LB&quot;</span>,
-    <span class="ruby-value">right_buttock:</span> <span class="ruby-string">&quot;RB&quot;</span>,
-    <span class="ruby-value">nose:</span> <span class="ruby-string">&quot;N&quot;</span>
-    <span class="ruby-comment"># We don&#39;t implement the other codes currently</span>
-  }.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">site</span>.<span class="ruby-identifier">to_sym</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          <p>Official list of Careplus codes AB: Abdomen ALT: Anterolateral Thigh L: Left LA: Left Arm LALT: Left Upper Anterolateral Thigh LB: Left Buttock LL: Left Leg LLIF: Left Lower Inside Forearm LT: Left Thigh MOU: Mouth N: Nasal NA: Not Applicable NK: Not Known O: Other R: Right RA: Right Arm RALT: Right Upper Anterolateral Thigh RB: Right Buttock RL: Right Leg RLIF: Right Lower Inside Forearm RT: Right Thigh U: Unconfirmed UA: Upper Arm ULA: Upper Left Arm URA: Upper Right Arm</p>
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-consents" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-consents" title="Link to this method">
-                <span class="method-name">consents</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="consents-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 169</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consents</span>
-  <span class="ruby-ivar">@consents</span> <span class="ruby-operator">||=</span>
-    <span class="ruby-constant">Consent</span>
-      .<span class="ruby-identifier">select</span>(<span class="ruby-string">&quot;DISTINCT ON (patient_id) consents.*&quot;</span>)
-      .<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>)
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span>(<span class="ruby-value">:patient_id</span>), <span class="ruby-value">academic_year:</span>)
-      .<span class="ruby-identifier">not_invalidated</span>
-      .<span class="ruby-identifier">response_given</span>
-      .<span class="ruby-identifier">order</span>(<span class="ruby-value">:patient_id</span>, <span class="ruby-value">created_at:</span> <span class="ruby-value">:desc</span>)
-      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:parent</span>, <span class="ruby-value">:patient</span>)
-      .<span class="ruby-identifier">group_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:patient_id</span>)
-      .<span class="ruby-identifier">transform_values</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:first</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-dose_sequence_code" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-dose_sequence_code" title="Link to this method">
-                <span class="method-name">dose_sequence_code</span>
-                <span class="method-args">(record)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="dose_sequence_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 293</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_code</span>(<span class="ruby-identifier">record</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">dose_sequence</span>.<span class="ruby-identifier">blank?</span>
-
-  <span class="ruby-keyword">if</span> (<span class="ruby-identifier">dose_codes</span> = <span class="ruby-constant">DOSE_CODES</span>[<span class="ruby-identifier">record</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>])
-    <span class="ruby-identifier">dose_codes</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">record</span>.<span class="ruby-identifier">dose_sequence</span>) <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unexpected dose sequence: #{record.dose_sequence}&quot;</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-node">&quot;#{record.dose_sequence}P&quot;</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-gender_headers" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-gender_headers" title="Link to this method">
-                <span class="method-name">gender_headers</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="gender_headers-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 115</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gender_headers</span>
-  <span class="ruby-identifier">include_gender</span> <span class="ruby-operator">?</span> [<span class="ruby-string">&quot;Gender&quot;</span>] <span class="ruby-operator">:</span> []
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-gender_row_value" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-gender_row_value" title="Link to this method">
-                <span class="method-name">gender_row_value</span>
-                <span class="method-args">(patient)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="gender_row_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 119</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gender_row_value</span>(<span class="ruby-identifier">patient</span>)
-  <span class="ruby-identifier">include_gender</span> <span class="ruby-operator">?</span> [<span class="ruby-constant">GENDER_CODE_MAPPINGS</span>[<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">gender_code</span>]] <span class="ruby-operator">:</span> []
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-headers" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-headers" title="Link to this method">
-                <span class="method-name">headers</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="headers-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 82</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">headers</span>
-  [
-    <span class="ruby-string">&quot;NHS Number&quot;</span>,
-    <span class="ruby-string">&quot;Surname&quot;</span>,
-    <span class="ruby-string">&quot;Forename&quot;</span>,
-    <span class="ruby-string">&quot;Date of Birth&quot;</span>,
-    <span class="ruby-string">&quot;Address Line 1&quot;</span>,
-    <span class="ruby-string">&quot;Person Giving Consent&quot;</span>,
-    <span class="ruby-string">&quot;Ethnicity&quot;</span>,
-    <span class="ruby-string">&quot;Date Attended&quot;</span>,
-    <span class="ruby-string">&quot;Time Attended&quot;</span>,
-    <span class="ruby-string">&quot;Venue Type&quot;</span>,
-    <span class="ruby-string">&quot;Venue Code&quot;</span>,
-    <span class="ruby-string">&quot;Staff Type&quot;</span>,
-    <span class="ruby-string">&quot;Staff Code&quot;</span>,
-    <span class="ruby-string">&quot;Attended&quot;</span>,
-    <span class="ruby-string">&quot;Reason Not Attended&quot;</span>,
-    <span class="ruby-string">&quot;Suspension End Date&quot;</span>,
-    <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">1</span>),
-    <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">2</span>),
-    <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">3</span>),
-    <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">4</span>),
-    <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_column_headers</span>(<span class="ruby-value">5</span>),
-    <span class="ruby-operator">*</span><span class="ruby-identifier">gender_headers</span>
-  ]
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-rows" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-rows" title="Link to this method">
-                <span class="method-name">rows</span>
-                <span class="method-args">(patient:, vaccination_records:)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="rows-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 183</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rows</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">vaccination_records:</span>)
-  <span class="ruby-identifier">vaccination_records</span>
-    .<span class="ruby-identifier">group_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:session</span>)
-    .<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">session</span>, <span class="ruby-identifier">records_in_same_session</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">records_in_same_session</span>
-        .<span class="ruby-identifier">group_by</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">to_date</span> }
-        .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">date</span>, <span class="ruby-identifier">records</span><span class="ruby-operator">|</span>
-          [
-            <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>,
-            <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">family_name</span>,
-            <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">given_name</span>,
-            <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d/%m/%Y&quot;</span>),
-            <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">restricted?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">address_line_1</span>,
-            <span class="ruby-identifier">consents</span>[<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">id</span>]&amp;.<span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>,
-            <span class="ruby-comment"># We use an empty value for ethnicity, rather than the official unknown value of 99,</span>
-            <span class="ruby-comment"># to prevent overwriting existing values in CarePlus</span>
-            <span class="ruby-string">&quot;&quot;</span>,
-            <span class="ruby-identifier">date</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d/%m/%Y&quot;</span>),
-            <span class="ruby-identifier">records</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%H:%M&quot;</span>),
-            <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;SC&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;CL&quot;</span>, <span class="ruby-comment"># Venue Type</span>
-            <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">dfe_number</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_venue_code</span>, <span class="ruby-comment"># Venue Code</span>
-            <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_staff_type</span>,
-            <span class="ruby-identifier">team</span>.<span class="ruby-identifier">careplus_staff_code</span>,
-            <span class="ruby-string">&quot;Y&quot;</span>, <span class="ruby-comment"># Attended; Did not attends do not get recorded on GP systems</span>
-            <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-comment"># Reason Not Attended; Always blank</span>
-            <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-comment"># Suspension End Date; Doesn&#39;t need to be used</span>
-            <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">0</span>),
-            <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">1</span>),
-            <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">2</span>),
-            <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">3</span>),
-            <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">4</span>),
-            <span class="ruby-operator">*</span><span class="ruby-identifier">gender_row_value</span>(<span class="ruby-identifier">patient</span>)
-          ]
-        <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccination_records" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccination_records" title="Link to this method">
-                <span class="method-name">vaccination_records</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccination_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 123</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_records</span>
-  <span class="ruby-identifier">scope</span> =
-    <span class="ruby-constant">VaccinationRecord</span>
-      .<span class="ruby-identifier">kept</span>
-      .<span class="ruby-identifier">sourced_from_service</span>
-      .<span class="ruby-identifier">for_programmes</span>(<span class="ruby-identifier">programmes</span>)
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_location:</span> { <span class="ruby-value">team_id:</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">id</span> })
-      .<span class="ruby-identifier">for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
-      .<span class="ruby-identifier">administered</span>
-      .<span class="ruby-identifier">order_by_performed_at</span>
-      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:patient</span>, <span class="ruby-value">:vaccine</span>, <span class="ruby-value">session:</span> <span class="ruby-node">%i[location team_location]</span>)
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">scope</span> =
-      <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-        <span class="ruby-string">&quot;vaccination_records.created_at &gt;= ?&quot;</span>,
-        <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">beginning_of_day</span>
-      ).<span class="ruby-identifier">or</span>(
-        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;vaccination_records.updated_at &gt;= ?&quot;</span>,
-          <span class="ruby-identifier">start_date</span>.<span class="ruby-identifier">beginning_of_day</span>
-        )
-      )
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">scope</span> =
-      <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-        <span class="ruby-string">&quot;vaccination_records.created_at &lt;= ?&quot;</span>,
-        <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">end_of_day</span>
-      ).<span class="ruby-identifier">or</span>(
-        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-string">&quot;vaccination_records.updated_at &lt;= ?&quot;</span>,
-          <span class="ruby-identifier">end_date</span>.<span class="ruby-identifier">end_of_day</span>
-        )
-      )
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">scope</span> =
-    <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>).<span class="ruby-identifier">merge</span>(
-      <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">with_nhs_number</span>
-    ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">include_missing_nhs_number</span>
-
-  <span class="ruby-identifier">scope</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccine_code" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccine_code" title="Link to this method">
-                <span class="method-name">vaccine_code</span>
-                <span class="method-args">(vaccination_record)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccine_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 305</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_code</span>(<span class="ruby-identifier">vaccination_record</span>)
-  <span class="ruby-identifier">programme</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">programme</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">delivery_method_nasal_spray?</span>
-    <span class="ruby-string">&quot;FLUENZ&quot;</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span>
-    <span class="ruby-string">&quot;FLU&quot;</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">hpv?</span>
-    <span class="ruby-string">&quot;HPV&quot;</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">menacwy?</span>
-    <span class="ruby-string">&quot;ACWYX4&quot;</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
-    <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmrv_variant?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;MMRV&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;MMR&quot;</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">td_ipv?</span>
-    <span class="ruby-string">&quot;3IN1&quot;</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unknown programme: #{programme.type}&quot;</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccine_column_headers" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccine_column_headers" title="Link to this method">
-                <span class="method-name">vaccine_column_headers</span>
-                <span class="method-args">(number)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccine_column_headers-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 109</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_column_headers</span>(<span class="ruby-identifier">number</span>)
-  <span class="ruby-identifier">vaccine_columns</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">column</span><span class="ruby-operator">|</span>
-    <span class="ruby-node">&quot;#{VACCINE_COLUMN_HEADINGS.fetch(column)} #{number}&quot;</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccine_field_value" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccine_field_value" title="Link to this method">
-                <span class="method-name">vaccine_field_value</span>
-                <span class="method-args">(column, record)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccine_field_value-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 231</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_field_value</span>(<span class="ruby-identifier">column</span>, <span class="ruby-identifier">record</span>)
-  <span class="ruby-keyword">case</span> <span class="ruby-identifier">column</span>
-  <span class="ruby-keyword">when</span> <span class="ruby-value">:vaccine</span>
-    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">vaccine</span>.<span class="ruby-identifier">snomed_product_code</span>
-  <span class="ruby-keyword">when</span> <span class="ruby-value">:vaccine_code</span>
-    <span class="ruby-identifier">vaccine_code</span>(<span class="ruby-identifier">record</span>)
-  <span class="ruby-keyword">when</span> <span class="ruby-value">:dose</span>
-    <span class="ruby-identifier">dose_sequence_code</span>(<span class="ruby-identifier">record</span>)
-  <span class="ruby-keyword">when</span> <span class="ruby-value">:reason_not_given</span>
-    <span class="ruby-string">&quot;&quot;</span>
-  <span class="ruby-keyword">when</span> <span class="ruby-value">:site</span>
-    <span class="ruby-identifier">coded_site</span>(<span class="ruby-identifier">record</span>.<span class="ruby-identifier">delivery_site</span>)
-  <span class="ruby-keyword">when</span> <span class="ruby-value">:manufacturer</span>
-    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">vaccine</span>.<span class="ruby-identifier">manufacturer</span>
-  <span class="ruby-keyword">when</span> <span class="ruby-value">:batch_number</span>
-    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">batch_number</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unknown vaccine column: #{column}&quot;</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccine_fields" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccine_fields" title="Link to this method">
-                <span class="method-name">vaccine_fields</span>
-                <span class="method-args">(vaccination_records, index)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccine_fields-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 224</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_fields</span>(<span class="ruby-identifier">vaccination_records</span>, <span class="ruby-identifier">index</span>)
-  <span class="ruby-identifier">record</span> = <span class="ruby-identifier">vaccination_records</span>[<span class="ruby-identifier">index</span>]
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">blank_vaccine_fields</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">record</span>
-
-  <span class="ruby-identifier">vaccine_columns</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">column</span><span class="ruby-operator">|</span> <span class="ruby-identifier">vaccine_field_value</span>(<span class="ruby-identifier">column</span>, <span class="ruby-identifier">record</span>) }
 <span class="ruby-keyword">end</span></pre>
           </div>
 
