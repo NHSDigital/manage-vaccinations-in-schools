@@ -13,7 +13,7 @@ class AppSessionSearchFormComponent < ViewComponent::Base
   STATUSES = %w[in_progress unscheduled scheduled completed].freeze
 
   TYPES = {
-    "school" => "School session",
+    "gias_school" => "School session",
     "generic_clinic" => "Community clinic"
   }.freeze
 

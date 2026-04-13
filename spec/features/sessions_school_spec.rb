@@ -180,7 +180,9 @@ describe "School sessions" do
 
     click_link "Sessions", match: :first
 
+    choose "School session"
     choose "In progress"
+
     click_on "Update results"
   end
 

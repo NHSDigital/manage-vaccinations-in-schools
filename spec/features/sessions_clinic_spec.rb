@@ -60,7 +60,9 @@ describe "Clinic sessions" do
 
     click_link "Sessions", match: :first
 
+    choose "Community clinic"
     choose "In progress"
+
     click_on "Update results"
   end
 
