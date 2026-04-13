@@ -4,50 +4,52 @@
 #
 # Table name: vaccination_records
 #
-#  id                                      :bigint           not null, primary key
-#  batch_expiry                            :date
-#  batch_number                            :string
-#  confirmation_sent_at                    :datetime
-#  delivery_method                         :integer
-#  delivery_site                           :integer
-#  discarded_at                            :datetime
-#  disease_types                           :enum             not null, is an Array
-#  dose_sequence                           :integer
-#  full_dose                               :boolean
-#  local_patient_id_uri                    :string
-#  location_name                           :string
-#  nhs_immunisations_api_etag              :string
-#  nhs_immunisations_api_identifier_system :string
-#  nhs_immunisations_api_identifier_value  :string
-#  nhs_immunisations_api_primary_source    :boolean
-#  nhs_immunisations_api_sync_pending_at   :datetime
-#  nhs_immunisations_api_synced_at         :datetime
-#  notes                                   :text
-#  notify_parents                          :boolean
-#  outcome                                 :integer          not null
-#  pending_changes                         :jsonb            not null
-#  performed_at_date                       :date             not null
-#  performed_at_time                       :time
-#  performed_by_family_name                :string
-#  performed_by_given_name                 :string
-#  performed_ods_code                      :string
-#  programme_type                          :enum             not null
-#  protocol                                :integer
-#  source                                  :integer          not null
-#  uuid                                    :uuid             not null
-#  created_at                              :datetime         not null
-#  updated_at                              :datetime         not null
-#  duplicate_of_vaccination_record_id      :bigint
-#  local_patient_id                        :string
-#  location_id                             :bigint
-#  next_dose_delay_triage_id               :bigint
-#  nhs_immunisations_api_id                :string
-#  patient_id                              :bigint           not null
-#  performed_by_user_id                    :bigint
-#  reported_by_id                          :bigint
-#  session_id                              :bigint
-#  supplied_by_user_id                     :bigint
-#  vaccine_id                              :bigint
+#  id                                          :bigint           not null, primary key
+#  batch_expiry                                :date
+#  batch_number                                :string
+#  confirmation_sent_at                        :datetime
+#  delivery_method                             :integer
+#  delivery_site                               :integer
+#  discarded_at                                :datetime
+#  disease_types                               :enum             not null, is an Array
+#  dose_sequence                               :integer
+#  full_dose                                   :boolean
+#  local_patient_id_uri                        :string
+#  location_name                               :string
+#  nhs_immunisations_api_etag                  :string
+#  nhs_immunisations_api_identifier_system     :string
+#  nhs_immunisations_api_identifier_value      :string
+#  nhs_immunisations_api_primary_source        :boolean
+#  nhs_immunisations_api_snomed_procedure_code :string
+#  nhs_immunisations_api_snomed_procedure_term :string
+#  nhs_immunisations_api_sync_pending_at       :datetime
+#  nhs_immunisations_api_synced_at             :datetime
+#  notes                                       :text
+#  notify_parents                              :boolean
+#  outcome                                     :integer          not null
+#  pending_changes                             :jsonb            not null
+#  performed_at_date                           :date             not null
+#  performed_at_time                           :time
+#  performed_by_family_name                    :string
+#  performed_by_given_name                     :string
+#  performed_ods_code                          :string
+#  programme_type                              :enum             not null
+#  protocol                                    :integer
+#  source                                      :integer          not null
+#  uuid                                        :uuid             not null
+#  created_at                                  :datetime         not null
+#  updated_at                                  :datetime         not null
+#  duplicate_of_vaccination_record_id          :bigint
+#  local_patient_id                            :string
+#  location_id                                 :bigint
+#  next_dose_delay_triage_id                   :bigint
+#  nhs_immunisations_api_id                    :string
+#  patient_id                                  :bigint           not null
+#  performed_by_user_id                        :bigint
+#  reported_by_id                              :bigint
+#  session_id                                  :bigint
+#  supplied_by_user_id                         :bigint
+#  vaccine_id                                  :bigint
 #
 # Indexes
 #

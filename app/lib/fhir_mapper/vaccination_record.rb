@@ -14,6 +14,9 @@ module FHIRMapper
     BATCH_EXPIRY_MIN = Date.new(Date.current.year - 100, 1, 1)
     BATCH_EXPIRY_MAX = Date.new(Date.current.year + 100, 1, 1)
 
+    VACCINATION_PROCEDURE_EXTENSION_URL =
+      "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure"
+
     def initialize(vaccination_record)
       @vaccination_record = vaccination_record
     end
@@ -83,6 +86,14 @@ module FHIRMapper
         .sole
         .value
       attrs[:nhs_immunisations_api_primary_source] = fhir_record.primarySource
+
+      procedure_coding = vaccination_procedure_coding_from_fhir(fhir_record)
+      attrs[
+        :nhs_immunisations_api_snomed_procedure_code
+      ] = procedure_coding&.code
+      attrs[
+        :nhs_immunisations_api_snomed_procedure_term
+      ] = procedure_coding&.display
 
       attrs[:programme] = Programme.from_fhir_record(fhir_record)
 
@@ -180,8 +191,7 @@ module FHIRMapper
 
     def fhir_vaccination_procedure_extension
       FHIR::Extension.new(
-        url:
-          "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+        url: VACCINATION_PROCEDURE_EXTENSION_URL,
         valueCodeableConcept: vaccine.fhir_procedure_coding(dose_sequence:)
       )
     end
@@ -339,6 +349,17 @@ module FHIRMapper
 
     private_class_method def self.org_performer_actor_from_fhir(fhir_record)
       fhir_record.performer.find { it.actor&.type == "Organization" }&.actor
+    end
+
+    private_class_method def self.vaccination_procedure_coding_from_fhir(
+      fhir_record
+    )
+      fhir_record
+        .extension
+        &.find { it.url == VACCINATION_PROCEDURE_EXTENSION_URL }
+        &.valueCodeableConcept
+        &.coding
+        &.find { it.system == "http://snomed.info/sct" }
     end
 
     def fhir_reason_code
