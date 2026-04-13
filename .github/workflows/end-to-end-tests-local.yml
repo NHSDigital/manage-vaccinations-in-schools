@@ -4,7 +4,7 @@ on: [workflow_call]
 
 jobs:
   end-to-end-tests:
-    runs-on: ubuntu-latest
+    runs-on: codebuild-mavis-github-runner-${{ github.run_id }}-${{ github.run_attempt }}
     services:
       postgres:
         image: postgres:17.2
