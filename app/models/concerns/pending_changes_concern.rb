@@ -25,12 +25,8 @@ module PendingChangesConcern
   def with_pending_changes
     return self if pending_changes.blank?
 
-    # TODO: Work out how to really preserve the loaded associations
-    # (`becomes` doesn't do this.) because if we don't we get lazy loading errors.
-    # For now I've changed `becomes` to `clone`.
-
     # Use `becomes` instead of `dup` or `clone` to preserve loaded associations.
-    clone.tap do |record|
+    becomes(self.class).tap do |record|
       record.clear_changes_information
       pending_changes.each do |attr, value|
         record.public_send("#{attr}=", value)

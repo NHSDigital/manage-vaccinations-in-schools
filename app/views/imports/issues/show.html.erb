@@ -16,7 +16,7 @@
     <%= render AppCardComponent.new(feature: true) do |c| %>
       <% c.with_heading(level: 2) { "Uploaded record" } %>
       <% if @type == "child" %>
-        <%= render AppChildSummaryComponent.new(@patient.with_pending_changes, show_parents: true) %>
+        <%= render AppChildSummaryComponent.new(@patient_with_pending_changes, show_parents: true) %>
       <% else %>
         <%= render AppVaccinationRecordSummaryComponent.new(
               @vaccination_record.with_pending_changes, current_user:,

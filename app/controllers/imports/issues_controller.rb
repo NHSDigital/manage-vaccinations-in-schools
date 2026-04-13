@@ -5,6 +5,7 @@ class Imports::IssuesController < ApplicationController
   before_action :set_record, only: %i[show update]
   before_action :set_vaccination_record, only: %i[show update]
   before_action :set_patient, only: %i[show update]
+  before_action :set_patient_with_pending_changes, only: :show
   before_action :set_form, only: %i[show update]
   before_action :set_type
 
@@ -74,6 +75,13 @@ class Imports::IssuesController < ApplicationController
 
   def set_patient
     @patient = @record.is_a?(VaccinationRecord) ? @record.patient : @record
+  end
+
+  def set_patient_with_pending_changes
+    @patient_with_pending_changes =
+      @patient.with_pending_changes.tap do |patient_with_pending_changes|
+        patient_with_pending_changes.strict_loading!(false)
+      end
   end
 
   def set_form
