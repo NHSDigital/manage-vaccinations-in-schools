@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Class list imports duplicates" do
+describe "Class list imports duplicates", :pds do
   around { |example| travel_to(Date.new(2023, 5, 20)) { example.run } }
 
   scenario "User reviews and selects between duplicate records" do

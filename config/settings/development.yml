@@ -18,7 +18,6 @@ nhs_api:
   disable_authentication: true
 
 pds:
-  enabled: false
   rate_limit_per_second: 5
 
 splunk:

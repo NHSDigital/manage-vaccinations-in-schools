@@ -41,6 +41,8 @@ import_concurrency_per_server: >-
 
 ops_tools: Enable the operational support tools; timeline and graph.
 
+pds: Main switch for PDS integration. Turning this off will disable all PDS-related features.
+
 pds_enqueue_bulk_updates: >-
   Whether to enqueue jobs which updates a large number of patients with the data from PDS in bulk.
 

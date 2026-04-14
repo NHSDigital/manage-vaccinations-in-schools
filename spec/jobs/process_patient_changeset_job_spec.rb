@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ProcessPatientChangesetJob do
+describe ProcessPatientChangesetJob, :pds do
   include ActiveJob::TestHelper
 
   let(:programme) { Programme.hpv }

@@ -15,8 +15,27 @@ describe UpdatePatientsFromPDS do
     expect { call }.not_to have_enqueued_job
   end
 
-  context "when feature is enabled" do
+  context "when feature is enabled but not main switch" do
     before { Flipper.enable(:pds_enqueue_bulk_updates) }
+
+    it "queues no jobs" do
+      expect { call }.not_to have_enqueued_job
+    end
+  end
+
+  context "when main switch is enabled but not feature" do
+    before { Flipper.enable(:pds) }
+
+    it "queues no jobs" do
+      expect { call }.not_to have_enqueued_job
+    end
+  end
+
+  context "when main switch and feature is enabled" do
+    before do
+      Flipper.enable(:pds)
+      Flipper.enable(:pds_enqueue_bulk_updates)
+    end
 
     it "queues PDSCascadingSearchJob for patients without an NHS number" do
       expect { call }.to have_enqueued_job(PDSCascadingSearchJob)

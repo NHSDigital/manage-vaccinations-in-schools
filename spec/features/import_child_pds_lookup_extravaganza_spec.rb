@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Import child records" do
+describe "Import child records", :pds do
   let(:today) { Time.zone.local(2025, 9, 1, 12, 0, 0) }
 
   around { |example| travel_to(today) { example.run } }

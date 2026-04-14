@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Import child records" do
+describe "Import child records", :pds do
   around { |example| travel_to(Date.new(2023, 5, 20)) { example.run } }
 
   scenario "User uploads a file" do

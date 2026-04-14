@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Child record imports twins" do
+describe "Child record imports twins", :pds do
   around { |example| travel_to(Date.new(2024, 12, 1)) { example.run } }
 
   before { Flipper.enable(:pds_search_during_import) }

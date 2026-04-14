@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Important notices" do
+describe "Important notices", :pds do
   around { |example| travel_to(Date.new(2023, 5, 20)) { example.run } }
 
   before { given_my_team_exists }

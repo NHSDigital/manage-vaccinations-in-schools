@@ -175,8 +175,10 @@ describe ClassImport do
     end
 
     context "when pds_search_during_import flag is enabled" do
-      before { Flipper.enable(:pds_search_during_import) }
-      after { Flipper.disable(:pds_search_during_import) }
+      before do
+        Flipper.enable(:pds)
+        Flipper.enable(:pds_search_during_import)
+      end
 
       it "enqueues PDSCascadingSearchJob for each changeset with a postcode" do
         process!
