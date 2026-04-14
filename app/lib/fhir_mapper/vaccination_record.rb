@@ -86,6 +86,10 @@ module FHIRMapper
         .sole
         .value
       attrs[:nhs_immunisations_api_primary_source] = fhir_record.primarySource
+      recorded = fhir_record.recorded
+      attrs[:nhs_immunisations_api_recorded_at] = Time.zone.parse(
+        recorded
+      ) if recorded
 
       procedure_coding = vaccination_procedure_coding_from_fhir(fhir_record)
       attrs[

@@ -20,6 +20,7 @@
 #  nhs_immunisations_api_identifier_system     :string
 #  nhs_immunisations_api_identifier_value      :string
 #  nhs_immunisations_api_primary_source        :boolean
+#  nhs_immunisations_api_recorded_at           :datetime
 #  nhs_immunisations_api_snomed_procedure_code :string
 #  nhs_immunisations_api_snomed_procedure_term :string
 #  nhs_immunisations_api_snomed_reason_code    :string
