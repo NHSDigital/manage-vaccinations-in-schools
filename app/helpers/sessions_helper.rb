@@ -58,16 +58,22 @@ module SessionsHelper
 
   def session_title(session)
     programmes = session.programmes.map(&:name).to_sentence
-    dates = ("on #{session_dates(session)}" if session.dates.present?)
 
     items =
       if session.generic_clinic?
-        [programmes, "community clinic", dates].compact
+        [programmes, "community clinic"].compact
       else
-        [programmes, "session at", session.location.name, dates].compact
+        [programmes, "session at", session.location.name].compact
       end
 
     items.join(" ")
+  end
+
+  def session_caption(session)
+    dates = session_dates(session) if session.dates.present?
+    year_groups = format_year_groups(session.year_groups)
+
+    [dates, year_groups].compact.join(" – ")
   end
 
   def session_consent_style(session)
