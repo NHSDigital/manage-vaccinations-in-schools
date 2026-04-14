@@ -2,6 +2,7 @@ organisation:
   ods_code: RXG
 
 team:
-  name: South West Yorkshire Partnership NHS foundation Trust
+  name: South West Yorkshire Partnership NHS Foundation Trust
   workgroup: swyorkshiremavisnr
   type: national_reporting
+  national_reporting_cut_off_date: 2026-04-20

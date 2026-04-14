@@ -2,6 +2,7 @@ organisation:
   ods_code: NLX
 
 team:
-  name: Sirona care & health
+  name: Sirona Care & Health
   workgroup: sironamavisnr
   type: national_reporting
+  national_reporting_cut_off_date: 2026-04-20

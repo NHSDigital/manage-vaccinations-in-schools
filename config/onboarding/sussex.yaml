@@ -2,6 +2,7 @@ organisation:
   ods_code: RDR
 
 team:
-  name: Sussex Community Foundation trust
+  name: Sussex Community NHS Foundation Trust
   workgroup: sussexmavisnr
   type: national_reporting
+  national_reporting_cut_off_date: 2026-04-20
