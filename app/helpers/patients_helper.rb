@@ -88,4 +88,9 @@ module PatientsHelper
       .dose_sequence
       &.ordinalize
   end
+
+  def patient_previous_dose_label(patient, programme, academic_year)
+    dose = patient.programme_status(programme, academic_year:).dose_sequence
+    (dose - 1).ordinalize if dose && dose > 1
+  end
 end
