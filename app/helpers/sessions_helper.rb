@@ -39,9 +39,9 @@ module SessionsHelper
         end
 
       if dates.length == 2
-        "#{min_date_str} – #{max_date_str}"
+        "#{min_date_str} to #{max_date_str}"
       else
-        "#{min_date_str} – #{max_date_str} (#{dates.length} dates)"
+        "#{min_date_str} to #{max_date_str} (#{dates.length} dates)"
       end
     end
   end

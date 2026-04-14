@@ -50,7 +50,7 @@ describe SessionsHelper do
         create(:session, dates: [Date.new(2025, 1, 1), Date.new(2025, 1, 2)])
       end
 
-      it { should eq("1 – 2 January 2025") }
+      it { should eq("1 to 2 January 2025") }
     end
 
     context "with three dates" do
@@ -65,7 +65,7 @@ describe SessionsHelper do
         )
       end
 
-      it { should eq("1 – 3 January 2025 (3 dates)") }
+      it { should eq("1 to 3 January 2025 (3 dates)") }
     end
 
     context "with dates across multiple months" do
@@ -73,7 +73,7 @@ describe SessionsHelper do
         create(:session, dates: [Date.new(2025, 1, 31), Date.new(2025, 2, 1)])
       end
 
-      it { should eq("31 January – 1 February 2025") }
+      it { should eq("31 January to 1 February 2025") }
     end
 
     context "with dates across multiple years" do
@@ -81,7 +81,7 @@ describe SessionsHelper do
         create(:session, dates: [Date.new(2025, 12, 31), Date.new(2026, 1, 1)])
       end
 
-      it { should eq("31 December 2025 – 1 January 2026") }
+      it { should eq("31 December 2025 to 1 January 2026") }
     end
   end
 
