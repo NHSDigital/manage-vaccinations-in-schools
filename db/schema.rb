@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[8.1].define(version: 2026_03_30_130232) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_31_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1007,6 +1006,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_130232) do
     t.boolean "nhs_immunisations_api_primary_source"
     t.string "nhs_immunisations_api_snomed_procedure_code"
     t.string "nhs_immunisations_api_snomed_procedure_term"
+    t.string "nhs_immunisations_api_snomed_reason_code"
+    t.string "nhs_immunisations_api_snomed_reason_term"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.datetime "nhs_immunisations_api_synced_at"
     t.text "notes"
