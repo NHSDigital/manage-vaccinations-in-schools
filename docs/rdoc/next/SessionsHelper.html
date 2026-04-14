@@ -555,6 +555,8 @@
 
         <li ><a href="#method-i-session_dates">session_dates</a></li>
 
+        <li ><a href="#method-i-session_future_dates">session_future_dates</a></li>
+
         <li ><a href="#method-i-session_status">session_status</a></li>
 
         <li ><a href="#method-i-session_title">session_title</a></li>
@@ -765,6 +767,48 @@
       <span class="ruby-node">&quot;#{min_date_str} – #{max_date_str} (#{dates.length} dates)&quot;</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-session_future_dates" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-session_future_dates" title="Link to this method">
+                <span class="method-name">session_future_dates</span>
+                <span class="method-args">(session)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="session_future_dates-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/sessions_helper.rb, line 77</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_future_dates</span>(<span class="ruby-identifier">session</span>)
+  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">future_dates</span>.<span class="ruby-identifier">map</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">to_fs</span>(<span class="ruby-value">:short_day_of_week</span>) }.<span class="ruby-identifier">to_sentence</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
