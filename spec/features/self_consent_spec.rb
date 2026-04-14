@@ -146,7 +146,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_status_reflects_that_there_is_no_consent
-    expect(page).to have_content("No contact details")
+    expect(page).to have_content("no parent contact details")
   end
 
   def and_the_activity_log_shows_the_gillick_non_competence
@@ -158,7 +158,7 @@ describe "Self-consent" do
   end
 
   def when_the_nurse_edits_the_assessment_the_child_as_gillick_competent
-    click_on "Edit Gillick competence"
+    click_on "Update Gillick competence"
 
     # notes from previous assessment
     expect(page).to have_content(
