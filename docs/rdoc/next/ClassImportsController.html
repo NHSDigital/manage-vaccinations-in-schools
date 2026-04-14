@@ -600,8 +600,6 @@
 
         <li ><a href="#method-i-show">show</a></li>
 
-        <li ><a href="#method-i-update">update</a></li>
-
       </ul>
     </details>
   </div>
@@ -684,7 +682,7 @@
             </details>
           </div>
           <div class="method-source-code" id="approve-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 109</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 103</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">approve</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">reviewed_by_user_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">reviewed_at</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>
@@ -752,7 +750,7 @@
             </details>
           </div>
           <div class="method-source-code" id="cancel-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 139</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 133</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">reviewed_by_user_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
   <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">reviewed_at</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>
@@ -879,7 +877,7 @@
             </details>
           </div>
           <div class="method-source-code" id="imported_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 101</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 95</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/imported_records&quot;</span>,
          <span class="ruby-value">layout:</span> <span class="ruby-string">&quot;full&quot;</span>,
@@ -967,7 +965,7 @@
             </details>
           </div>
           <div class="method-source-code" id="re_review-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 93</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 87</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/re_review&quot;</span>,
          <span class="ruby-value">layout:</span> <span class="ruby-string">&quot;full&quot;</span>,
@@ -1057,50 +1055,6 @@
          <span class="ruby-value">locals:</span> {
            <span class="ruby-value">import:</span> <span class="ruby-ivar">@class_import</span>
          }
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-update" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-update" title="Link to this method">
-                <span class="method-name">update</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/class_imports_controller.rb, line 87</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
-  <span class="ruby-ivar">@class_import</span>.<span class="ruby-identifier">process!</span>
-
-  <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">class_import_path</span>(<span class="ruby-ivar">@class_import</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
