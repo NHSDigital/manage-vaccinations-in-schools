@@ -118,6 +118,14 @@ class Parent < ApplicationRecord
     full_name.presence || "Parent or guardian (name unknown)"
   end
 
+  def relationship_type_label
+    other? ? "Other – #{other_name}" : human_enum_name(:type).capitalize
+  end
+
+  def label_with_parent
+    unknown? ? label : "#{label} (#{relationship_type_label.downcase_first})"
+  end
+
   def contact_label
     [email, phone].compact_blank.join(" / ")
   end
