@@ -80,7 +80,7 @@ jobs:
             fi
           fi
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ inputs.git_ref_to_deploy || github.sha }}
       - name: Get git sha
@@ -109,12 +109,12 @@ jobs:
       repository_name: ${{ matrix.service == 'ops' && 'mavis/ops' || 'mavis/webapp' }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         id: checkout-code
         with:
           ref: ${{ needs.validate-and-resolve-sha.outputs.git-sha }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
           aws-region: eu-west-2
@@ -131,7 +131,7 @@ jobs:
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
       - name: Populate task definition
         id: create-task-definition
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e # v1.8.4
         with:
           task-definition-family:
             mavis-${{ matrix.service }}-task-definition-${{ inputs.environment }}-template
@@ -147,7 +147,7 @@ jobs:
           mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{
           matrix.service }}-task-definition.json
       - name: Upload artifact for ${{ matrix.service }} task definition
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ inputs.environment }}-${{ matrix.service }}-task-definition
           path: ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
@@ -196,14 +196,14 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
           aws-region: eu-west-2
       - name: Download ops task definition artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-ops-task-definition
@@ -332,12 +332,12 @@ jobs:
           fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
           aws-region: eu-west-2
       - name: Download ${{ matrix.service }} task definition artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-${{ matrix.service }}-task-definition
@@ -348,7 +348,7 @@ jobs:
           jq --arg f "$family_name" '.family = $f' "$file_path" > tmpfile && mv tmpfile "$file_path"
       - name: Deploy ${{ matrix.service }} service
         id: ecs-deploy
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        uses: aws-actions/amazon-ecs-deploy-task-definition@fc8fc60f3a60ffd500fcb13b209c59d221ac8c8c # v2.6.1
         with:
           task-definition: ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
           cluster: ${{ env.cluster_name }}
@@ -376,14 +376,14 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
           aws-region: eu-west-2
       - name: Download ops task definition artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-ops-task-definition

@@ -29,11 +29,11 @@ jobs:
       RAILS_MASTER_KEY: intentionally-insecure-dev-key00
       SKIP_TEST_DATABASE: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ inputs.github_ref || github.ref_name == 'next' && 'next' || github.ref_name }}
           repository: nhsuk/manage-vaccinations-in-schools
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: .tool-versions
           cache: yarn
@@ -56,7 +56,7 @@ jobs:
               sleep 2
             done
                 '
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@4c56a21280b36d862b5fc31348f463d60bdc55d5 # v1.301.0
         with:
           bundler-cache: true
       - name: Populate database for testing
@@ -65,13 +65,13 @@ jobs:
           bin/rails feature_flags:enable_for_development
           bin/mavis gias import --input-file=spec/fixtures/dfe-schools.zip
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
       - name: Login to ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@f2e9fc6c2b355c1890b65e6f6f0e2ac3e6e22f78 # v2.1.2
       # yamllint disable rule:line-length
       - name: get github ref short
         id: github-ref

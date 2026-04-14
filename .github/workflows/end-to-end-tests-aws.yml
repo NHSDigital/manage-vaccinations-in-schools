@@ -26,11 +26,11 @@ jobs:
       application-image-git-ref: ${{ steps.check-image.outputs.GIT_REF_SHA }}
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           repository: nhsuk/manage-vaccinations-in-schools
@@ -59,18 +59,18 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ needs.check-development-image-presence.outputs.application-image-git-ref }}
           repository: nhsuk/manage-vaccinations-in-schools
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
       - name: Login to ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@f2e9fc6c2b355c1890b65e6f6f0e2ac3e6e22f78 # v2.1.2
       - name: Build and push mavis/development docker image
         # yamllint disable rule:line-length
         run: |
@@ -91,11 +91,11 @@ jobs:
       db_git_ref_sha: ${{ steps.check-image.outputs.GIT_REF_SHA }}
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           repository: nhsuk/manage-vaccinations-in-schools
@@ -145,13 +145,13 @@ jobs:
       run_task_arn: ${{ steps.run-task.outputs.run-task-arn }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
       - name: Render task definition web
         id: render-task-definition-web
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e # v1.8.4
         with:
           task-definition-family: assurance-testing-mavis-development-task-definition-template
           container-name: mavis-development-web
@@ -161,7 +161,7 @@ jobs:
             needs.check-development-image-presence.outputs.application-image-git-ref }}
       - name: Render task definition database
         id: render-task-definition-database
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e # v1.8.4
         with:
           task-definition: ${{ steps.render-task-definition-web.outputs.task-definition }}
           container-name: mavis-development-db
@@ -171,7 +171,7 @@ jobs:
             needs.check-database-image-presence.outputs.db_git_ref_sha }}
       - name: Render task definition sidekiq
         id: render-task-definition-sidekiq
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e # v1.8.4
         with:
           task-definition: ${{ steps.render-task-definition-database.outputs.task-definition }}
           container-name: mavis-development-sidekiq
@@ -197,7 +197,7 @@ jobs:
           echo "run-task-subnets=$subnet_id" >> "$GITHUB_OUTPUT"
           echo "run-task-security-groups=$security_group_id" >> "$GITHUB_OUTPUT"
       - name: Deploy task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        uses: aws-actions/amazon-ecs-deploy-task-definition@fc8fc60f3a60ffd500fcb13b209c59d221ac8c8c # v2.6.1
         id: run-task
         with:
           task-definition: "assurance-testing-mavis-development-task-definition.json"
@@ -218,7 +218,7 @@ jobs:
       container_ip: ${{ steps.compile-outputs.outputs.container_ip }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
@@ -360,7 +360,7 @@ jobs:
       id-token: write
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
