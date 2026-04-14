@@ -30,6 +30,25 @@ describe Parent do
 
       it { should validate_presence_of(:phone) }
     end
+
+    context "when type is other" do
+      subject(:parent_relationship) do
+        build(:parent_relationship, type: "other")
+      end
+
+      it { should validate_presence_of(:other_name) }
+    end
+
+    context "when type is not other" do
+      subject(:parent_relationship) do
+        build(:parent_relationship, type: "mother", other_name: "Mother")
+      end
+
+      it "sets the other name to nil" do
+        expect(parent_relationship.valid?).to be true
+        expect(parent_relationship.other_name).to be_nil
+      end
+    end
   end
 
   it_behaves_like "a model with a normalised email address"

@@ -97,8 +97,8 @@ class Patient < ApplicationRecord
   has_many :vaccination_records, -> { kept }
 
   has_many :locations, through: :patient_locations
-  has_many :parents, through: :parent_relationships
   has_many :teams, through: :patient_teams
+  has_many :parents, through: :parent_relationships
 
   has_and_belongs_to_many :class_imports
   has_and_belongs_to_many :cohort_imports

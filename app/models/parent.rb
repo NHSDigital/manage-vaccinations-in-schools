@@ -21,6 +21,8 @@
 class Parent < ApplicationRecord
   audited
 
+  self.inheritance_column = nil
+
   before_save :reset_unused_attributes
 
   has_many :consents

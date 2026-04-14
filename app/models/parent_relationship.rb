@@ -49,7 +49,16 @@ class ParentRelationship < ApplicationRecord
        },
        validate: true
 
+  enum :contact_method_type,
+       { any: "any", other: "other", text: "text", voice: "voice" },
+       prefix: :contact_method,
+       validate: {
+         allow_nil: true
+       }
+
   encrypts :other_name
+  encrypts :email, :full_name, :phone, deterministic: true
+  encrypts :contact_method_other_details
 
   validates :other_name, presence: true, length: { maximum: 300 }, if: :other?
 
@@ -57,6 +66,28 @@ class ParentRelationship < ApplicationRecord
 
   accepts_nested_attributes_for :parent
   validates_associated :parent
+
+  normalizes :email, with: EmailAddressNormaliser.new
+  normalizes :phone, with: PhoneNumberNormaliser.new
+
+  validates :phone,
+            presence: {
+              if: :phone_receive_updates
+            },
+            phone: {
+              allow_blank: true
+            }
+  validates :email, notify_safe_email: { allow_blank: true }
+  validates :contact_method_other_details,
+            :email,
+            :full_name,
+            :phone,
+            length: {
+              maximum: 300
+            }
+  validates :contact_method_other_details,
+            presence: true,
+            if: :contact_method_other?
 
   def label
     other? ? "Other – #{other_name}" : human_enum_name(:type).capitalize

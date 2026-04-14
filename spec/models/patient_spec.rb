@@ -75,6 +75,18 @@ describe Patient do
       it { should include(kept_vaccination_record) }
       it { should_not include(discarded_vaccination_record) }
     end
+
+    context "when the `one_patient_per_parent` feature flag is enabled" do
+      before { Flipper.enable(:one_patient_per_parent) }
+
+      it { should have_many(:parents) }
+    end
+
+    context "when the `one_patient_per_parent` feature flag is disabled" do
+      before { Flipper.disable(:one_patient_per_parent) }
+
+      it { should have_many(:parents).through(:parent_relationships) }
+    end
   end
 
   describe "scopes" do
