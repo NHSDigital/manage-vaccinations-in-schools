@@ -547,10 +547,9 @@ class Patient < ApplicationRecord
     end
   end
 
-  def can_self_consent_after_gillick_assessment?(session:, programme_type:)
+  def can_self_consent_after_gillick_assessment?(location:, programme_type:)
     gillick_assessments
-      .for_session(session)
-      .where(programme_type:)
+      .where(location:, programme_type:, date: Date.current)
       .order(created_at: :desc)
       &.first
       &.gillick_competent? || false

@@ -232,7 +232,7 @@ class DraftConsentsController < ApplicationController
     @new_or_existing_contact_options = []
 
     if @patient.can_self_consent_after_gillick_assessment?(
-         session: @session,
+         location: @session.location,
          programme_type: @programme.type
        )
       @new_or_existing_contact_options << NewOrExistingContactOption.new(

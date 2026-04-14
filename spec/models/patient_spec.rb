@@ -911,7 +911,7 @@ describe Patient do
   describe "#can_self_consent_after_gillick_assessment?" do
     subject(:can_self_consent_after_gillick_assessment) do
       patient.can_self_consent_after_gillick_assessment?(
-        session:,
+        location: session.location,
         programme_type: programme.type
       )
     end
@@ -950,6 +950,21 @@ describe Patient do
           patient:,
           programme_type: programme.type,
           session: other_session
+        )
+      end
+
+      it { should be(false) }
+    end
+
+    context "when patient has a Gillick assessment on a different date" do
+      before do
+        create(
+          :gillick_assessment,
+          :competent,
+          patient:,
+          programme_type: programme.type,
+          session:,
+          date: Date.yesterday
         )
       end
 
