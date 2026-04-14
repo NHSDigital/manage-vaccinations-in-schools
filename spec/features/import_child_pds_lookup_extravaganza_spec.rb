@@ -278,7 +278,7 @@ describe "Import child records" do
   end
 
   def and_pds_lookups_dont_return_any_matches
-    Flipper.enable(:import_search_pds)
+    Flipper.enable(:pds_search_during_import)
 
     csv =
       CSV.new(
@@ -305,7 +305,7 @@ describe "Import child records" do
   end
 
   def and_pds_lookup_during_import_is_enabled
-    Flipper.enable(:import_search_pds)
+    Flipper.enable(:pds_search_during_import)
 
     stub_pds_cascading_search(
       family_name: "Tweedle",
