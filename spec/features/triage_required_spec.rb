@@ -481,16 +481,27 @@ describe "Triage" do
 
   def and_a_partially_vaccinated_patient_who_needs_triage_exists
     @patient_triage_needed =
-      create(:patient, :partially_vaccinated_triage_needed, session: @session)
+      create(
+        :patient,
+        :partially_vaccinated_triage_needed,
+        date_of_birth: Date.new(2019, 6, 1), # before MMRV eligibility cutoff
+        session: @session
+      )
   end
 
   def then_the_mmr_second_dose_will_happen_email_is_sent
+    patient_name = @patient_triage_needed.short_name
+
     @patient_triage_needed.parents.each do |parent|
       expect(email_deliveries).to include(
         matching_notify_email(
           to: parent.email,
-          template: :triage_vaccination_will_happen_mmr_second_dose
-        ).with_content_including("We recently gave", "2nd dose")
+          template: :triage_vaccination_will_happen_mmr_second_dose,
+          subject: "#{patient_name} needs another dose of the MMR vaccination"
+        ).with_content_including(
+          "We recently gave #{patient_name} their 1st dose of the MMR vaccination",
+          "plan to give #{patient_name} their 2nd dose then"
+        )
       )
     end
   end
