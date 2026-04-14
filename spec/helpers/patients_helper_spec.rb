@@ -221,4 +221,20 @@ describe PatientsHelper do
       it { should eq("1st") }
     end
   end
+
+  describe "#patient_short_name_possessive" do
+    subject { helper.patient_short_name_possessive(patient) }
+
+    context "when the name does not end in s" do
+      let(:patient) { build(:patient, given_name: "Filip") }
+
+      it { should eq("Filip’s") }
+    end
+
+    context "when the name ends in s" do
+      let(:patient) { build(:patient, given_name: "James") }
+
+      it { should eq("James’") }
+    end
+  end
 end

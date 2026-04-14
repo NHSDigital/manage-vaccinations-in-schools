@@ -1,13 +1,13 @@
 ---
 template_id: "6fd910fd-120c-4e58-9ef3-15ffc5bd6edc"
 template_name: triage_vaccination_will_happen_mmr_second_dose
-subject: "<%= short_patient_name %> needs another dose of the <%= programme_name_for_parents(mmr_programme.variant_for(patient:)) %> vaccination"
+subject: "<%= patient.short_name %> needs another dose of the <%= programme_name_for_parents(mmr_programme.variant_for(patient:)) %> vaccination"
 ---
 <% variant = mmr_programme.variant_for(patient:) -%>
 <% previous_dose = patient_previous_dose_label(patient, mmr_programme, academic_year) -%>
 <% next_dose = patient_next_dose_label(patient, mmr_programme, academic_year) -%>
-We recently gave <%= short_patient_name %> their <%= previous_dose %> dose of the <%= programme_name_for_parents(variant) %> vaccination. To be fully vaccinated, they need <%= mmr_programme.maximum_dose_sequence %> doses.
+We recently gave <%= patient.short_name %> their <%= previous_dose %> dose of the <%= programme_name_for_parents(variant) %> vaccination. To be fully vaccinated, they need <%= mmr_programme.maximum_dose_sequence %> doses.
 
-We’re coming to <%= location_name %> on <%= next_session_dates %> and plan to give <%= short_patient_name %> their <%= next_dose %> dose then. Please let them know about this.
+We’re coming to <%= session.location.name %> on <%= next_session_dates %> and plan to give <%= patient.short_name %> their <%= next_dose %> dose then. Please let them know about this.
 
-If <%= short_patient_name_apos %> health changes, or you arrange for them to get their <%= next_dose %> dose somewhere else, contact us. You can email <%= subteam_email %> or phone <%= subteam_phone %>.
+If <%= patient_short_name_possessive(patient) %> health changes, or you arrange for them to get their <%= next_dose %> dose somewhere else, contact us. You can email <%= team_contact_email(session) %> or phone <%= team_contact_phone(session) %>.
