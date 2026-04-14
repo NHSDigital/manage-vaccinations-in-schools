@@ -672,7 +672,7 @@ class ImmunisationImportRow
               "must be less than 15 years in the future"
             )
           elsif date < EARLIEST_BATCH_EXPIRY
-            errors.add(batch_expiry.header, "must be more than 15 years old")
+            errors.add(batch_expiry.header, "must be less than 15 years old")
           end
         else
           errors.add(batch_expiry.header, "Enter a date in the correct format.")
