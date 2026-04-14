@@ -29,6 +29,8 @@
 class Parent < ApplicationRecord
   audited
 
+  self.inheritance_column = nil
+
   before_save :reset_unused_attributes
 
   has_many :consents
@@ -40,6 +42,8 @@ class Parent < ApplicationRecord
 
   has_many :patients, through: :parent_relationships
 
+  has_one :patient, required: false
+
   enum :contact_method_type,
        { any: "any", other: "other", text: "text", voice: "voice" },
        prefix: :contact_method,
@@ -47,8 +51,21 @@ class Parent < ApplicationRecord
          allow_nil: true
        }
 
+  enum :type,
+       {
+         father: "father",
+         guardian: "guardian",
+         mother: "mother",
+         other: "other",
+         unknown: "unknown"
+       },
+       validate: {
+         allow_nil: true
+       }
+
   encrypts :email, :full_name, :phone, deterministic: true
   encrypts :contact_method_other_details
+  encrypts :other_name
 
   normalizes :email, with: EmailAddressNormaliser.new
   normalizes :phone, with: PhoneNumberNormaliser.new
@@ -71,6 +88,9 @@ class Parent < ApplicationRecord
   validates :contact_method_other_details,
             presence: true,
             if: :contact_method_other?
+  validates :other_name, presence: true, length: { maximum: 300 }, if: :other?
+
+  before_validation -> { self.other_name = nil unless other? }
 
   def self.match_existing(patient:, email:, phone:, full_name:)
     if email.present? && (parent = Parent.find_by(email:))
