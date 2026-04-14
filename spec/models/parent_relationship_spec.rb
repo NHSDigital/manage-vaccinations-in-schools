@@ -4,13 +4,19 @@
 #
 # Table name: parent_relationships
 #
-#  id         :bigint           not null, primary key
-#  other_name :string
-#  type       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  parent_id  :bigint           not null
-#  patient_id :bigint           not null
+#  id                           :bigint           not null, primary key
+#  contact_method_other_details :text
+#  contact_method_type          :string
+#  email                        :string
+#  full_name                    :string
+#  other_name                   :string
+#  phone                        :string
+#  phone_receive_updates        :string
+#  type                         :string           not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  parent_id                    :bigint           not null
+#  patient_id                   :bigint           not null
 #
 # Indexes
 #
