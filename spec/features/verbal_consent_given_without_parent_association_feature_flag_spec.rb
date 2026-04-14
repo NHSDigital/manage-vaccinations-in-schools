@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Verbal consent" do
-  before { Flipper.enable(:one_patient_per_parent) }
-
   scenario "Given HPV" do
     given_an_hpv_programme_is_underway
     and_i_am_signed_in
@@ -116,14 +114,15 @@ describe "Verbal consent" do
     @team = create(:team, :with_one_nurse, programmes:)
     @session = create(:session, team: @team, programmes:)
 
+    @parent = create(:parent)
     @patient =
       create(
         :patient,
         given_name: "Alex",
         session: @session,
+        parents: [@parent],
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.year
       )
-    @parent = create(:parent, patient: @patient)
 
     PatientStatusUpdater.call
   end
@@ -202,7 +201,12 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    parent_label = @patient.parents.find_by(patient: @patient).label_with_parent
+    parent_label =
+      @patient
+        .parent_relationships
+        .includes(:parent)
+        .find_by(patient: @patient)
+        .label_with_parent
 
     choose parent_label
     click_button "Continue"
@@ -269,18 +273,18 @@ describe "Verbal consent" do
 
   def then_the_parent_details_are_saved_to_the_consent
     consent = @patient.consents.last
-    parent = @patient.parents.first
+    parent_relationship = @patient.parent_relationships.first
 
     expect(consent).to have_attributes(
       parent_full_name: @parent.full_name,
       parent_email: @parent.email,
       parent_phone: @parent.phone,
       parent_phone_receive_updates: @parent.phone_receive_updates,
-      parent_relationship_type: parent.type
+      parent_relationship_type: parent_relationship.type
     )
 
     expect(consent.parent_relationship_other_name.to_s).to eq(
-      parent.other_name.to_s
+      parent_relationship.other_name.to_s
     )
   end
 
@@ -301,14 +305,14 @@ describe "Verbal consent" do
 
     expect(page).to have_content(["Name", @parent.full_name].join)
     expect(page).to have_content(
-      ["Relationship", @patient.parents.first.label].join
+      ["Relationship", @patient.parent_relationships.first.label].join
     )
     expect(page).to have_content(["Email address", @parent.email].join("\n"))
     expect(page).to have_content(["Phone number", @parent.phone].join("\n"))
 
     expect(page).to have_content("Answers to health questions")
     expect(page).to have_content(
-      "#{@patient.parents.first.label} responded: No",
+      "#{@patient.parent_relationships.first.label} responded: No",
       count: number_of_health_questions
     )
   end
