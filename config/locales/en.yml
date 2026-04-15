@@ -395,6 +395,9 @@ en:
           other: Other
           text: Can only receive text messages
           voice: Can only receive voice calls
+        types:
+          father: dad
+          mother: mum
       parent_relationship:
         types:
           father: dad

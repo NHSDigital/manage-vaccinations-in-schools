@@ -301,14 +301,14 @@ describe "Verbal consent" do
 
     expect(page).to have_content(["Name", @parent.full_name].join)
     expect(page).to have_content(
-      ["Relationship", @patient.parents.first.label].join
+      ["Relationship", @patient.parents.first.relationship_type_label].join
     )
     expect(page).to have_content(["Email address", @parent.email].join("\n"))
     expect(page).to have_content(["Phone number", @parent.phone].join("\n"))
 
     expect(page).to have_content("Answers to health questions")
     expect(page).to have_content(
-      "#{@patient.parents.first.label} responded: No",
+      "#{@patient.parents.first.relationship_type_label} responded: No",
       count: number_of_health_questions
     )
   end

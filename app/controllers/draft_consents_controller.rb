@@ -213,17 +213,6 @@ class DraftConsentsController < ApplicationController
     self.steps = @draft_consent.wizard_steps
   end
 
-  def set_back_link_path
-    @back_link_path =
-      if @draft_consent.editing?
-        wizard_path("confirm")
-      elsif current_step == @draft_consent.wizard_steps.first
-        session_patient_programme_path(@session, @patient, @programme)
-      else
-        previous_wizard_path
-      end
-  end
-
   def is_who_step? = current_step == :who
 
   NewOrExistingContactOption = Struct.new(:value, :label, :hint)
@@ -241,22 +230,39 @@ class DraftConsentsController < ApplicationController
       )
     end
 
-    parent_relationships =
-      (
-        @patient.parent_relationships.includes(:parent) +
+    @new_or_existing_contact_options +=
+      if Flipper.enabled?(:one_patient_per_parent)
+        parents = (@patient.parents +
           @patient
             .consents
-            .where(programme_type: @programme.type)
-            .filter_map(&:parent_relationship)
-      ).compact.uniq.sort_by(&:label)
+            .select { it.programme_type == @programme.type }
+            .filter_map(&:parent)
+          ).compact.uniq.sort_by(&:label)
 
-    @new_or_existing_contact_options +=
-      parent_relationships.map do |parent_relationship|
-        NewOrExistingContactOption.new(
-          value: parent_relationship.parent.id,
-          label: parent_relationship.label_with_parent,
-          hint: parent_relationship.parent.contact_label
-        )
+        parents.map do |parent|
+          NewOrExistingContactOption.new(
+            value: parent.id,
+            label: parent.label_with_parent,
+            hint: parent.contact_label
+          )
+        end
+      else
+        parent_relationships =
+          (
+            @patient.parent_relationships.includes(:parent) +
+              @patient
+                .consents
+                .where(programme_type: @programme.type)
+                .filter_map(&:parent_relationship)
+          ).compact.uniq.sort_by(&:label)
+
+        parent_relationships.map do |parent_relationship|
+          NewOrExistingContactOption.new(
+            value: parent_relationship.parent.id,
+            label: parent_relationship.label_with_parent,
+            hint: parent_relationship.parent.contact_label
+          )
+        end
       end
 
     @new_or_existing_contact_options << NewOrExistingContactOption.new(
@@ -284,6 +290,17 @@ class DraftConsentsController < ApplicationController
           programme: @programme,
           status_option: @draft_consent.triage_status_option
         )
+      end
+  end
+
+  def set_back_link_path
+    @back_link_path =
+      if @draft_consent.editing?
+        wizard_path("confirm")
+      elsif current_step == @draft_consent.wizard_steps.first
+        session_patient_programme_path(@session, @patient, @programme)
+      else
+        previous_wizard_path
       end
   end
 

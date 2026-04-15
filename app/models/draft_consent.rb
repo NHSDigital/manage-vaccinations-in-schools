@@ -279,8 +279,9 @@ class DraftConsent
     self.parent_full_name = value&.full_name
     self.parent_phone = patient.restricted? ? "" : value&.phone
     self.parent_phone_receive_updates = value&.phone_receive_updates
-    self.parent_relationship_type = parent_relationship&.type
-    self.parent_relationship_other_name = parent_relationship&.other_name
+    self.parent_relationship_type = parent_relationship&.type || value&.type
+    self.parent_relationship_other_name =
+      parent_relationship&.other_name || value&.other_name
     self.parent_responsibility = value ? true : nil
   end
 
