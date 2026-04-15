@@ -38,7 +38,7 @@ class AppTimelineComponent < ViewComponent::Base
     "Triage" => "red",
     "VaccinationRecord" => "grey",
     "SchoolMove" => "orange",
-    "SchoolMoveLogEntry" => "pink"
+    "SchoolMoveLogEntry" => "orange"
   }.freeze
 
   def format_heading(item)
