@@ -237,13 +237,23 @@ class DraftConsentsController < ApplicationController
 
   def set_parent_options
     @parent_options =
-      (
-        @patient.parent_relationships.includes(:parent) +
-          @patient
-            .consents
-            .select { it.programme_type == @programme.type }
-            .filter_map(&:parent_relationship)
-      ).compact.uniq.sort_by(&:label)
+      if Flipper.enabled?(:one_patient_per_parent)
+        (
+          @patient.parents +
+            @patient
+              .consents
+              .select { it.programme_type == @programme.type }
+              .filter_map(&:parent)
+        ).compact.uniq.sort_by(&:label)
+      else
+        (
+          @patient.parent_relationships.includes(:parent) +
+            @patient
+              .consents
+              .select { it.programme_type == @programme.type }
+              .filter_map(&:parent_relationship)
+        ).compact.uniq.sort_by(&:label)
+      end
   end
 
   def set_back_link_path

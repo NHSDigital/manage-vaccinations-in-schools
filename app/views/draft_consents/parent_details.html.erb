@@ -3,7 +3,7 @@
 <% end %>
 
 <% page_title = if @parent.persisted?
-       "Details for #{@draft_consent.parent_relationship.label_with_parent}"
+       "Details for #{Flipper.enabled?(:one_patient_per_parent) ? @parent.label_with_parent : @draft_consent.parent_relationship.label_with_parent}"
      else
        "Details for parent or guardian"
      end %>

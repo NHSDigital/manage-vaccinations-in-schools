@@ -37,6 +37,8 @@ FactoryBot.define do
     email { Faker::Internet.email }
     phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
     phone_receive_updates { phone.present? }
+    type { %w[father guardian mother other].sample }
+    other_name { type == "other" ? "Other" : nil }
 
     trait :non_contactable do
       phone { nil }

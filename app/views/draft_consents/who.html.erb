@@ -24,10 +24,10 @@
     <% end %>
 
     <% if @parent_options.present? %>
-      <% @parent_options.each.with_index do |parent_relationship, i| %>
-        <% parent = parent_relationship.parent %>
+      <% @parent_options.each.with_index do |parent_option, i| %>
+        <% parent = parent_option.respond_to?(:parent) ? parent_relationship.parent : parent_option %>
         <%= f.govuk_radio_button :new_or_existing_contact, parent.id,
-                                 label: { text: parent_relationship.label_with_parent },
+                                 label: { text: parent.label_with_parent },
                                  hint: { text: parent.contact_label },
                                  link_errors: !gillick_competent && i == 0 %>
       <% end %>
