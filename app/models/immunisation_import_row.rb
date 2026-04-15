@@ -930,6 +930,11 @@ class ImmunisationImportRow
         patient_date_of_birth.header,
         "Enter a date of birth in the past."
       )
+    elsif patient_date_of_birth.to_date < Date.new(2000, 1, 1)
+      errors.add(
+        patient_date_of_birth.header,
+        "is too old to still be in school"
+      )
     end
   end
 
