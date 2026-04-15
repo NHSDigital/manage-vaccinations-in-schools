@@ -51,7 +51,11 @@ def run(args):
         + (f" (service {args.service})" if args.service else "")
     )
     exit_code = aws.run_command(
-        env, task_id, "/rails/bin/docker-entrypoint /bin/bash", container=container
+        env,
+        task_id,
+        "/rails/bin/docker-entrypoint /bin/bash",
+        container=container,
+        replace_process=True,
     )
 
     sys.exit(exit_code)

@@ -1,3 +1,4 @@
+import os
 import json
 import subprocess
 
@@ -137,7 +138,9 @@ def resolve_task(env, task_id=None, task_ip=None, service=None):
     )
 
 
-def run_command(env, task_id, command, container=None, interactive=True):
+def run_command(
+    env, task_id, command, container=None, interactive=True, replace_process=False
+):
     """Execute a command in an ECS task, returning the exit code."""
     cmd = [
         "aws",
@@ -156,6 +159,8 @@ def run_command(env, task_id, command, container=None, interactive=True):
         cmd += ["--container", container]
     if interactive:
         cmd.append("--interactive")
+    if replace_process:
+        os.execvp(cmd[0], cmd)
     return subprocess.run(cmd).returncode
 
 
