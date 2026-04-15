@@ -646,7 +646,7 @@
             <div class="method-heading">
               <a href="#method-i-team_contact_email" title="Link to this method">
                 <span class="method-name">team_contact_email</span>
-                <span class="method-args">(session)</span>
+                <span class="method-args">(session: nil, vaccination_record: nil)</span>
               </a>
             </div>
 
@@ -660,8 +660,8 @@
           </div>
           <div class="method-source-code" id="team_contact_email-source">
             <pre class="ruby"><span class="ruby-comment"># File app/helpers/teams_helper.rb, line 10</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team_contact_email</span>(<span class="ruby-identifier">session</span>)
-  (<span class="ruby-identifier">session</span>.<span class="ruby-identifier">subteam</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">team</span>).<span class="ruby-identifier">email</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team_contact_email</span>(<span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">vaccination_record:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">contact_entity</span>(<span class="ruby-value">session:</span>, <span class="ruby-value">vaccination_record:</span>).<span class="ruby-identifier">email</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -688,7 +688,7 @@
             <div class="method-heading">
               <a href="#method-i-team_contact_name" title="Link to this method">
                 <span class="method-name">team_contact_name</span>
-                <span class="method-args">(session)</span>
+                <span class="method-args">(session: nil, vaccination_record: nil)</span>
               </a>
             </div>
 
@@ -702,8 +702,8 @@
           </div>
           <div class="method-source-code" id="team_contact_name-source">
             <pre class="ruby"><span class="ruby-comment"># File app/helpers/teams_helper.rb, line 6</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team_contact_name</span>(<span class="ruby-identifier">session</span>)
-  (<span class="ruby-identifier">session</span>.<span class="ruby-identifier">subteam</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">team</span>).<span class="ruby-identifier">name</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team_contact_name</span>(<span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">vaccination_record:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">contact_entity</span>(<span class="ruby-value">session:</span>, <span class="ruby-value">vaccination_record:</span>).<span class="ruby-identifier">name</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -730,7 +730,7 @@
             <div class="method-heading">
               <a href="#method-i-team_contact_phone" title="Link to this method">
                 <span class="method-name">team_contact_phone</span>
-                <span class="method-args">(session)</span>
+                <span class="method-args">(session: nil, vaccination_record: nil)</span>
               </a>
             </div>
 
@@ -744,8 +744,10 @@
           </div>
           <div class="method-source-code" id="team_contact_phone-source">
             <pre class="ruby"><span class="ruby-comment"># File app/helpers/teams_helper.rb, line 14</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team_contact_phone</span>(<span class="ruby-identifier">session</span>)
-  <span class="ruby-identifier">format_phone_with_instructions</span>(<span class="ruby-identifier">session</span>.<span class="ruby-identifier">subteam</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">team</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team_contact_phone</span>(<span class="ruby-value">session:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">vaccination_record:</span> <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">format_phone_with_instructions</span>(
+    <span class="ruby-identifier">contact_entity</span>(<span class="ruby-value">session:</span>, <span class="ruby-value">vaccination_record:</span>)
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
