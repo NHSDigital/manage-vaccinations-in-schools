@@ -14,11 +14,9 @@
 #  index_local_authority_postcodes_on_gss_code  (gss_code)
 #  index_local_authority_postcodes_on_value     (value) UNIQUE
 #
+
 class LocalAuthority::Postcode < ApplicationRecord
-  belongs_to :local_authority,
-             foreign_key: :gss_code,
-             primary_key: :gss_code,
-             optional: true
+  belongs_to :local_authority, foreign_key: :gss_code, primary_key: :gss_code
 
   normalizes :value,
              with: ->(given_value) do

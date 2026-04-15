@@ -31,6 +31,7 @@
 #  index_locations_on_urn             (urn) UNIQUE WHERE ((type = 0) AND (site IS NULL))
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
+
 class Location < ApplicationRecord
   self.inheritance_column = nil
 
