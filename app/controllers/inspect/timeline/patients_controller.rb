@@ -69,22 +69,32 @@ class Inspect::Timeline::PatientsController < ApplicationController
   private
 
   def show_pii
-    @show_pii ||=
-      user_is_allowed_to_access_pii && !patient_accessed_is_sensitive &&
-        pii_access_requested_by_user
+    return @show_pii if defined?(@show_pii)
+    @show_pii =
+      user_is_allowed_to_access_pii && pii_access_requested_by_user &&
+        !patient_accessed_is_sensitive
   end
 
   def user_is_allowed_to_access_pii
-    @user_is_allowed_to_access_pii ||= policy(:inspect).show_pii?
+    if defined?(@user_is_allowed_to_access_pii)
+      return @user_is_allowed_to_access_pii
+    end
+    @user_is_allowed_to_access_pii = policy(:inspect).show_pii?
   end
 
   def patient_accessed_is_sensitive
-    @patient_accessed_is_sensitive ||=
+    if defined?(@patient_accessed_is_sensitive)
+      return @patient_accessed_is_sensitive
+    end
+    @patient_accessed_is_sensitive =
       @patient.restricted? || @compare_patient&.restricted?
   end
 
   def pii_access_requested_by_user
-    @pii_access_requested_by_user ||= params[:show_pii] || SHOW_PII_BY_DEFAULT
+    if defined?(@pii_access_requested_by_user)
+      return @pii_access_requested_by_user
+    end
+    @pii_access_requested_by_user = params[:show_pii] || SHOW_PII_BY_DEFAULT
   end
 
   def set_patient

@@ -42,17 +42,24 @@ module Inspect
     private
 
     def show_pii
-      @show_pii ||=
-        user_is_allowed_to_access_pii && !sensitive_patient_in_graph &&
-          pii_access_requested_by_user
+      return @show_pii if defined?(@show_pii)
+      @show_pii =
+        user_is_allowed_to_access_pii && pii_access_requested_by_user &&
+          !sensitive_patient_in_graph
     end
 
     def user_is_allowed_to_access_pii
-      @user_is_allowed_to_access_pii ||= policy(:inspect).show_pii?
+      if defined?(@user_is_allowed_to_access_pii)
+        return @user_is_allowed_to_access_pii
+      end
+      @user_is_allowed_to_access_pii = policy(:inspect).show_pii?
     end
 
     def sensitive_patient_in_graph
-      @sensitive_patient_in_graph ||=
+      if defined?(@sensitive_patient_in_graph)
+        return @sensitive_patient_in_graph
+      end
+      @sensitive_patient_in_graph =
         begin
           graph_with_pii =
             GraphRecords.new(
@@ -67,7 +74,10 @@ module Inspect
     end
 
     def pii_access_requested_by_user
-      @pii_access_requested_by_user ||= params[:show_pii] || SHOW_PII_BY_DEFAULT
+      if defined?(@pii_access_requested_by_user)
+        return @pii_access_requested_by_user
+      end
+      @pii_access_requested_by_user = params[:show_pii] || SHOW_PII_BY_DEFAULT
     end
 
     def traversals_config
