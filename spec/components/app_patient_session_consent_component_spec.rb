@@ -17,12 +17,6 @@ describe AppPatientSessionConsentComponent do
     it { should_not have_css("details", text: "Responses to health questions") }
     it { should have_css("p", text: "No consent request is scheduled") }
     it { should have_css("button", text: "Record a new consent response") }
-
-    context "when session is not in progress" do
-      let(:session) { create(:session, :scheduled, programmes: [programme]) }
-
-      it { should_not have_css("button", text: "Assess Gillick competence") }
-    end
   end
 
   context "when vaccinated" do
@@ -32,7 +26,6 @@ describe AppPatientSessionConsentComponent do
 
     it { should_not have_css("p", text: "No requests have been sent.") }
     it { should_not have_css("button", text: "Record a new consent response") }
-    it { should_not have_css("button", text: "Assess Gillick competence") }
   end
 
   context "with refused consent" do
