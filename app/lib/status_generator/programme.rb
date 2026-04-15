@@ -332,14 +332,24 @@ class StatusGenerator::Programme
     @sessions ||=
       patient_locations
         .reject { it.location.generic_clinic? }
-        .flat_map do |patient_location|
-          patient_location
-            .location
-            .team_locations
-            .select { it.academic_year == academic_year }
-            .flat_map(&:sessions)
-            .select { it.programme_types.include?(programme_type) }
-            .reject(&:completed?)
-        end
+        .flat_map { sessions_for(it) }
+        .uniq
+  end
+
+  def sessions_for(patient_location)
+    patient_location
+      .location
+      .team_locations
+      .select { it.academic_year == academic_year }
+      .flat_map(&:sessions)
+      .select { it.programme_types.include?(programme_type) }
+      .select { session_in_patient_location_date_range?(it, patient_location) }
+      .reject(&:completed?)
+  end
+
+  def session_in_patient_location_date_range?(session, patient_location)
+    return true if session.dates.empty?
+
+    session.dates.any? { |date| date.in?(patient_location.date_range) }
   end
 end
