@@ -4,7 +4,7 @@ describe "Verbal consent" do
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
   before do
-    Flipper.enable(:one_patient_per_parent)
+    Flipper.disable(:one_patient_per_parent)
     given_i_am_signed_in
   end
 

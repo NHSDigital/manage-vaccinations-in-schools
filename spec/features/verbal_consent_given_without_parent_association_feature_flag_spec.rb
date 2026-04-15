@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Verbal consent" do
+  before { Flipper.disable(:one_patient_per_parent) }
+
   scenario "Given HPV" do
     given_an_hpv_programme_is_underway
     and_i_am_signed_in
