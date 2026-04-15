@@ -277,12 +277,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   def programme
     programmes = team.programmes.flat_map(&:import_names).map { tag.i(it) }
-
-    programmes_sentence =
-      programmes.to_sentence(
-        last_word_connector: " or ",
-        two_words_connector: " or "
-      )
+    programmes_sentence = to_sentence_with_or(programmes)
 
     [
       {
@@ -292,21 +287,13 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
-  def make_vaccines_sentence(vaccines:)
-    vaccines.to_sentence(
-      last_word_connector: " or ",
-      two_words_connector: " or "
-    )
-  end
-
   def vaccine_and_batch
     vaccines = team.vaccines.pluck(:upload_name).map { tag.i(it) }
-    vaccines_sentence = make_vaccines_sentence(vaccines:)
 
     [
       {
         name: "VACCINE_GIVEN",
-        notes: "Optional, must be one of: #{vaccines_sentence}."
+        notes: "Optional, must be one of: #{to_sentence_with_or(vaccines)}."
       },
       { name: "BATCH_NUMBER", notes: "Optional" },
       {
@@ -318,23 +305,26 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def national_reporting_vaccine_and_batch
-    hpv_vaccines =
-      Programme.hpv.vaccines.pluck(:nivs_name).compact.map { tag.i(it) }
-    flu_vaccines =
-      Programme.flu.vaccines.pluck(:nivs_name).compact.map { tag.i(it) }
+    vaccine_given_notes_per_programme =
+      [Programme.hpv, Programme.flu].map do |programme|
+        vaccines =
+          programme
+            .vaccines
+            .where.not(nivs_name: [nil, ""])
+            .order(:nivs_name)
+            .pluck(:nivs_name)
+            .map { tag.i(it) }
 
-    hpv_vaccines_sentence = make_vaccines_sentence(vaccines: hpv_vaccines)
-    flu_vaccines_sentence = make_vaccines_sentence(vaccines: flu_vaccines)
+        "#{tag.br}#{tag.br}" \
+          "For #{programme.name_in_sentence} records, must be one of: " \
+          "#{to_sentence_with_or(vaccines)}."
+      end
 
     [
       {
         name: "VACCINE_GIVEN",
         notes:
-          "#{tag.strong("Required")}" \
-            "#{tag.br}#{tag.br}" \
-            "For HPV records, must be one of: #{hpv_vaccines_sentence}." \
-            "#{tag.br}#{tag.br}" \
-            "For flu records, must be one of: #{flu_vaccines_sentence}."
+          ([tag.strong("Required")] + vaccine_given_notes_per_programme).join
       },
       { name: "BATCH_NUMBER", notes: tag.strong("Required") },
       {
@@ -367,7 +357,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   def reason_not_vaccinated_and_notes
     reasons =
       ImmunisationImportRow::REASONS_NOT_ADMINISTERED.keys.sort.map do
-        tag.i(_1)
+        tag.i(it)
       end
     reasons_sentence =
       reasons.to_sentence(
@@ -458,7 +448,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def national_reporting_anatomical_site
-    sites = ImmunisationImportRow::DELIVERY_SITES.keys.sort.map { tag.i(_1) }
+    sites = ImmunisationImportRow::DELIVERY_SITES.keys.sort.map { tag.i(it) }
 
     site_sentence =
       sites.to_sentence(
@@ -502,5 +492,9 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
           "#{tag.strong("Required")}, supplied automatically by your vaccination recording system."
       }
     ]
+  end
+
+  def to_sentence_with_or(items)
+    items.to_sentence(last_word_connector: " or ", two_words_connector: " or ")
   end
 end
