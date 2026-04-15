@@ -239,9 +239,7 @@ describe "Import child records" do
   end
 
   def then_i_should_the_errors_page_with_invalid_fields
-    expect(page).to have_content(
-      "How to format your Mavis CSV file for child records"
-    )
+    expect(page).to have_content("What your CSV file must include")
     expect(page).to have_content("Row 2")
   end
 

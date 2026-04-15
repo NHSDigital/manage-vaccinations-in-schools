@@ -218,9 +218,7 @@ describe("National reporting immunisation imports") do
   end
 
   def then_i_should_see_the_errors_page
-    expect(page).to have_content(
-      "How to format your CSV file for vaccination records"
-    )
+    expect(page).to have_content("What your CSV file must include")
     expect(page).to have_content("Row 2")
     expect(page).to have_content("ANATOMICAL_SITE:")
     expect(page).to have_content("SCHOOL_URN:")
