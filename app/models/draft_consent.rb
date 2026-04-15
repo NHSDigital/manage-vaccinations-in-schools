@@ -247,24 +247,30 @@ class DraftConsent
     parent.email = parent_email
     parent.full_name = parent_full_name
     parent.phone = parent_phone
-    parent.phone_receive_updates = parent_phone_receive_updates
+    parent.phone_receive_updates = parent_phone_receive_updates.presence
 
-    # We can't use find_or_initialize_by here because we need the object to
-    # remain attached to the parent so we can save the parent with its
-    # relationships.
+    if Flipper.enabled?(:one_patient_per_parent)
+      parent.patient = patient
+      parent.type = parent_relationship_type
+      parent.other_name = parent_relationship_other_name
+    else
+      # We can't use find_or_initialize_by here because we need the object to
+      # remain attached to the parent so we can save the parent with its
+      # relationships.
 
-    parent_relationship =
-      parent.parent_relationships.find { it.patient_id == patient_id } ||
-        parent.parent_relationships.build(patient_id:)
+      parent_relationship =
+        parent.parent_relationships.find { it.patient_id == patient_id } ||
+          parent.parent_relationships.build(patient_id:)
 
-    parent_relationship.assign_attributes(
-      patient:, # acts as preload
-      type: parent_relationship_type,
-      other_name: parent_relationship_other_name
-    )
+      parent_relationship.assign_attributes(
+        patient:, # acts as preload
+        type: parent_relationship_type,
+        other_name: parent_relationship_other_name
+      )
 
-    if parent_relationship.new_record?
-      parent.parent_relationships << parent_relationship
+      if parent_relationship.new_record?
+        parent.parent_relationships << parent_relationship
+      end
     end
 
     parent
