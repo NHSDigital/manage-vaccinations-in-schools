@@ -778,7 +778,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="find_by_urn_and_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 206</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 207</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find_by_urn_and_site</span>(<span class="ruby-identifier">urn_and_site</span>)
   <span class="ruby-identifier">where_urn_and_site</span>(<span class="ruby-identifier">urn_and_site</span>).<span class="ruby-identifier">take</span>
 <span class="ruby-keyword">end</span></pre>
@@ -820,7 +820,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="find_by_urn_and_site-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 210</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 211</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find_by_urn_and_site!</span>(<span class="ruby-identifier">urn_and_site</span>)
   <span class="ruby-identifier">where_urn_and_site</span>(<span class="ruby-identifier">urn_and_site</span>).<span class="ruby-identifier">take!</span>
 <span class="ruby-keyword">end</span></pre>
@@ -876,7 +876,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="as_json-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 248</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 249</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">as_json</span>
   <span class="ruby-keyword">super</span>.<span class="ruby-identifier">except</span>(<span class="ruby-string">&quot;created_at&quot;</span>, <span class="ruby-string">&quot;systm_one_code&quot;</span>, <span class="ruby-string">&quot;updated_at&quot;</span>).<span class="ruby-identifier">merge</span>(
     <span class="ruby-string">&quot;is_attached_to_team&quot;</span> <span class="ruby-operator">=&gt;</span>
@@ -926,7 +926,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="attach_to_team-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 259</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 260</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">attach_to_team!</span>(<span class="ruby-identifier">team</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">subteam:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">team_locations</span>
     .<span class="ruby-identifier">find_or_initialize_by</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>)
@@ -970,7 +970,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="clinic-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 232</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 233</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clinic?</span> = <span class="ruby-identifier">generic_clinic?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">community_clinic?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school?</span> = <span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">generic_school?</span>
@@ -1088,7 +1088,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="dfe_number-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 236</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 237</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dfe_number</span>
   <span class="ruby-node">&quot;#{gias_local_authority_code}#{gias_establishment_number}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_school?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1130,7 +1130,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 308</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 309</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Location</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1172,7 +1172,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="import_default_programme_year_groups-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 277</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 278</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_default_programme_year_groups!</span>(<span class="ruby-identifier">programmes</span>, <span class="ruby-value">academic_year:</span>)
   <span class="ruby-identifier">year_group_ids</span> =
     <span class="ruby-identifier">location_year_groups</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:value</span>, <span class="ruby-value">:id</span>).<span class="ruby-identifier">to_h</span>
@@ -1230,7 +1230,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="import_year_groups-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 265</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 266</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_year_groups!</span>(<span class="ruby-identifier">values</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">source:</span>)
   <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">YearGroup</span>.<span class="ruby-identifier">import!</span>(
     <span class="ruby-node">%i[location_id academic_year value source]</span>,
@@ -1276,7 +1276,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="import_year_groups_from_gias-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 273</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 274</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_year_groups_from_gias!</span>(<span class="ruby-value">academic_year:</span>)
   <span class="ruby-identifier">import_year_groups!</span>(<span class="ruby-identifier">gias_year_groups</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">source:</span> <span class="ruby-string">&quot;gias&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1318,7 +1318,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="organisation_ods_codes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 299</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 300</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">organisation_ods_codes</span> = <span class="ruby-constant">Organisation</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:ods_code</span>)
 
   <span class="ruby-constant">GIAS_PHASE_MAPPINGS</span> = {
@@ -1370,7 +1370,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="phase-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 240</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">phase</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">gias_phase</span>
     <span class="ruby-constant">GIAS_PHASE_MAPPINGS</span>
@@ -1416,7 +1416,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="programmes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 228</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 229</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes</span>
   <span class="ruby-identifier">location_programme_year_groups</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme</span>).<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">uniq</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1458,7 +1458,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="school-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 234</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 235</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school?</span> = <span class="ruby-identifier">gias_school?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">generic_school?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dfe_number</span>
@@ -1574,7 +1574,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="teams_for_academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 255</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 256</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">teams_for_academic_year</span>(<span class="ruby-identifier">academic_year</span>)
   <span class="ruby-identifier">team_locations</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">includes</span>(<span class="ruby-value">:team</span>).<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:team</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1616,7 +1616,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="to_param-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 214</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 215</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_param</span>
   <span class="ruby-comment"># ODS code and URN+site are uniquely indexed.</span>
   <span class="ruby-identifier">ods_code</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">urn_and_site</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">id</span>
@@ -1659,7 +1659,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="urn_and_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 219</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 220</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">urn_and_site</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">urn</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">site</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">site</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">urn</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">urn</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">site</span>
@@ -1702,7 +1702,7 @@ index_locations_on_urn_and_site    (urn,site) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 224</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/location.rb, line 225</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>
   <span class="ruby-ivar">@year_groups</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">location_year_groups</span>.<span class="ruby-identifier">pluck_values</span>
 <span class="ruby-keyword">end</span></pre>
