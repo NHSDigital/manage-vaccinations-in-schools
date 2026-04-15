@@ -25,6 +25,7 @@
 #  index_local_authorities_on_nation_and_short_name  (nation,short_name)
 #  index_local_authorities_on_short_name             (short_name)
 #
+
 class LocalAuthority < ApplicationRecord
   self.primary_key = :mhclg_code
 
@@ -32,10 +33,7 @@ class LocalAuthority < ApplicationRecord
   validates :gias_code, uniqueness: true, allow_nil: true
   validates :gss_code, uniqueness: true, allow_nil: true
 
-  has_many :postcodes,
-           foreign_key: :gss_code,
-           primary_key: :gss_code,
-           class_name: "LocalAuthority::Postcode"
+  has_many :postcodes, foreign_key: :gss_code, primary_key: :gss_code
 
   enum :nation,
        {
@@ -80,8 +78,6 @@ class LocalAuthority < ApplicationRecord
   end
 
   def self.for_postcode(postcode)
-    joins(:postcodes).merge(
-      LocalAuthority::Postcode.where(value: postcode)
-    ).first
+    joins(:postcodes).merge(Postcode.where(value: postcode)).first
   end
 end
