@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "../vendor/nhsuk-frontend" as *;
 
 .app-session-banner {
@@ -44,6 +45,45 @@
 
     @include nhsuk-media-query($until: tablet) {
       margin-left: #{$nhsuk-gutter-half * -1};
+    }
+  }
+
+  &[data-app-sticky-init] {
+    position: sticky;
+    z-index: 999;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    width: 100vw;
+    margin-right: -50vw;
+    margin-left: -50vw;
+  }
+
+  &[data-stuck="true"] {
+    border-bottom-color: nhsuk-colour("grey-3");
+    box-shadow: 0 $nhsuk-border-width 0
+      color.scale(nhsuk-colour("grey-3"), $alpha: -50%);
+
+    .app-main-wrapper--xs {
+      padding-top: nhsuk-spacing(2);
+      padding-bottom: 0;
+    }
+
+    .nhsuk-breadcrumb {
+      @include nhsuk-visually-hidden;
+    }
+
+    .nhsuk-heading-l {
+      @include nhsuk-font-size(22);
+    }
+
+    .app-secondary-navigation {
+      box-shadow: none;
+    }
+
+    .app-secondary-navigation__list {
+      @include nhsuk-font-size(16);
     }
   }
 }
