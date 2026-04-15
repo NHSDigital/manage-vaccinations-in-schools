@@ -15,6 +15,7 @@ class ParentRelationshipsController < ApplicationController
                 @patient.parent_relationships.build(parent_relationship_params)
 
     if @parent_relationship.save
+      PatientStatusUpdater.call(patient: @patient)
       redirect_to edit_patient_path(@patient)
     else
       render :new, status: :unprocessable_entity
@@ -27,6 +28,7 @@ class ParentRelationshipsController < ApplicationController
 
   def update
     if @parent_relationship.update(parent_relationship_params)
+      PatientStatusUpdater.call(patient: @patient)
       redirect_to edit_patient_path(@patient)
     else
       render :edit, status: :unprocessable_content
@@ -38,6 +40,7 @@ class ParentRelationshipsController < ApplicationController
   def destroy
     @parent_relationship.destroy!
 
+    PatientStatusUpdater.call(patient: @patient)
     redirect_to edit_patient_path(@patient),
                 flash: {
                   success: "Parent relationship removed"

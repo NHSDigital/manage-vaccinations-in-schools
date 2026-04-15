@@ -58,6 +58,11 @@ FactoryBot.define do
       status { "needs_consent_follow_up_requested" }
     end
 
+    trait :needs_consent_no_contact_details do
+      consent_status { "no_contact_details" }
+      status { "needs_consent_no_contact_details" }
+    end
+
     trait :needs_triage do
       consent_status { "given" }
       consent_vaccine_methods { %w[injection] }
