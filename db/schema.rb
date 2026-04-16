@@ -352,6 +352,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
   end
 
+  create_table "exports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "exportable_id", null: false
+    t.string "exportable_type", null: false
+    t.binary "file_data"
+    t.string "file_type", null: false
+    t.string "filename", null: false
+    t.string "status", default: "pending", null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["created_at"], name: "index_exports_on_created_at"
+    t.index ["exportable_type", "exportable_id"], name: "index_exports_on_exportable"
+    t.index ["status"], name: "index_exports_on_status"
+    t.index ["team_id"], name: "index_exports_on_team_id"
+  end
+
   create_table "flipper_features", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "key", null: false
@@ -1126,6 +1143,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "teams"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
+  add_foreign_key "exports", "teams"
+  add_foreign_key "exports", "users"
   add_foreign_key "gillick_assessments", "locations"
   add_foreign_key "gillick_assessments", "patients"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"

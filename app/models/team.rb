@@ -62,6 +62,7 @@ class Team < ApplicationRecord
   has_many :clinic_notifications
   has_many :cohort_imports
   has_many :consents
+  has_many :exports
   has_many :important_notices
   has_many :patient_specific_directions
   has_many :patient_teams

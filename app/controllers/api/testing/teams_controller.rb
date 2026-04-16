@@ -10,6 +10,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     CohortImport.where(team:).delete_all
     ImmunisationImport.where(team:).delete_all
     ClassImport.where(team:).delete_all
+    Export.where(team:)
 
     Consent.where(team:).delete_all
     ArchiveReason.where(team:).delete_all
