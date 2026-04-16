@@ -202,7 +202,7 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    parent_label = @patient.parents.find_by(patient: @patient).label_with_parent
+    parent_label = @parent.label_with_parent
 
     choose parent_label
     click_button "Continue"

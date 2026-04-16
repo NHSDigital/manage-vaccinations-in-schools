@@ -99,10 +99,15 @@ class Patient < ApplicationRecord
   has_many :locations, through: :patient_locations
   has_many :teams, through: :patient_teams
 
-  if Flipper.enabled?(:one_patient_per_parent)
-    has_many :parents, -> { order(:created_at) }
-  else
-    has_many :parents, through: :parent_relationships
+  has_many :parents_one_to_many, -> { order(:created_at) }, class_name: "Parent"
+  has_many :parents, through: :parent_relationships
+
+  def parents
+    if Flipper.enabled?(:one_patient_per_parent)
+      parents_one_to_many
+    else
+      super
+    end
   end
 
   has_and_belongs_to_many :class_imports
