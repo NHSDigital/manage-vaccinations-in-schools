@@ -106,23 +106,6 @@ class PatientStatusUpdater < PatientScopedUpdater
       end
   end
 
-  def patient_statuses_to_import
-    @patient_statuses_to_import ||=
-      (patient_scope || Patient.all)
-        .pluck(:id, :birth_academic_year)
-        .flat_map do |patient_id, birth_academic_year|
-          academic_years.flat_map do |academic_year|
-            year_group = birth_academic_year.to_year_group(academic_year:)
-
-            programme_types_per_year_group
-              .fetch(year_group, [])
-              .map do |programme_type|
-                [patient_id, programme_type, academic_year]
-              end
-          end
-        end
-  end
-
   def programme_statuses_to_import
     @programme_statuses_to_import ||=
       (patient_scope || Patient.all)
@@ -159,19 +142,6 @@ class PatientStatusUpdater < PatientScopedUpdater
 
         [patient_id, session_id]
       end
-  end
-
-  def programme_types_per_year_group
-    @programme_types_per_year_group ||=
-      Location::ProgrammeYearGroup
-        .joins(:location_year_group)
-        .where(location_year_group: { academic_year: academic_years })
-        .distinct
-        .pluck(:programme_type, :"location_year_group.value")
-        .each_with_object({}) do |(programme_type, year_group), hash|
-          hash[year_group] ||= []
-          hash[year_group] << programme_type
-        end
   end
 
   def programme_types_per_session_id_and_year_group
