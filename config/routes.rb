@@ -383,6 +383,9 @@ Rails.application.routes.draw do
             controller: "vaccination_records/exports",
             only: %i[new create]
 
+  get "/vaccination-report/new",
+      to: redirect("/vaccination-records/exports/new")
+
   get "consent-form/:type",
       to: "consent_form_downloads#show",
       as: :consent_form_download
