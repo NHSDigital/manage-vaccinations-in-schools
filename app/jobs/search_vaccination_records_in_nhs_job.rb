@@ -133,6 +133,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     service_vaccination_records =
       patient
         .vaccination_records
+        .administered
         .with_correct_source_for_nhs_immunisations_api
         .includes(:team)
 

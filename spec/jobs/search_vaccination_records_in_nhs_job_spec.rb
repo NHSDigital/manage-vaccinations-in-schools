@@ -208,6 +208,44 @@ describe SearchVaccinationRecordsInNHSJob do
           ).to eq(mavis_record)
         end
       end
+
+      context "record duplicates a not-administered Mavis record" do
+        let(:nhs_immunisations_api_primary_source) { true }
+
+        before do
+          create(
+            :vaccination_record,
+            :not_administered,
+            session:,
+            programme:,
+            patient:,
+            performed_at:
+          )
+        end
+
+        it "returns all incoming records" do
+          expect(deduplicate).to contain_exactly(
+            first_vaccination_record,
+            second_vaccination_record
+          )
+        end
+
+        it "doesn't discard all incoming records" do
+          deduplicate
+          expect(first_vaccination_record.discarded_at).to be_nil
+          expect(second_vaccination_record.discarded_at).to be_nil
+        end
+
+        it "doesn't point any incoming records at the Mavis record" do
+          deduplicate
+          expect(
+            first_vaccination_record.duplicate_of_vaccination_record
+          ).to be_nil
+          expect(
+            second_vaccination_record.duplicate_of_vaccination_record
+          ).to be_nil
+        end
+      end
     end
 
     let(:vaccination_records) do
