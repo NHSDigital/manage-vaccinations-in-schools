@@ -288,7 +288,13 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def vaccine_and_batch
-    vaccines = team.vaccines.pluck(:upload_name).map { tag.i(it) }
+    vaccines =
+      team
+        .vaccines
+        .where.not(upload_name: [nil, ""])
+        .order(:upload_name)
+        .pluck(:upload_name)
+        .map { tag.i(it) }
 
     [
       {
