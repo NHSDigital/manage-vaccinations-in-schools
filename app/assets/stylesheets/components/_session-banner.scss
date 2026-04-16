@@ -12,6 +12,7 @@
   }
 
   .nhsuk-notification-banner {
+    margin-bottom: nhsuk-spacing(4);
     border-color: nhsuk-colour("white");
   }
 
@@ -31,7 +32,18 @@
     color: $nhsuk-reverse-text-colour;
   }
 
+  .app-secondary-navigation {
+    margin: 0;
+    border-bottom: 0 none;
+    background: nhsuk-shade($nhsuk-brand-colour, 20%);
+    box-shadow: 0 -1px 0 0 $nhsuk-secondary-border-colour;
+  }
+
   .app-secondary-navigation__list {
-    box-shadow: 0 -1px 0 0 $nhsuk-reverse-border-colour;
+    box-shadow: none;
+
+    @include nhsuk-media-query($until: tablet) {
+      margin-left: #{$nhsuk-gutter-half * -1};
+    }
   }
 }

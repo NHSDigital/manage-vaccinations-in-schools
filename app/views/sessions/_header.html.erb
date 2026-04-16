@@ -1,6 +1,8 @@
 <div class="app-session-banner">
   <div class="nhsuk-width-container">
     <div class="nhsuk-main-wrapper nhsuk-main-wrapper--s">
+      <%= render(AppFlashMessageComponent.new(flash: flash)) %>
+
       <%= h1 session_title(@session), class: "nhsuk-u-margin-bottom-2" %>
 
       <p class="nhsuk-caption-l nhsuk-u-margin-bottom-0">
