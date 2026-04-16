@@ -41,7 +41,8 @@ class CSVParser
 
         parsed_values =
           DATE_FORMATS.lazy.filter_map do |format|
-            Date.strptime(value, format)
+            date = Date.strptime(value, format)
+            date.year >= 1000 ? date : nil
           rescue ArgumentError, TypeError
             nil
           end
