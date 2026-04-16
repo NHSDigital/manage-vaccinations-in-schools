@@ -169,7 +169,7 @@ def run_command(
 
 def _default_service(env):
     if env.endswith("data-replication"):
-        return f"mavis-{env}-web"
+        return f"mavis-{env}"
     return f"mavis-{env}-ops"
 
 
