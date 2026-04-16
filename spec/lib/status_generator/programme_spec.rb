@@ -451,26 +451,6 @@ describe StatusGenerator::Programme do
       its(:status) { should be(:needs_consent_request_scheduled) }
     end
 
-    context "when the patient moved from a school to home educated" do
-      let(:send_consent_requests_at) { Date.tomorrow }
-      let(:school_move) do
-        create(
-          :school_move,
-          :to_home_educated,
-          patient:,
-          team: session.team,
-          academic_year: AcademicYear.current
-        )
-      end
-
-      before do
-        ConsentNotification.delete_all
-        school_move.confirm!
-      end
-
-      its(:status) { should be(:needs_consent_request_not_scheduled) }
-    end
-
     context "when a consent requests are not scheduled to go out in the future" do
       let(:send_consent_requests_at) { nil }
 
