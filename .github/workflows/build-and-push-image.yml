@@ -41,7 +41,7 @@ jobs:
         steps.check-prod-image.outputs.ops-build-needed }}
     steps:
       - name: Configure AWS Dev Credentials
-        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GithubDeployECSService
           aws-region: eu-west-2
@@ -57,7 +57,7 @@ jobs:
           fi
       - name: Configure AWS Production credentials
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
-        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::820242920762:role/GithubDeployECSService
           aws-region: eu-west-2
@@ -108,7 +108,7 @@ jobs:
       - name: Write build SHA
         run: git rev-parse HEAD > public/sha
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: ${{ matrix.aws-role }}
           aws-region: eu-west-2
