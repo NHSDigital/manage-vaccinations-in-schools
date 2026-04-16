@@ -10,6 +10,8 @@ rules:
     min-spaces-from-content: 1
   document-start: disable
   line-length:
-    max: 100
+    # Ideally, this value would be smaller, but it makes dealing with long lines
+    #  including commit SHAs, etc. very difficult.
+    max: 120
   truthy:
     ignore: .github/workflows/*
