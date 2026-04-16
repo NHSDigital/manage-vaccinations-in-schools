@@ -892,7 +892,7 @@
             </details>
           </div>
           <div class="method-source-code" id="academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 481</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 477</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">academic_year</span> = <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">academic_year</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch</span>
@@ -1075,7 +1075,7 @@
             </details>
           </div>
           <div class="method-source-code" id="allowed_dose_sequences-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 411</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 407</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">allowed_dose_sequences</span>
   <span class="ruby-comment"># New MenACWY records created in mavis have a dose sequence</span>
   <span class="ruby-comment"># Old records may not, but can be edited to have a dose sequence of 1</span>
@@ -1168,7 +1168,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 483</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 479</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_id</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-constant">Batch</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">batch_id</span>)
@@ -1305,7 +1305,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_be_half_dose-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 520</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 516</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_be_half_dose?</span> = <span class="ruby-identifier">vaccine_method</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;nasal&quot;</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_change_outcome?</span>
@@ -1407,7 +1407,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_change_outcome-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 522</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 518</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_change_outcome?</span>
   (
     (<span class="ruby-identifier">outcome</span> <span class="ruby-operator">!=</span> <span class="ruby-string">&quot;already_had&quot;</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span>) <span class="ruby-operator">||</span>
@@ -1617,9 +1617,7 @@
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> [],
-      <span class="ruby-value">sessions:</span> [],
-      <span class="ruby-value">consent_notifications:</span> []
+      <span class="ruby-value">parents:</span> []
     )
 
   <span class="ruby-identifier">triage_generator</span> =
@@ -1630,9 +1628,7 @@
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">triages:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> [],
-      <span class="ruby-value">sessions:</span> [],
-      <span class="ruby-value">consent_notifications:</span> []
+      <span class="ruby-value">parents:</span> []
     )
 
   <span class="ruby-identifier">approved_vaccine_methods</span> =
@@ -1932,7 +1928,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delivery_site_matches_delivery_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 533</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 529</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_site_matches_delivery_method</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">delivery_method</span>.<span class="ruby-identifier">blank?</span>
 
@@ -1994,7 +1990,7 @@
             </details>
           </div>
           <div class="method-source-code" id="dose_sequence_can_be_modified-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 406</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 402</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_can_be_modified?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span>
     (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">doubles?</span>)
@@ -2037,7 +2033,7 @@
             </details>
           </div>
           <div class="method-source-code" id="earliest_possible_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 488</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 484</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">earliest_possible_date</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">national_reporting_user_and_record?</span>
     <span class="ruby-identifier">academic_year</span>.<span class="ruby-identifier">to_academic_year_date_range</span>.<span class="ruby-identifier">first</span>
@@ -2083,7 +2079,7 @@
             </details>
           </div>
           <div class="method-source-code" id="human_enum_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 385</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 381</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">human_enum_name</span>(<span class="ruby-identifier">attribute</span>)
   <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">send</span>(<span class="ruby-identifier">attribute</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -2225,7 +2221,7 @@
             </details>
           </div>
           <div class="method-source-code" id="latest_possible_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 496</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 492</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_possible_date</span>
   [<span class="ruby-identifier">academic_year</span>.<span class="ruby-identifier">to_academic_year_date_range</span>.<span class="ruby-identifier">last</span>, <span class="ruby-constant">Date</span>.<span class="ruby-identifier">current</span>].<span class="ruby-identifier">min</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2398,7 +2394,7 @@
             </details>
           </div>
           <div class="method-source-code" id="national_reporting_user_and_record-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 401</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 397</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">national_reporting_user_and_record?</span>
   <span class="ruby-ivar">@current_user</span>.<span class="ruby-identifier">selected_team</span>.<span class="ruby-identifier">has_national_reporting_access?</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">sourced_from_national_reporting?</span>
@@ -2526,7 +2522,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_at_date_within_range-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 500</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 496</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_at_date_within_range</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">performed_at_date</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
 
@@ -2665,7 +2661,7 @@
             </details>
           </div>
           <div class="method-source-code" id="readable_attribute_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 425</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 421</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">readable_attribute_names</span>
   <span class="ruby-identifier">writable_attribute_names</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2792,7 +2788,7 @@
             </details>
           </div>
           <div class="method-source-code" id="request_session_key-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 461</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 457</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">request_session_key</span> = <span class="ruby-string">&quot;vaccination_record&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_unused_attributes</span>
@@ -2952,7 +2948,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_supplied_by-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 529</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 525</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_supplied_by?</span>
   <span class="ruby-identifier">performed_by_user</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">performed_by_user</span>&amp;.<span class="ruby-identifier">show_in_suppliers</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2994,7 +2990,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reset_unused_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 463</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 459</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_unused_attributes</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered?</span>
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">full_dose</span> = <span class="ruby-keyword">true</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_be_half_dose?</span>
@@ -3136,7 +3132,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sourced_from_consent_refusal-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 395</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 391</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_consent_refusal?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;consent_refusal&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_national_reporting?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;national_reporting&quot;</span>
@@ -3360,7 +3356,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sourced_from_historical_upload-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 391</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 387</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_historical_upload?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;historical_upload&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_nhs_immunisations_api?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;nhs_immunisations_api&quot;</span>
@@ -3587,7 +3583,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sourced_from_manual_report-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 399</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 395</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_manual_report?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;manual_report&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">national_reporting_user_and_record?</span>
@@ -3808,7 +3804,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sourced_from_national_reporting-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 397</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 393</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_national_reporting?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;national_reporting&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_manual_report?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;manual_report&quot;</span>
@@ -4030,7 +4026,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sourced_from_nhs_immunisations_api-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 393</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 389</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_nhs_immunisations_api?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;nhs_immunisations_api&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_consent_refusal?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;consent_refusal&quot;</span>
@@ -4255,7 +4251,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sourced_from_service-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 389</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 385</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_service?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;service&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sourced_from_historical_upload?</span> = <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;historical_upload&quot;</span>
@@ -4790,7 +4786,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 516</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 512</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method</span>
   <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">delivery_method_to_vaccine_method</span>(<span class="ruby-identifier">delivery_method</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4849,9 +4845,7 @@
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> [],
-      <span class="ruby-value">sessions:</span> [],
-      <span class="ruby-value">consent_notifications:</span> []
+      <span class="ruby-value">parents:</span> []
     )
 
   <span class="ruby-identifier">triage_generator</span> =
@@ -4862,9 +4856,7 @@
       <span class="ruby-value">consents:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>,
       <span class="ruby-value">triages:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>,
       <span class="ruby-value">vaccination_records:</span> [],
-      <span class="ruby-value">parents:</span> [],
-      <span class="ruby-value">sessions:</span> [],
-      <span class="ruby-value">consent_notifications:</span> []
+      <span class="ruby-value">parents:</span> []
     )
 
   <span class="ruby-identifier">approved_vaccine_methods</span> =
@@ -4916,7 +4908,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_batch_presence-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 557</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 553</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_batch_presence</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">administered?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">sourced_from_service?</span>
 
@@ -4960,7 +4952,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_patient_attendance-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 563</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 559</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
@@ -5090,7 +5082,7 @@
             </details>
           </div>
           <div class="method-source-code" id="writable_attribute_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 429</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 425</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">writable_attribute_names</span>
   <span class="ruby-node">%w[
     batch_number

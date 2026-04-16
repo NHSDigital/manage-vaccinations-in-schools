@@ -676,7 +676,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">( programme_type:, academic_year:, patient:, consents:, triages:, vaccination_records:, parents:, sessions:, consent_notifications: )</span>
+                <span class="method-args">( programme_type:, academic_year:, patient:, consents:, triages:, vaccination_records:, parents: )</span>
               </a>
             </div>
 
@@ -697,9 +697,7 @@
   <span class="ruby-value">consents:</span>,
   <span class="ruby-value">triages:</span>,
   <span class="ruby-value">vaccination_records:</span>,
-  <span class="ruby-value">parents:</span>,
-  <span class="ruby-value">sessions:</span>,
-  <span class="ruby-value">consent_notifications:</span>
+  <span class="ruby-value">parents:</span>
 )
   <span class="ruby-ivar">@programme_type</span> = <span class="ruby-identifier">programme_type</span>
   <span class="ruby-ivar">@academic_year</span> = <span class="ruby-identifier">academic_year</span>
@@ -708,8 +706,6 @@
   <span class="ruby-ivar">@triages</span> = <span class="ruby-identifier">triages</span>
   <span class="ruby-ivar">@vaccination_records</span> = <span class="ruby-identifier">vaccination_records</span>
   <span class="ruby-ivar">@parents</span> = <span class="ruby-identifier">parents</span>
-  <span class="ruby-ivar">@sessions</span> = <span class="ruby-identifier">sessions</span>
-  <span class="ruby-ivar">@consent_notifications</span> = <span class="ruby-identifier">consent_notifications</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -763,7 +759,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consent_requires_triage-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 62</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 58</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consent_requires_triage?</span>
   <span class="ruby-identifier">latest_consents</span>.<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:requires_triage?</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -805,7 +801,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delay_vaccination_until_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 56</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 52</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delay_vaccination_until_date</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">status_should_be_delay_vaccination?</span>
     <span class="ruby-identifier">latest_triage</span>&amp;.<span class="ruby-identifier">delay_vaccination_until</span>
@@ -849,7 +845,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 26</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme</span>
   <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>, <span class="ruby-value">disease_types:</span>, <span class="ruby-value">patient:</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -891,7 +887,7 @@
             </details>
           </div>
           <div class="method-source-code" id="status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 30</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">status</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">status_should_be_safe_to_vaccinate?</span>
     <span class="ruby-value">:safe_to_vaccinate</span>
@@ -945,7 +941,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination_history_requires_triage-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 66</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_history_requires_triage?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">triage_on_vaccination_history?</span>
 
@@ -996,7 +992,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 46</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 42</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method</span>
   <span class="ruby-identifier">latest_triage</span>&amp;.<span class="ruby-identifier">vaccine_method</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">status_should_be_safe_to_vaccinate?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1038,7 +1034,7 @@
             </details>
           </div>
           <div class="method-source-code" id="without_gelatine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 50</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/triage.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">without_gelatine</span>
   <span class="ruby-identifier">latest_triage</span>&amp;.<span class="ruby-identifier">without_gelatine</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">status_should_be_safe_to_vaccinate?</span>
 <span class="ruby-keyword">end</span></pre>
