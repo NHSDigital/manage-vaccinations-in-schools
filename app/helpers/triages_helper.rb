@@ -61,16 +61,22 @@ module TriagesHelper
              triage.programme.has_multiple_vaccine_methods?
           vaccination_method =
             Vaccine.human_enum_name(:method_prefix, triage.vaccine_method)
-          "is safe to vaccinate using the #{vaccination_method} vaccine only."
+          " is safe to vaccinate using the #{vaccination_method} vaccine only."
         else
-          "is safe to vaccinate."
+          " is safe to vaccinate."
         end
       elsif triage.do_not_vaccinate?
-        "should not be vaccinated."
+        " should not be vaccinated."
       elsif triage.delay_vaccination?
-        "’s vaccination should be delayed."
+        if triage.delay_vaccination_until.present?
+          "’s vaccination should be delayed until #{triage.delay_vaccination_until.to_fs(:long)}."
+        else
+          "’s vaccination should be delayed."
+        end
+      elsif triage.invite_to_clinic?
+        "’s vaccination should take place at a clinic."
       end
 
-    "#{prefix}#{triage.patient.full_name} #{suffix}" if suffix
+    "#{prefix}#{triage.patient.given_name}#{suffix}" if suffix
   end
 end

@@ -117,10 +117,86 @@ describe AppPatientSessionProgrammeComponent do
     it { should have_css("h4", text: "Flu:") }
     it { should_not have_css("table") }
 
-    it "shows safe to vaccinate decision details" do
+    it "shows needs triage details" do
       expect(rendered).to have_text(
-        "You need to decide if it’s safe to vaccinate."
+        "You need to decide if it’s safe to vaccinate #{patient.given_name}."
       )
+    end
+  end
+
+  context "when triaged" do
+    let(:nurse) { create(:user) }
+
+    context "safe to vaccinate" do
+      before do
+        create(
+          :triage,
+          :safe_to_vaccinate,
+          patient:,
+          programme:,
+          performed_by: nurse
+        )
+      end
+
+      it "shows triage summary" do
+        expect(rendered).to have_text("#{nurse.full_name} decided that")
+        expect(rendered).to have_text("is safe to vaccinate")
+      end
+    end
+
+    context "do not vaccinate" do
+      before do
+        create(
+          :triage,
+          :do_not_vaccinate,
+          patient:,
+          programme:,
+          performed_by: nurse
+        )
+      end
+
+      it "shows triage summary" do
+        expect(rendered).to have_text(
+          "#{nurse.full_name} decided that #{patient.given_name} should not be vaccinated."
+        )
+      end
+    end
+
+    context "delay vaccination" do
+      let!(:triage) do
+        create(
+          :triage,
+          :delay_vaccination,
+          patient:,
+          programme:,
+          performed_by: nurse
+        )
+      end
+
+      it "shows triage summary with delay date" do
+        expect(rendered).to have_text(
+          "#{nurse.full_name} decided that #{patient.given_name}’s vaccination should be delayed " \
+            "until #{triage.delay_vaccination_until.to_fs(:long)}."
+        )
+      end
+    end
+
+    context "invite to clinic" do
+      before do
+        create(
+          :triage,
+          :invite_to_clinic,
+          patient:,
+          programme:,
+          performed_by: nurse
+        )
+      end
+
+      it "shows triage summary" do
+        expect(rendered).to have_text(
+          "#{nurse.full_name} decided that #{patient.given_name}’s vaccination should take place at a clinic."
+        )
+      end
     end
   end
 end

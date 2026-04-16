@@ -34,6 +34,7 @@ class AppPatientSessionProgrammeComponent < ViewComponent::Base
   attr_reader :patient, :session, :programme
 
   delegate :academic_year, to: :session
+  delegate :triage_summary, to: :helpers
 
   def heading
     "#{resolver[:prefix]}: #{resolver[:text]}"
@@ -44,7 +45,9 @@ class AppPatientSessionProgrammeComponent < ViewComponent::Base
   end
 
   def details
-    if programme_status.due?
+    if latest_triage
+      triage_summary(latest_triage)
+    elsif programme_status.due?
       criteria_label =
         I18n.t(
           programme_status.vaccine_criteria.to_param,
@@ -72,10 +75,19 @@ class AppPatientSessionProgrammeComponent < ViewComponent::Base
         "#{patient.given_name} was vaccinated on #{record&.performed_at&.to_fs(:long)}."
       end
     elsif programme_status.needs_triage?
-      "You need to decide if it’s safe to vaccinate."
+      "You need to decide if it’s safe to vaccinate #{patient.given_name}."
     else
       resolver[:details_text]
     end
+  end
+
+  def latest_triage
+    @latest_triage ||=
+      TriageFinder.call(
+        patient.triages.includes(:performed_by),
+        programme_type: programme.type,
+        academic_year:
+      )
   end
 
   def programme_status
