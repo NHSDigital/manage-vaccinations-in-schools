@@ -270,12 +270,10 @@ Rails.application.routes.draw do
   resources :reports, only: :index
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
-  resources :school_move_exports,
+  resources :school_moves_exports,
             path: "school-moves/exports",
             controller: "school_moves/exports",
-            only: %i[create show update] do
-    get "download", on: :member
-  end
+            only: %i[new create]
 
   resources :schools, only: :index, param: :urn_and_site do
     resource :invite_to_clinic,

@@ -1,0 +1,26 @@
+<% content_for :navigation do %>
+  <%= govuk_back_link(href: school_moves_path) %>
+<% end %>
+
+<span class="nhsuk-caption-l">School moves</span>
+<%= h1 "Download school moves" %>
+
+<p>
+  You can download a record of school moves as a CSV file. Only school
+  moves that have been reviewed and confirmed will be included.
+</p>
+
+<h2>Select a date range</h2>
+
+<%= form_with model: @form, url: school_moves_exports_path do |f| %>
+  <%= f.mavis_error_summary %>
+  <%= f.govuk_date_field :date_from,
+                         legend: { text: "From (optional)" },
+                         hint: { text: "For example, 27 3 2024" } %>
+
+  <%= f.govuk_date_field :date_to,
+                         legend: { text: "To (optional)" },
+                         hint: { text: "For example, 16 6 2025" } %>
+
+  <%= f.govuk_submit "Download school move data" %>
+<% end %>

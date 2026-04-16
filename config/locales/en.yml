@@ -282,6 +282,16 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
+        school_moves_export_form:
+          attributes:
+            date_from:
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+            date_to:
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
         select_team_form:
           attributes:
             team_id:
