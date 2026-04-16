@@ -1,4 +1,4 @@
-name: Local E2E tests
+name: Local
 
 on: [workflow_call]
 
@@ -6,8 +6,8 @@ jobs:
   end-to-end-tests:
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:17.2
+      postgresql:
+        image: postgis/postgis:17-master
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
