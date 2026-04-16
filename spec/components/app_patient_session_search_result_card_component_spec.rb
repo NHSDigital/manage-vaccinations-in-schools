@@ -14,7 +14,7 @@ describe AppPatientSessionSearchResultCardComponent do
       family_name: "Seldon",
       address_postcode: "SW11 1AA",
       year_group: 8,
-      school: build(:school, name: "Streeling University"),
+      school: build(:gias_school, name: "Streeling University"),
       session:
     )
   end

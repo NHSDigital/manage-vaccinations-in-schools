@@ -18,11 +18,13 @@ describe AppImportReviewComponent do
 
   let(:team) { create(:team) }
   let(:user) { create(:user, team:) }
-  let(:location) { create(:school, team:, name: "Test School") }
-  let(:second_location) { create(:school, team:, name: "Second Test School") }
+  let(:location) { create(:gias_school, team:, name: "Test School") }
+  let(:second_location) do
+    create(:gias_school, team:, name: "Second Test School")
+  end
   let(:other_team) { create(:team) }
   let(:other_location) do
-    create(:school, team: other_team, name: "Other Test School")
+    create(:gias_school, team: other_team, name: "Other Test School")
   end
 
   let(:import) { create(:cohort_import, team:, uploaded_by: user) }
@@ -327,7 +329,7 @@ describe AppImportReviewComponent do
 
   describe "with skipped school moves" do
     let(:other_team_school) do
-      create(:school, team: other_team, name: "School in Other Team")
+      create(:gias_school, team: other_team, name: "School in Other Team")
     end
     let(:skipped_patient) do
       create(:patient, school: other_team_school, team: other_team)

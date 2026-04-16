@@ -268,13 +268,13 @@ describe "MMRV vaccination" do
       matching_notify_email(
         to: @patient.consents.last.parent.email,
         subject: "Your child had their MMRV vaccination today",
-        template: :vaccination_administered_mmr
+        template: :vaccination_administered
       ).with_content_including(
         "MMRV vaccination",
         "ProQuad",
         "a raised, blotchy rash",
         "swollen glands around the cheeks, neck and jaw",
-        "Your child still needs a second dose of the MMR vaccine"
+        "Your child still needs a 2nd dose of the MMRV vaccine"
       )
     )
   end

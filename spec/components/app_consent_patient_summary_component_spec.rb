@@ -9,7 +9,7 @@ describe AppConsentPatientSummaryComponent do
   let(:team) { create(:team, programmes: [programme]) }
 
   let(:consent) { create(:consent, patient:, consent_form:, programme:, team:) }
-  let(:school) { create(:school, name: "Waterloo Road", team:) }
+  let(:school) { create(:gias_school, name: "Waterloo Road", team:) }
   let(:session) do
     create(:session, programmes: [programme], team:, location: school)
   end

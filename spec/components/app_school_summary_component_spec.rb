@@ -11,7 +11,7 @@ describe AppSchoolSummaryComponent do
   let(:academic_year) { AcademicYear.pending }
   let(:school) do
     create(
-      :school,
+      :gias_school,
       :secondary,
       name: "Streeling University",
       urn: "123456",

@@ -17,7 +17,7 @@ describe SchoolMovePolicy do
 
       context "patient belonging to two sessions" do
         let(:patient) { create(:patient) }
-        let(:school) { create(:school, team:) }
+        let(:school) { create(:gias_school, team:) }
         let(:school_move) do
           create(:school_move, :to_school, patient:, school:)
         end
@@ -32,7 +32,7 @@ describe SchoolMovePolicy do
 
       context "school move with school in different team" do
         let(:patient) { create(:patient) }
-        let(:school) { create(:school, team: other_team) }
+        let(:school) { create(:gias_school, team: other_team) }
         let(:school_move) do
           create(:school_move, :to_school, patient:, school:)
         end

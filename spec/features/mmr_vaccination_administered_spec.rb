@@ -94,7 +94,7 @@ describe "MMR vaccination" do
   def given_i_am_signed_in_with_mmr_programme
     @programme = Programme.mmr
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @location = create(:school, team: @team)
+    @location = create(:gias_school, team: @team)
     @session =
       create(
         :session,
@@ -305,12 +305,12 @@ describe "MMR vaccination" do
       matching_notify_email(
         to: @patient.consents.last.parent.email,
         subject: "Your child had their MMR vaccination today",
-        template: :vaccination_administered_mmr
+        template: :vaccination_administered
       ).with_content_including(
         "MMR vaccination",
         "a raised, blotchy rash",
         "swollen glands around the cheeks, neck and jaw",
-        "Your child still needs a second dose of the MMR vaccine"
+        "Your child still needs a 2nd dose of the MMR vaccine"
       )
     )
   end

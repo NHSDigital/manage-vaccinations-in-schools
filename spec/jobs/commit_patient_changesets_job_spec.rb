@@ -5,7 +5,7 @@ describe CommitPatientChangesetsJob do
 
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
-  let(:location) { create(:school, team:) }
+  let(:location) { create(:gias_school, team:) }
   let(:session) { create(:session, location:, programmes:, team:) }
 
   let(:file) { "valid.csv" }
@@ -328,7 +328,7 @@ describe CommitPatientChangesetsJob do
           address_line_2: nil,
           year_group: 9,
           preferred_given_name: "Jenny",
-          school: create(:school),
+          school: create(:gias_school),
           session: create(:session, team:, programmes:)
         )
       end
@@ -517,7 +517,7 @@ describe CommitPatientChangesetsJob do
     end
 
     context "with a patient currently in the imported school but with an outstanding move to another school" do
-      let(:other_school) { create(:school, team:) }
+      let(:other_school) { create(:gias_school, team:) }
 
       let(:existing_patient) do
         create(

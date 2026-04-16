@@ -61,30 +61,15 @@ class GraphRecords
   ALLOWED_TYPES = DEFAULT_NODE_ORDER
 
   DEFAULT_TRAVERSALS = {
-    patient: {
-      patient: %i[
-        parents
-        consents
-        cohort_imports
-        class_imports
-        vaccination_records
-        triages
-        school
-        patient_locations
-      ],
-      parent: %i[patients consents cohort_imports class_imports],
-      consent: %i[consent_form patient parent],
-      patient_location: %i[patient location],
-      location: %i[sessions],
-      session: %i[location programmes],
-      vaccination_record: %i[session]
+    batch: {
+      batch: %i[team vaccine],
+      vaccine: %i[programme]
     },
-    parent: {
-      parent: %i[class_imports cohort_imports consents patients],
-      class_import: %i[session],
-      consent: %i[parent patient],
-      patient: %i[parents sessions consents],
-      session: %i[location]
+    class_import: {
+      class_import: %i[team uploaded_by]
+    },
+    cohort_import: {
+      cohort_import: %i[team uploaded_by]
     },
     consent: {
       consent: %i[consent_form parent patient programme],
@@ -92,158 +77,168 @@ class GraphRecords
       patient: %i[parents]
     },
     consent_form: {
-      consent_form: [:consents]
-    },
-    vaccination_record: {
-      vaccination_record: %i[
-        patient
-        programme
-        session
-        vaccine
-        performed_by_user
-      ],
-      patient: [:consents],
-      session: [:location],
-      consent: [:programme]
-    },
-    location: {
-      location: %i[sessions team]
-    },
-    session: {
-      session: %i[location programmes session_dates]
-    },
-    session_attendance: {
-      session_attendance: %i[session_date],
-      session: %i[location],
-      session_date: %i[session]
+      consent_form: %i[consents]
     },
     gillick_assessment: {
       gillick_assessment: %i[performed_by programme],
       session: %i[location]
     },
-    triage: {
-      triage: %i[patient performed_by programme]
-    },
-    programme: {
-      programme: %i[teams vaccines]
+    location: {
+      location: %i[sessions teams]
     },
     organisation: {
       organisation: %i[teams]
     },
+    parent: {
+      class_import: %i[session],
+      consent: %i[parent patient],
+      parent: %i[class_imports cohort_imports consents patients],
+      patient: %i[consents parents sessions],
+      session: %i[location]
+    },
+    patient: {
+      consent: %i[consent_form parent patient],
+      location: %i[sessions],
+      parent: %i[class_imports cohort_imports consents patients],
+      patient: %i[
+        class_imports
+        cohort_imports
+        consents
+        parents
+        patient_locations
+        school
+        triages
+        vaccination_records
+      ],
+      patient_location: %i[location patient],
+      session: %i[location programmes],
+      vaccination_record: %i[session]
+    },
+    patient_location: {
+      patient_location: %i[location patient]
+    },
+    programme: {
+      programme: %i[teams vaccines]
+    },
+    session: {
+      session: %i[location programmes]
+    },
+    session_attendance: {
+      session: %i[location],
+      session_attendance: %i[session_date],
+      session_date: %i[session]
+    },
     team: {
       team: %i[organisation programmes]
     },
-    vaccine: {
-      vaccine: %i[batches programme]
-    },
-    batch: {
-      batch: %i[team vaccine],
-      vaccine: [:programme]
+    triage: {
+      triage: %i[patient performed_by programme]
     },
     user: {
-      user: %i[teams programmes],
-      team: [:programmes]
+      team: %i[programmes],
+      user: %i[programmes teams]
     },
-    session_date: {
-      session_date: [:session],
-      session: %i[location]
+    vaccination_record: {
+      consent: %i[programme],
+      patient: %i[consents],
+      session: %i[location],
+      vaccination_record: %i[
+        patient
+        performed_by_user
+        programme
+        session
+        vaccine
+      ]
     },
-    cohort_import: {
-      cohort_import: %i[team uploaded_by]
-    },
-    class_import: {
-      class_import: %i[team uploaded_by]
-    },
-    patient_location: {
-      patient_location: %i[patient location]
+    vaccine: {
+      vaccine: %i[batches programme]
     }
   }.freeze
 
   DETAIL_WHITELIST = {
-    consent: %i[
-      response
-      route
-      created_at
-      updated_at
-      withdrawn_at
-      invalidated_at
-    ],
-    session: %i[slug clinic? academic_year],
-    session_attendance: %i[attending created_at updated_at],
-    triage: %i[status created_at updated_at invalidated_at],
-    vaccination_record: %i[
-      outcome
-      performed_at
-      created_at
-      updated_at
-      discarded_at
-      uuid
-    ],
-    programme: %i[type],
-    vaccine: %i[upload_name],
-    organisation: %i[ods_code],
-    team: %i[name workgroup],
-    subteam: %i[name],
-    location: %i[name address_postcode type gias_year_groups],
-    cohort_import: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-    ],
+    batch: %i[archived_at expiry number],
     class_import: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
       changed_record_count
+      csv_filename
+      exact_duplicate_record_count
+      new_record_count
+      processed_at
+      rows_count
+      status
       year_groups
     ],
-    session_date: %i[value],
-    patient: %i[
-      updated_from_pds_at
-      date_of_death_recorded_at
-      restricted_at
-      invalidated_at
+    cohort_import: %i[
+      changed_record_count
+      csv_filename
+      exact_duplicate_record_count
+      new_record_count
+      processed_at
+      rows_count
+      status
     ],
-    parent: %i[],
+    consent: %i[
+      created_at
+      invalidated_at
+      response
+      route
+      updated_at
+      withdrawn_at
+    ],
+    consent_form: %i[archived_at recorded_at response],
     gillick_assessment: %i[
-      knows_vaccination
-      knows_disease
+      created_at
       knows_consequences
       knows_delivery
+      knows_disease
       knows_side_effects
-      created_at
+      knows_vaccination
     ],
-    batch: %i[number expiry archived_at],
-    user: %i[fallback_role uid],
-    consent_form: %i[response recorded_at archived_at],
+    location: %i[address_postcode gias_year_groups name type],
+    organisation: %i[ods_code],
+    parent: %i[],
     parent_relationship: %i[type],
-    patient_location: %i[academic_year]
+    patient: %i[
+      date_of_death_recorded_at
+      invalidated_at
+      restricted_at
+      updated_from_pds_at
+    ],
+    patient_location: %i[academic_year],
+    programme: %i[type],
+    session: %i[academic_year clinic? dates slug],
+    session_attendance: %i[attending created_at updated_at],
+    subteam: %i[name],
+    team: %i[name workgroup],
+    triage: %i[created_at invalidated_at status updated_at],
+    user: %i[fallback_role uid],
+    vaccination_record: %i[
+      created_at
+      discarded_at
+      outcome
+      performed_at
+      updated_at
+      uuid
+    ],
+    vaccine: %i[upload_name]
   }.freeze
 
   EXTRA_DETAIL_WHITELIST_WITH_PII = {
+    consent_form: %i[address_postcode date_of_birth family_name given_name],
+    parent: %i[email full_name phone],
+    parent_relationship: %i[other_name],
     patient: %i[
-      nhs_number
-      given_name
-      family_name
-      date_of_birth
       address_line_1
       address_line_2
-      address_town
       address_postcode
+      address_town
+      date_of_birth
       date_of_death
+      family_name
+      given_name
+      nhs_number
       pending_changes
     ],
-    parent: %i[full_name email phone],
-    user: %i[given_name family_name email fallback_role uid],
-    consent_form: %i[given_name family_name address_postcode date_of_birth],
-    parent_relationship: %i[other_name]
+    user: %i[email fallback_role family_name given_name uid]
   }.freeze
 
   DETAIL_WHITELIST_WITH_PII =

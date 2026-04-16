@@ -18,18 +18,18 @@ describe "mavis gias import" do
   end
 
   def and_a_location_already_exists
-    create(:school, :secondary, urn: "100000", site: nil)
+    create(:gias_school, :secondary, urn: "100000", site: nil)
   end
 
   def and_sites_exist
     create(
-      :school,
+      :gias_school,
       urn: "100000",
       site: "A",
       name: "The Aldgate School - Site 2"
     )
     create(
-      :school,
+      :gias_school,
       urn: "100000",
       site: "B",
       name: "The Aldgate School - Site 3"

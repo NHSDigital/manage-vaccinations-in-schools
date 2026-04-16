@@ -32,7 +32,7 @@ describe "Triage" do
     team = create(:team, programmes: [@programme])
     @user = create(:nurse, teams: [team])
 
-    location = create(:school, :secondary, urn: 123_456, team:)
+    location = create(:gias_school, :secondary, urn: 123_456, team:)
 
     @session =
       create(

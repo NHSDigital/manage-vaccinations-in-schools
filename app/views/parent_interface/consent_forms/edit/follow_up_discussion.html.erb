@@ -8,6 +8,8 @@
 <% hint = case @consent_form.reason_for_refusal
      when "contains_gelatine"
        "For example, it may be possible to use a vaccine that does not contain gelatine."
+     when "do_not_want_vaccination_at_school"
+       "For example, it may be possible to vaccinate your child in a community clinic."
      when "medical_reasons"
        "We understand alternatives might not be suitable in some cases."
      end %>

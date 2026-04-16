@@ -23,8 +23,8 @@ module HasManyTeamLocations
              through: :team_locations,
              source: :location
 
-    has_many :schools,
-             -> { distinct.school },
+    has_many :gias_schools,
+             -> { distinct.gias_school },
              through: :team_locations,
              source: :location
   end

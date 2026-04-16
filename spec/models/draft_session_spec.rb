@@ -22,7 +22,9 @@ describe DraftSession do
   let(:existing_programmes) { [Programme.menacwy, Programme.td_ipv] }
   let(:new_programme) { Programme.hpv }
 
-  let(:location) { create(:school, team:, programmes: existing_programmes) }
+  let(:location) do
+    create(:gias_school, team:, programmes: existing_programmes)
+  end
   let(:session) do
     create(:session, team:, location:, programmes: existing_programmes)
   end

@@ -14,7 +14,7 @@ describe "Session school reminders" do
   def given_a_school_session_is_scheduled_for_tomorrow
     programme = Programme.hpv
     @team = create(:team, programmes: [programme])
-    school = create(:school, team: @team)
+    school = create(:gias_school, team: @team)
     @session =
       create(
         :session,

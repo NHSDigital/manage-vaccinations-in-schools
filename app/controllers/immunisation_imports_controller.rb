@@ -3,7 +3,7 @@
 class ImmunisationImportsController < ApplicationController
   include Pagy::Backend
 
-  before_action :set_immunisation_import, only: %i[show update]
+  before_action :set_immunisation_import, only: %i[show]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
@@ -54,12 +54,6 @@ class ImmunisationImportsController < ApplicationController
            locals: {
              import: @immunisation_import
            }
-  end
-
-  def update
-    @immunisation_import.process!
-
-    redirect_to immunisation_import_path(@immunisation_import)
   end
 
   private

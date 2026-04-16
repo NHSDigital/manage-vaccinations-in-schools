@@ -5,7 +5,7 @@ class EnqueuePatientsAgedOutOfSchoolsJob < ApplicationJob
 
   def perform
     academic_year = AcademicYear.pending
-    ids = Location.school.with_team(academic_year:).pluck(:id)
+    ids = Location.gias_school.with_team(academic_year:).pluck(:id)
     PatientsAgedOutOfSchoolJob.perform_bulk(ids.zip)
   end
 end

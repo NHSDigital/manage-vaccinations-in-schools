@@ -17,7 +17,9 @@ describe Stats::ConsentsBySchool do
 
     let(:team) { create(:team, organisation:, name: "Test Team", programmes:) }
     let(:academic_year) { AcademicYear.current }
-    let(:school) { create(:school, name: "Test School", team:, programmes:) }
+    let(:school) do
+      create(:gias_school, name: "Test School", team:, programmes:)
+    end
 
     context "when there are consent responses" do
       before do

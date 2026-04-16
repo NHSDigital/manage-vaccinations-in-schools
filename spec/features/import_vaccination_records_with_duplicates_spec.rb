@@ -41,7 +41,7 @@ describe "Immunisation imports duplicates" do
     @team =
       create(:team, :with_one_nurse, ods_code: "R1L", programmes: [@programme])
 
-    @location = create(:school, urn: "110158", name: "Eton College")
+    @location = create(:gias_school, urn: "110158", name: "Eton College")
     @session =
       create(
         :session,

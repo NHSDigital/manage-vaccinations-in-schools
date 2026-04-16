@@ -51,7 +51,7 @@ describe "Vaccination programmes table" do
   end
 
   def given_patients_exist_in_year_eleven
-    school = create(:school, team: @team)
+    school = create(:gias_school, team: @team)
 
     @session =
       create(

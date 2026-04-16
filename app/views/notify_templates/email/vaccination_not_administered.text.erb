@@ -1,12 +1,12 @@
 ---
 template_id: "130fe52a-014a-45dd-9f53-8e65c1b8bb79"
 template_name: vaccination_not_administered
-subject: "Your child did not have their <%= vaccination %> today"
+subject: "Your child did not have their <%= programme_name_for_parents(vaccination_record.programme) %> vaccination today"
 ---
-<%= full_and_preferred_patient_name %> did not have their <%= vaccination %> at school today. This was because <%= reason_did_not_vaccinate %>.
+<%= full_and_preferred_patient_name %> did not have their <%= programme_name_for_parents(vaccination_record.programme) %> vaccination at school today. This was because <%= reason_did_not_vaccinate %>.
 
 <% if show_additional_instructions? %>If you’d still like your child to be vaccinated, you can book an appointment at a catch-up clinic by contacting our team.<% end %>
 
-<%= subteam_name %>
-<%= subteam_email %>
-<%= subteam_phone %>
+<%= team_contact_name(vaccination_record:) %>
+<%= team_contact_email(vaccination_record:) %>
+<%= team_contact_phone(vaccination_record:) %>

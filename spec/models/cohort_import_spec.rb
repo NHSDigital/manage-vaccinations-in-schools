@@ -44,7 +44,7 @@ describe CohortImport do
   let(:academic_year) { AcademicYear.current }
 
   # Ensure location URN matches the URN in our fixture files
-  let!(:location) { create(:school, urn: "123456", team:) } # rubocop:disable RSpec/LetSetup
+  let!(:location) { create(:gias_school, urn: "123456", team:) } # rubocop:disable RSpec/LetSetup
 
   it_behaves_like "a CSVImportable model"
 
@@ -159,7 +159,7 @@ describe CohortImport do
 
       let(:location) do
         Location.find_by_urn_and_site("120026") ||
-          create(:school, urn: "120026", team:)
+          create(:gias_school, urn: "120026", team:)
       end
 
       it "is valid" do

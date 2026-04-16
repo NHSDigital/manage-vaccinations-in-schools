@@ -1,0 +1,8 @@
+organisation:
+  ods_code: AYG
+
+team:
+  name: Kernow Health CIC - Cornwall
+  workgroup: kernowsaisnr
+  type: national_reporting
+  national_reporting_cut_off_date: 2026-04-20

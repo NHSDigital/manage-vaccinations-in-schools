@@ -19,7 +19,6 @@ jobs:
     with:
       git_reference_for_database_image: ${{ github.base_ref }}
       git_reference_for_application_image: ${{ github.head_ref }}
-    secrets: inherit
 
   local-e2e-flow:
     if: github.event.pull_request.head.repo.full_name != github.repository

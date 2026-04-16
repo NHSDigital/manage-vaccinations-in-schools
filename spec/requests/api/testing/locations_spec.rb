@@ -15,10 +15,10 @@ describe "/api/testing/locations" do
   end
   let!(:home_educated_school) { team.home_educated_school }
   let!(:primary_school) do
-    create(:school, :primary, :closed, name: "Location D")
+    create(:gias_school, :primary, :closed, name: "Location D")
   end
   let!(:secondary_school) do
-    create(:school, :secondary, :closed, name: "Location E")
+    create(:gias_school, :secondary, :closed, name: "Location E")
   end
   let!(:unknown_school) { team.unknown_school }
 
@@ -79,10 +79,10 @@ describe "/api/testing/locations" do
       end
 
       context "with multiple year groups" do
-        before { create(:school, gias_year_groups: [8, 9]) }
+        before { create(:gias_school, gias_year_groups: [8, 9]) }
 
         let!(:secondary_school) do
-          create(:school, gias_year_groups: [8, 9, 10])
+          create(:gias_school, gias_year_groups: [8, 9, 10])
         end
 
         it "includes locations with all those year groups" do

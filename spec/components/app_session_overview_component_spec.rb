@@ -171,7 +171,7 @@ describe AppSessionOverviewComponent do
         create(
           :vaccination_record,
           patient:,
-          location: create(:school, name: "Hogwarts"),
+          location: create(:gias_school, name: "Hogwarts"),
           programme: hpv_programme
         )
 
@@ -186,7 +186,7 @@ describe AppSessionOverviewComponent do
         create(
           :vaccination_record,
           patient:,
-          location: create(:school, name: "Hogwarts"),
+          location: create(:gias_school, name: "Hogwarts"),
           programme: hpv_programme,
           outcome: "refused"
         )
@@ -196,7 +196,7 @@ describe AppSessionOverviewComponent do
     end
 
     context "with multiple patients and one was vaccinated for HPV elsewhere" do
-      let(:other_school) { create(:school) }
+      let(:other_school) { create(:gias_school) }
 
       before do
         create(

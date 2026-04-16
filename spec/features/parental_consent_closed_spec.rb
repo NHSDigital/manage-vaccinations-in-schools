@@ -20,7 +20,7 @@ describe "Parental consent closed" do
     @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @subteam = create(:subteam, team: @team)
-    location = create(:school, name: "Pilot School", subteam: @subteam)
+    location = create(:gias_school, name: "Pilot School", subteam: @subteam)
     @session =
       create(
         :session,
@@ -36,7 +36,7 @@ describe "Parental consent closed" do
     @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @subteam = create(:subteam, team: @team)
-    location = create(:school, name: "Pilot School", subteam: @subteam)
+    location = create(:gias_school, name: "Pilot School", subteam: @subteam)
     @session =
       create(
         :session,

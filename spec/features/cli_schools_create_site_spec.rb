@@ -28,7 +28,7 @@ describe "mavis schools create-site" do
     subteam = create(:subteam, team:)
     @school =
       create(
-        :school,
+        :gias_school,
         urn: "123456",
         name: "MainSchool",
         site: nil,

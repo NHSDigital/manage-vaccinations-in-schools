@@ -18,7 +18,7 @@ describe "mavis gias check_import" do
   def and_there_are_schools_with_future_sessions
     @school_with_future_session =
       create(
-        :school,
+        :gias_school,
         name: "The Aldgate School",
         urn: "100000",
         gias_year_groups: (-1..6).to_a
@@ -33,11 +33,16 @@ describe "mavis gias check_import" do
       )
 
     @successor_school =
-      create(:school, name: "The Aldgate Academy", urn: "100004", team: @team)
+      create(
+        :gias_school,
+        name: "The Aldgate Academy",
+        urn: "100004",
+        team: @team
+      )
 
     @school2_with_future_session =
       create(
-        :school,
+        :gias_school,
         name: "St Paul's Cathedral School",
         urn: "100002",
         gias_year_groups: (0..6).to_a
@@ -53,7 +58,7 @@ describe "mavis gias check_import" do
 
     @school_without_future_session =
       create(
-        :school,
+        :gias_school,
         name: "City of London School for Girls",
         urn: "100001",
         gias_year_groups: (3..13).to_a

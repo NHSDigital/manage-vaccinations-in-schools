@@ -57,7 +57,7 @@ describe "Td/IPV vaccination" do
   def given_i_am_signed_in
     programme = Programme.td_ipv
     team = create(:team, :with_one_nurse, programmes: [programme])
-    location = create(:school, team:)
+    location = create(:gias_school, team:)
 
     programme.vaccines.discontinued.each do |vaccine|
       create(:batch, team:, vaccine:)
@@ -218,10 +218,10 @@ describe "Td/IPV vaccination" do
         to: @patient.consents.last.parent.email,
         subject:
           "Your child had their Td/IPV (3-in-1 teenage booster) vaccination today",
-        template: :vaccination_administered_td_ipv
+        template: :vaccination_administered
       ).with_content_including(
         "John Doe had their Td/IPV (3-in-1 teenage booster) vaccination at #{@session.location.name} today",
-        "Vaccination: Td/IPV",
+        "Vaccination: Td/IPV (3-in-1 teenage booster)",
         "Vaccine: Revaxis",
         "Date of vaccination: 01/02/2024",
         "dizziness",

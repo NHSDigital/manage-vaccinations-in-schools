@@ -15,17 +15,10 @@ class Notifier::VaccinationRecord
         :vaccination_not_administered
       end
 
-    email_template_name =
-      if vaccination_record.administered?
-        :"#{template_name}_#{vaccination_record.programme_type}"
-      else
-        template_name
-      end
-
     parents.each do |parent|
       params = { parent:, vaccination_record:, sent_by: }
 
-      EmailDeliveryJob.perform_later(email_template_name, **params)
+      EmailDeliveryJob.perform_later(template_name, **params)
 
       if parent.phone_receive_updates
         SMSDeliveryJob.perform_later(template_name, **params)

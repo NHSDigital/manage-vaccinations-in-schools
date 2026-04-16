@@ -92,7 +92,7 @@ describe "mavis teams onboard" do
 
     @school_a =
       create(
-        :school,
+        :gias_school,
         :secondary,
         :open,
         urn: "123456",
@@ -100,7 +100,7 @@ describe "mavis teams onboard" do
       )
     @school_b =
       create(
-        :school,
+        :gias_school,
         :secondary,
         :open,
         urn: "234567",
@@ -108,7 +108,7 @@ describe "mavis teams onboard" do
       )
     @school_c =
       create(
-        :school,
+        :gias_school,
         :secondary,
         :open,
         urn: "345678",
@@ -116,7 +116,7 @@ describe "mavis teams onboard" do
       )
     @school_d =
       create(
-        :school,
+        :gias_school,
         :secondary,
         :open,
         urn: "456789",
@@ -150,10 +150,10 @@ describe "mavis teams onboard" do
   end
 
   def and_schools_are_added_to_the_team_appropriately
-    expect(Team.last.schools.count).to eq(6)
+    expect(Team.last.gias_schools.count).to eq(6)
     school_b_sites = Location.where(urn: @school_b.urn).where.not(site: nil)
     school_d_sites = Location.where(urn: @school_d.urn).where.not(site: nil)
-    expect(Team.last.schools).to include(
+    expect(Team.last.gias_schools).to include(
       @school_a,
       @school_c,
       *school_b_sites,

@@ -133,7 +133,7 @@ class Patients::EditController < Patients::BaseController
     @eligible_schools =
       current_team
         .locations
-        .where(type: %w[school generic_school])
+        .school
         .joins(:location_year_groups)
         .where(location_year_groups: { value: year_group })
         .distinct

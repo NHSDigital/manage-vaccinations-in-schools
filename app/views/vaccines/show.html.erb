@@ -7,58 +7,57 @@
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading(level: 2) { "Vaccine details" } %>
 
-  <dl class="nhsuk-summary-list">
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Vaccine
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <%= @vaccine.programme.name %>
-      </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Brand
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <%= @vaccine.brand %>
-      </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Manufacturer
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <%= @vaccine.manufacturer %>
-      </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Method
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <%= @vaccine.human_enum_name(:method) %>
-      </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Dose
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <%= @vaccine.dose_volume_ml %> ml
-      </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Health questions
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <ul class="nhsuk-list nhsuk-list--bullet">
-          <% @vaccine.health_questions.each do |question| %>
-            <li><%= question.title %></li>
-          <% end %>
-        </ul>
-      </dd>
-    </div>
-  </dl>
+  <%= govuk_summary_list do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Vaccine" }
+          row.with_value { @vaccine.programme.name }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Brand" }
+          row.with_value { @vaccine.brand }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Manufacturer" }
+          row.with_value { @vaccine.manufacturer }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "SNOMED code" }
+          row.with_value { content_tag(:span, @vaccine.snomed_product_code, class: "nhsuk-u-text-break-word app-u-code") }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Method" }
+          row.with_value { @vaccine.human_enum_name(:method) }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Dose" }
+          row.with_value { "#{@vaccine.dose_volume_ml} ml" }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Health questions" }
+          row.with_value do
+            content_tag(:ul, class: "nhsuk-list nhsuk-list--bullet") do
+              safe_join(@vaccine.health_questions.map { |q|
+                content_tag(:li, q.title)
+              })
+            end
+          end
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Side effects" }
+          row.with_value do
+            content_tag(:ul, class: "nhsuk-list nhsuk-list--bullet") do
+              safe_join(@vaccine.side_effects.map {
+                content_tag(:li, Vaccine.human_enum_name(:side_effect, it).capitalize)
+              })
+            end
+          end
+        end
+      end %>
 <% end %>

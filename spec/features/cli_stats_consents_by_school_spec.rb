@@ -67,9 +67,9 @@ describe "mavis stats consents-by-school", type: :integration do
       )
 
     school1 =
-      create(:school, name: "Primary School", team: @team_a, programmes:)
+      create(:gias_school, name: "Primary School", team: @team_a, programmes:)
     school2 =
-      create(:school, name: "Secondary School", team: @team_b, programmes:)
+      create(:gias_school, name: "Secondary School", team: @team_b, programmes:)
 
     school1.import_year_groups_from_gias!(academic_year: AcademicYear.previous)
     school1.import_default_programme_year_groups!(

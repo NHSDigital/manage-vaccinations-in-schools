@@ -48,7 +48,7 @@ class Generate::Consents
                 :session_programme_year_groups,
                 :team_location
               )
-              .merge(Location.school)
+              .merge(Location.gias_school)
               .has_all_programmes_of([programme])
           end
 
@@ -79,7 +79,7 @@ class Generate::Consents
         .joins(
           "INNER JOIN locations ON locations.id = team_locations.location_id"
         )
-        .merge(Location.school)
+        .merge(Location.gias_school)
         .has_all_programmes_of([programme])
         .sample
   end
@@ -97,7 +97,8 @@ class Generate::Consents
 
     consent_forms =
       available_patient_sessions.map do |patient, session|
-        school = session.location.school? ? session.location : patient.school
+        school =
+          session.location.gias_school? ? session.location : patient.school
 
         @updated_patients << patient
 
@@ -124,7 +125,7 @@ class Generate::Consents
       end
     elsif Session
           .has_any_programmes_of([programme])
-          .none? { it.location.school? }
+          .none? { it.location.gias_school? }
       raise "Programme #{programme.type} does not have a school session"
     end
   end

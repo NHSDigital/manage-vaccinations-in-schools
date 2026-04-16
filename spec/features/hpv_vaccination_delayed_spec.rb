@@ -30,7 +30,7 @@ describe "HPV vaccination" do
     programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
 
-    location = create(:school, team: @team)
+    location = create(:gias_school, team: @team)
     @batch =
       create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
 

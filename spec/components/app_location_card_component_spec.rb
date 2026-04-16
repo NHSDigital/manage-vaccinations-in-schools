@@ -24,7 +24,7 @@ describe AppLocationCardComponent do
   context "with a secondary school" do
     let(:location) do
       create(
-        :school,
+        :gias_school,
         :secondary,
         urn: "123456",
         name: "Waterloo Road",

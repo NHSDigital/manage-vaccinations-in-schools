@@ -98,7 +98,7 @@ describe "Manage attendance" do
         :today,
         programmes: @programmes,
         team: @team,
-        location: create(:school, team: @team)
+        location: create(:gias_school, team: @team)
       )
   end
 
@@ -110,7 +110,7 @@ describe "Manage attendance" do
         :requires_no_registration,
         programmes: @programmes,
         team: @team,
-        location: create(:school, team: @team)
+        location: create(:gias_school, team: @team)
       )
   end
 
@@ -122,7 +122,7 @@ describe "Manage attendance" do
         :requires_no_registration,
         programmes: @programmes,
         team: @team,
-        location: create(:school, team: @team)
+        location: create(:gias_school, team: @team)
       )
   end
 

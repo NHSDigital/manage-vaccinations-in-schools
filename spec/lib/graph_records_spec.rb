@@ -44,64 +44,63 @@ describe GraphRecords do
     text.gsub(" ", "&nbsp;").gsub("-", "#8209;")
   end
 
+  def wrap_in_detail_styling(text)
+    # Wrap in the styling which is output for a line of detail on a model
+    "<br><span style=\"font-size:14px\">#{non_breaking_text(text)}</span>"
+  end
+
   it { should start_with "flowchart TB" }
 
   it "generates the graph" do
     # stree-ignore
     session_details =
       [
-        "slug: #{session.slug}",
+        "academic_year: #{session.academic_year}",
         "clinic?: #{session.clinic?}",
-        "academic_year: #{session.academic_year}"
-      ].map {
-          "<br><span style=\"font-size:14px\">#{non_breaking_text(it)}</span>"
-        }
-        .join
+        "dates: #{session.dates}",
+        "slug: #{session.slug}"
+      ].map{wrap_in_detail_styling(it)}.join
 
     consent_details =
       [
-        non_breaking_text("response: #{consent.response}"),
-        non_breaking_text("route: #{consent.route}"),
-        non_breaking_text("created_at: 2024-02-01 00:00:00 +0000"),
-        non_breaking_text("updated_at: 2024-02-01 00:00:00 +0000"),
-        non_breaking_text("withdrawn_at: "),
-        non_breaking_text("invalidated_at: ")
-      ].map { |d| "<br><span style=\"font-size:14px\">#{d}</span>" }.join
+        "created_at: 2024-02-01 00:00:00 +0000",
+        "invalidated_at: ",
+        "response: #{consent.response}",
+        "route: #{consent.route}",
+        "updated_at: 2024-02-01 00:00:00 +0000",
+        "withdrawn_at: "
+      ].map { wrap_in_detail_styling(it) }.join
 
     cohort_import_details =
       [
-        non_breaking_text("csv_filename: #{cohort_import.csv_filename}"),
-        non_breaking_text("processed_at: "),
-        non_breaking_text("status: #{cohort_import.status}"),
-        non_breaking_text("rows_count: #{cohort_import.rows_count}"),
-        non_breaking_text("new_record_count: "),
-        non_breaking_text("exact_duplicate_record_count: "),
-        non_breaking_text("changed_record_count: ")
-      ].map { |d| "<br><span style=\"font-size:14px\">#{d}</span>" }.join
+        "changed_record_count: ",
+        "csv_filename: #{cohort_import.csv_filename}",
+        "exact_duplicate_record_count: ",
+        "new_record_count: ",
+        "processed_at: ",
+        "rows_count: #{cohort_import.rows_count}",
+        "status: #{cohort_import.status}"
+      ].map { wrap_in_detail_styling(it) }.join
 
     class_import_details =
       [
-        non_breaking_text("csv_filename: #{class_import.csv_filename}"),
-        non_breaking_text("processed_at: "),
-        non_breaking_text("status: #{class_import.status}"),
-        non_breaking_text("rows_count: #{class_import.rows_count}"),
-        non_breaking_text("new_record_count: "),
-        non_breaking_text("exact_duplicate_record_count: "),
-        non_breaking_text("changed_record_count: "),
-        non_breaking_text("year_groups: #{class_import.year_groups}")
-      ].map { |d| "<br><span style=\"font-size:14px\">#{d}</span>" }.join
+        "changed_record_count: ",
+        "csv_filename: #{class_import.csv_filename}",
+        "exact_duplicate_record_count: ",
+        "new_record_count: ",
+        "processed_at: ",
+        "rows_count: #{class_import.rows_count}",
+        "status: #{class_import.status}",
+        "year_groups: #{class_import.year_groups}"
+      ].map { wrap_in_detail_styling(it) }.join
 
     location_details =
       [
-        non_breaking_text("name: #{session.location.name}"),
-        non_breaking_text(
-          "address_postcode: #{session.location.address_postcode}"
-        ),
-        non_breaking_text("type: #{session.location.type}"),
-        non_breaking_text(
-          "gias_year_groups: #{session.location.gias_year_groups}"
-        )
-      ].map { |d| "<br><span style=\"font-size:14px\">#{d}</span>" }.join
+        "address_postcode: #{session.location.address_postcode}",
+        "gias_year_groups: #{session.location.gias_year_groups}",
+        "name: #{session.location.name}",
+        "type: #{session.location.type}"
+      ].map { wrap_in_detail_styling(it) }.join
 
     patient_location = patient.patient_locations.first
 
@@ -118,9 +117,10 @@ describe GraphRecords do
       "  classDef programme fill:#3cb44b,color:white,stroke:#000",
       "  patient-#{patient.id}[\"Patient #{patient.id}<br><span style=\"font-size:10px\"><i>Patient.find(" \
         "#{patient.id})</i></span><br><span style=\"font-size:10px\"><i>puts&nbsp;GraphRecords.new.graph(patient:" \
-        "&nbsp;#{patient.id})</i></span><br><span style=\"font-size:14px\">updated_from_pds_at:&nbsp;</span><br>" \
-        "<span style=\"font-size:14px\">date_of_death_recorded_at:&nbsp;</span><br><span style=\"font-size:14px\">" \
-        "restricted_at:&nbsp;</span><br><span style=\"font-size:14px\">invalidated_at:&nbsp;</span>\"]:::" \
+        "&nbsp;#{patient.id})</i></span><br>" \
+        "<span style=\"font-size:14px\">date_of_death_recorded_at:&nbsp;</span><br>" \
+        "<span style=\"font-size:14px\">invalidated_at:&nbsp;</span><br><span style=\"font-size:14px\">" \
+        "restricted_at:&nbsp;</span><br><span style=\"font-size:14px\">updated_from_pds_at:&nbsp;</span>\"]:::" \
         "patient_focused",
       "  parent-#{parent.id}[\"Parent #{parent.id}<br><span style=\"font-size:10px\"><i>Parent.find(#{parent.id})</i>" \
         "</span><br><span style=\"font-size:10px\"><i>puts&nbsp;GraphRecords.new.graph(parent:&nbsp;#{parent.id})</i>" \

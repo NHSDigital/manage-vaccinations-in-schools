@@ -23,7 +23,7 @@ class CohortImportRow < PatientImportRow
 
   def schools
     Location
-      .where(type: %w[school generic_school])
+      .school
       .joins(:team_locations)
       .where(team_locations: { team:, academic_year: })
   end

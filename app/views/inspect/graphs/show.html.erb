@@ -10,6 +10,13 @@
   <%= link_to "View timeline", inspect_timeline_patient_path(@primary_id), class: "nhsuk-button nhsuk-button--secondary" %>
 <% end %>
 
+<% if @pii_access_requested_by_user && @sensitive_patient_in_graph %>
+  <%= render AppWarningCalloutComponent.new(
+        heading: "Patient is restricted",
+        description: "One of the patients in the graph has been marked as restricted. You cannot view PII for this graph.",
+      ) %>
+<% end %>
+
 <pre class="mermaid" style="overflow-x: auto; width: 100vw; margin-left: calc(50% - 50vw); display: grid; place-items: center;">
   <%= @mermaid.html_safe %>
 </pre>

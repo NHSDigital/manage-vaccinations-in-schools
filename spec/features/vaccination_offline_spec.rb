@@ -107,7 +107,7 @@ describe "Offline vaccination" do
     programmes = [Programme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
-    school = clinic ? @team.unknown_school : create(:school, team: @team)
+    school = clinic ? @team.unknown_school : create(:gias_school, team: @team)
     previous_date = 1.month.ago.to_date
 
     if clinic
@@ -188,7 +188,7 @@ describe "Offline vaccination" do
     programmes = [Programme.hpv]
 
     @team = create(:team, :with_one_nurse, programmes:)
-    school = create(:school, team: @team)
+    school = create(:gias_school, team: @team)
     previous_date = 1.month.ago.to_date
 
     vaccine = programmes.first.vaccines.active.first
@@ -220,7 +220,7 @@ describe "Offline vaccination" do
     programmes = [Programme.flu]
 
     @team = create(:team, :with_one_nurse, programmes:, ods_code: "B0C4P")
-    school = create(:school, team: @team)
+    school = create(:gias_school, team: @team)
 
     vaccine = programmes.first.vaccines.active.first
     @batch = create(:batch, :not_expired, team: @team, vaccine:)
@@ -558,7 +558,7 @@ describe "Offline vaccination" do
     expect(page).to have_content("SiteLeft arm (upper position)")
 
     visit patient_url
-    within(".nhsuk-breadcrumb") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children in session" }
     choose "Unable to vaccinate"
     click_on "Update results"
 
@@ -568,7 +568,7 @@ describe "Offline vaccination" do
     expect(page).to have_content("Unwell")
 
     visit patient_url
-    within(".nhsuk-breadcrumb") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children in session" }
     choose "Vaccinated", match: :first
     click_on "Update results"
 
@@ -588,7 +588,7 @@ describe "Offline vaccination" do
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     expect_email_to(
       @vaccinated_patient.consents.last.parent.email,
-      :vaccination_administered_hpv,
+      :vaccination_administered,
       :any
     )
 

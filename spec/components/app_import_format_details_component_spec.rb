@@ -4,36 +4,10 @@ describe AppImportFormatDetailsComponent do
   let(:programme) { Programme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
 
-  it "renders the correct summary text for ClassImport" do
+  it "renders the correct summary text" do
     import = ClassImport.new(team:)
     render_inline(described_class.new(import:))
-    expect(page).to have_content(
-      "How to format your Mavis CSV file for class lists"
-    )
-  end
-
-  it "renders the correct summary text for CohortImport" do
-    import = CohortImport.new(team:)
-    render_inline(described_class.new(import:))
-    expect(page).to have_content(
-      "How to format your Mavis CSV file for child records"
-    )
-  end
-
-  it "renders the correct summary text for ImmunisationImport" do
-    import = ImmunisationImport.new(team:)
-    render_inline(described_class.new(import:))
-    expect(page).to have_content(
-      "How to format your Mavis CSV file for vaccination records"
-    )
-  end
-
-  it "raises an error for unsupported import types" do
-    import = Object.new
-    expect { render_inline(described_class.new(import:)) }.to raise_error(
-      ArgumentError,
-      "Unsupported import type: Object"
-    )
+    expect(page).to have_content("What your CSV file must include")
   end
 
   it "renders the correct columns for ClassImport" do
@@ -82,14 +56,6 @@ describe AppImportFormatDetailsComponent do
 
   context "with a national reporting team" do
     let(:team) { create(:team, :national_reporting, programmes: [programme]) }
-
-    it "renders the correct summary text for ImmunisationImport" do
-      import = ImmunisationImport.new(team:)
-      render_inline(described_class.new(import:))
-      expect(page).to have_content(
-        "How to format your CSV file for vaccination records"
-      )
-    end
 
     it "renders the correct columns for ImmunisationImport" do
       import = ImmunisationImport.new(team:)

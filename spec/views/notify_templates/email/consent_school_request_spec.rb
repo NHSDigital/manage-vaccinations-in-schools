@@ -4,7 +4,7 @@ describe "Notify email templates: consent school requests", type: :view do
   around { |example| travel_to(Date.new(2024, 1, 1)) { example.run } }
 
   let(:team) { create(:team, :with_one_nurse, programmes: [programme]) }
-  let(:location) { create(:school, team:, programmes: [programme]) }
+  let(:location) { create(:gias_school, team:, programmes: [programme]) }
   let(:parent) { create(:parent) }
 
   let(:session_dates) { [Date.current + 2.days] }

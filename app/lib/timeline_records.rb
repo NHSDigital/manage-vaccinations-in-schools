@@ -5,7 +5,7 @@ class TimelineRecords
     changesets: %i[import_id import_type],
     class_imports: %i[],
     cohort_imports: %i[],
-    consents: %i[response route],
+    consents: %i[programme_type response route],
     school_move_log_entries: %i[school_id user_id],
     school_moves: %i[school_id source],
     sessions: %i[location_id],
@@ -35,10 +35,17 @@ class TimelineRecords
       rows_count
       status
     ],
-    consents: %i[invalidated_at response route updated_at withdrawn_at],
+    consents: %i[
+      invalidated_at
+      programme_type
+      response
+      route
+      updated_at
+      withdrawn_at
+    ],
     gillick_assessments: %i[],
-    parent_relationships: %i[],
-    parents: %i[],
+    notify_log_entries: %i[purpose],
+    patient_locations: %i[academic_year date_range location_id],
     pds_search_results: %i[step],
     school_move_log_entries: %i[school_id user_id],
     school_moves: %i[school_id source],
@@ -136,12 +143,12 @@ class TimelineRecords
   ALLOWED_AUDITED_CHANGES_WITH_PII =
     (ALLOWED_AUDITED_CHANGES + ALLOWED_AUDITED_CHANGES_PII).uniq.freeze
 
-  def initialize(patient, detail_config: {}, audit_config: {}, show_pii: false)
+  def initialize(patient, details_config: {}, audit_config: {}, show_pii: false)
     @patient = patient
     @patient_id = @patient.id
     @patient_events = patient_events(@patient)
     @additional_events = additional_events(@patient)
-    @detail_config = extract_detail_config(detail_config)
+    @detail_config = extract_detail_config(details_config)
     @events = []
     @audit_config = audit_config
     @show_pii = show_pii
@@ -188,7 +195,7 @@ class TimelineRecords
   end
 
   def details
-    @details ||= DEFAULT_DETAILS_CONFIG.merge(@detail_config)
+    @detail_config
   end
 
   def audits

@@ -57,7 +57,7 @@ describe "MenACWY vaccination" do
   def given_i_am_signed_in
     programme = Programme.menacwy
     team = create(:team, :with_one_nurse, programmes: [programme])
-    location = create(:school, team:)
+    location = create(:gias_school, team:)
 
     programme.vaccines.discontinued.each do |vaccine|
       create(:batch, team:, vaccine:)
@@ -217,7 +217,7 @@ describe "MenACWY vaccination" do
       matching_notify_email(
         to: @patient.consents.last.parent.email,
         subject: "Your child had their MenACWY vaccination today",
-        template: :vaccination_administered_menacwy
+        template: :vaccination_administered
       ).with_content_including(
         "John Doe had their MenACWY vaccination at #{@session.location.name} today",
         "Vaccination: MenACWY",

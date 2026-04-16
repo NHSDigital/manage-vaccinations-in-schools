@@ -1,20 +1,19 @@
 <%= h1 page_title: @patient.initials do %>
   <%= "Inspect Patient #{@patient.id}" %>
 <% end %>
-
-<p>
-  <code><%= "Patient.find(#{@patient.id})" %></code>
-</p>
-
-<%= link_to "View graph", inspect_path(:patient, @patient.id), class: "nhsuk-button nhsuk-button--secondary" %>
-
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">
+    <p>
+      <code><%= "Patient.find(#{@patient.id})" %></code>
+    </p>
+
+    <%= link_to "View graph", inspect_path(:patient, @patient.id), class: "nhsuk-button nhsuk-button--secondary" %>
+
     <%= render AppTimelineFilterComponent.new(
           url: inspect_timeline_patient_path,
           patient: @patient,
           teams: @patient.teams,
-          event_options: TimelineRecords::DEFAULT_DETAILS_CONFIG,
+          event_options: TimelineRecords::AVAILABLE_DETAILS_CONFIG,
           timeline_fields: @show_pii ? TimelineRecords::AVAILABLE_DETAILS_CONFIG_WITH_PII : TimelineRecords::AVAILABLE_DETAILS_CONFIG,
           class_imports: @patient_events[:class_imports],
           cohort_imports: @patient_events[:cohort_imports],
@@ -43,6 +42,14 @@
               ) %>
         </div>
       <% else %>
+        <% if @patient_accessed_is_sensitive & @pii_access_requested_by_user %>
+          <div class="nhsuk-grid-column-full">
+            <%= render AppWarningCalloutComponent.new(
+                  heading: "Patient is restricted",
+                  description: "One of the patients accessed has been marked as restricted. You cannot view PII for this patient.",
+                ) %>
+          </div>
+        <% end %>
         <% if @compare_patient_timeline || @invalid_patient_id || @no_events_compare_message %>
           <div class="nhsuk-grid-column-one-half">
             <h2 class="nhsuk-heading-m">Patient <%= @patient.id %></h2>

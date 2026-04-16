@@ -141,13 +141,14 @@ describe "Import class lists - Moving patients" do
     @second_team = create(:team, :with_one_nurse, programmes:)
     @second_user = @second_team.users.first
 
-    location = create(:school, :secondary, name: "Waterloo Road", team: @team)
+    location =
+      create(:gias_school, :secondary, name: "Waterloo Road", team: @team)
     other_location =
-      create(:school, :secondary, name: "Different Road", team: @team)
+      create(:gias_school, :secondary, name: "Different Road", team: @team)
 
     second_team_location =
       create(
-        :school,
+        :gias_school,
         :secondary,
         name: "Second Team School",
         team: @second_team

@@ -172,6 +172,11 @@ class Patient::ProgrammeStatus < ApplicationRecord
 
   def vaccine_criteria = VaccineCriteria.from_programme_status(self)
 
+  def needs_more_doses?
+    dose_sequence.present? &&
+      dose_sequence <= Programme.find(programme_type).maximum_dose_sequence
+  end
+
   def on_last_dose?
     dose_sequence == Programme.find(programme_type).maximum_dose_sequence
   end

@@ -138,7 +138,7 @@ describe "Parental consent" do
 
     @child = create(:patient, school: @team.unknown_school, session: @session)
 
-    @school = create(:school, team: @team)
+    @school = create(:gias_school, team: @team)
   end
 
   def and_an_upcoming_school_session_exists

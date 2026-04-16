@@ -211,7 +211,7 @@ class ImmunisationImport < ApplicationRecord
       end
 
     PatientTeamUpdater.call(patient_scope: patients)
-    PatientStatusUpdater.call(patient_scope: patients)
+    PatientStatusUpdater.call(patient_scope: Patient.where(id: patients.ids))
 
     vaccination_records
       .includes(:patient, :team, :subteam)

@@ -54,7 +54,7 @@ describe "Parental consent" do
       Programme::Variant.new(@mmr_programme, variant_type: "mmrv")
     @team = create(:team, :with_one_nurse, programmes: [@mmr_programme])
     location =
-      create(:school, name: "Pilot School", programmes: [@mmr_programme])
+      create(:gias_school, name: "Pilot School", programmes: [@mmr_programme])
     @session =
       create(:session, :scheduled, programmes: [@mmrv_programme], location:)
     @child =

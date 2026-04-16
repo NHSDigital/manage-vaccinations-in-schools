@@ -12,13 +12,6 @@ on:
         type: string
         required: false
         default: next
-    secrets:
-      HTTP_AUTH_TOKEN_FOR_TESTS:
-        description: HTTP Basic Auth token for the environment under test
-        required: true
-      MAVIS_TESTING_REPO_ACCESS_TOKEN:
-        description: Access token for the manage-vaccinations-in-schools-testing repository
-        required: true
 
 permissions: {}
 

@@ -5,9 +5,9 @@ describe AppChildSummaryComponent do
 
   let(:component) { described_class.new(patient) }
 
-  let(:school) { create(:school, name: "Test School") }
+  let(:school) { create(:gias_school, name: "Test School") }
   let(:gp_practice) { nil }
-  let(:other_school) { create(:school, name: "Other School") }
+  let(:other_school) { create(:gias_school, name: "Other School") }
   let(:parent) { create(:parent, full_name: "Mark Doe") }
   let(:restricted) { false }
   let(:patient) do

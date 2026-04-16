@@ -353,8 +353,13 @@ en:
           contains_gelatine_mmrv: I’m concerned the vaccine contains gelatine
           medical: Medical reasons
           other: Other
+          do_not_want_vaccination_at_school: Do not want vaccination at school
           personal_choice: Personal choice
           will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
+        reason_for_refusal_hints:
+          do_not_want_vaccination_at_school: >-
+            For example, you do not want your child to be vaccinated in a busy environment
+          will_be_vaccinated_elsewhere: "For example, you've booked your child into a clinic"
         responses:
           follow_up_requested: Follow-up requested
           given: Consent given
@@ -1158,6 +1163,7 @@ en:
         contains_gelatine: of the gelatine in the nasal spray
         medical_reasons: of medical reasons
         other: of other reasons
+        does_not_want_vaccination_at_school: they do not want vaccination at school
         personal_choice: of personal choice
         will_be_vaccinated_elsewhere: they will be given the vaccine elsewhere
     vaccination_mailer:
@@ -1204,6 +1210,16 @@ en:
     sessions:
       index:
         title: Sessions
+  # Only MMR/MMRV disease types are mapped for now. I18n.t! is used
+  # intentionally so that adding a new multi-dose programme forces you
+  # to add parent-friendly disease names here.
+  disease_types:
+    measles: measles
+    mumps: mumps
+    rubella: rubella
+    varicella: varicella
+  programme_names_on_nhs_uk:
+    td_ipv: 3-in-1 teenage booster
   programme_types:
     flu: Flu
     hpv: HPV
@@ -1241,7 +1257,7 @@ en:
       consent: Consent
       overview: Overview
       patient_specific_directions: PSDs
-      patients: Children
+      patients: Children in session
       record: Record vaccinations
       register: Register
       triage: Triage

@@ -64,7 +64,7 @@ describe "mavis schools remove-from-team" do
   def and_the_schools_exist
     @school_a =
       create(
-        :school,
+        :gias_school,
         urn: "123456",
         name: "MainSchool",
         site: nil,
@@ -73,7 +73,7 @@ describe "mavis schools remove-from-team" do
       )
     @school_b =
       create(
-        :school,
+        :gias_school,
         urn: "654321",
         name: "OtherSchool",
         site: nil,
@@ -88,7 +88,7 @@ describe "mavis schools remove-from-team" do
     @other_team = create(:team, workgroup: "TeamB")
     @school_a =
       create(
-        :school,
+        :gias_school,
         urn: "123456",
         name: "MainSchool",
         site: nil,
@@ -96,7 +96,7 @@ describe "mavis schools remove-from-team" do
       )
     @school_b =
       create(
-        :school,
+        :gias_school,
         urn: "654321",
         name: "OtherSchool",
         site: nil,

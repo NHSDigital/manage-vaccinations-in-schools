@@ -28,8 +28,9 @@ describe "User authorisation" do
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @other_team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    location = create(:school, name: "Pilot School", team: @team)
-    other_location = create(:school, name: "Other School", team: @other_team)
+    location = create(:gias_school, name: "Pilot School", team: @team)
+    other_location =
+      create(:gias_school, name: "Other School", team: @other_team)
     @session =
       create(
         :session,

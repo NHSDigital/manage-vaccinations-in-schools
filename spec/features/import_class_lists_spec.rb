@@ -78,7 +78,7 @@ describe "Import class lists" do
     programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
 
-    location = create(:school, name: "Waterloo Road", team: @team)
+    location = create(:gias_school, name: "Waterloo Road", team: @team)
 
     @user = @team.users.first
 
@@ -219,9 +219,7 @@ describe "Import class lists" do
   end
 
   def then_i_should_the_errors_page_with_invalid_fields
-    expect(page).to have_content(
-      "How to format your Mavis CSV file for class lists"
-    )
+    expect(page).to have_content("What your CSV file must include")
     expect(page).to have_content("Row 1")
   end
 

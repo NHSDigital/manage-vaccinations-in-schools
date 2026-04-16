@@ -98,8 +98,7 @@ class CIS2Info
   end
 
   def is_support_with_pii_access?
-    role_code == SUPPORT_ROLE && can_access_sensitive_flagged_records? &&
-      can_view_detailed_health_records?
+    role_code == SUPPORT_ROLE && can_view_detailed_health_records?
   end
 
   private

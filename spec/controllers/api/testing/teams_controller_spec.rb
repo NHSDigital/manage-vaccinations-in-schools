@@ -42,11 +42,11 @@ describe API::Testing::TeamsController do
         end
       end
 
-      create(:school, urn: "123456", team:, programmes:) # to match cohort_import/valid.csv
-      create(:school, urn: "110158", team:, programmes:) # to match valid_hpv.csv
+      create(:gias_school, urn: "123456", team:, programmes:) # to match cohort_import/valid.csv
+      create(:gias_school, urn: "110158", team:, programmes:) # to match valid_hpv.csv
 
       session =
-        create(:session, team:, location: team.schools.first, programmes:)
+        create(:session, team:, location: team.gias_schools.first, programmes:)
 
       process_and_approve_import(cohort_import)
       immunisation_import.process!

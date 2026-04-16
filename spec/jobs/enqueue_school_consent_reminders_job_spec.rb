@@ -5,7 +5,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
   let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }
-  let(:location) { create(:school, team:) }
+  let(:location) { create(:gias_school, team:) }
 
   let(:dates) { [Date.new(2024, 1, 12), Date.new(2024, 1, 15)] }
 

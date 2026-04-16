@@ -1,0 +1,8 @@
+organisation:
+  ods_code: RTQ
+
+team:
+  name: Gloucestershire Health and Care NHS Foundation Trust
+  workgroup: gloucestershiremavisnr
+  type: national_reporting
+  national_reporting_cut_off_date: 2026-04-20

@@ -91,7 +91,8 @@ describe "Parental consent" do
   def given_a_flu_programme_is_underway
     @programme = Programme.flu
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    location = create(:school, name: "Pilot School", programmes: [@programme])
+    location =
+      create(:gias_school, name: "Pilot School", programmes: [@programme])
     @session = create(:session, :scheduled, programmes: [@programme], location:)
     @child = create(:patient, session: @session)
     stub_pds_search_to_return_a_patient(@child.nhs_number)

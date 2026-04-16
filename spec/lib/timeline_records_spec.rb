@@ -2,15 +2,11 @@
 
 describe TimelineRecords do
   subject(:timeline) do
-    described_class.new(
-      patient,
-      detail_config: detail_config,
-      show_pii: show_pii
-    )
+    described_class.new(patient, details_config:, show_pii:)
   end
 
   let(:programme) { Programme.hpv }
-  let(:detail_config) { {} }
+  let(:details_config) { TimelineRecords::DEFAULT_DETAILS_CONFIG }
   let(:show_pii) { false }
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) { create(:session, team:, programmes: [programme]) }
@@ -140,7 +136,11 @@ describe TimelineRecords do
         event = timeline.instance_variable_get(:@events).first
         expect(event[:event_type]).to eq "Consent"
         expect(event[:details]).to eq(
-          { "response" => consent.response, "route" => consent.route }
+          {
+            "programme_type" => consent.programme_type,
+            "response" => consent.response,
+            "route" => consent.route
+          }
         )
       end
 
@@ -211,7 +211,7 @@ describe TimelineRecords do
     end
 
     context "with custom details configuration" do
-      let(:detail_config) { { consents: %i[route], triages: %i[status] } }
+      let(:details_config) { { consents: %i[route], triages: %i[status] } }
 
       before do
         patient.consents << consent

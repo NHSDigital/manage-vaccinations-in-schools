@@ -46,7 +46,7 @@ describe "Self-consent" do
 
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    @school = create(:school, team: @team)
+    @school = create(:gias_school, team: @team)
 
     @session =
       create(

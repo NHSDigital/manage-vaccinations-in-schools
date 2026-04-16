@@ -29,7 +29,7 @@ describe "Triage" do
   def given_a_programme_with_a_running_session
     programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
-    @school = create(:school, team: @team)
+    @school = create(:gias_school, team: @team)
     session =
       create(
         :session,
@@ -95,7 +95,7 @@ describe "Triage" do
   end
 
   def when_i_filter_by_delay_vaccination
-    within(".nhsuk-breadcrumb") { click_on "Children" }
+    within(".nhsuk-breadcrumb") { click_on "Children in session" }
     choose "Unable to vaccinate"
     check "Delay vaccination"
     click_on "Update results"

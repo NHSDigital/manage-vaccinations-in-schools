@@ -11,7 +11,10 @@ class PatientsAgedOutOfSchoolJob
     academic_year = AcademicYear.pending
 
     school =
-      Location.school.includes(:location_year_groups).find_by(id: school_id)
+      Location
+        .gias_school
+        .includes(:location_year_groups)
+        .find_by(id: school_id)
 
     return if school.nil?
 

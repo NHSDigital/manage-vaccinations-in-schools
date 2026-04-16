@@ -58,8 +58,10 @@ describe Location do
     describe "#find_by_urn_and_site" do
       subject(:scope) { described_class.find_by_urn_and_site(urn_and_site) }
 
-      let(:location_without_site) { create(:school, urn: "123456") }
-      let(:location_with_site) { create(:school, urn: "123456", site: "A") }
+      let(:location_without_site) { create(:gias_school, urn: "123456") }
+      let(:location_with_site) do
+        create(:gias_school, urn: "123456", site: "A")
+      end
 
       context "with just a URN" do
         let(:urn_and_site) { "123456" }
@@ -78,15 +80,19 @@ describe Location do
       subject(:scope) { described_class.search_by_name(query) }
 
       let(:clinic) { create(:generic_clinic) }
-      let!(:school_a) { create(:school, name: "St. John's School") }
-      let!(:school_b) { create(:school, name: "St. John's School for Boys") }
+      let!(:school_a) { create(:gias_school, name: "St. John's School") }
+      let!(:school_b) do
+        create(:gias_school, name: "St. John's School for Boys")
+      end
       let!(:school_c) do
         create(
-          :school,
+          :gias_school,
           name: "St. John's Primary School for Boys with learning disabilities"
         )
       end
-      let!(:school_d) { create(:school, name: "St. Mary's School for Girls") }
+      let!(:school_d) do
+        create(:gias_school, name: "St. Mary's School for Girls")
+      end
 
       context "with an exact match on the name" do
         let(:query) { "Community clinic" }
@@ -145,18 +151,20 @@ describe Location do
     describe "#where_phase" do
       subject { described_class.where_phase(phase) }
 
-      let!(:nursery) { create(:school, gias_phase: "nursery") }
-      let!(:primary) { create(:school, gias_phase: "primary") }
+      let!(:nursery) { create(:gias_school, gias_phase: "nursery") }
+      let!(:primary) { create(:gias_school, gias_phase: "primary") }
       let!(:middle_deemed_primary) do
-        create(:school, gias_phase: "middle_deemed_primary")
+        create(:gias_school, gias_phase: "middle_deemed_primary")
       end
-      let!(:secondary) { create(:school, gias_phase: "secondary") }
+      let!(:secondary) { create(:gias_school, gias_phase: "secondary") }
       let!(:middle_deemed_secondary) do
-        create(:school, gias_phase: "middle_deemed_secondary")
+        create(:gias_school, gias_phase: "middle_deemed_secondary")
       end
-      let!(:sixteen_plus) { create(:school, gias_phase: "sixteen_plus") }
-      let!(:all_through) { create(:school, gias_phase: "all_through") }
-      let!(:not_applicable) { create(:school, gias_phase: "not_applicable") }
+      let!(:sixteen_plus) { create(:gias_school, gias_phase: "sixteen_plus") }
+      let!(:all_through) { create(:gias_school, gias_phase: "all_through") }
+      let!(:not_applicable) do
+        create(:gias_school, gias_phase: "not_applicable")
+      end
 
       context "with nursery" do
         let(:phase) { "nursery" }
@@ -246,7 +254,7 @@ describe Location do
     end
 
     context "with a school" do
-      subject(:location) { build(:school, urn: "abc") }
+      subject(:location) { build(:gias_school, urn: "abc") }
 
       it { should validate_presence_of(:gias_establishment_number) }
       it { should validate_presence_of(:gias_local_authority_code) }
@@ -286,7 +294,7 @@ describe Location do
     end
 
     context "with a school" do
-      let(:location) { create(:school) }
+      let(:location) { create(:gias_school) }
 
       it { should be(location.urn_and_site) }
     end
@@ -308,7 +316,7 @@ describe Location do
     end
 
     context "with a school" do
-      let(:location) { build(:school) }
+      let(:location) { build(:gias_school) }
 
       it { should be(false) }
     end
@@ -332,7 +340,7 @@ describe Location do
     context "with a school" do
       let(:location) do
         build(
-          :school,
+          :gias_school,
           gias_local_authority_code: 123,
           gias_establishment_number: 456
         )
@@ -346,49 +354,53 @@ describe Location do
     subject { location.phase }
 
     context "with a nursery GIAS phase" do
-      let(:location) { build(:school, gias_phase: "nursery") }
+      let(:location) { build(:gias_school, gias_phase: "nursery") }
 
       it { should eq("nursery") }
     end
 
     context "with a primary GIAS phase" do
-      let(:location) { build(:school, gias_phase: "primary") }
+      let(:location) { build(:gias_school, gias_phase: "primary") }
 
       it { should eq("primary") }
     end
 
     context "with a middle deemed primary GIAS phase" do
-      let(:location) { build(:school, gias_phase: "middle_deemed_primary") }
+      let(:location) do
+        build(:gias_school, gias_phase: "middle_deemed_primary")
+      end
 
       it { should eq("primary") }
     end
 
     context "with a secondary GIAS phase" do
-      let(:location) { build(:school, gias_phase: "secondary") }
+      let(:location) { build(:gias_school, gias_phase: "secondary") }
 
       it { should eq("secondary") }
     end
 
     context "with a middle deemed secondary GIAS phase" do
-      let(:location) { build(:school, gias_phase: "middle_deemed_secondary") }
+      let(:location) do
+        build(:gias_school, gias_phase: "middle_deemed_secondary")
+      end
 
       it { should eq("secondary") }
     end
 
     context "with a 16-plus phase" do
-      let(:location) { build(:school, gias_phase: "sixteen_plus") }
+      let(:location) { build(:gias_school, gias_phase: "sixteen_plus") }
 
       it { should eq("other") }
     end
 
     context "with an all-through phase" do
-      let(:location) { build(:school, gias_phase: "all_through") }
+      let(:location) { build(:gias_school, gias_phase: "all_through") }
 
       it { should eq("other") }
     end
 
     context "with a not applicable phase" do
-      let(:location) { build(:school, gias_phase: "not_applicable") }
+      let(:location) { build(:gias_school, gias_phase: "not_applicable") }
 
       it { should eq("other") }
     end
@@ -430,7 +442,7 @@ describe Location do
     end
 
     context "when the location is not attached to a team" do
-      let(:location) { create(:school, subteam: nil) }
+      let(:location) { create(:gias_school, subteam: nil) }
 
       it { should include("is_attached_to_team" => false) }
     end
@@ -445,7 +457,7 @@ describe Location do
     let(:academic_year) { AcademicYear.pending }
 
     context "when the location has no year groups" do
-      let(:location) { create(:school, gias_year_groups: []) }
+      let(:location) { create(:gias_school, gias_year_groups: []) }
 
       it "doesn't create any programme year groups" do
         expect { import_default_programme_year_groups! }.not_to change(
@@ -456,7 +468,7 @@ describe Location do
     end
 
     context "when the location has fewer year groups than the default" do
-      let(:location) { create(:school, gias_year_groups: (0..3).to_a) }
+      let(:location) { create(:gias_school, gias_year_groups: (0..3).to_a) }
 
       it "creates only suitable year groups" do
         expect { import_default_programme_year_groups! }.to change(
@@ -471,7 +483,7 @@ describe Location do
     end
 
     context "when the location has more year groups than the default" do
-      let(:location) { create(:school, gias_year_groups: (-1..14).to_a) }
+      let(:location) { create(:gias_school, gias_year_groups: (-1..14).to_a) }
 
       it "creates only suitable year groups" do
         expect { import_default_programme_year_groups! }.to change(
@@ -491,7 +503,7 @@ describe Location do
       location.teams_for_academic_year(target_year)
     end
 
-    let(:location) { create(:school) }
+    let(:location) { create(:gias_school) }
     let(:team_a) { create(:team) }
     let(:team_b) { create(:team) }
     let(:team_c) { create(:team) }
@@ -528,7 +540,7 @@ describe Location do
     end
 
     context "when the location has no teams for the specified year" do
-      let(:location_without_teams) { create(:school) }
+      let(:location_without_teams) { create(:gias_school) }
       let(:pending_year) { AcademicYear.pending }
 
       it "returns an empty array" do

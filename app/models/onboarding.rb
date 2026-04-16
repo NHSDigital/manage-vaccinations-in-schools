@@ -180,7 +180,8 @@ class Onboarding
       urn = school.urn
       next if urn.blank?
 
-      locations_with_teams = Location.school.where(urn:).joins(:teams).distinct
+      locations_with_teams =
+        Location.gias_school.where(urn:).joins(:teams).distinct
 
       next unless locations_with_teams.exists?
 
@@ -304,7 +305,7 @@ class Onboarding
     validates :status, inclusion: %w[open opening]
 
     def location
-      @location ||= Location.school.find_by_urn_and_site(urn)
+      @location ||= Location.gias_school.find_by_urn_and_site(urn)
     end
 
     delegate :status, to: :location, allow_nil: true
@@ -344,7 +345,7 @@ class Onboarding
     validates :site, presence: true
 
     def original_location
-      @original_location ||= Location.school.find_by_urn_and_site(urn)
+      @original_location ||= Location.gias_school.find_by_urn_and_site(urn)
     end
 
     def location

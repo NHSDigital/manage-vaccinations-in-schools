@@ -14,7 +14,7 @@ describe DraftSchool do
   let(:current_user) { team.users.first }
   let(:request_session) { {} }
 
-  let(:school) { create(:school, :secondary, team:) }
+  let(:school) { create(:gias_school, :secondary, team:) }
 
   let(:valid_attributes) do
     {
@@ -153,7 +153,7 @@ describe DraftSchool do
       context "when editing and removing existing year groups" do
         let(:existing_site) do
           create(
-            :school,
+            :gias_school,
             urn: school.urn,
             site: "A",
             gias_year_groups: [8, 9, 10]
@@ -178,7 +178,7 @@ describe DraftSchool do
       context "when editing and keeping all existing year groups" do
         let(:existing_site) do
           create(
-            :school,
+            :gias_school,
             urn: school.urn,
             site: "A",
             gias_year_groups: [8, 9, 10]
@@ -263,7 +263,9 @@ describe DraftSchool do
 
       context "when school belongs to a different team" do
         let(:other_team) { create(:team) }
-        let(:other_school) { create(:school, :secondary, team: other_team) }
+        let(:other_school) do
+          create(:gias_school, :secondary, team: other_team)
+        end
         let(:attributes) { { parent_urn_and_site: other_school.urn_and_site } }
 
         it { expect(draft_school.source_location).to be_nil }
@@ -272,7 +274,7 @@ describe DraftSchool do
 
     context "when editing an existing site" do
       let(:existing_site) do
-        create(:school, urn: school.urn, site: "A", name: "Site A")
+        create(:gias_school, urn: school.urn, site: "A", name: "Site A")
       end
       let(:attributes) { { editing_id: existing_site.id } }
 
@@ -314,14 +316,14 @@ describe DraftSchool do
     context "when multiple sites exist with the same URN" do
       before do
         create(
-          :school,
+          :gias_school,
           :secondary,
           urn: school.urn,
           site: "A",
           name: "School Site A"
         )
         create(
-          :school,
+          :gias_school,
           :secondary,
           urn: school.urn,
           site: "B",
@@ -482,8 +484,8 @@ describe DraftSchool do
 
       context "when sites already exist" do
         before do
-          create(:school, urn: school.urn, site: "A", name: "Site A")
-          create(:school, urn: school.urn, site: "B", name: "Site B")
+          create(:gias_school, urn: school.urn, site: "A", name: "Site A")
+          create(:gias_school, urn: school.urn, site: "B", name: "Site B")
         end
 
         it "returns the URN with the next available site letter" do
@@ -494,7 +496,7 @@ describe DraftSchool do
 
     context "when editing an existing site" do
       let(:existing_site) do
-        create(:school, urn: school.urn, site: "A", name: "Site A")
+        create(:gias_school, urn: school.urn, site: "A", name: "Site A")
       end
       let(:attributes) { { editing_id: existing_site.id } }
 
@@ -515,7 +517,7 @@ describe DraftSchool do
 
     context "when editing an existing site" do
       let(:existing_site) do
-        create(:school, urn: "654321", site: "A", name: "Site A")
+        create(:gias_school, urn: "654321", site: "A", name: "Site A")
       end
       let(:attributes) { { editing_id: existing_site.id, context: "add_site" } }
 
@@ -535,7 +537,7 @@ describe DraftSchool do
     end
 
     context "when site A exists" do
-      before { create(:school, urn: school.urn, site: "A") }
+      before { create(:gias_school, urn: school.urn, site: "A") }
 
       it "returns B" do
         expect(draft_school.next_site_letter).to eq("B")
@@ -544,8 +546,8 @@ describe DraftSchool do
 
     context "when sites A and B exist" do
       before do
-        create(:school, urn: school.urn, site: "A")
-        create(:school, urn: school.urn, site: "B")
+        create(:gias_school, urn: school.urn, site: "A")
+        create(:gias_school, urn: school.urn, site: "B")
       end
 
       it "returns C" do
@@ -554,7 +556,7 @@ describe DraftSchool do
     end
 
     context "when site Z exists" do
-      before { create(:school, urn: school.urn, site: "Z") }
+      before { create(:gias_school, urn: school.urn, site: "Z") }
 
       it "returns AA" do
         expect(draft_school.next_site_letter).to eq("AA")
@@ -573,7 +575,12 @@ describe DraftSchool do
 
     context "when editing an existing site" do
       let(:existing_site) do
-        create(:school, urn: school.urn, site: "A", gias_year_groups: [10, 11])
+        create(
+          :gias_school,
+          urn: school.urn,
+          site: "A",
+          gias_year_groups: [10, 11]
+        )
       end
       let(:attributes) { { editing_id: existing_site.id } }
 
@@ -604,7 +611,7 @@ describe DraftSchool do
     context "when editing an existing site" do
       let(:programmes) { [Programme.hpv, Programme.flu] }
       let(:existing_site) do
-        create(:school, urn: school.urn, site: "A", team:, programmes:)
+        create(:gias_school, urn: school.urn, site: "A", team:, programmes:)
       end
       let(:attributes) { { editing_id: existing_site.id } }
 
@@ -627,7 +634,7 @@ describe DraftSchool do
 
     context "when editing an existing site" do
       let(:existing_site) do
-        create(:school, :primary, urn: school.urn, site: "A")
+        create(:gias_school, :primary, urn: school.urn, site: "A")
       end
       let(:attributes) { { editing_id: existing_site.id } }
 

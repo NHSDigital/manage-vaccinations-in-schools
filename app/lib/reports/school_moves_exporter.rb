@@ -54,14 +54,14 @@ class Reports::SchoolMovesExporter
             .where(
               SchoolMoveLogEntry
                 .where("patient_id = patients.id")
-                .where(school: team.schools)
+                .where(school: team.gias_schools)
                 .arel
                 .exists
             )
 
         scope =
           SchoolMoveLogEntry
-            .where(school: team.schools)
+            .where(school: team.gias_schools)
             .or(SchoolMoveLogEntry.where(patient: team.patients, school: nil))
             .or(
               SchoolMoveLogEntry
@@ -94,7 +94,7 @@ class Reports::SchoolMovesExporter
     location = log_entry.school
 
     systm_one_school_code =
-      if location&.school?
+      if location&.gias_school?
         location.systm_one_code
       else
         patient&.school&.systm_one_code

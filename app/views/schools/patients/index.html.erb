@@ -8,7 +8,7 @@
 <% content_for :page_title, "#{t("schools.patients.title")} – #{@location.name}" %>
 <%= render "schools/header" %>
 
-<% if @location.school? %>
+<% if @location.gias_school? %>
   <%= govuk_button_link_to "Import class lists", new_school_import_path(@location), secondary: true %>
 <% elsif @location.generic_school? %>
   <div class="nhsuk-button-group">

@@ -13,8 +13,8 @@ module MavisCLI
 
         academic_year = AcademicYear.pending
 
-        old_loc = Location.school.find_by_urn_and_site(source_urn)
-        new_loc = Location.school.find_by_urn_and_site(target_urn)
+        old_loc = Location.gias_school.find_by_urn_and_site(source_urn)
+        new_loc = Location.gias_school.find_by_urn_and_site(target_urn)
 
         if old_loc.nil? || new_loc.nil?
           warn "Could not find one or both schools."

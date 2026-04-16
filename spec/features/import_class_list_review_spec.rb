@@ -113,7 +113,7 @@ describe "Import class lists" do
   def and_an_hpv_programme_is_underway
     @school =
       create(
-        :school,
+        :gias_school,
         urn: "123456",
         name: "Waterloo Road",
         gias_year_groups: [7, 8, 9, 10],
@@ -122,11 +122,12 @@ describe "Import class lists" do
 
     @other_school =
       create(
-        :school,
+        :gias_school,
         team: @team,
         name: "Liverpool Road",
         gias_year_groups: [7, 8, 9, 10]
       )
+
     @clinic = @team.generic_clinic
 
     @session =

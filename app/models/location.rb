@@ -31,6 +31,7 @@
 #  index_locations_on_urn             (urn) UNIQUE WHERE ((type = 0) AND (site IS NULL))
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
+
 class Location < ApplicationRecord
   self.inheritance_column = nil
 
@@ -88,7 +89,7 @@ class Location < ApplicationRecord
 
   enum :type,
        {
-         school: 0,
+         gias_school: 0,
          generic_clinic: 1,
          community_clinic: 2,
          gp_practice: 3,
@@ -96,6 +97,8 @@ class Location < ApplicationRecord
        }
 
   scope :clinic, -> { generic_clinic.or(community_clinic) }
+
+  scope :school, -> { gias_school.or(generic_school) }
 
   scope :where_urn_and_site,
         ->(urn_and_site) do
@@ -181,6 +184,15 @@ class Location < ApplicationRecord
     validates :urn, inclusion: [URN_HOME_EDUCATED, URN_UNKNOWN]
   end
 
+  with_options if: :gias_school? do
+    validates :gias_establishment_number, presence: true
+    validates :gias_local_authority_code, presence: true
+    validates :gias_phase, inclusion: Location.gias_phases.keys
+    validates :ods_code, absence: true
+    validates :site, uniqueness: { scope: :urn }, allow_nil: true
+    validates :urn, presence: true, uniqueness: { unless: :site }
+  end
+
   with_options if: :gp_practice? do
     validates :gias_establishment_number, absence: true
     validates :gias_local_authority_code, absence: true
@@ -188,15 +200,6 @@ class Location < ApplicationRecord
     validates :ods_code, presence: true
     validates :site, absence: true
     validates :urn, absence: true
-  end
-
-  with_options if: :school? do
-    validates :gias_establishment_number, presence: true
-    validates :gias_local_authority_code, presence: true
-    validates :gias_phase, inclusion: Location.gias_phases.keys
-    validates :ods_code, absence: true
-    validates :site, uniqueness: { scope: :urn }, allow_nil: true
-    validates :urn, presence: true, uniqueness: { unless: :site }
   end
 
   delegate :fhir_reference, to: :fhir_mapper
@@ -229,8 +232,10 @@ class Location < ApplicationRecord
 
   def clinic? = generic_clinic? || community_clinic?
 
+  def school? = gias_school? || generic_school?
+
   def dfe_number
-    "#{gias_local_authority_code}#{gias_establishment_number}" if school?
+    "#{gias_local_authority_code}#{gias_establishment_number}" if gias_school?
   end
 
   def phase

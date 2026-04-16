@@ -9,7 +9,7 @@ describe "Notify email templates: vaccination_administered", type: :view do
   let(:programme) { nil }
 
   let(:team) { create(:team, :with_one_nurse, programmes: [programme]) }
-  let(:location) { create(:school, team:, programmes: [programme]) }
+  let(:location) { create(:gias_school, team:, programmes: [programme]) }
   let(:session) do
     create(
       :session,
@@ -28,7 +28,7 @@ describe "Notify email templates: vaccination_administered", type: :view do
 
   describe "body" do
     context "flu" do
-      let(:template_name) { :vaccination_administered_flu }
+      let(:template_name) { :vaccination_administered }
       let(:programme) { Programme.flu }
 
       context "when the vaccination record is injection" do

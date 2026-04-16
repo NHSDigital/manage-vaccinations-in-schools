@@ -37,17 +37,17 @@ describe "View children" do
   end
 
   def given_patients_exist
-    school = create(:school, team: @team)
+    school = create(:gias_school, team: @team)
 
     @ineligible_school =
       create(
-        :school,
+        :gias_school,
         name: "Ineligible School",
         gias_year_groups: [4],
         team: @team
       )
 
-    @new_school = create(:school, name: "New School", team: @team)
+    @new_school = create(:gias_school, name: "New School", team: @team)
 
     @session =
       create(:session, location: school, team: @team, programmes: [@hpv])

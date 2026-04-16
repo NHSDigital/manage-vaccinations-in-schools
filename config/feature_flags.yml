@@ -4,48 +4,49 @@ dev_tools: Developer tools useful for testing and debugging.
 
 ethnicity_capture: Enable optional ethnicity capture after parent consent
 
-imms_api_enqueue_rolling_searches: |
-  Enables enqueueing of vaccination searches for patients not in sessions,
-  spread over a period of 28 days, in the EnqueueVaccinationsSearchInNHSJob.
+imms_api_enqueue_rolling_searches: >-
+  Enables enqueueing of vaccination searches for patients not in sessions, spread over a period of
+  28 days, in the EnqueueVaccinationsSearchInNHSJob.
 
-imms_api_enqueue_session_searches: |
+imms_api_enqueue_session_searches: >-
   Enables enqueueing of vaccination searches for upcoming sessions in the
   EnqueueVaccinationsSearchInNHSJob.
 
-imms_api_ignore_records_prior_to_2025_academic_year: |
-  Per-programme flag. When enabled for a programme, prevents vaccination records
-  dated before 1st September 2025 from being imported.
+imms_api_ignore_records_prior_to_2025_academic_year: >-
+  Per-programme flag. When enabled for a programme, prevents vaccination records dated before 1st
+  September 2025 from being imported.
 
 imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
-imms_api_search_job:
+imms_api_search_job: >-
   Flag to switch off any automated receipt of vaccination records (Search), as part of the search
   job.
 
-imms_api_sentry_warnings: |
-  Enable sending non-fatal Immunisations API warnings to Sentry (e.g. OperationOutcome and
-  Bundle link param mismatches). When disabled, these warnings are logged but not sent to Sentry.
+imms_api_sentry_warnings: >-
+  Enable sending non-fatal Immunisations API warnings to Sentry (e.g. OperationOutcome and Bundle
+  link param mismatches). When disabled, these warnings are logged but not sent to Sentry.
 
-imms_api_sync_job:
+imms_api_sync_job: >-
   Flag to switch off any automated sending of vaccination records (Create, Update, Delete),
   triggered by the creation/edit/delete of any vaccination records. This can be controlled on a
   per-programme basis.
 
 import_bulk_remove_parents: Allow user to bulk remove parent relationships from imports.
 
-import_choose_academic_year:
+import_choose_academic_year: >-
   Add an option to choose the academic year when importing patients during the preparation period.
 
-import_concurrency_per_server: |
-  Controls whether to limit the concurrency of the import jobs to be global or
-  to be per-server.
+import_concurrency_per_server: >-
+  Controls whether to limit the concurrency of the import jobs to be global or to be per-server.
 
 import_search_pds: Perform PDS lookups as part of the patient import processing.
 
 ops_tools: Enable the operational support tools; timeline and graph.
 
-sync_national_reporting_to_imms_api: |
-  Sync immunisations records uploaded as part of national reporting to the NHS
-  Immunisations API.
+sync_national_reporting_to_imms_api: >-
+  Sync immunisations records uploaded as part of national reporting to the NHS Immunisations API.
 
 testing_api: Basic API useful for automated testing.
+
+vaccinating_16_plus_year_olds: >-
+  Enable functionality related to recording vaccinations for patients over the age of 16.

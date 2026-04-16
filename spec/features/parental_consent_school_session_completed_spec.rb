@@ -33,7 +33,7 @@ describe "Parental consent" do
 
     @unscheduled_school =
       create(
-        :school,
+        :gias_school,
         :secondary,
         name: "School 1",
         subteam: @subteam,
@@ -42,7 +42,7 @@ describe "Parental consent" do
       )
     @scheduled_school =
       create(
-        :school,
+        :gias_school,
         :secondary,
         name: "School 2",
         subteam: @subteam,
@@ -51,7 +51,7 @@ describe "Parental consent" do
       )
     @completed_school =
       create(
-        :school,
+        :gias_school,
         :secondary,
         name: "School 3",
         subteam: @subteam,

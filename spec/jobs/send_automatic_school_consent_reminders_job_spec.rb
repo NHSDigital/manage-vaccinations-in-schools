@@ -70,7 +70,7 @@ describe SendAutomaticSchoolConsentRemindersJob do
   let(:dates) { [Date.new(2024, 2, 1), Date.new(2024, 3, 1)] }
 
   let(:team) { create(:team, programmes:) }
-  let(:location) { create(:school, team:) }
+  let(:location) { create(:gias_school, team:) }
 
   let!(:session) do
     create(

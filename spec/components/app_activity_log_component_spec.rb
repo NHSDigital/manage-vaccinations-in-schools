@@ -10,7 +10,9 @@ describe AppActivityLogComponent do
   let(:programmes) { [Programme.hpv, Programme.flu, Programme.mmr] }
   let(:team) { create(:team, programmes:) }
   let(:user) { create(:user, team:, family_name: "Joy", given_name: "Nurse") }
-  let(:location) { create(:school, :secondary, name: "Hogwarts", programmes:) }
+  let(:location) do
+    create(:gias_school, :secondary, name: "Hogwarts", programmes:)
+  end
   let(:session) { create(:session, programmes:, location:) }
   let(:session_last_year) do
     create(:session, programmes:, location:, date: 1.year.ago.to_date)

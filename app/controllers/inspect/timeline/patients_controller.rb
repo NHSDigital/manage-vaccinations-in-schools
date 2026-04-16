@@ -13,11 +13,8 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
   def show
     authorize :inspect, :timeline?
-    set_pii_settings
 
     params[:audit_config] ||= {}
-
-    compare_option = params[:compare_option] || nil
 
     # Set default values if none present
     if params[:detail_config].nil? && params[:event_names].nil? &&
@@ -40,7 +37,6 @@ class Inspect::Timeline::PatientsController < ApplicationController
         params[:audit_config][:include_filtered_audit_changes]
     }
 
-    @compare_patient = sample_patient(params[:compare_option]) if compare_option
     @event_names = params[:event_names] || []
 
     record_access_log_entry
@@ -48,9 +44,9 @@ class Inspect::Timeline::PatientsController < ApplicationController
     @patient_timeline =
       TimelineRecords.new(
         @patient,
-        detail_config: build_details_config,
-        audit_config: audit_config,
-        show_pii: @show_pii
+        details_config:,
+        audit_config:,
+        show_pii:
       ).load_timeline_events(@event_names)
 
     @no_events_message = true if @patient_timeline.empty?
@@ -61,9 +57,9 @@ class Inspect::Timeline::PatientsController < ApplicationController
       @compare_patient_timeline =
         TimelineRecords.new(
           @compare_patient,
-          detail_config: build_details_config,
-          audit_config: audit_config,
-          show_pii: @show_pii
+          details_config:,
+          audit_config:,
+          show_pii:
         ).load_timeline_events(@event_names)
 
       @no_events_compare_message = true if @compare_patient_timeline.empty?
@@ -72,11 +68,33 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
   private
 
-  def set_pii_settings
-    @user_is_allowed_to_access_pii = policy(:inspect).show_pii?
+  def show_pii
+    return @show_pii if defined?(@show_pii)
     @show_pii =
-      @user_is_allowed_to_access_pii &&
-        (params[:show_pii] || SHOW_PII_BY_DEFAULT)
+      user_is_allowed_to_access_pii && pii_access_requested_by_user &&
+        !patient_accessed_is_sensitive
+  end
+
+  def user_is_allowed_to_access_pii
+    if defined?(@user_is_allowed_to_access_pii)
+      return @user_is_allowed_to_access_pii
+    end
+    @user_is_allowed_to_access_pii = policy(:inspect).show_pii?
+  end
+
+  def patient_accessed_is_sensitive
+    if defined?(@patient_accessed_is_sensitive)
+      return @patient_accessed_is_sensitive
+    end
+    @patient_accessed_is_sensitive =
+      @patient.restricted? || @compare_patient&.restricted?
+  end
+
+  def pii_access_requested_by_user
+    if defined?(@pii_access_requested_by_user)
+      return @pii_access_requested_by_user
+    end
+    @pii_access_requested_by_user = params[:show_pii] || SHOW_PII_BY_DEFAULT
   end
 
   def set_patient
@@ -84,6 +102,9 @@ class Inspect::Timeline::PatientsController < ApplicationController
     timeline = TimelineRecords.new(@patient)
     @patient_events = timeline.patient_events(@patient)
     @additional_events = timeline.additional_events(@patient)
+
+    compare_option = params[:compare_option] || nil
+    @compare_patient = sample_patient(params[:compare_option]) if compare_option
   end
 
   # TODO: Fix so that a new comparison patient isn't sampled every time
@@ -118,22 +139,42 @@ class Inspect::Timeline::PatientsController < ApplicationController
     end
   end
 
-  def build_details_config
-    details_params = params[:detail_config] || {}
-    details_params = details_params.to_unsafe_h unless details_params.is_a?(
-      Hash
-    )
+  def details_config
+    @details_config ||=
+      begin
+        details_params = params[:detail_config] || {}
+        details_params = details_params.to_unsafe_h unless details_params.is_a?(
+          Hash
+        )
 
-    details_params.each_with_object({}) do |(event_type, fields), hash|
-      selected_fields = Array(fields).reject(&:blank?).map(&:to_sym)
-      hash[event_type.to_sym] = selected_fields
-    end
+        event_list_details =
+          (@event_names - ["audits"]).map { [it.to_sym, []] }.to_h
+        user_submitted_details =
+          details_params.each_with_object(
+            event_list_details
+          ) do |(event_type, fields), hash|
+            selected_fields = Array(fields).reject(&:blank?).map(&:to_sym)
+            hash[event_type.to_sym] = selected_fields
+          end
+
+        # Removes details from the config which the user does not have permission to view
+        details_mask =
+          (
+            if show_pii
+              TimelineRecords::AVAILABLE_DETAILS_CONFIG_WITH_PII
+            else
+              TimelineRecords::AVAILABLE_DETAILS_CONFIG
+            end
+          )
+        (details_mask.keys & user_submitted_details.keys).index_with do |key|
+          details_mask[key] & user_submitted_details[key]
+        end
+      end
   end
 
   def pii_accessed?
-    return false unless @show_pii
-    detail_config = build_details_config
-    detail_config.any? do |event_type, selected_fields|
+    return false unless show_pii
+    details_config.any? do |event_type, selected_fields|
       pii_fields =
         TimelineRecords::AVAILABLE_DETAILS_CONFIG_PII[event_type] || []
       (selected_fields & pii_fields).any?
@@ -141,14 +182,14 @@ class Inspect::Timeline::PatientsController < ApplicationController
   end
 
   def audit_pii_accessed?
-    true if @show_pii && @event_names.include?("audits")
+    true if show_pii && @event_names.include?("audits")
   end
 
   def record_access_log_entry
     return unless pii_accessed? || audit_pii_accessed?
 
     details_accessed =
-      build_details_config.reverse_merge(
+      details_config.reverse_merge(
         @event_names.map { |key| [key.to_sym, []] }.to_h
       )
     details_accessed[:audits] = :accessed if details_accessed.key?(:audits)

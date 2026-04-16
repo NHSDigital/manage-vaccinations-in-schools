@@ -42,7 +42,7 @@ describe "mavis teams add-programme" do
 
   def given_the_team_exists
     @team = create(:team, workgroup: "abc")
-    @school = create(:school, :secondary, team: @team)
+    @school = create(:gias_school, :secondary, team: @team)
   end
 
   def and_is_already_set_up_for_hpv

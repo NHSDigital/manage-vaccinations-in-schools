@@ -103,7 +103,7 @@ describe "Flu vaccination" do
   def given_i_am_signed_in_with_flu_programme
     @programme = Programme.flu
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @location = create(:school, team: @team)
+    @location = create(:gias_school, team: @team)
     @session =
       create(
         :session,
@@ -371,7 +371,7 @@ describe "Flu vaccination" do
       matching_notify_email(
         to: @patient.consents.last.parent.email,
         subject: "Your child had their flu vaccination today",
-        template: :vaccination_administered_flu
+        template: :vaccination_administered
       ).with_content_including("Vaccination: flu", *method_and_side_effects)
     )
   end

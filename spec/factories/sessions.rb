@@ -34,7 +34,7 @@ FactoryBot.define do
 
       academic_year { (dates.first || Date.current).academic_year }
       team { association(:team, programmes:) }
-      location { association(:school, programmes:, academic_year:) }
+      location { association(:gias_school, programmes:, academic_year:) }
     end
 
     sequence(:slug) { |n| "session-#{n}" }

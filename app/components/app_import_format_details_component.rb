@@ -10,23 +10,6 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   delegate :team, to: :@import
   delegate :govuk_details, :govuk_table, to: :helpers
 
-  def summary_text
-    case @import
-    when ClassImport
-      "How to format your Mavis CSV file for class lists"
-    when CohortImport
-      "How to format your Mavis CSV file for child records"
-    when ImmunisationImport
-      if team.has_national_reporting_access?
-        "How to format your CSV file for vaccination records"
-      else
-        "How to format your Mavis CSV file for vaccination records"
-      end
-    else
-      raise ArgumentError, "Unsupported import type: #{@import.class}"
-    end
-  end
-
   def columns
     case @import
     when ClassImport
@@ -44,7 +27,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         {
           name: "CHILD_POSTCODE",
           notes:
-            "Optional, must be formatted as a valid postcode, for example #{tag.i("SW1A 1AA")}."
+            "Optional, must be a full postcode, for example #{tag.i("SW1A 1AA")}"
         }
       ] + parent_columns
   end
@@ -55,7 +38,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         {
           name: "CHILD_POSTCODE",
           notes:
-            "#{tag.strong("Required")}, must be formatted as a valid postcode, for example #{tag.i("SW1A 1AA")}."
+            "#{tag.strong("Required")}, must be a full postcode, for example #{tag.i("SW1A 1AA")}"
         },
         {
           name: "CHILD_SCHOOL_URN",
@@ -77,33 +60,26 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   def point_of_care_immunisation_import_columns
     organisation_code(optionality: "Optional") +
-      school_urn(optionality: "Optional") + school_name +
-      nhs_number(optionality: "Optional") +
-      patient_demographics(optionality: "Required") +
-      date_and_time_of_vaccination(date_optionality: "Required") +
+      school_urn(optionality: "Optional") + school_name + nhs_number +
+      patient_demographics + date_and_time_of_vaccination +
       vaccinated(
-        optionality: "Required",
-        extra_notes:
-          "Can be omitted if #{tag.code("VACCINE_GIVEN")} is provided."
+        notes:
+          "Enter #{tag.i("Y")} or #{tag.i("N")}. Mavis will assume #{tag.i("Y")} if " \
+            "#{tag.code(" VACCINE_GIVEN ")} is provided."
       ) + vaccine_and_batch + programme + anatomical_site +
       reason_not_vaccinated_and_notes + dose_sequence + care_setting +
       performing_professional
   end
 
   def national_reporting_immunisation_import_columns
-    organisation_code(optionality: "Mandatory") +
-      school_urn(optionality: "Mandatory") +
-      nhs_number(optionality: "Required") +
-      patient_demographics(
-        optionality: "Mandatory",
-        gender_field_name: "PERSON_GENDER"
-      ) +
+    organisation_code(optionality: "Required") +
+      school_urn(optionality: "Required") + nhs_number +
+      patient_demographics(gender_field_name: "PERSON_GENDER") +
       vaccinated(
-        optionality: "Optional",
-        extra_notes:
-          "Rows with the value #{tag.i("N")} will not be validated and will not be imported."
-      ) + date_and_time_of_vaccination(date_optionality: "Mandatory") +
-      national_reporting_vaccine_and_batch +
+        notes:
+          "Optional, enter #{tag.i("Y")} or #{tag.i("N")}. If you enter nothing, Mavis will assume " \
+            "#{tag.i("Y")}. If you enter #{tag.i("N")}, the row will not be uploaded."
+      ) + date_and_time_of_vaccination + national_reporting_vaccine_and_batch +
       national_reporting_anatomical_site + national_reporting_dose_sequence +
       national_reporting_performing_professional_names + local_patient_id
   end
@@ -146,7 +122,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CHILD_YEAR_GROUP",
         notes:
-          "Optional, numeric, the child’s year group, for example #{tag.i("8")}. If present, and " \
+          "Optional, numeric, for example #{tag.i("8")}. If present, and " \
             "when the child’s date of birth would place them in a different year, this value can " \
             "be used to override the cohort the child will be placed in."
       },
@@ -157,7 +133,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       },
       {
         name: "CHILD_NHS_NUMBER",
-        notes: "Optional, must be 10 digits and numeric."
+        notes: "You must enter a valid NHS number if available."
       },
       {
         name: "CHILD_GENDER",
@@ -181,12 +157,17 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
-  def nhs_number(optionality:)
+  def nhs_number
     [
       {
         name: "NHS_NUMBER",
         notes:
-          "#{tag.strong(optionality)}, must be a valid #{link_to("NHS number", "https://www.datadictionary.nhs.uk/attributes/nhs_number.html")}."
+          "You must enter a valid #{
+            link_to(
+              "NHS number",
+              "https://www.datadictionary.nhs.uk/attributes/nhs_number.html"
+            )
+          } if available."
       }
     ]
   end
@@ -212,60 +193,56 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
-  def patient_demographics(
-    optionality:,
-    gender_field_name: "PERSON_GENDER_CODE"
-  )
+  def patient_demographics(gender_field_name: "PERSON_GENDER_CODE")
     [
-      { name: "PERSON_FORENAME", notes: tag.strong(optionality) },
-      { name: "PERSON_SURNAME", notes: tag.strong(optionality) },
+      {
+        name: "PERSON_FORENAME",
+        notes:
+          "#{tag.strong("Required")}, must use alphabetical characters " \
+            "(you can include accents like Chloë, hyphens like Anne-Marie or apostrophes like D'Arcy " \
+            "but no other special characters)."
+      },
+      {
+        name: "PERSON_SURNAME",
+        notes:
+          "#{tag.strong("Required")}, must use alphabetical characters " \
+            "(you can include accents like Jiménez, hyphens like Burne-Jones or apostrophes like O'Hare " \
+            "but no other special characters)."
+      },
       {
         name: "PERSON_DOB",
         notes:
-          "#{tag.strong(optionality)}, must use either #{tag.i("YYYYMMDD")} or " \
+          "#{tag.strong("Required")}, you must use either #{tag.i("YYYYMMDD")} or " \
             "#{tag.i("DD/MM/YYYY")} format."
       },
       {
         name: gender_field_name,
         notes:
-          "#{tag.strong(optionality)}, must be one of: #{tag.i("female")}, " \
+          "#{tag.strong("Required")}, must be one of: #{tag.i("female")}, " \
             "#{tag.i("male")}, #{tag.i("not known")} or #{tag.i("not specified")}."
       },
       {
         name: "PERSON_POSTCODE",
         notes:
-          "#{tag.strong(optionality)}, must be formatted as a valid postcode, for example #{tag.i("SW1A 1AA")}."
+          "#{tag.strong("Required")}, must be a full postcode, for example #{tag.i("SW1A 1AA")}"
       }
     ]
   end
 
-  def vaccinated(optionality:, extra_notes: "")
-    optionality_html =
-      if %w[Mandatory Required].include?(optionality)
-        tag.strong(optionality)
-      else
-        optionality
-      end
-
-    [
-      {
-        name: "VACCINATED",
-        notes:
-          "#{optionality_html}, must be #{tag.i("Y")} or #{tag.i("N")}. #{extra_notes}"
-      }
-    ]
+  def vaccinated(notes:)
+    [{ name: "VACCINATED", notes: }]
   end
 
-  def date_and_time_of_vaccination(date_optionality:)
+  def date_and_time_of_vaccination
     [
       {
         name: "DATE_OF_VACCINATION",
         notes:
-          "#{tag.strong(date_optionality)}, must use either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format."
+          "#{tag.strong("Required")}, you must use either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format."
       },
       {
         name: "TIME_OF_VACCINATION",
-        notes: "Optional, must use #{tag.i("HH:MM:SS")} format."
+        notes: "Optional, use #{tag.i("HH:MM:SS")} format."
       }
     ]
   end
@@ -300,12 +277,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   def programme
     programmes = team.programmes.flat_map(&:import_names).map { tag.i(it) }
-
-    programmes_sentence =
-      programmes.to_sentence(
-        last_word_connector: " or ",
-        two_words_connector: " or "
-      )
+    programmes_sentence = to_sentence_with_or(programmes)
 
     [
       {
@@ -315,59 +287,50 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     ]
   end
 
-  def make_vaccines_sentence(vaccines:)
-    vaccines.to_sentence(
-      last_word_connector: " or ",
-      two_words_connector: " or "
-    )
-  end
-
   def vaccine_and_batch
     vaccines = team.vaccines.pluck(:upload_name).map { tag.i(it) }
-    vaccines_sentence = make_vaccines_sentence(vaccines:)
 
     [
       {
         name: "VACCINE_GIVEN",
-        notes: "Optional, must be one of: #{vaccines_sentence}."
+        notes: "Optional, must be one of: #{to_sentence_with_or(vaccines)}."
       },
-      {
-        name: "BATCH_NUMBER",
-        notes: "Required if #{tag.code("BATCH_EXPIRY_DATE")} is provided."
-      },
+      { name: "BATCH_NUMBER", notes: "Optional" },
       {
         name: "BATCH_EXPIRY_DATE",
         notes:
-          "Required if #{tag.code("BATCH_NUMBER")} is provided, must use " \
-            "either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format."
+          "Optional, use either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format."
       }
     ]
   end
 
   def national_reporting_vaccine_and_batch
-    hpv_vaccines =
-      Programme.hpv.vaccines.pluck(:nivs_name).compact.map { tag.i(it) }
-    flu_vaccines =
-      Programme.flu.vaccines.pluck(:nivs_name).compact.map { tag.i(it) }
+    vaccine_given_notes_per_programme =
+      [Programme.hpv, Programme.flu].map do |programme|
+        vaccines =
+          programme
+            .vaccines
+            .where.not(nivs_name: [nil, ""])
+            .order(:nivs_name)
+            .pluck(:nivs_name)
+            .map { tag.i(it) }
 
-    hpv_vaccines_sentence = make_vaccines_sentence(vaccines: hpv_vaccines)
-    flu_vaccines_sentence = make_vaccines_sentence(vaccines: flu_vaccines)
+        "#{tag.br}#{tag.br}" \
+          "For #{programme.name_in_sentence} records, must be one of: " \
+          "#{to_sentence_with_or(vaccines)}."
+      end
 
     [
       {
         name: "VACCINE_GIVEN",
         notes:
-          "#{tag.strong("Mandatory")}" \
-            "#{tag.br}#{tag.br}" \
-            "For HPV records, must be one of: #{hpv_vaccines_sentence}." \
-            "#{tag.br}#{tag.br}" \
-            "For flu records, must be one of: #{flu_vaccines_sentence}."
+          ([tag.strong("Required")] + vaccine_given_notes_per_programme).join
       },
-      { name: "BATCH_NUMBER", notes: tag.strong("Mandatory") },
+      { name: "BATCH_NUMBER", notes: tag.strong("Required") },
       {
         name: "BATCH_EXPIRY_DATE",
         notes:
-          "#{tag.strong("Mandatory")}, must use #{tag.i("YYYYMMDD")} format."
+          "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format."
       }
     ]
   end
@@ -394,7 +357,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   def reason_not_vaccinated_and_notes
     reasons =
       ImmunisationImportRow::REASONS_NOT_ADMINISTERED.keys.sort.map do
-        tag.i(_1)
+        tag.i(it)
       end
     reasons_sentence =
       reasons.to_sentence(
@@ -466,11 +429,11 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     [
       {
         name: "PERFORMING_PROFESSIONAL_FORENAME",
-        notes: "Mandatory for flu records, optional for HPV records."
+        notes: "Required for flu records, optional for HPV records."
       },
       {
         name: "PERFORMING_PROFESSIONAL_SURNAME",
-        notes: "Mandatory for flu records, optional for HPV records."
+        notes: "Required for flu records, optional for HPV records."
       }
     ]
   end
@@ -485,7 +448,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def national_reporting_anatomical_site
-    sites = ImmunisationImportRow::DELIVERY_SITES.keys.sort.map { tag.i(_1) }
+    sites = ImmunisationImportRow::DELIVERY_SITES.keys.sort.map { tag.i(it) }
 
     site_sentence =
       sites.to_sentence(
@@ -496,7 +459,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     [
       {
         name: "ANATOMICAL_SITE",
-        notes: "#{tag.strong("Mandatory")}, must be one of: #{site_sentence}."
+        notes: "#{tag.strong("Required")}, must be one of: #{site_sentence}."
       }
     ]
   end
@@ -509,7 +472,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "DOSE_SEQUENCE",
         notes:
-          "Mandatory for HPV records, optional for flu records." \
+          "Required for HPV records, optional for flu records." \
             "#{tag.br} #{tag.br}" \
             "Must be a number between 1 and #{hpv_max} for HPV records and between 1 and #{flu_max} for flu records."
       }
@@ -518,8 +481,20 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   def local_patient_id
     [
-      { name: "LOCAL_PATIENT_ID", notes: tag.strong("Mandatory") },
-      { name: "LOCAL_PATIENT_ID_URI", notes: tag.strong("Mandatory") }
+      {
+        name: "LOCAL_PATIENT_ID",
+        notes:
+          "#{tag.strong("Required")}, supplied automatically by your vaccination recording system."
+      },
+      {
+        name: "LOCAL_PATIENT_ID_URI",
+        notes:
+          "#{tag.strong("Required")}, supplied automatically by your vaccination recording system."
+      }
     ]
+  end
+
+  def to_sentence_with_or(items)
+    items.to_sentence(last_word_connector: " or ", two_words_connector: " or ")
   end
 end

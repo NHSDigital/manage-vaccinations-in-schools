@@ -245,7 +245,7 @@ class Notifier::Patient
     outbreak:,
     type:
   )
-    is_school = location.school?
+    is_school = location.gias_school?
     base_template = :"consent_#{is_school ? "school" : "clinic"}_#{type}"
 
     # We can only handle a single programme group or variant in the template.

@@ -8,7 +8,7 @@ describe AppSessionSummaryComponent do
   let(:programmes) { [Programme.hpv] }
   let(:location) do
     create(
-      :school,
+      :gias_school,
       :secondary,
       name: "Streeling University",
       urn: 123_456,

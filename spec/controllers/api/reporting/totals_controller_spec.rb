@@ -65,7 +65,9 @@ describe API::Reporting::TotalsController do
       expect(not_vaccinated).to eq(1) # patient3
       expect(vaccinated + not_vaccinated).to eq(cohort)
 
-      expect(parsed_response["vaccinations_given"]).to eq(2) # 2 administered records
+      expect(parsed_response["vaccinations_given"]).to eq(
+        { "school_count" => 2, "community_count" => 0 }
+      )
       expect(parsed_response["monthly_vaccinations_given"]).to be_an(Array)
     end
 
@@ -169,8 +171,8 @@ describe API::Reporting::TotalsController do
       team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
-      school_one = create(:school, name: "School One", urn: "111111")
-      school_two = create(:school, name: "School Two", urn: "222222")
+      school_one = create(:gias_school, name: "School One", urn: "111111")
+      school_two = create(:gias_school, name: "School Two", urn: "222222")
 
       create(:patient, session:, school: school_one)
       patient2 = create(:patient, session:, school: school_two)
@@ -226,7 +228,7 @@ describe API::Reporting::TotalsController do
       team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
-      school = create(:school, name: "Test School", urn: "123456")
+      school = create(:gias_school, name: "Test School", urn: "123456")
 
       patient1 =
         create(
@@ -304,8 +306,8 @@ describe API::Reporting::TotalsController do
       team.programmes << programme
       session = create(:session, team:, programmes: [programme])
 
-      school_one = create(:school, name: "School One", urn: "111111")
-      school_two = create(:school, name: "School Two", urn: "222222")
+      school_one = create(:gias_school, name: "School One", urn: "111111")
+      school_two = create(:gias_school, name: "School Two", urn: "222222")
 
       create(:patient, session:, school: school_one)
       create(:patient, session:, school: school_two)
@@ -335,9 +337,9 @@ describe API::Reporting::TotalsController do
       session = create(:session, team:, programmes: [programme])
 
       school_one =
-        create(:school, name: "School One", gias_local_authority_code: 201)
+        create(:gias_school, name: "School One", gias_local_authority_code: 201)
       school_two =
-        create(:school, name: "School Two", gias_local_authority_code: 202)
+        create(:gias_school, name: "School Two", gias_local_authority_code: 202)
 
       create(:patient, session:, school: school_one)
       create(:patient, session:, school: school_two)
@@ -369,7 +371,11 @@ describe API::Reporting::TotalsController do
 
       # Patient with school that has LA
       school =
-        create(:school, name: "Known School", gias_local_authority_code: 201)
+        create(
+          :gias_school,
+          name: "Known School",
+          gias_local_authority_code: 201
+        )
       create(:patient, session:, school:)
 
       # Home-educated patient without postcode LA lookup
@@ -495,7 +501,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(1)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 1, "community_count" => 0 }
+      )
 
       monthly =
         monthly_vaccinations_given.find do
@@ -503,7 +511,8 @@ describe API::Reporting::TotalsController do
             it["month"] == Date::MONTHNAMES[Time.current.month]
         end
       expect(monthly).to be_present
-      expect(monthly["count"]).to eq(1)
+      expect(monthly["school_count"]).to eq(1)
+      expect(monthly["community_count"]).to eq(0)
     end
 
     it "counts vaccination in correct month when performed during BST" do
@@ -525,7 +534,8 @@ describe API::Reporting::TotalsController do
         end
       expect(monthly).to be_present,
       "Expected vaccination to be counted in September, not August"
-      expect(monthly["count"]).to eq(1)
+      expect(monthly["school_count"]).to eq(1)
+      expect(monthly["community_count"]).to eq(0)
     end
 
     it "child archived after being vaccinated by SAIS" do
@@ -613,7 +623,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -634,7 +646,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -658,7 +672,9 @@ describe API::Reporting::TotalsController do
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
 
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -678,7 +694,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -702,7 +720,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -734,7 +754,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -759,7 +781,9 @@ describe API::Reporting::TotalsController do
       # flu is seasonal so vaccinations from a previous year don't count
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -779,7 +803,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -800,7 +826,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -821,7 +849,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -854,7 +884,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -878,7 +910,9 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinations_given).to eq(0)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 0, "community_count" => 0 }
+      )
       expect(monthly_vaccinations_given).to be_empty
     end
 
@@ -886,7 +920,7 @@ describe API::Reporting::TotalsController do
       other_org = create(:organisation)
       other_team =
         create(:team, programmes: [flu_programme], organisation: other_org)
-      other_school = create(:school, team: other_team)
+      other_school = create(:gias_school, team: other_team)
 
       patient = create(:patient, session: flu_session)
       create(
@@ -913,14 +947,68 @@ describe API::Reporting::TotalsController do
 
       # Child moved out, but vaccination was given by this team
       # so it should be counted as given
-      expect(vaccinations_given).to eq(1)
+      expect(vaccinations_given).to eq(
+        { "school_count" => 1, "community_count" => 0 }
+      )
       monthly =
         monthly_vaccinations_given.find do
           it["year"] == Time.current.year &&
             it["month"] == Date::MONTHNAMES[Time.current.month]
         end
       expect(monthly).to be_present
-      expect(monthly["count"]).to eq(1)
+      expect(monthly["school_count"]).to eq(1)
+      expect(monthly["community_count"]).to eq(0)
+    end
+
+    it "splits vaccinations given by school and community location" do
+      school_patient = create(:patient, session: hpv_session)
+      create(
+        :vaccination_record,
+        patient: school_patient,
+        programme: hpv_programme,
+        session: hpv_session,
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      community_clinic =
+        create(
+          :community_clinic,
+          team:,
+          programmes: [hpv_programme],
+          academic_year: AcademicYear.current
+        )
+      community_session =
+        create(
+          :session,
+          team:,
+          location: community_clinic,
+          programmes: [hpv_programme]
+        )
+      community_patient = create(:patient, session: community_session)
+      create(
+        :vaccination_record,
+        patient: community_patient,
+        programme: hpv_programme,
+        session: community_session,
+        outcome: "administered",
+        performed_at: Time.current
+      )
+
+      refresh_and_get_totals
+
+      expect(vaccinations_given).to eq(
+        { "school_count" => 1, "community_count" => 1 }
+      )
+
+      monthly =
+        monthly_vaccinations_given.find do
+          it["year"] == Time.current.year &&
+            it["month"] == Date::MONTHNAMES[Time.current.month]
+        end
+      expect(monthly).to be_present
+      expect(monthly["school_count"]).to eq(1)
+      expect(monthly["community_count"]).to eq(1)
     end
 
     it "counts HPV cohort correctly across years 8 to 11" do
@@ -981,7 +1069,7 @@ describe API::Reporting::TotalsController do
     it "counts year 12 students when session location has year 12 enabled" do
       send_location =
         create(
-          :school,
+          :gias_school,
           gias_year_groups: (0..12).to_a,
           team:,
           programmes: [flu_programme],

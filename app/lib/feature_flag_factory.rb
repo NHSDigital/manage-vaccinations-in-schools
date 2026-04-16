@@ -16,7 +16,11 @@ class FeatureFlagFactory
     end
   end
 
-  FEATURES_FOR_DEVELOPMENT = %i[dev_tools testing_api].freeze
+  FEATURES_FOR_DEVELOPMENT = %i[
+    dev_tools
+    testing_api
+    vaccinating_16_plus_year_olds
+  ].freeze
 
   def self.enable_for_development!(check_rails_env: true)
     if check_rails_env && !(Rails.env.development? || Rails.env.end_to_end?)

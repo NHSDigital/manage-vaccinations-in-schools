@@ -170,7 +170,7 @@ describe PatientPolicy do
       let(:patient_with_move_in_school) { create(:patient) }
       let!(:patient_with_move_in_another_school) { create(:patient) }
 
-      let(:school) { create(:school, team:) }
+      let(:school) { create(:gias_school, team:) }
 
       before do
         create(
@@ -183,7 +183,7 @@ describe PatientPolicy do
           :school_move,
           :to_school,
           patient: patient_with_move_in_another_school,
-          school: create(:school, team: another_team)
+          school: create(:gias_school, team: another_team)
         )
       end
 

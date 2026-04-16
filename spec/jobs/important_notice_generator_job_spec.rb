@@ -166,7 +166,7 @@ describe ImportantNoticeGeneratorJob do
       end
 
       context "team_changed" do
-        let(:new_school) { create(:school, team: team_b) }
+        let(:new_school) { create(:gias_school, team: team_b) }
         let(:team_changed_patient) { create(:patient, school: new_school) }
         let(:school_move_log_entry) do
           create(

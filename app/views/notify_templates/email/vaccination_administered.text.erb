@@ -1,0 +1,37 @@
+---
+template_id: "bd51556d-bccc-469c-a822-0b88f26efd10"
+template_name: vaccination_administered
+subject: "Your child had their <%= programme_name_for_parents(vaccination_record.programme) %> vaccination <%= vaccination_record_today_or_date(vaccination_record) %>"
+---
+<%= patient.full_name_with_known_as(context: :parents) %> had their <%= programme_name_for_parents(vaccination_record.programme) %> vaccination at <%= vaccination_record_location(vaccination_record) %> <%= vaccination_record_today_or_date(vaccination_record) %>.
+
+We suggest you record the following details somewhere.
+
+Vaccination: <%= programme_name_for_parents(vaccination_record.programme) %>
+Vaccine: <%= vaccination_record.vaccine.brand %>
+<% if vaccination_record.programme.has_multiple_vaccine_methods? -%>
+Method: <%= vaccine_method(vaccination_record.vaccine) %>
+<% end -%>
+Date of vaccination: <%= vaccination_record_date(vaccination_record) %>
+Batch number: <%= vaccination_record.batch_number %>
+
+## Possible side effects
+
+Your child might have some of the following side effects:
+
+<%= vaccine_side_effects_list(vaccination_record.vaccine) %>
+
+<% if vaccination_record.programme.mmr? %>These side effects are usually mild and only last 2 to 3 days. <% end -%>
+If you’re concerned about your child’s reaction to the vaccine, contact your GP in the usual way.
+<% if vaccination_record.programme.multi_dose? && patient_needs_more_doses?(patient, vaccination_record.programme, academic_year) -%>
+
+## Your child still needs a <%= patient_next_dose_label(patient, vaccination_record.programme, academic_year) %> dose of the <%= programme_name_for_parents(vaccination_record.programme) %> vaccine
+
+To be fully protected against <%= programme_disease_names(vaccination_record.programme) %>, your child needs a <%= patient_next_dose_label(patient, vaccination_record.programme, academic_year) %> dose of the vaccine. Our team will be in touch about this soon.
+<% end -%>
+
+You can [give feedback](https://feedback.digital.nhs.uk/jfe/form/SV_3fICo6frMvUZX1k) about the ’Give or refuse consent’ service by completing our short survey. Your feedback will help us improve the service.
+
+<%= team_contact_name(vaccination_record:) %>
+<%= team_contact_email(vaccination_record:) %>
+<%= team_contact_phone(vaccination_record:) %>

@@ -126,7 +126,7 @@ describe "HPV vaccination" do
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     expect_email_to(
       @patient.consents.last.parent.email,
-      :vaccination_administered_hpv
+      :vaccination_administered
     )
   end
 

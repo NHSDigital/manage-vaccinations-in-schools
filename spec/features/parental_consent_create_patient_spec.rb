@@ -85,7 +85,7 @@ describe "Parental consent create patient" do
   def given_the_app_is_setup
     @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    location = create(:school, name: "Pilot School", team: @team)
+    location = create(:gias_school, name: "Pilot School", team: @team)
     @session =
       create(
         :session,

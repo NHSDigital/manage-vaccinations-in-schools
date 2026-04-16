@@ -53,7 +53,7 @@ describe "mavis imports recent" do
 
   def given_there_imports
     team = create(:team, workgroup: "test_team")
-    location = create(:school, team:)
+    location = create(:gias_school, team:)
 
     @class_import = create(:class_import, :processed, team:, location:)
     @cohort_import = create(:cohort_import, :processed, team:)
@@ -62,7 +62,7 @@ describe "mavis imports recent" do
 
   def given_there_are_multiple_class_and_cohort_imports
     team = create(:team, workgroup: "multi_team")
-    location = create(:school, team:)
+    location = create(:gias_school, team:)
 
     # Create 3 of each type with time travel to ensure proper ordering
     freeze_time do
@@ -85,7 +85,7 @@ describe "mavis imports recent" do
     organisation2 = create(:organisation, ods_code: "ORG2")
     team1 = create(:team, organisation: organisation1, workgroup: "team1")
     team2 = create(:team, organisation: organisation2, workgroup: "team2")
-    location = create(:school, team: team1)
+    location = create(:gias_school, team: team1)
 
     create(:class_import, :processed, team: team1, location:)
     create(:cohort_import, :processed, team: team1)
@@ -96,7 +96,7 @@ describe "mavis imports recent" do
     organisation = create(:organisation)
     team1 = create(:team, organisation:, workgroup: "wg1")
     team2 = create(:team, organisation:, workgroup: "wg2")
-    location = create(:school, team: team1)
+    location = create(:gias_school, team: team1)
 
     create(:class_import, :processed, team: team1, location:)
     create(:cohort_import, :processed, team: team1)
@@ -105,7 +105,7 @@ describe "mavis imports recent" do
 
   def given_there_are_interleaved_class_and_cohort_imports
     team = create(:team, workgroup: "interleaved")
-    location = create(:school, team:)
+    location = create(:gias_school, team:)
 
     freeze_time do
       @oldest = create(:cohort_import, :processed, team:)

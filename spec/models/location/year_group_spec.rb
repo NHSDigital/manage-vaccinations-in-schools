@@ -24,7 +24,7 @@
 describe Location::YearGroup do
   subject(:location_year_group) { build(:location_year_group, location:) }
 
-  let(:location) { create(:school) }
+  let(:location) { create(:gias_school) }
 
   describe "associations" do
     it { should belong_to(:location) }

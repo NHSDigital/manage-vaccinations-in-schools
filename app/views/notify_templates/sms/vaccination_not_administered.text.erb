@@ -2,6 +2,6 @@
 template_id: "aae061e0-b847-4d4c-a87a-12508f95a302"
 template_name: vaccination_not_administered
 ---
-<%= short_patient_name %> did not have their <%= vaccination %> at school today. This was because <%= reason_did_not_vaccinate %>.
+<%= short_patient_name %> did not have their <%= programme_name_for_parents(vaccination_record.programme) %> vaccination at school today. This was because <%= reason_did_not_vaccinate %>.
 
-If you'd still like them to be vaccinated on a different date, contact the local health team by calling <%= subteam_phone %>, or email <%= subteam_email %>.
+If you'd still like them to be vaccinated on a different date, contact the local health team by calling <%= team_contact_phone(vaccination_record:) %>, or email <%= team_contact_email(vaccination_record:) %>.

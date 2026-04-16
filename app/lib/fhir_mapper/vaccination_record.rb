@@ -14,6 +14,9 @@ module FHIRMapper
     BATCH_EXPIRY_MIN = Date.new(Date.current.year - 100, 1, 1)
     BATCH_EXPIRY_MAX = Date.new(Date.current.year + 100, 1, 1)
 
+    VACCINATION_PROCEDURE_EXTENSION_URL =
+      "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure"
+
     def initialize(vaccination_record)
       @vaccination_record = vaccination_record
     end
@@ -45,7 +48,8 @@ module FHIRMapper
         sourced_from_service? || sourced_from_national_reporting?
       immunisation.manufacturer = vaccine.fhir_manufacturer_reference
 
-      immunisation.location = (location || ::Location.school.new).fhir_reference
+      immunisation.location =
+        (location || ::Location.gias_school.new).fhir_reference
       immunisation.lotNumber = batch_number
       immunisation.expirationDate = batch_expiry.to_s
       immunisation.site = fhir_site
@@ -82,6 +86,18 @@ module FHIRMapper
         .sole
         .value
       attrs[:nhs_immunisations_api_primary_source] = fhir_record.primarySource
+      recorded = fhir_record.recorded
+      attrs[:nhs_immunisations_api_recorded_at] = Time.zone.parse(
+        recorded
+      ) if recorded
+
+      procedure_coding = vaccination_procedure_coding_from_fhir(fhir_record)
+      attrs[
+        :nhs_immunisations_api_snomed_procedure_code
+      ] = procedure_coding&.code
+      attrs[
+        :nhs_immunisations_api_snomed_procedure_term
+      ] = procedure_coding&.display
 
       attrs[:programme] = Programme.from_fhir_record(fhir_record)
 
@@ -109,9 +125,14 @@ module FHIRMapper
         )
       end
 
-      performer_ods_code = org_performer_ods_code_from_fhir(fhir_record)
+      org_actor = org_performer_actor_from_fhir(fhir_record)
+      performer_ods_code = org_actor&.identifier&.value
       unless performer_ods_code == FHIRMapper::Location::UNKNOWN_IDENTIFIER
         attrs[:performed_ods_code] = performer_ods_code
+      end
+
+      if org_actor&.display.present?
+        notes << "Performing organisation display name: #{org_actor.display}"
       end
 
       user_performer_name = user_performer_name_from_fhir(fhir_record)
@@ -122,12 +143,26 @@ module FHIRMapper
       attrs[:delivery_site] = site_from_fhir(fhir_record)
 
       dose_sequence = dose_sequence_from_fhir(fhir_record)
-      max_dose_sequence = attrs[:programme].maximum_dose_sequence
-      if dose_sequence.present? && dose_sequence > max_dose_sequence
-        notes << "Reported dose sequence: #{dose_sequence}"
+      if dose_sequence
+        if dose_sequence > attrs[:programme].maximum_dose_sequence ||
+             dose_sequence < 1
+          notes << "Reported dose number: #{dose_sequence}"
+        else
+          attrs[:dose_sequence] = dose_sequence
+        end
       else
-        attrs[:dose_sequence] = dose_sequence
+        notes << dose_number_string_note_from_fhir(fhir_record)
       end
+
+      reason_coding = reason_coding_from_fhir(fhir_record)
+      attrs[:nhs_immunisations_api_snomed_reason_code] = reason_coding&.code
+      attrs[:nhs_immunisations_api_snomed_reason_term] = reason_coding&.display
+
+      product_coding = vaccine_product_coding_from_fhir(fhir_record)
+      attrs[:nhs_immunisations_api_snomed_product_code] = product_coding&.code
+      attrs[
+        :nhs_immunisations_api_snomed_product_term
+      ] = product_coding&.display
 
       attrs[:vaccine] = Vaccine.from_fhir_record(fhir_record)
       attrs[:batch_number] = fhir_record.lotNumber&.to_s
@@ -145,7 +180,6 @@ module FHIRMapper
         )
       else
         attrs[:disease_types] = attrs[:programme].disease_types
-        notes << vaccine_batch_notes_from_fhir(fhir_record)
         attrs[:full_dose] = true
       end
 
@@ -170,8 +204,7 @@ module FHIRMapper
 
     def fhir_vaccination_procedure_extension
       FHIR::Extension.new(
-        url:
-          "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+        url: VACCINATION_PROCEDURE_EXTENSION_URL,
         valueCodeableConcept: vaccine.fhir_procedure_coding(dose_sequence:)
       )
     end
@@ -285,21 +318,6 @@ module FHIRMapper
       end
     end
 
-    private_class_method def self.vaccine_batch_notes_from_fhir(fhir_record)
-      fhir_vaccine =
-        fhir_record.vaccineCode&.coding&.find do
-          it.system == "http://snomed.info/sct"
-        end
-
-      vaccine_snomed_code = fhir_vaccine&.code
-      vaccine_description = fhir_vaccine&.display.presence
-
-      [
-        ("SNOMED product code: #{vaccine_snomed_code}" if vaccine_snomed_code),
-        ("SNOMED description: #{vaccine_description}" if vaccine_description)
-      ].compact.join("\n").presence
-    end
-
     def fhir_user_performer(reference_id:)
       FHIR::Immunization::Performer.new(
         actor: FHIR::Reference.new(reference: "##{reference_id}")
@@ -327,10 +345,31 @@ module FHIRMapper
       )
     end
 
-    private_class_method def self.org_performer_ods_code_from_fhir(fhir_record)
-      org_actor =
-        fhir_record.performer.find { it.actor&.type == "Organization" }&.actor
-      org_actor&.identifier&.value
+    private_class_method def self.org_performer_actor_from_fhir(fhir_record)
+      fhir_record.performer.find { it.actor&.type == "Organization" }&.actor
+    end
+
+    private_class_method def self.vaccination_procedure_coding_from_fhir(
+      fhir_record
+    )
+      fhir_record
+        .extension
+        &.find { it.url == VACCINATION_PROCEDURE_EXTENSION_URL }
+        &.valueCodeableConcept
+        &.coding
+        &.find { it.system == "http://snomed.info/sct" }
+    end
+
+    private_class_method def self.reason_coding_from_fhir(fhir_record)
+      fhir_record.reasonCode&.first&.coding&.find do
+        it.system == "http://snomed.info/sct"
+      end
+    end
+
+    private_class_method def self.vaccine_product_coding_from_fhir(fhir_record)
+      fhir_record.vaccineCode&.coding&.find do
+        it.system == "http://snomed.info/sct"
+      end
     end
 
     def fhir_reason_code
@@ -350,10 +389,21 @@ module FHIRMapper
     end
 
     private_class_method def self.dose_sequence_from_fhir(fhir_record)
-      # TODO: currently we only look at `doseNumberPositiveInt` but often `doseNumberString` is populated instead
-      #       This doesn't matter much for flu, but this may need to be revisited when we start consuming programmes
-      #       where dose number matters more (eg MMR)
-      fhir_record.protocolApplied.sole.doseNumberPositiveInt
+      protocol = fhir_record.protocolApplied&.sole
+
+      if protocol&.doseNumberPositiveInt.present?
+        return protocol&.doseNumberPositiveInt
+      end
+
+      Integer(protocol&.doseNumberString, exception: false)
+    end
+
+    private_class_method def self.dose_number_string_note_from_fhir(fhir_record)
+      dose_string = fhir_record.protocolApplied&.sole&.doseNumberString
+
+      return if dose_string.blank?
+
+      "Reported dose number string: #{dose_string}"
     end
   end
 end

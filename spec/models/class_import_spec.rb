@@ -42,7 +42,7 @@ describe ClassImport do
 
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
-  let(:location) { create(:school, team:) }
+  let(:location) { create(:gias_school, team:) }
   let(:session) { create(:session, location:, programmes:, team:) }
 
   let(:file) { "valid.csv" }

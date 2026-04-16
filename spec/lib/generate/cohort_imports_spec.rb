@@ -10,7 +10,7 @@ describe Generate::CohortImports do
 
   before do
     location =
-      create(:school, :secondary, team:, name: "Test School", urn: "31337")
+      create(:gias_school, :secondary, team:, name: "Test School", urn: "31337")
     create(:session, team:, slug: "slug", location:, programmes: [programme])
   end
 

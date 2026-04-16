@@ -9,7 +9,7 @@
 
   <% programme = @consent_form.refused_consent_form_programmes.find { it.programme.mmr? }&.programme %>
   <% if programme && @consent_form.reason_for_refusal == "already_vaccinated" %>
-    <p class="nhsuk-hint">Children need 2 doses of the #{programme.name} vaccine to be fully protected. If your child has had more than 1 dose, give details about both doses.</p>
+    <p class="nhsuk-hint">Children need 2 doses of the <%= programme.name %> vaccine to be fully protected. If your child has had more than 1 dose, give details about both doses.</p>
   <% end %>
 
   <% label = "Give details" + (@consent_form.reason_for_refusal_requires_notes? ? "" : " (optional)") %>

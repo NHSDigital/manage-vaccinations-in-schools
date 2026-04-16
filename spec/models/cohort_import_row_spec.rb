@@ -58,7 +58,7 @@ describe CohortImportRow do
     }
   end
 
-  let!(:school) { create(:school, urn: "123456", team:) }
+  let!(:school) { create(:gias_school, urn: "123456", team:) }
 
   describe "validations" do
     let(:data) { valid_data }
@@ -146,8 +146,8 @@ describe CohortImportRow do
 
       before do
         school.team_locations.includes(:team).destroy_all
-        create(:school, urn: school_urn, site: "A", team:)
-        create(:school, urn: school_urn, site: "B", team:)
+        create(:gias_school, urn: school_urn, site: "A", team:)
+        create(:gias_school, urn: school_urn, site: "B", team:)
       end
 
       it "is invalid" do
@@ -163,8 +163,8 @@ describe CohortImportRow do
 
       before do
         school.team_locations.includes(:team).destroy_all
-        create(:school, urn: school_urn, site: "A", team:)
-        create(:school, urn: school_urn, site: "B", team:)
+        create(:gias_school, urn: school_urn, site: "A", team:)
+        create(:gias_school, urn: school_urn, site: "B", team:)
       end
 
       it "is valid" do

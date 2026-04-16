@@ -38,7 +38,7 @@ class AppTimelineComponent < ViewComponent::Base
     "Triage" => "red",
     "VaccinationRecord" => "grey",
     "SchoolMove" => "orange",
-    "SchoolMoveLogEntry" => "pink"
+    "SchoolMoveLogEntry" => "orange"
   }.freeze
 
   def format_heading(item)
@@ -63,6 +63,8 @@ class AppTimelineComponent < ViewComponent::Base
       "#{id_info}#{formatted_details}"
     elsif item[:description].present?
       item[:description]
+    else
+      ""
     end
   end
 

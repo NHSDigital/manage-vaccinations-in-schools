@@ -44,6 +44,9 @@ class Team < ApplicationRecord
 
   NATIONAL_REPORTING_YEAR_GROUPS = (-2..13).to_a.freeze
 
+  # The number of days after the national reporting cut-off date when users will lose access to NIVS
+  NIVS_SWITCH_OFF_DELAY_DAYS = 2
+
   audited associated_with: :organisation
   has_associated_audits
 

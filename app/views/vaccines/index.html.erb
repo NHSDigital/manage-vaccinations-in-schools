@@ -4,12 +4,23 @@
   <%= render AppCardComponent.new(section: true) do |card| %>
     <% card.with_heading(level: 2) { link_to(vaccine_heading(vaccine), vaccine_path(vaccine)) } %>
 
-    <p><%= vaccine.manufacturer %></p>
+    <%= govuk_summary_list do |summary_list|
+          summary_list.with_row do |row|
+            row.with_key { "Manufacturer" }
+            row.with_value { vaccine.manufacturer }
+          end
+        
+          summary_list.with_row do |row|
+            row.with_key { "SNOMED code" }
+            row.with_value { content_tag(:span, vaccine.snomed_product_code, class: "nhsuk-u-text-break-word app-u-code") }
+          end
+        end %>
 
-    <%= govuk_button_link_to "Add a new batch",
-                             new_vaccine_batch_path(vaccine),
-                             secondary: true,
-                             aria: { label: "Add a new #{vaccine.brand} batch" } %>
+    <%= render AppActionLinkComponent.new(
+          href: new_vaccine_batch_path(vaccine),
+          text: "Add a new batch",
+          aria: { label: "Add a new #{vaccine.brand} batch" },
+        ) %>
 
     <% if (batches = @batches_by_vaccine_id[vaccine.id]).present? %>
       <%= govuk_table do |table| %>

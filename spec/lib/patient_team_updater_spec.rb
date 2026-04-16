@@ -34,7 +34,7 @@ describe PatientTeamUpdater do
           :school_move,
           :to_school,
           patient:,
-          school: create(:school, team:)
+          school: create(:gias_school, team:)
         )
         PatientTeam.delete_all
       end

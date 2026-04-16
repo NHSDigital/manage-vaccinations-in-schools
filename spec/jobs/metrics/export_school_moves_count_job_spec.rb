@@ -46,8 +46,8 @@ describe Metrics::ExportSchoolMovesCountJob do
   end
 
   context "with unresolved school moves" do
-    let(:school_a) { create(:school, team: team_a) }
-    let(:school_b) { create(:school, team: team_b) }
+    let(:school_a) { create(:gias_school, team: team_a) }
+    let(:school_b) { create(:gias_school, team: team_b) }
 
     before do
       create_list(:school_move, 2, school: school_a)

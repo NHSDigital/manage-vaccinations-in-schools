@@ -10,9 +10,9 @@ class Schools::BaseController < ApplicationController
 
   def set_location
     @location =
-      policy_scope(Location).where(
-        type: %w[school generic_school]
-      ).find_by_urn_and_site!(params[:school_urn_and_site])
+      policy_scope(Location).school.find_by_urn_and_site!(
+        params[:school_urn_and_site]
+      )
 
     authorize @location, policy_class: SchoolPolicy
   end

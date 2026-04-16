@@ -163,13 +163,15 @@ describe "Manage teams" do
 
   def given_my_team_exists
     @team = create(:team, :with_one_nurse)
-    @school = create(:school, team: @team, urn: "12345", name: "Current school")
-    @school_last_year = create(:school, urn: "67890", name: "School last year")
+    @school =
+      create(:gias_school, team: @team, urn: "12345", name: "Current school")
+    @school_last_year =
+      create(:gias_school, urn: "67890", name: "School last year")
     @school_last_year.attach_to_team!(
       @team,
       academic_year: AcademicYear.pending - 1
     )
-    create(:school, team: @team, urn: "34567")
+    create(:gias_school, team: @team, urn: "34567")
     create(:community_clinic, team: @team)
   end
 
@@ -177,7 +179,13 @@ describe "Manage teams" do
     @school.update!(site: "A")
 
     @site_b =
-      create(:school, team: @team, urn: @school.urn, site: "B", name: "Site B")
+      create(
+        :gias_school,
+        team: @team,
+        urn: @school.urn,
+        site: "B",
+        name: "Site B"
+      )
   end
 
   def when_i_click_on_team_settings
@@ -406,9 +414,9 @@ describe "Manage teams" do
   end
 
   def and_a_school_site_is_created
-    expect(Location.school.count).to eq(4)
+    expect(Location.gias_school.count).to eq(4)
 
-    site = Location.school.last
+    site = Location.gias_school.last
     expect(site.name).to eq("New School Site")
     expect(site.address_line_1).to eq("123 Main St")
     expect(site.address_line_2).to eq("Suite 100")
@@ -420,7 +428,7 @@ describe "Manage teams" do
   end
 
   def and_the_school_site_has_the_correct_year_groups
-    site = Location.school.last
+    site = Location.gias_school.last
     expect(site.location_year_groups.pluck(:value)).to include(12)
   end
 
@@ -430,16 +438,17 @@ describe "Manage teams" do
 
   def and_other_schools_exist
     @closed_school =
-      create(:school, :closed, urn: "99999", name: "Closed school")
+      create(:gias_school, :closed, urn: "99999", name: "Closed school")
     @other_team = create(:team)
     @other_team_school =
       create(
-        :school,
+        :gias_school,
         urn: "88888",
         team: @other_team,
         name: "Other Team School"
       )
-    @available_school = create(:school, urn: "77777", name: "Available School")
+    @available_school =
+      create(:gias_school, urn: "77777", name: "Available School")
   end
 
   def when_i_click_on_add_a_new_school

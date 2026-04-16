@@ -13,7 +13,7 @@ describe AppPatientCardComponent do
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
   let(:session) { create(:session, team:, programmes:) }
-  let(:school) { create(:school, team:) }
+  let(:school) { create(:gias_school, team:) }
 
   let(:patient) { create(:patient, school:, year_group: 8) }
 
@@ -53,7 +53,7 @@ describe AppPatientCardComponent do
 
   context "with a patient that has moved teams" do
     let(:other_team) { create(:team, programmes:) }
-    let(:other_school) { create(:school, team: other_team) }
+    let(:other_school) { create(:gias_school, team: other_team) }
     let(:school_move) do
       create(:school_move, :to_school, patient:, school: other_school)
     end

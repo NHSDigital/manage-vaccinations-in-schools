@@ -22,7 +22,7 @@ describe StatusGenerator::Programme do
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:, parents:) }
   let(:parents) { [create(:parent)] }
-  let(:location) { create(:school) }
+  let(:location) { create(:gias_school) }
 
   context "when already vaccinated" do
     let(:programme) { Programme.hpv }
@@ -406,7 +406,7 @@ describe StatusGenerator::Programme do
   end
 
   context "when not eligible" do
-    let(:patient) { create(:patient, year_group: 20, parents:) }
+    let(:patient) { create(:patient, year_group: 12, parents:) }
 
     its(:consent_status) { should be(:no_response) }
     its(:consent_vaccine_methods) { should be_empty }
@@ -417,5 +417,21 @@ describe StatusGenerator::Programme do
     its(:status) { should be(:not_eligible) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
+
+    context "when vaccination for 16+ is enabled" do
+      before { Flipper.enable(:vaccinating_16_plus_year_olds) }
+
+      let(:programme) { Programme.hpv }
+
+      its(:consent_status) { should be(:no_response) }
+      its(:consent_vaccine_methods) { should be_empty }
+      its(:date) { should be_nil }
+      its(:disease_types) { should be_nil }
+      its(:dose_sequence) { should eq(1) }
+      its(:location_id) { should be_nil }
+      its(:status) { should be(:needs_consent_no_response) }
+      its(:vaccine_methods) { should be_nil }
+      its(:without_gelatine) { should be_nil }
+    end
   end
 end

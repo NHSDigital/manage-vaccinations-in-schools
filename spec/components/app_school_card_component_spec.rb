@@ -9,7 +9,7 @@ describe AppSchoolCardComponent do
 
   let(:school) do
     create(
-      :school,
+      :gias_school,
       :secondary,
       name: "Streeling University",
       urn: "123456",

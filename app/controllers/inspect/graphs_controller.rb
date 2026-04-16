@@ -14,104 +14,147 @@ module Inspect
 
     def show
       authorize :inspect, :graph?
-      @primary_type = safe_get_primary_type
-      if @primary_type.nil?
+      if primary_type.nil?
         render plain:
                  "You don't have permission to view object type: #{params[:object_type].to_s.downcase.singularize}",
                status: :bad_request and return
       end
-      @primary_id = params[:object_id]
 
       # Set default relationships when loading a page for the first time
       if params[:relationships].blank? &&
-           GraphRecords::DEFAULT_TRAVERSALS.key?(@primary_type)
-        default_rels = GraphRecords::DEFAULT_TRAVERSALS[@primary_type] || {}
+           GraphRecords::DEFAULT_TRAVERSALS.key?(primary_type)
+        default_rels = GraphRecords::DEFAULT_TRAVERSALS[primary_type] || {}
 
         new_params = params.to_unsafe_h.merge("relationships" => default_rels)
         redirect_to inspect_path(new_params) and return
       end
 
-      @object = @primary_type.to_s.classify.constantize.find(@primary_id)
-
-      @traversals_config = build_traversals_config
-      @graph_params = build_graph_params
-      set_pii_settings
-
       @graph_record =
         GraphRecords.new(
-          traversals_config: @traversals_config,
-          primary_type: @primary_type,
+          traversals_config:,
+          primary_type:,
           clickable: true,
-          show_pii: @show_pii
+          show_pii:
         )
-      @mermaid = @graph_record.graph(**@graph_params).join("\n")
+      @mermaid = @graph_record.graph(**graph_params).join("\n")
     end
 
     private
 
-    def set_pii_settings
-      @user_is_allowed_to_access_pii = policy(:inspect).show_pii?
+    def show_pii
+      return @show_pii if defined?(@show_pii)
       @show_pii =
-        @user_is_allowed_to_access_pii &&
-          (params[:show_pii] || SHOW_PII_BY_DEFAULT)
+        user_is_allowed_to_access_pii && pii_access_requested_by_user &&
+          !sensitive_patient_in_graph
     end
 
-    def build_traversals_config
-      traversals_config = {}
-      to_process = Set.new([@primary_type])
-      processed = Set.new
-
-      # Process types until we've explored all connected relationships
-      while (type = to_process.first)
-        to_process.delete(type)
-        processed.add(type)
-
-        selected_rels =
-          Array(params.dig(:relationships, type)).reject(&:blank?).map(&:to_sym)
-
-        traversals_config[type] = selected_rels
-
-        # Add target types to process queue
-        klass = type.to_s.classify.constantize
-        selected_rels.each do |rel|
-          association = klass.reflect_on_association(rel)
-          next unless association
-
-          target_type = association.klass.name.underscore.to_sym
-          to_process.add(target_type) unless processed.include?(target_type)
-        end
+    def user_is_allowed_to_access_pii
+      if defined?(@user_is_allowed_to_access_pii)
+        return @user_is_allowed_to_access_pii
       end
-
-      traversals_config
+      @user_is_allowed_to_access_pii = policy(:inspect).show_pii?
     end
 
-    def build_graph_params
-      graph_params = { @primary_type => [@object.id] }
-
-      if params[:additional_ids].present?
-        params[:additional_ids].each do |type, ids_string|
-          next if ids_string.blank?
-          additional_ids = ids_string.split(",").map { |s| s.strip.to_i }
-          next unless additional_ids.any?
-          type_sym = type.to_sym
-          graph_params[type_sym] ||= []
-          graph_params[type_sym].concat(additional_ids)
-        end
+    def sensitive_patient_in_graph
+      if defined?(@sensitive_patient_in_graph)
+        return @sensitive_patient_in_graph
       end
-
-      graph_params
+      @sensitive_patient_in_graph =
+        begin
+          graph_with_pii =
+            GraphRecords.new(
+              traversals_config:,
+              primary_type:,
+              clickable: true,
+              show_pii: true
+            )
+          graph_with_pii.graph(**graph_params)
+          graph_with_pii.patients_with_pii_in_graph.any?(&:restricted?)
+        end
     end
 
-    def safe_get_primary_type
-      singular_type = params[:object_type].downcase.singularize
-      return nil unless GraphRecords::ALLOWED_TYPES.include?(singular_type)
-      singular_type.to_sym
+    def pii_access_requested_by_user
+      if defined?(@pii_access_requested_by_user)
+        return @pii_access_requested_by_user
+      end
+      @pii_access_requested_by_user = params[:show_pii] || SHOW_PII_BY_DEFAULT
+    end
+
+    def traversals_config
+      @traversals_config ||=
+        begin
+          traversals = {}
+          to_process = Set.new([primary_type])
+          processed = Set.new
+
+          # Process types until we've explored all connected relationships
+          while (type = to_process.first)
+            to_process.delete(type)
+            processed.add(type)
+
+            selected_rels =
+              Array(params.dig(:relationships, type)).reject(&:blank?).map(
+                &:to_sym
+              )
+
+            traversals[type] = selected_rels
+
+            # Add target types to process queue
+            klass = type.to_s.classify.constantize
+            selected_rels.each do |rel|
+              association = klass.reflect_on_association(rel)
+              next unless association
+
+              target_type = association.klass.name.underscore.to_sym
+              to_process.add(target_type) unless processed.include?(target_type)
+            end
+          end
+
+          traversals
+        end
+    end
+
+    def graph_params
+      @graph_params ||=
+        begin
+          graph_params = { primary_type => [primary_object.id] }
+
+          if params[:additional_ids].present?
+            params[:additional_ids].each do |type, ids_string|
+              next if ids_string.blank?
+              additional_ids = ids_string.split(",").map { |s| s.strip.to_i }
+              next unless additional_ids.any?
+              type_sym = type.to_sym
+              graph_params[type_sym] ||= []
+              graph_params[type_sym].concat(additional_ids)
+            end
+          end
+
+          graph_params
+        end
+    end
+
+    def primary_type
+      @primary_type ||=
+        begin
+          singular_type = params[:object_type].downcase.singularize
+          return nil unless GraphRecords::ALLOWED_TYPES.include?(singular_type)
+          singular_type.to_sym
+        end
+    end
+
+    def primary_object
+      @primary_object ||=
+        begin
+          @primary_id = params[:object_id]
+          primary_type.to_s.classify.constantize.find(@primary_id)
+        end
     end
 
     def pii_accessed?
-      return false unless @show_pii
+      return false unless show_pii
 
-      build_traversals_config.any? do |from_type, rels|
+      traversals_config.any? do |from_type, rels|
         GraphRecords::EXTRA_DETAIL_WHITELIST_WITH_PII.key?(
           from_type.name.underscore.to_sym
         ) ||
@@ -142,7 +185,7 @@ module Inspect
             controller: "graph",
             action: "show_pii",
             request_details: {
-              primary_type: @primary_type,
+              primary_type:,
               primary_id: @primary_id,
               additional_ids: additional_ids.presence,
               visible_fields: request_details

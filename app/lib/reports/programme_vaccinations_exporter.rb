@@ -88,48 +88,20 @@ class Reports::ProgrammeVaccinationsExporter
   end
 
   def vaccination_records
-    scope =
-      team
-        .vaccination_records
-        .sourced_from_service
-        .for_programme(programme)
-        .for_academic_year(academic_year)
-        .includes(
-          :location,
-          :performed_by_user,
-          :session,
-          :supplied_by,
-          :vaccine,
-          patient: %i[programme_statuses gp_practice school]
-        )
-
-    if start_date.present?
-      scope =
-        scope.where(
-          "vaccination_records.created_at >= ?",
-          start_date.beginning_of_day
-        ).or(
-          scope.where(
-            "vaccination_records.updated_at >= ?",
-            start_date.beginning_of_day
-          )
-        )
-    end
-
-    if end_date.present?
-      scope =
-        scope.where(
-          "vaccination_records.created_at <= ?",
-          end_date.end_of_day
-        ).or(
-          scope.where(
-            "vaccination_records.updated_at <= ?",
-            end_date.end_of_day
-          )
-        )
-    end
-
-    scope
+    team
+      .vaccination_records
+      .sourced_from_service
+      .for_programme(programme)
+      .for_academic_year(academic_year)
+      .created_or_updated_between(start_date, end_date)
+      .includes(
+        :location,
+        :performed_by_user,
+        :session,
+        :supplied_by,
+        :vaccine,
+        patient: %i[programme_statuses gp_practice school]
+      )
   end
 
   def consents

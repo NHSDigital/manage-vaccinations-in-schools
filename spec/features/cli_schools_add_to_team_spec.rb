@@ -128,7 +128,7 @@ describe "mavis schools add-to-team" do
   end
 
   def and_the_school_exists
-    @school = create(:school, name: "School", urn: "123456")
+    @school = create(:gias_school, name: "School", urn: "123456")
   end
 
   def and_the_school_belongs_to_another_subteam
@@ -170,25 +170,26 @@ describe "mavis schools add-to-team" do
   end
 
   def then_the_school_is_added_to_the_team
-    expect(@team.schools).to include(@school)
+    expect(@team.gias_schools).to include(@school)
     expect(@school.programmes).to eq(@programmes)
   end
 
   def then_the_school_is_added_to_the_team_with_flu_only
-    expect(@team.schools).to include(@school)
+    expect(@team.gias_schools).to include(@school)
     expect(@school.programmes).to contain_exactly(@programmes.first)
   end
 
   def and_the_school_remains_in_the_other_team_too
-    expect(@other_team.schools).to include(@school)
+    expect(@other_team.gias_schools).to include(@school)
   end
 
   def and_the_school_exists_with_multiple_sites
-    @school_main = create(:school, name: "School", urn: "123456", site: nil)
+    @school_main =
+      create(:gias_school, name: "School", urn: "123456", site: nil)
     @school_site_a =
-      create(:school, name: "School Site A", urn: "123456", site: "A")
+      create(:gias_school, name: "School Site A", urn: "123456", site: "A")
     @school_site_b =
-      create(:school, name: "School Site B", urn: "123456", site: "B")
+      create(:gias_school, name: "School Site B", urn: "123456", site: "B")
   end
 
   def and_site_b_already_belongs_to_the_team
@@ -250,13 +251,13 @@ describe "mavis schools add-to-team" do
   end
 
   def then_all_sites_are_added_to_the_team
-    expect(@team.schools).to include(@school_site_a)
-    expect(@team.schools).to include(@school_site_b)
-    expect(@team.schools).not_to include(@school_main)
+    expect(@team.gias_schools).to include(@school_site_a)
+    expect(@team.gias_schools).to include(@school_site_b)
+    expect(@team.gias_schools).not_to include(@school_main)
   end
 
   def then_site_a_is_added_to_the_team
-    expect(@team.schools).to include(@school_site_a)
-    expect(@team.schools).to include(@school_site_b) # already was in team
+    expect(@team.gias_schools).to include(@school_site_a)
+    expect(@team.gias_schools).to include(@school_site_b) # already was in team
   end
 end

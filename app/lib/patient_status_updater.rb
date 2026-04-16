@@ -85,7 +85,7 @@ class PatientStatusUpdater < PatientScopedUpdater
       .joins(session: :team_location)
       .where(team_location: { academic_year: academic_years })
       .includes(:attendance_records, :patient, :session, :vaccination_records)
-      .find_in_batches(batch_size: 10_000) do |batch|
+      .find_in_batches do |batch|
         batch.each(&:assign_status)
 
         Patient::RegistrationStatus.import!(

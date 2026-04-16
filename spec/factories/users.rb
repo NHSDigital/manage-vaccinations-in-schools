@@ -126,8 +126,20 @@ FactoryBot.define do
       activity_codes do
         [
           CIS2Info::VIEW_SHARED_NON_PATIENT_IDENTIFIABLE_INFORMATION_ACTIVITY_CODE,
-          CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE,
           CIS2Info::VIEW_DETAILED_HEALTH_RECORDS_ACTIVITY_CODE
+        ]
+      end
+    end
+
+    trait :support_no_pii do
+      team { create(:team, ods_code: "Y90128") }
+      role_code { CIS2Info::SUPPORT_ROLE }
+      sequence(:email) { |n| "support-no-pii#{n}@example.com" }
+      role_workgroups { [CIS2Info::SUPPORT_WORKGROUP] }
+      fallback_role { :support }
+      activity_codes do
+        [
+          CIS2Info::VIEW_SHARED_NON_PATIENT_IDENTIFIABLE_INFORMATION_ACTIVITY_CODE
         ]
       end
     end

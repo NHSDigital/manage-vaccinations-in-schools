@@ -16,9 +16,6 @@ on:
       HTTP_AUTH_TOKEN_FOR_TESTS:
         description: HTTP Basic Auth token for the environment under test
         required: false
-      MAVIS_TESTING_REPO_ACCESS_TOKEN:
-        description: Access token for the manage-vaccinations-in-schools-testing repository
-        required: false
       IMMS_API_KEY_FOR_TESTS:
         description: API key to use NHS Immunisations API
         required: false
@@ -39,7 +36,6 @@ jobs:
       endpoint: ${{ inputs.endpoint }}
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
-      MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
       IMMS_API_KEY: ${{ secrets.IMMS_API_KEY_FOR_TESTS }}
       IMMS_API_KID: ${{ secrets.IMMS_API_KID_FOR_TESTS }}
       IMMS_API_PEM: ${{ secrets.IMMS_API_PEM_FOR_TESTS }}

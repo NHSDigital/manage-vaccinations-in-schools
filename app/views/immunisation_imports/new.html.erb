@@ -6,13 +6,21 @@
 
 <% content_for :page_title, title %>
 
-<% if (cutoff_date = current_team.national_reporting_cut_off_date) && cutoff_date.today? %>
-  <%= govuk_notification_banner(title_text: "#{cutoff_date.to_fs(:long)} - Check where to upload records") do |notification_banner| %>
-    <% notification_banner.with_heading(text: "Vaccinations given:") %>
-    <ul>
-      <li>before <%= cutoff_date.to_fs(:long) %> must be uploaded to NIVS by the end of today</li>
-      <li>on or after <%= cutoff_date.to_fs(:long) %> must be uploaded to Mavis national reporting only</li>
-    </ul>
+<% if (cutoff_date = current_team.national_reporting_cut_off_date) &&
+      Date.today <= cutoff_date + Team::NIVS_SWITCH_OFF_DELAY_DAYS.days %>
+  <%= govuk_notification_banner(title_text: "Important") do %>
+    <h3 class="nhsuk-notification-banner__heading">
+      Mavis national reporting replaces NIVS on <%= cutoff_date.to_fs(:long) %>
+    </h3>
+
+    <h4 class="nhsuk-u-margin-bottom-2">Vaccinations given before <%= cutoff_date.to_fs(:long) %></h4>
+    <p>
+      Upload to NIVS by <%= (cutoff_date + Team::NIVS_SWITCH_OFF_DELAY_DAYS.days).to_fs(:long) %>.
+      After this, NIVS will no longer be available.
+    </p>
+
+    <h4 class="nhsuk-u-margin-bottom-2">Vaccinations given on or after <%= cutoff_date.to_fs(:long) %></h4>
+    <p>Upload to Mavis national reporting only.</p>
   <% end %>
 <% end %>
 

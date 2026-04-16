@@ -9,7 +9,7 @@ class EnqueueSchoolSessionRemindersJob < ApplicationJob
         .includes(:session_programme_year_groups)
         .has_date(Date.tomorrow)
         .joins(:location)
-        .merge(Location.school)
+        .merge(Location.gias_school)
 
     sessions.find_each do |session|
       SendSchoolSessionRemindersJob.perform_later(session)

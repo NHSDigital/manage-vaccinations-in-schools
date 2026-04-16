@@ -5,7 +5,7 @@ class CohortImportsController < ApplicationController
 
   before_action :set_draft_import, only: %i[new create]
   before_action :set_cohort_import,
-                only: %i[show update approve cancel re_review imported_records]
+                only: %i[show approve cancel re_review imported_records]
   before_action :set_open_sections, only: %i[show]
   before_action :set_review_records, only: %i[re_review imported_records]
 
@@ -87,12 +87,6 @@ class CohortImportsController < ApplicationController
            locals: {
              import: @cohort_import
            }
-  end
-
-  def update
-    @cohort_import.process!
-
-    redirect_to cohort_import_path(@cohort_import)
   end
 
   def re_review

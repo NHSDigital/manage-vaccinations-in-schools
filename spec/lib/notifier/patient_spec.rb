@@ -25,7 +25,7 @@ describe Notifier::Patient do
       end
 
       context "with a school location" do
-        let(:location) { create(:school, team:) }
+        let(:location) { create(:gias_school, team:) }
 
         it "creates a record" do
           expect { send_consent_request }.to change(
@@ -316,7 +316,7 @@ describe Notifier::Patient do
       end
 
       context "with a school location" do
-        let(:location) { create(:school, team:) }
+        let(:location) { create(:gias_school, team:) }
 
         it "creates a record" do
           expect { send_consent_request }.to change(
@@ -579,7 +579,7 @@ describe Notifier::Patient do
     let(:disease_types) { programmes.flat_map(&:disease_types).uniq.presence }
     let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
-    let(:location) { create(:school, team:) }
+    let(:location) { create(:gias_school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
 
     context "without an initial reminder" do
@@ -990,7 +990,7 @@ describe Notifier::Patient do
     let(:programmes) { [Programme.td_ipv] }
     let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
-    let(:location) { create(:school, team:) }
+    let(:location) { create(:gias_school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
     let(:academic_year) { AcademicYear.current }
     let(:include_vaccinated_programmes) { false }
@@ -1100,7 +1100,7 @@ describe Notifier::Patient do
     let(:programmes) { [Programme.td_ipv] }
     let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
-    let(:location) { create(:school, team:) }
+    let(:location) { create(:gias_school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
     let(:academic_year) { AcademicYear.current }
     let(:include_vaccinated_programmes) { false }

@@ -107,6 +107,32 @@ describe SessionsHelper do
     end
   end
 
+  describe "#session_future_dates" do
+    subject { travel_to(today) { helper.session_future_dates(session) } }
+
+    let(:today) { Date.new(2025, 6, 1) }
+
+    context "with no future dates" do
+      let(:session) { create(:session, dates: [Date.new(2025, 5, 30)]) }
+
+      it { should eq("") }
+    end
+
+    context "with one future date" do
+      let(:session) { create(:session, dates: [Date.new(2025, 6, 10)]) }
+
+      it { should eq("Tuesday 10 June") }
+    end
+
+    context "with multiple future dates" do
+      let(:session) do
+        create(:session, dates: [Date.new(2025, 6, 10), Date.new(2025, 6, 17)])
+      end
+
+      it { should eq("Tuesday 10 June and Tuesday 17 June") }
+    end
+  end
+
   describe "#session_title" do
     subject(:session_title) { helper.session_title(session) }
 
@@ -133,7 +159,9 @@ describe SessionsHelper do
     end
 
     context "with a school location" do
-      let(:location) { create(:school, name: "Waterloo Road", programmes:) }
+      let(:location) do
+        create(:gias_school, name: "Waterloo Road", programmes:)
+      end
 
       context "when unscheduled" do
         let(:session) { create(:session, :unscheduled, programmes:, location:) }

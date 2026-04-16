@@ -20,7 +20,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
     return unless feature_flags_enabled
 
-    existing_vaccination_records.find_each do |vaccination_record|
+    existing_vaccination_records.each do |vaccination_record|
       incoming_vaccination_record =
         incoming_vaccination_records.find do
           it.nhs_immunisations_api_id ==
@@ -28,11 +28,15 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         end
 
       if incoming_vaccination_record
-        vaccination_record.update!(
+        vaccination_record.assign_attributes(
           incoming_vaccination_record
             .attributes
             .except("id", "uuid", "created_at")
-            .merge(updated_at: Time.current)
+            .merge(
+              duplicate_of_vaccination_record:
+                incoming_vaccination_record.duplicate_of_vaccination_record,
+              updated_at: Time.current
+            )
         )
 
         incoming_vaccination_records.delete(incoming_vaccination_record)
@@ -41,10 +45,12 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       end
     end
 
-    # Remaining incoming_vaccination_records are new.
     # Save non-discarded records first so they have IDs before discarded
     # duplicates reference them via duplicate_of_vaccination_record_id.
-    incoming_vaccination_records.sort_by { it.discarded? ? 1 : 0 }.each(&:save!)
+    (
+      existing_vaccination_records.reject(&:destroyed?) +
+        incoming_vaccination_records
+    ).sort_by { it.discarded? ? 1 : 0 }.each(&:save!)
 
     update_vaccination_search_timestamps if patient.nhs_number.present?
 
@@ -104,6 +110,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     @existing_vaccination_records ||=
       patient
         .vaccination_records
+        .with_discarded
         .includes(:identity_check)
         .sourced_from_nhs_immunisations_api
         .for_programmes(programmes)
@@ -126,6 +133,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
     service_vaccination_records =
       patient
         .vaccination_records
+        .administered
         .with_correct_source_for_nhs_immunisations_api
         .includes(:team)
 
@@ -150,8 +158,23 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
           end
       elsif records.any?(&:nhs_immunisations_api_primary_source)
         # If some records have `primarySource: true`, set `discarded_at` for all `primarySource: false` records,
-        # pointing each at the first `primarySource: true` record
-        canonical = records.find(&:nhs_immunisations_api_primary_source)
+        # pointing each at the first `primarySource: true` record.
+
+        canonical_incoming =
+          records.find(&:nhs_immunisations_api_primary_source)
+        canonical_existing =
+          patient
+            .vaccination_records
+            .sourced_from_nhs_immunisations_api
+            .with_discarded
+            .find_by(
+            nhs_immunisations_api_id:
+              canonical_incoming.nhs_immunisations_api_id
+          )
+
+        # Prefer the persisted DB record (if it already exists from a previous run) so that
+        # `duplicate_of_vaccination_record_id` is non-nil when the non-primary record is saved.
+        canonical = canonical_existing || canonical_incoming
         records
           .select(&:sourced_from_nhs_immunisations_api?)
           .reject(&:nhs_immunisations_api_primary_source)

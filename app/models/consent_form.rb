@@ -133,7 +133,7 @@ class ConsentForm < ApplicationRecord
            source: :team_locations
 
   has_many :eligible_schools,
-           -> { school },
+           -> { gias_school },
            through: :eligible_team_locations,
            source: :location
 
@@ -329,6 +329,7 @@ class ConsentForm < ApplicationRecord
   ETHNICITY_STEPS = %i[ethnicity ethnic_group ethnic_background].freeze
   FOLLOW_UP_REQUIRED_REASONS = %w[
     contains_gelatine
+    do_not_want_vaccination_at_school
     medical_reasons
     personal_choice
     other
@@ -784,7 +785,7 @@ class ConsentForm < ApplicationRecord
     true
   end
 
-  def location_is_school? = location.school?
+  def location_is_school? = location.gias_school?
 
   def location_is_clinic? = location.generic_clinic? || location.generic_school?
 

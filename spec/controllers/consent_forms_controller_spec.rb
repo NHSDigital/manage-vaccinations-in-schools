@@ -4,7 +4,7 @@ describe ConsentFormsController do
   let(:programme) { Programme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
   let(:user) { create(:user, :nurse, team:) }
-  let(:location) { create(:school, team:, programmes: [programme]) }
+  let(:location) { create(:gias_school, team:, programmes: [programme]) }
   let(:session) { create(:session, team:, location:, programmes: [programme]) }
 
   before { sign_in user }

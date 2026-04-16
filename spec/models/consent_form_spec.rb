@@ -617,7 +617,7 @@ describe ConsentForm do
           team:,
           programmes:,
           academic_year: AcademicYear.current,
-          location: create(:school, programmes:),
+          location: create(:gias_school, programmes:),
           session: nil,
           health_answers: [
             HealthAnswer.new(
@@ -683,7 +683,7 @@ describe ConsentForm do
     let(:programmes) { [Programme.hpv] }
     let(:team) { create(:team, programmes:) }
 
-    let!(:school) { create(:school, team:) }
+    let!(:school) { create(:gias_school, team:) }
     let!(:generic_clinic) { team.generic_clinic }
 
     context "with a consent form from a school" do
@@ -938,7 +938,7 @@ describe ConsentForm do
     let(:programme) { Programme.sample }
     let(:team) { create(:team, programmes: [programme]) }
 
-    let(:school) { create(:school, programmes: [programme]) }
+    let(:school) { create(:gias_school, programmes: [programme]) }
     let(:location) { school }
     let(:session) do
       create(:session, team:, programmes: [programme], location:)
@@ -1016,7 +1016,7 @@ describe ConsentForm do
         )
       end
 
-      let(:new_school) { create(:school) }
+      let(:new_school) { create(:gias_school) }
 
       it "creates a consent" do
         expect { match_with_patient! }.to change(Consent, :count).by(1)

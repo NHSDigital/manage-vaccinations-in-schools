@@ -73,4 +73,8 @@ module SessionsHelper
   def session_consent_style(session)
     session.outbreak ? "Outbreak request" : "Standard request"
   end
+
+  def session_future_dates(session)
+    session.future_dates.map { it.to_fs(:short_day_of_week) }.to_sentence
+  end
 end

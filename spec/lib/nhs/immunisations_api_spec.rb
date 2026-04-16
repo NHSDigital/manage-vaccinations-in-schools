@@ -809,7 +809,7 @@ describe NHS::ImmunisationsAPI do
     end
 
     let(:status) { 200 }
-    let(:body) { file_fixture("fhir/search_response_full_bundle.json").read }
+    let(:body) { file_fixture("fhir/search_responses/full_bundle.json").read }
     let(:headers) { { "content-type" => "application/fhir+json" } }
     let(:diagnostics) { nil }
 
@@ -871,7 +871,9 @@ describe NHS::ImmunisationsAPI do
     context "with an operation outcome in bundle" do
       context "when the severity is `error`" do
         let(:body) do
-          file_fixture("fhir/search_response_operation_outcome_error.json").read
+          file_fixture(
+            "fhir/search_responses/operation_outcome_error.json"
+          ).read
         end
 
         it "raises an error" do
@@ -883,7 +885,9 @@ describe NHS::ImmunisationsAPI do
 
       context "when the severity is `fatal`" do
         let(:body) do
-          file_fixture("fhir/search_response_operation_outcome_fatal.json").read
+          file_fixture(
+            "fhir/search_responses/operation_outcome_fatal.json"
+          ).read
         end
 
         it "raises an error" do
@@ -896,7 +900,7 @@ describe NHS::ImmunisationsAPI do
       context "when the severity is `warning`" do
         let(:body) do
           file_fixture(
-            "fhir/search_response_operation_outcome_warning.json"
+            "fhir/search_responses/operation_outcome_warning.json"
           ).read
         end
 
@@ -933,7 +937,7 @@ describe NHS::ImmunisationsAPI do
       context "when the severity is `success`" do
         let(:body) do
           file_fixture(
-            "fhir/search_response_operation_outcome_success.json"
+            "fhir/search_responses/operation_outcome_success.json"
           ).read
         end
 
@@ -950,7 +954,9 @@ describe NHS::ImmunisationsAPI do
     describe "handling `-immunization.target` in `Bundle.link`" do
       context "with `immunization+target` (incorrect, and unexpected)" do
         let(:body) do
-          file_fixture("fhir/search_response_bad_immunization_target.json").read
+          file_fixture(
+            "fhir/search_responses/bad_immunization_target.json"
+          ).read
         end
 
         it "doesn't raise an error" do
@@ -974,7 +980,7 @@ describe NHS::ImmunisationsAPI do
       context "with both `immunization.target` and `-immunization.target` (as is currently in production)" do
         let(:body) do
           file_fixture(
-            "fhir/search_response_immunization_target_both.json"
+            "fhir/search_responses/immunization_target_both.json"
           ).read
         end
 
@@ -999,7 +1005,7 @@ describe NHS::ImmunisationsAPI do
       context "with `-immunization.target` (correct)" do
         let(:body) do
           file_fixture(
-            "fhir/search_response_immunization_target_good.json"
+            "fhir/search_responses/immunization_target_good.json"
           ).read
         end
 
@@ -1040,7 +1046,7 @@ describe NHS::ImmunisationsAPI do
       end
 
       let(:body) do
-        file_fixture("fhir/search_response_1_result_mmrv.json").read
+        file_fixture("fhir/search_responses/1_result_mmrv.json").read
       end
 
       it_behaves_like "continues the request and returns the bundle anyway",

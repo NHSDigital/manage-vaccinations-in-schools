@@ -6,7 +6,7 @@ namespace :smoke do
     Location.find_or_create_by!(
       name: "XXX Smoke Test School XXX",
       urn: "XXXXXX",
-      type: :school,
+      type: "gias_school",
       address_line_1: "1 Test Street",
       address_town: "Test Town",
       address_postcode: "TE1 1ST",
@@ -19,7 +19,7 @@ namespace :smoke do
     Location.find_or_create_by!(
       name: "XXX Smoke Test GP XXX",
       ods_code: "Y90001", # https://digital.nhs.uk/developer/api-catalogue/personal-demographics-service-fhir/pds-fhir-api-test-data#production-smoke-testing
-      type: :gp_practice
+      type: "gp_practice"
     )
   end
 end

@@ -18,7 +18,7 @@ describe AppConsentCardComponent do
       submitted_at: Time.zone.local(2024, 1, 1)
     )
   end
-  let(:school) { create(:school, name: "Waterloo Road", team:) }
+  let(:school) { create(:gias_school, name: "Waterloo Road", team:) }
   let(:session) do
     create(:session, programmes: [programme], team:, location: school)
   end

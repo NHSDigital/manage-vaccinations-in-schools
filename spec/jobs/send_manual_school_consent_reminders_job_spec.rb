@@ -20,7 +20,7 @@ describe SendManualSchoolConsentRemindersJob do
   end
   let(:today) { dates.first - 1.week }
   let(:team) { create(:team, programmes:) }
-  let(:location) { create(:school, team:) }
+  let(:location) { create(:gias_school, team:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, team:, parents:) }
   let(:user) { create(:user, team:) }

@@ -15,7 +15,7 @@ describe AppCompareConsentFormAndPatientComponent do
       address_line_2: "Area",
       address_town: "Some Town",
       address_postcode: "SW11 1AA",
-      school: build(:school, name: "Waterloo Road")
+      school: build(:gias_school, name: "Waterloo Road")
     )
   end
 
@@ -51,7 +51,7 @@ describe AppCompareConsentFormAndPatientComponent do
         address_line_2: consent_form.address_line_2,
         address_town: consent_form.address_town,
         address_postcode: consent_form.address_postcode,
-        school: build(:school, name: "Hogwarts")
+        school: build(:gias_school, name: "Hogwarts")
       )
     end
 

@@ -252,28 +252,64 @@ describe Programme do
   describe "#default_year_groups" do
     subject { programme.default_year_groups }
 
-    context "with a flu programme" do
+    context "for flu" do
       let(:programme) { described_class.flu }
 
       it { should eq([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) }
+
+      context "when vaccination for 16+ is enabled" do
+        before { Flipper.enable(:vaccinating_16_plus_year_olds) }
+
+        it { should eq([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) }
+      end
     end
 
-    context "with an HPV programme" do
+    context "for HPV" do
       let(:programme) { described_class.hpv }
 
       it { should eq([8, 9, 10, 11]) }
+
+      context "when vaccination for 16+ is enabled" do
+        before { Flipper.enable(:vaccinating_16_plus_year_olds) }
+
+        it { should eq([8, 9, 10, 11, 12, 13]) }
+      end
     end
 
-    context "with a MenACWY programme" do
+    context "for MenACWY" do
       let(:programme) { described_class.menacwy }
 
       it { should eq([9, 10, 11]) }
+
+      context "when vaccination for 16+ is enabled" do
+        before { Flipper.enable(:vaccinating_16_plus_year_olds) }
+
+        it { should eq([9, 10, 11, 12, 13]) }
+      end
     end
 
-    context "with an Td/IPV programme" do
+    context "for MMR(V)" do
+      let(:programme) { described_class.mmr }
+
+      it { should eq([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) }
+
+      context "when vaccination for 16+ is enabled" do
+        before { Flipper.enable(:vaccinating_16_plus_year_olds) }
+
+        it { should eq([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]) }
+      end
+    end
+
+    context "for Td/IPV" do
       let(:programme) { described_class.td_ipv }
 
       it { should eq([9, 10, 11]) }
+
+      context "when vaccination for 16+ is enabled" do
+        before { Flipper.enable(:vaccinating_16_plus_year_olds) }
+
+        it { should eq([9, 10, 11, 12, 13]) }
+      end
     end
   end
 
@@ -424,6 +460,40 @@ describe Programme do
       end
 
       it { should eq("ProgrammeVariant:mmr") }
+    end
+  end
+
+  describe "#multi_dose?" do
+    subject { programme.multi_dose? }
+
+    context "with a flu programme" do
+      let(:programme) { described_class.flu }
+
+      it { should be(false) }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { described_class.hpv }
+
+      it { should be(false) }
+    end
+
+    context "with an MenACWY programme" do
+      let(:programme) { described_class.menacwy }
+
+      it { should be(false) }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { described_class.td_ipv }
+
+      it { should be(false) }
+    end
+
+    context "with an MMR programme" do
+      let(:programme) { described_class.mmr }
+
+      it { should be(true) }
     end
   end
 

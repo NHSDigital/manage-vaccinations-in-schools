@@ -73,7 +73,7 @@ describe "Record already vaccinated" do
     programmes = [Programme.mmr]
 
     team = create(:team, :with_one_nurse, programmes:)
-    school = create(:school, :primary, team:, programmes:)
+    school = create(:gias_school, :primary, team:, programmes:)
 
     @patient =
       create(

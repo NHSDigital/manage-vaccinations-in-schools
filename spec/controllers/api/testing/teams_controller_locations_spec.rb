@@ -12,11 +12,11 @@ describe API::Testing::TeamsController do
     let(:team) { create(:team, workgroup: "r1l") }
 
     let!(:base_location) do
-      create(:school, team:, name: "Hogwarts", urn: "123456")
+      create(:gias_school, team:, name: "Hogwarts", urn: "123456")
     end
 
     let!(:site_location) do
-      create(:school, team:, name: "Hogwarts 2", urn: "123456", site: "B")
+      create(:gias_school, team:, name: "Hogwarts 2", urn: "123456", site: "B")
     end
 
     context "when keep_base_locations is true" do
@@ -48,7 +48,7 @@ describe API::Testing::TeamsController do
       end
 
       it "deletes all locations" do
-        expect { call }.to change(Location.school, :count).by(-2)
+        expect { call }.to change(Location.gias_school, :count).by(-2)
 
         expect { Location.find(base_location.id) }.to raise_error(
           ActiveRecord::RecordNotFound

@@ -28,7 +28,7 @@ module MavisCLI
           if id
             Location.find(urn_or_id)
           else
-            Location.school.find_by_urn_and_site(urn_or_id)
+            Location.gias_school.find_by_urn_and_site(urn_or_id)
           end
 
         if location.nil?

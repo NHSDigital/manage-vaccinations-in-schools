@@ -22,10 +22,10 @@ describe "/api/testing/onboard" do
 
       before do
         Programme.hpv
-        create(:school, :secondary, :open, urn: "123456")
-        create(:school, :secondary, :open, urn: "234567")
-        create(:school, :secondary, :open, urn: "345678")
-        create(:school, :secondary, :open, urn: "456789")
+        create(:gias_school, :secondary, :open, urn: "123456")
+        create(:gias_school, :secondary, :open, urn: "234567")
+        create(:gias_school, :secondary, :open, urn: "345678")
+        create(:gias_school, :secondary, :open, urn: "456789")
       end
 
       it "responds with created" do

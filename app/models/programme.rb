@@ -26,6 +26,14 @@ class Programme
     "td_ipv" => (9..11).to_a
   }.freeze
 
+  DEFAULT_YEAR_GROUPS_WITH_OVER_16S_BY_TYPE = {
+    "flu" => (0..11).to_a,
+    "hpv" => (8..13).to_a,
+    "menacwy" => (9..13).to_a,
+    "mmr" => (0..13).to_a,
+    "td_ipv" => (9..13).to_a
+  }.freeze
+
   MAXIMUM_DOSE_SEQUENCES = {
     "flu" => 2,
     "hpv" => 3,
@@ -155,6 +163,11 @@ class Programme
     @name ||= I18n.t(translation_key, scope: :programme_types)
   end
 
+  def name_on_nhs_uk
+    @name_on_nhs_uk ||=
+      I18n.t(type, scope: :programme_names_on_nhs_uk, default: nil)
+  end
+
   def name_in_sentence
     @name_in_sentence = flu? ? name.downcase : name
   end
@@ -204,7 +217,13 @@ class Programme
 
   def triage_on_vaccination_history? = menacwy? || td_ipv?
 
-  def default_year_groups = DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
+  def default_year_groups
+    if Flipper.enabled?(:vaccinating_16_plus_year_olds)
+      DEFAULT_YEAR_GROUPS_WITH_OVER_16S_BY_TYPE.fetch(type)
+    else
+      DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
+    end
+  end
 
   def is_catch_up?(year_group:)
     return nil if seasonal?
@@ -241,6 +260,10 @@ class Programme
   def maximum_dose_sequence = MAXIMUM_DOSE_SEQUENCES.fetch(type)
 
   def minimum_dose_interval = MINIMUM_DOSE_INTERVALS.fetch(type)
+
+  # TODO: Make this more explicit when other programmes start
+  # administering multiple doses (e.g. immunocompromised schedules).
+  def multi_dose? = minimum_dose_interval.present?
 
   def import_names = IMPORT_NAMES.fetch(type)
 

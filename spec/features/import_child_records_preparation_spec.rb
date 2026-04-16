@@ -150,7 +150,7 @@ describe "Import child records" do
     programmes = [Programme.hpv, Programme.menacwy, Programme.td_ipv]
 
     @team = create(:team, :with_one_nurse, programmes:)
-    @school = create(:school, urn: "123456", team: @team)
+    @school = create(:gias_school, urn: "123456", team: @team)
     @user = @team.users.first
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|

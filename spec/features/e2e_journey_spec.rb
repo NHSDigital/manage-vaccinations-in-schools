@@ -54,7 +54,8 @@ describe "End-to-end journey" do
     programme = Programme.hpv
 
     @team = create(:team, :with_one_nurse, programmes: [programme])
-    @school = create(:school, :secondary, team: @team, name: "Pilot School")
+    @school =
+      create(:gias_school, :secondary, team: @team, name: "Pilot School")
     @batch =
       create(
         :batch,
