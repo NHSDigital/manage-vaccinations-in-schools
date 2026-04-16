@@ -1,6 +1,7 @@
-import os
 import json
 import subprocess
+
+from .helpers import run_command
 
 REGION = "eu-west-2"
 PRODUCTION_ENVS = {"production", "production-data-replication"}
@@ -138,11 +139,11 @@ def resolve_task(env, task_id=None, task_ip=None, service=None):
     )
 
 
-def run_command(
-    env, task_id, command, container=None, interactive=True, replace_process=False
+def run_remote_command(
+    env, task_id, remote_command, container=None, replace_process=False
 ):
     """Execute a command in an ECS task, returning the exit code."""
-    cmd = [
+    command = [
         "aws",
         "ecs",
         "execute-command",
@@ -153,15 +154,12 @@ def run_command(
         "--task",
         task_id,
         "--command",
-        command,
+        remote_command,
+        "--interactive",
     ]
     if container:
-        cmd += ["--container", container]
-    if interactive:
-        cmd.append("--interactive")
-    if replace_process:
-        os.execvp(cmd[0], cmd)
-    return subprocess.run(cmd).returncode
+        command += ["--container", container]
+    return run_command(command, replace_process=replace_process)
 
 
 # --- private helpers ---
