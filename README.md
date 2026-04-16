@@ -69,9 +69,6 @@ export MACOSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion)"
 
 # Version manager
 brew install mise
-
-# Yarn via brew as this skips installing `gpg`
-brew install yarn
 ```
 
 Then to install the required tools (or update, following a change to
