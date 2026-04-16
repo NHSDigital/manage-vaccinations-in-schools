@@ -8,6 +8,8 @@ HEALTH_CHECK_URL="http://localhost:${RAILS_PORT}/up"
 MAVIS_TEST_REPO="${MAVIS_TEST_REPO:-"../manage-vaccinations-in-schools-testing"}"
 PYTEST_ARGS=("-m" "not accessibility and not reporting and not imms_api and not pds_api")
 
+export REDIS_URL="redis://localhost:6379/2"
+
 # Argument handling
 
 function print_help() {
