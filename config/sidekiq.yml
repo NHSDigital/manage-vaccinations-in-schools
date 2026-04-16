@@ -64,6 +64,9 @@
     EnqueueProcessUnmatchedConsentFormsJob:
       cron: "0 4 * * *"
       description: Re-process unmatched consent forms to attempt automatic matching
+    RemoveExportFileDataJob:
+      cron: "0 4 * * *"
+      description: Purge old vaccination report exports and mark expired
     EnqueuePatientsAgedOutOfSchoolsJob:
       cron: "0 5 * * *"
       description: Moves patients who have aged out of their school to unknown school
