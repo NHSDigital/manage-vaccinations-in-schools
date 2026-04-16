@@ -1,10 +1,9 @@
 import os
 import secrets
-import subprocess
 import sys
 
 from . import aws
-from .helpers import confirm_production
+from .helpers import confirm_production, run_command
 
 
 def register(subparsers):
@@ -59,24 +58,23 @@ def run(args):
     local_dest = _local_destination(args.remote_path, args.local_path)
 
     try:
-        exit_code = aws.run_command(
+        upload_result = aws.run_remote_command(
             env,
             task_id,
             f"aws s3 cp {args.remote_path} {s3_uri} --region {aws.REGION}",
             container=container,
         )
-        if exit_code != 0:
+        if not upload_result:
             sys.exit("Error: Failed to copy file from container to S3")
 
-        download = subprocess.run(
+        download_result = run_command(
             ["aws", "s3", "cp", s3_uri, local_dest, "--region", aws.REGION]
         )
-        if download.returncode != 0:
-            sys.exit("Error: Failed to download file from S3")
+        if not download_result:
+            sys.exit("Error: Download from S3 failed with code")
     finally:
-        subprocess.run(
+        run_command(
             ["aws", "s3", "rm", s3_uri, "--region", aws.REGION],
-            capture_output=True,
         )
 
     print(f"File successfully downloaded to {local_dest}")

@@ -1,7 +1,7 @@
 import sys
 
 from . import aws
-from .helpers import confirm_production
+from .helpers import confirm_production, run_command
 
 
 def register(subparsers):
@@ -50,12 +50,10 @@ def run(args):
         f"Opening shell in task {task_id}"
         + (f" (service {args.service})" if args.service else "")
     )
-    exit_code = aws.run_command(
+    aws.run_remote_command(
         env,
         task_id,
         "/rails/bin/docker-entrypoint /bin/bash",
         container=container,
         replace_process=True,
     )
-
-    sys.exit(exit_code)

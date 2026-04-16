@@ -1,10 +1,9 @@
 import os
 import secrets
-import subprocess
 import sys
 
 from . import aws
-from .helpers import confirm_production
+from .helpers import confirm_production, run_command
 
 
 def register(subparsers):
@@ -61,25 +60,24 @@ def run(args):
     key = f"temp-{secrets.token_hex(8)}"
     s3_uri = f"s3://{bucket}/{key}"
 
-    upload = subprocess.run(
+    upload_result = run_command(
         ["aws", "s3", "cp", args.local_file, s3_uri, "--region", aws.REGION]
     )
-    if upload.returncode != 0:
-        sys.exit("Error: Failed to upload file to S3")
+    if not upload_result != 0:
+        sys.exit("Error: Upload to S3 failed with code")
 
     try:
-        exit_code = aws.run_command(
+        download_result = aws.run_remote_command(
             env,
             task_id,
             f"aws s3 cp {s3_uri} {remote_path} --region {aws.REGION}",
             container=container,
         )
     finally:
-        subprocess.run(
+        run_command(
             ["aws", "s3", "rm", s3_uri, "--region", aws.REGION],
-            capture_output=True,
         )
 
-    if exit_code != 0:
+    if not download_result:
         sys.exit("Error: Failed to copy file into container")
     print("File successfully uploaded to container")
