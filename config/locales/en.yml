@@ -347,15 +347,6 @@ en:
               inclusion: Select yes or no
             notes:
               too_long: Enter notes that are less than %{count} characters long
-        vaccination_report:
-          attributes:
-            academic_year:
-              blank: Choose an academic year
-            file_format:
-              blank: Choose a file format
-              inclusion: Choose a file format
-            programme_type:
-              blank: Choose a programme
   activerecord:
     attributes:
       careplus_report:
