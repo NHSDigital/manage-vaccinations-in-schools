@@ -247,7 +247,8 @@ class DraftConsent
     parent.email = parent_email
     parent.full_name = parent_full_name
     parent.phone = parent_phone
-    parent.phone_receive_updates = parent_phone_receive_updates.presence
+    parent.phone_receive_updates =
+      parent_phone_receive_updates.presence || false
 
     if Flipper.enabled?(:one_patient_per_parent)
       parent.patient = patient
