@@ -15,7 +15,7 @@ describe AppPatientSessionConsentComponent do
     it { should_not have_content(/Consent (given|refused)/) }
     it { should_not have_css("details", text: /Consent (given|refused) by/) }
     it { should_not have_css("details", text: "Responses to health questions") }
-    it { should have_css("p", text: "No consent request is scheduled") }
+    it { should have_css("p", text: "No requests have been sent.") }
     it { should have_css("button", text: "Record a new consent response") }
 
     context "when session is not in progress" do

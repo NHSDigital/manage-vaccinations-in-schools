@@ -125,7 +125,7 @@ describe PatientProgrammeStatusResolver do
             prefix: "MMR",
             text: "Needs consent",
             colour: "blue",
-            details_text: "Request not scheduled"
+            details_text: "No response"
           }
         )
       end

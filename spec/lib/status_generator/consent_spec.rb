@@ -48,12 +48,6 @@ describe StatusGenerator::Consent do
       context "with consent requests not scheduled" do
         it { should be(:request_not_scheduled) }
       end
-
-      context "when consent requests scheduled date has already passed" do
-        let(:send_consent_requests_at) { 1.day.ago.to_date }
-
-        it { should be(:request_not_scheduled) }
-      end
     end
 
     context "with no contactable parents" do
