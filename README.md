@@ -16,8 +16,8 @@ This is a service used within the NHS for managing and recording school-aged vac
 
 We have two RDoc versions:
 
-1. [next](https://nhsuk.github.io/manage-vaccinations-in-schools/rdoc/next) - useful for dev work (based off the `next` branch).
-2. [release](https://nhsuk.github.io/manage-vaccinations-in-schools/rdoc/release) - useful for ops to debug live issues (based off the `release` branch).
+- [next](https://nhsdigital.github.io/manage-vaccinations-in-schools/rdoc/next/) - useful for dev work (based off the `next` branch).
+- [release](https://nhsdigital.github.io/manage-vaccinations-in-schools/rdoc/release/) - useful for ops to debug live issues (based off the `release` branch).
 
 ## Development
 
@@ -29,7 +29,7 @@ This project depends on:
 - [Ruby on Rails](https://rubyonrails.org/)
 - [NodeJS](https://nodejs.org/)
 - [Yarn](https://yarnpkg.com/)
-- [PostgreSQL](https://www.postgresql.org/)
+- [PostgreSQL](https://www.postgresql.org/) with [PostGIS](https://postgis.net/)
 - [Redis](https://redis.io/) or [Valkey](https://valkey.io/)
 
 The instructions below assume you are using `mise` to manage the necessary
@@ -48,31 +48,55 @@ bin/bundle exec rladr new title
 
 ### Installing dependencies
 
-This project uses `mise`. Use the following to set up (replace `brew` and
-package names depending on your platform):
+This project uses [`mise`](https://mise.jdx.dev/) to manage tool versions.
+
+#### Prerequisites
+
+Before you can run `mise install` you might need to install some system
+libraries and databases.
+
+##### macOS with Homebrew
 
 ```shell
-# Dependencies for ruby
+# Dependencies for Ruby
 brew install libyaml
 
-# Dependencies for postgres
-brew install gcc readline zlib curl ossp-uuid icu4c pkg-config
+# PostgreSQL
+brew install postgresql postgis
 
-# Env vars for postgres
-export OPENSSL_PATH=$(brew --prefix openssl)
-export CMAKE_PREFIX_PATH=$(brew --prefix icu4c)
-export PATH="$OPENSSL_PATH/bin:$CMAKE_PREFIX_PATH/bin:$PATH"
-export LDFLAGS="-L$OPENSSL_PATH/lib $LDFLAGS"
-export CPPFLAGS="-I$OPENSSL_PATH/include $CPPFLAGS"
-export PKG_CONFIG_PATH="$CMAKE_PREFIX_PATH/lib/pkgconfig"
-export MACOSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion)"
+# Redis
+brew install redis
 
-# Version manager
+# Mise
 brew install mise
 ```
 
-Then to install the required tools (or update, following a change to
-`.tool-versions`):
+##### Debian-based Linux
+
+```shell
+# Dependencies for Ruby
+sudo apt install build-essential autoconf libssl-dev libyaml-dev zlib1g-dev libffi-dev libgmp-dev libicu-dev rustc
+
+# PostgreSQL
+sudo apt install -y postgresql-common
+sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+sudo apt install postgresql-17 postgresql-contrib postgresql-17-postgis-3
+sudo -u postgres psql -c "CREATE USER $(whoami); ALTER USER $(whoami) WITH SUPERUSER;"
+
+# Redis
+sudo apt install redis-server
+
+# Mise
+curl https://mise.run | sh
+```
+
+See [installing Mise](https://mise.jdx.dev/installing-mise.html) for more
+details on how to install Mise.
+
+#### Using Mise
+
+At this point it should now be possible to use `mise` to install the required
+versions of the tools.
 
 ```shell
 mise install
@@ -83,28 +107,33 @@ mise install
 For the application to start successfully, PostgreSQL and Redis/Valkey must be
 running.
 
-#### PostgreSQL
+#### macOS with Homebrew
 
-If using `brew`, the simplest option is to run `brew services start postgresql`.
+```shell
+brew services start postgresql redis
+```
 
-Alternatively, you can run the server manually:
+#### Debian-based Linux
+
+```shell
+sudo systemctl start postgresql.service
+sudo systemctl start redis.service
+```
+
+#### Manually
 
 ```shell
 pg_ctl start
 psql -U postgres -c "CREATE USER $(whoami); ALTER USER $(whoami) WITH SUPERUSER;"
 ```
 
-#### Redis/Valkey
-
-If using `brew`, the simplest option is to run `brew services start redis`.
-
-Alternatively, you can run the server manually:
+You may have to run this as root via `sudo`.
 
 ```shell
 redis-server
 ```
 
-### Running locally
+### Running the application
 
 When running for the first time, `bin/setup` will automatically install Ruby
 dependencies and set up the database.
