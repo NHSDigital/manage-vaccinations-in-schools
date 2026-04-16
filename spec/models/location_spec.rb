@@ -15,6 +15,7 @@
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
+#  position                  :geography        point, 4326
 #  site                      :string
 #  status                    :integer          default("unknown"), not null
 #  systm_one_code            :string
@@ -432,6 +433,7 @@ describe Location do
           "is_attached_to_team" => false,
           "name" => location.name,
           "ods_code" => location.ods_code,
+          "position" => [location.position.x, location.position.y],
           "site" => location.site,
           "status" => "unknown",
           "type" => "community_clinic",

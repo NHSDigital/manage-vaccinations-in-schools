@@ -15,6 +15,7 @@
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
+#  position                  :geography        point, 4326
 #  site                      :string
 #  status                    :integer          default("unknown"), not null
 #  systm_one_code            :string
@@ -52,6 +53,9 @@ FactoryBot.define do
       address_line_1 { Faker::Address.street_address }
       address_town { Faker::Address.city }
       address_postcode { Faker::Address.uk_postcode }
+      position do
+        "POINT(#{Faker::Address.longitude} #{Faker::Address.latitude})"
+      end
     end
 
     factory :community_clinic do
