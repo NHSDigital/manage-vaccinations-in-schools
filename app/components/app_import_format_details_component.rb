@@ -122,7 +122,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CHILD_YEAR_GROUP",
         notes:
-          "Optional, numeric, the child’s year group, for example #{tag.i("8")}. If present, and " \
+          "Optional, numeric, for example #{tag.i("8")}. If present, and " \
             "when the child’s date of birth would place them in a different year, this value can " \
             "be used to override the cohort the child will be placed in."
       },
