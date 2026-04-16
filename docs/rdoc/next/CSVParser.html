@@ -704,7 +704,8 @@
 
       <span class="ruby-identifier">parsed_values</span> =
         <span class="ruby-constant">DATE_FORMATS</span>.<span class="ruby-identifier">lazy</span>.<span class="ruby-identifier">filter_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
-          <span class="ruby-constant">Date</span>.<span class="ruby-identifier">strptime</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">format</span>)
+          <span class="ruby-identifier">date</span> = <span class="ruby-constant">Date</span>.<span class="ruby-identifier">strptime</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">format</span>)
+          <span class="ruby-identifier">date</span>.<span class="ruby-identifier">year</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">1000</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">date</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
         <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-constant">TypeError</span>
           <span class="ruby-keyword">nil</span>
         <span class="ruby-keyword">end</span>
