@@ -6,7 +6,7 @@ class DownloadsController < ApplicationController
   skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
 
-  TYPE_FILTERS = {}.freeze
+  TYPE_FILTERS = { "school_moves" => "SchoolMovesExport" }.freeze
 
   def index
     @type = params[:type].presence_in(TYPE_FILTERS.keys)
