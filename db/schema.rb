@@ -623,6 +623,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
     t.index ["email"], name: "index_parents_on_email"
   end
 
+  create_table "patient_change_log_entries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "patient_id", null: false
+    t.jsonb "recorded_changes", default: {}, null: false
+    t.integer "source", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["patient_id"], name: "index_patient_change_log_entries_on_patient_id"
+    t.index ["user_id"], name: "index_patient_change_log_entries_on_user_id"
+  end
+
   create_table "patient_changesets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.jsonb "data"
@@ -1160,6 +1171,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
   add_foreign_key "notify_log_entry_programmes", "notify_log_entries", on_delete: :cascade
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
+  add_foreign_key "patient_change_log_entries", "patients"
+  add_foreign_key "patient_change_log_entries", "users"
   add_foreign_key "patient_changesets", "locations", column: "school_id"
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_locations", "locations"
