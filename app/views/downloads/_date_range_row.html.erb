@@ -1,0 +1,8 @@
+<% if export.date_from || export.date_to %>
+  <%= sl.with_row do |r|
+        from_str = export.date_from&.to_fs(:long) || "earliest"
+        to_str = export.date_to&.to_fs(:long) || "latest"
+        r.with_key { "Date range" }
+        r.with_value { "#{from_str} to #{to_str}" }
+      end %>
+<% end %>

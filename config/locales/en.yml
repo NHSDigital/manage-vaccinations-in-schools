@@ -1073,6 +1073,9 @@ en:
         description:
           one: "%{count} important notice needs attention"
           other: "%{count} important notices need attention"
+  downloads:
+    index:
+      title: Downloads
   draft_consents:
     agree:
       title:

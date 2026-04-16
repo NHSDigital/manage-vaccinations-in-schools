@@ -80,7 +80,7 @@ describe "Child record imports twins", :pds do
 
   def when_i_visit_the_import_page
     visit "/"
-    click_link "Import", match: :first
+    click_link "Manage data", match: :first
   end
 
   def and_i_start_adding_children_to_the_cohort

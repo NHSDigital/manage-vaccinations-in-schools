@@ -179,6 +179,9 @@ Rails.application.routes.draw do
             path: "immunisation-imports",
             except: %i[index destroy]
 
+  get "/manage-data", to: "imports#index", as: :manage_data
+  get "/downloads", to: "downloads#index", as: :downloads
+
   resources :imports, only: %i[index create] do
     collection { get :records }
   end

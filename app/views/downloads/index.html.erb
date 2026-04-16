@@ -1,0 +1,74 @@
+<% content_for :page_title, "Downloads" %>
+
+<%= h1 t(".title") %>
+
+<%= render AppManageDataNavigationComponent.new(active: :exports, team: current_team) %>
+
+<div class="nhsuk-grid-row">
+  <div class="app-grid-column-filters">
+    <%= form_with url: downloads_path, method: :get,
+                  builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+      <%= render AppCardComponent.new(filters: true) do |card| %>
+        <% card.with_heading(level: 3) { "Find download" } %>
+
+        <%= f.govuk_radio_buttons_fieldset :type,
+                                           legend: { text: "Type", size: "s" }, small: true do %>
+          <%= f.govuk_radio_button :type, "",
+                                   checked: @type.blank?, label: { text: "Any" } %>
+          <%= f.govuk_radio_button :type, "vaccination_records",
+                                   checked: @type == "vaccination_records",
+                                   label: { text: "Vaccination records" } %>
+          <%= f.govuk_radio_button :type, "offline_session",
+                                   checked: @type == "offline_session",
+                                   label: { text: "Offline session" } %>
+          <%= f.govuk_radio_button :type, "school_moves",
+                                   checked: @type == "school_moves",
+                                   label: { text: "School moves" } %>
+        <% end %>
+
+        <div class="nhsuk-button-group">
+          <%= f.govuk_submit "Update results", secondary: true,
+                                               class: "nhsuk-button--small" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(
+          @pagy,
+          label: "downloads",
+          heading: "All downloads",
+          no_results_text: "No downloads found",
+        ) do %>
+      <% @exports.each do |export| %>
+      <%= render AppCardComponent.new(compact: true) do |card| %>
+        <% card.with_heading(level: 4) { export.name } %>
+        <%= govuk_summary_list do |sl| %>
+          <%= sl.with_row do |r|
+                r.with_key { "Requested at" }
+                r.with_value { export.created_at.to_fs(:long) }
+              end %>
+          <%= sl.with_row do |r|
+                r.with_key { "Requested by" }
+                r.with_value { export.user.full_name }
+              end %>
+          <%= sl.with_row do |r|
+                r.with_key { "Type" }
+                r.with_value {
+                  export
+                    .type_label
+                }
+              end %>
+          <%= sl.with_row do |r|
+                r.with_key { "Status" }
+                r.with_value { render AppExportStatusComponent.new(export) }
+              end %>
+           <%= render "downloads/#{export.exportable_type.underscore}_details",
+                      export: export.exportable, sl: sl %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

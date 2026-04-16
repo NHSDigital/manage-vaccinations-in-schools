@@ -266,7 +266,7 @@ describe "Child record imports duplicates" do
 
   def when_i_visit_the_import_page
     visit "/"
-    click_link "Import", match: :first
+    click_link "Manage data", match: :first
   end
 
   def when_i_visit_the_import_issues_page

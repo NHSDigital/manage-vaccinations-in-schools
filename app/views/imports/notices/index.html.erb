@@ -1,6 +1,6 @@
 <%= render "imports/header" %>
 
-<%= render AppImportsNavigationComponent.new(active: :notices, team: current_team) %>
+<%= render AppManageDataNavigationComponent.new(active: :notices, team: current_team) %>
 
 <% if @notices.present? %>
   <%= render AppNoticesTableComponent.new(@notices) %>

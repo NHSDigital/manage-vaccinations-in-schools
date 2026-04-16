@@ -314,7 +314,7 @@ describe "Offline vaccination" do
   end
 
   def when_i_go_to_the_import_page
-    click_link "Import", match: :first
+    click_link "Manage data", match: :first
   end
 
   def then_i_should_see_no_import_issues_with_the_count
