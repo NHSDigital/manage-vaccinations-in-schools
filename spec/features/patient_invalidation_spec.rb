@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Patient invalidation deletes vaccination record from API" do
+describe "Patient invalidation deletes vaccination record from API", :pds do
   around { |example| travel_to(Date.new(2025, 8, 7)) { example.run } }
 
   scenario "PDS check invalidates patient and deletes vaccination record from API" do

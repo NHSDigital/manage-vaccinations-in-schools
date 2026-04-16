@@ -212,6 +212,11 @@ describe ImmunisationImport do
 
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
+    before do
+      Flipper.enable(:pds)
+      Flipper.enable(:pds_enqueue_bulk_updates)
+    end
+
     context "with an empty CSV file (no data rows)" do
       let(:programmes) { [Programme.flu] }
       let(:file) { "valid_flu.csv" }

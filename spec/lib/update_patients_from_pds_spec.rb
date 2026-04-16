@@ -6,32 +6,49 @@ describe UpdatePatientsFromPDS do
   let(:patients) { Patient.order(:created_at) }
   let(:queue) { :pds }
 
-  after { Settings.reload! }
-
   before do
     create_list(:patient, 2)
     create_list(:patient, 2, nhs_number: nil)
   end
 
-  context "when disabled" do
-    before { Settings.pds.enqueue_bulk_updates = false }
+  it "queues no jobs" do
+    expect { call }.not_to have_enqueued_job
+  end
+
+  context "when feature is enabled but not main switch" do
+    before { Flipper.enable(:pds_enqueue_bulk_updates) }
 
     it "queues no jobs" do
       expect { call }.not_to have_enqueued_job
     end
   end
 
-  it "queues PDSCascadingSearchJob for patients without an NHS number" do
-    expect { call }.to have_enqueued_job(PDSCascadingSearchJob)
-      .on_queue(:pds)
-      .exactly(2)
-      .times
+  context "when main switch is enabled but not feature" do
+    before { Flipper.enable(:pds) }
+
+    it "queues no jobs" do
+      expect { call }.not_to have_enqueued_job
+    end
   end
 
-  it "queues a job for each patient with an NHS number" do
-    expect { call }.to have_enqueued_job(PatientUpdateFromPDSJob)
-      .on_queue(:pds)
-      .exactly(2)
-      .times
+  context "when main switch and feature is enabled" do
+    before do
+      Flipper.enable(:pds)
+      Flipper.enable(:pds_enqueue_bulk_updates)
+    end
+
+    it "queues PDSCascadingSearchJob for patients without an NHS number" do
+      expect { call }.to have_enqueued_job(PDSCascadingSearchJob)
+        .on_queue(:pds)
+        .exactly(2)
+        .times
+    end
+
+    it "queues a job for each patient with an NHS number" do
+      expect { call }.to have_enqueued_job(PatientUpdateFromPDSJob)
+        .on_queue(:pds)
+        .exactly(2)
+        .times
+    end
   end
 end

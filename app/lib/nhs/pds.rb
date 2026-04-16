@@ -34,7 +34,8 @@ module NHS::PDS
 
   class << self
     def get_patient(nhs_number)
-      return unless Settings.pds.enabled
+      return unless Flipper.enabled?(:pds)
+
       NHS::API.connection.get(
         "personal-demographics/FHIR/R4/Patient/#{nhs_number}"
       )
@@ -55,7 +56,8 @@ module NHS::PDS
     end
 
     def search_patients(attributes)
-      return unless Settings.pds.enabled
+      return unless Flipper.enabled?(:pds)
+
       if (missing_attrs = (attributes.keys.map(&:to_s) - SEARCH_FIELDS)).any?
         raise "Unrecognised attributes: #{missing_attrs.join(", ")}"
       end

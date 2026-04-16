@@ -40,7 +40,7 @@ class PatientImport < ApplicationRecord
         PatientChangeset.from_import_row(row:, import: self, row_number:)
       end
 
-    if Flipper.enabled?(:import_search_pds)
+    if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
       process_no_postcode_changesets(self.changesets.without_postcode)
       if self.changesets.with_postcode.any?
         enqueue_pds_cascading_searches(self.changesets.with_postcode)
@@ -158,7 +158,7 @@ class PatientImport < ApplicationRecord
 
   def enqueue_review_jobs(changesets)
     review_changesets =
-      if Flipper.enabled?(:import_search_pds)
+      if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
         changesets.with_postcode
       else
         changesets

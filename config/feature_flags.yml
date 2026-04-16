@@ -39,9 +39,14 @@ import_choose_academic_year: >-
 import_concurrency_per_server: >-
   Controls whether to limit the concurrency of the import jobs to be global or to be per-server.
 
-import_search_pds: Perform PDS lookups as part of the patient import processing.
-
 ops_tools: Enable the operational support tools; timeline and graph.
+
+pds: Main switch for PDS integration. Turning this off will disable all PDS-related features.
+
+pds_enqueue_bulk_updates: >-
+  Whether to enqueue jobs which updates a large number of patients with the data from PDS in bulk.
+
+pds_search_during_import: Perform PDS lookups as part of the patient import processing.
 
 sync_national_reporting_to_imms_api: >-
   Sync immunisations records uploaded as part of national reporting to the NHS Immunisations API.

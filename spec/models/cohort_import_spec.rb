@@ -190,10 +190,11 @@ describe CohortImport do
       allow(configured_job).to receive(:perform_later)
     end
 
-    context "when import_search_pds flag is enabled" do
-      before { Flipper.enable(:import_search_pds) }
-
-      after { Flipper.disable(:import_search_pds) }
+    context "when pds_search_during_import flag is enabled" do
+      before do
+        Flipper.enable(:pds)
+        Flipper.enable(:pds_search_during_import)
+      end
 
       it "enqueues PDSCascadingSearchJob for each changeset" do
         process!
@@ -202,8 +203,8 @@ describe CohortImport do
       end
     end
 
-    context "when import_search_pds flag is disabled" do
-      before { Flipper.disable(:import_search_pds) }
+    context "when pds_search_during_import flag is disabled" do
+      before { Flipper.disable(:pds_search_during_import) }
 
       it "enqueues ReviewPatientChangesetJob for each changeset" do
         expect { process! }.to have_enqueued_job(

@@ -212,6 +212,9 @@ RSpec.configure do |config|
   config.before(:each, :js) { WebMock.allow_net_connect! }
   config.after(:each, :js) { WebMock.disable_net_connect! }
 
+  config.before(:each, :pds) { Flipper.enable(:pds) }
+  config.after(:each, :pds) { Flipper.disable(:pds) }
+
   config.before do
     EmailDeliveryJob.deliveries.clear
     SMSDeliveryJob.deliveries.clear

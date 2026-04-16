@@ -5,7 +5,10 @@ describe PatientNHSNumberLookupJob do
 
   let(:programme) { Programme.sample }
 
-  before { create(:gp_practice, ods_code: "H81109") }
+  before do
+    create(:gp_practice, ods_code: "H81109")
+    Flipper.enable(:pds)
+  end
 
   context "with an NHS number already" do
     let(:patient) { create(:patient, nhs_number: "0123456789") }
