@@ -24,3 +24,6 @@ splunk:
 reporting_api:
   client_app:
     root_url: http://localhost:5001/
+
+careplus:
+  base_url: http://localhost:8080

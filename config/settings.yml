@@ -57,6 +57,9 @@ reporting_api:
     client_id: <%= Rails.application.credentials.reporting_api&.client_id %>
     secret: <%= Rails.application.credentials.reporting_api&.secret %>
 
+careplus:
+  base_url: https://careplus.syhapp.thirdparty.nhs.uk
+
 # Set a value to override the default values set in config/initializers/devise.rb
 devise:
   timeout_in_seconds:
