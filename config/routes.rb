@@ -301,6 +301,8 @@ Rails.application.routes.draw do
   end
 
   resources :sessions, only: %i[index new show edit], param: :slug do
+    resources :exports, only: %i[create], controller: "sessions/exports"
+
     resource :patients, only: :show, controller: "sessions/patients" do
       post ":patient_id/register/:status", as: :register, action: :register
     end
