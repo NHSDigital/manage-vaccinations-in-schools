@@ -16,6 +16,7 @@ module PatientImportConcern
     patients_with_nhs_number_changes =
       patients.select(&:nhs_number_previously_changed?)
 
+    PatientChangeLogEntry.log_import_changes!(patients: patients.to_a, import:)
     Patient.import(patients.to_a, on_duplicate_key_update: :all)
     Imports::JoinRecords.call(import, patients)
 

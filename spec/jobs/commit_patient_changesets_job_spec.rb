@@ -631,6 +631,46 @@ describe CommitPatientChangesetsJob do
           )
         end
       end
+
+      context "when a patient has changes to tracked attributes" do
+        before do
+          [first_patient, second_patient, third_patient].each do |patient|
+            allow(patient).to receive(
+              :nhs_number_previously_changed?
+            ).and_return(false)
+          end
+          first_patient.given_name = "Changed"
+        end
+
+        it "creates a change log entry for that patient" do
+          expect { import_patients_and_parents }.to change(
+            PatientChangeLogEntry,
+            :count
+          ).by(1)
+
+          entry = PatientChangeLogEntry.last
+          expect(entry.patient).to eq(first_patient)
+          expect(entry.source).to eq("class_import")
+          expect(entry.recorded_changes.keys).to include("given_name")
+        end
+      end
+
+      context "when no patients have changes to tracked attributes" do
+        before do
+          [first_patient, second_patient, third_patient].each do |patient|
+            allow(patient).to receive(
+              :nhs_number_previously_changed?
+            ).and_return(false)
+          end
+        end
+
+        it "does not create any change log entries" do
+          expect { import_patients_and_parents }.not_to change(
+            PatientChangeLogEntry,
+            :count
+          )
+        end
+      end
     end
   end
 end
