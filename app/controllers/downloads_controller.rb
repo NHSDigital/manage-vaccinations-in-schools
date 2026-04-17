@@ -6,7 +6,11 @@ class DownloadsController < ApplicationController
   skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
 
-  TYPE_FILTERS = { "offline_session" => %w[LocationPatientsExport SessionPatientsExport] }.freeze
+  TYPE_FILTERS = {
+    "offline_session" => %w[LocationPatientsExport SessionPatientsExport],
+    "vaccination_records" => "VaccinationRecordsExport",
+    "school_moves" => "SchoolMovesExport"
+  }.freeze
 
   def index
     @type = params[:type].presence_in(TYPE_FILTERS.keys)

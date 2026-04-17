@@ -4,22 +4,32 @@ describe "Download school moves" do
   scenario "no dates given" do
     given_i_am_signed_in
     and_school_moves_exist
-    and_i_go_school_moves
+    and_i_go_to_school_moves
     when_i_click_on_download_records
-    and_i_click_continue
-    then_i_should_see_a_confirmation_page
-    when_i_click_download_csv
+    then_i_see_the_export_form
+
+    perform_enqueued_jobs { click_on "Download school move data" }
+
+    then_i_am_on_the_downloads_page
+    and_the_export_is_ready
+
+    when_i_click_the_download_link
     then_i_get_a_csv_file_with_expected_row_count(2)
   end
 
   scenario "dates supplied" do
     given_i_am_signed_in
     and_school_moves_exist
-    and_i_go_school_moves
+    and_i_go_to_school_moves
     when_i_click_on_download_records
     when_i_enter_some_dates
-    then_i_should_see_a_confirmation_page_with_dates
-    when_i_click_download_csv
+
+    perform_enqueued_jobs { click_on "Download school move data" }
+
+    then_i_am_on_the_downloads_page
+    and_the_export_is_ready
+
+    when_i_click_the_download_link
     then_i_get_a_csv_file_with_expected_row_count(1)
   end
 
@@ -52,7 +62,7 @@ describe "Download school moves" do
     )
   end
 
-  def and_i_go_school_moves
+  def and_i_go_to_school_moves
     visit school_moves_path
   end
 
@@ -60,20 +70,9 @@ describe "Download school moves" do
     click_on "Download records"
   end
 
-  def and_i_click_continue
-    click_on "Continue"
-  end
-
-  def when_i_click_download_csv
-    click_on "Download CSV"
-  end
-
-  def then_i_get_a_csv_file_with_expected_row_count(expected_count)
-    expect(page).to have_content(
-      Reports::SchoolMovesExporter::HEADERS.join(",")
-    )
-    csv_content = CSV.parse(page.body, headers: true)
-    expect(csv_content.size).to eq(expected_count)
+  def then_i_see_the_export_form
+    expect(page).to have_content("Download school moves")
+    expect(page).to have_button("Download school move data")
   end
 
   def when_i_enter_some_dates
@@ -88,26 +87,27 @@ describe "Download school moves" do
       fill_in "Month", with: "12"
       fill_in "Year", with: "2024"
     end
-
-    click_on "Continue"
   end
 
-  def then_i_should_see_a_confirmation_page
-    check_summary_list_row("From", "Earliest recorded vaccination")
-    check_summary_list_row("Until", "Latest recorded vaccination")
-    check_summary_list_row("Records", "2")
+  def then_i_am_on_the_downloads_page
+    expect(page).to have_current_path(downloads_path)
   end
 
-  def then_i_should_see_a_confirmation_page_with_dates
-    check_summary_list_row("From", "01 January 2024")
-    check_summary_list_row("Until", "31 December 2024")
-    check_summary_list_row("Records", "1")
+  def and_the_export_is_ready
+    visit downloads_path
+    expect(page).to have_content("School moves")
+    expect(page).to have_content("Ready")
   end
 
-  def check_summary_list_row(key, value)
-    within(".nhsuk-summary-list") do
-      expect(page).to have_css(".nhsuk-summary-list__key", text: key)
-      expect(page).to have_css(".nhsuk-summary-list__value", text: value)
-    end
+  def when_i_click_the_download_link
+    click_on "School moves"
+  end
+
+  def then_i_get_a_csv_file_with_expected_row_count(expected_count)
+    expect(page).to have_content(
+      Reports::SchoolMovesExporter::HEADERS.join(",")
+    )
+    csv_content = CSV.parse(page.body, headers: true)
+    expect(csv_content.size).to eq(expected_count)
   end
 end

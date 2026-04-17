@@ -279,12 +279,10 @@ Rails.application.routes.draw do
   resources :reports, only: :index
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
-  resources :school_move_exports,
+  resources :school_moves_exports,
             path: "school-moves/exports",
             controller: "school_moves/exports",
-            only: %i[create show update] do
-    get "download", on: :member
-  end
+            only: %i[new create]
 
   resources :schools, only: :index, param: :urn_and_site do
     resource :invite_to_clinic,
@@ -392,7 +390,13 @@ Rails.application.routes.draw do
     get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
   end
 
-  resource :vaccination_report, path: "vaccination-report", only: %i[new create]
+  resources :vaccination_records_exports,
+            path: "vaccination-records/exports",
+            controller: "vaccination_records/exports",
+            only: %i[new create]
+
+  get "/vaccination-report/new",
+      to: redirect("/vaccination-records/exports/new")
 
   get "consent-form/:type",
       to: "consent_form_downloads#show",
