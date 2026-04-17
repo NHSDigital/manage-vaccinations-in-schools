@@ -10,6 +10,7 @@ describe "Offline vaccination" do
 
     given_an_hpv_programme_is_underway
     when_i_choose_to_record_offline_from_a_school_session_page
+    and_i_download_this_export_from_the_downloads_page
     then_i_see_an_excel_spreadsheet_for_recording_offline
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
@@ -28,6 +29,7 @@ describe "Offline vaccination" do
 
     given_an_hpv_programme_is_underway(clinic: true)
     when_i_choose_to_record_offline_from_a_school_page
+    and_i_download_this_export_from_the_downloads_page
     then_i_see_an_excel_spreadsheet_for_recording_offline
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
