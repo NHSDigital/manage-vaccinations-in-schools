@@ -9,6 +9,7 @@ pytest_args=("-m" "not accessibility and not reporting and not imms_api and not 
 
 export RAILS_ENV="end_to_end"
 export REDIS_URL="redis://localhost:6379/2"
+export BASE_URL="http://localhost:${rails_port}"
 
 # Argument handling
 
@@ -206,8 +207,11 @@ done
 pushd "$mavis_test_repo" > /dev/null
 
 echo "[e2e] Running end-to-end tests:"
-echo "[e2e]   BASE_URL=\"http://localhost:${rails_port}\" uv run pytest ${pytest_args[*]}"
-BASE_URL="http://localhost:${rails_port}" uv run pytest -m "not accessibility and not reporting and not imms_api and not pds_api" "${pytest_args[@]}"
+echo "    export RAILS_ENV=\"$RAILS_ENV\""
+echo "    export REDIS_URL=\"$REDIS_URL\""
+echo "    export BASE_URL=\"$BASE_URL\""
+echo "    uv run pytest ${pytest_args[*]}"
+uv run pytest "${pytest_args[@]}"
 pytest_exit_code=$?
 
 popd > /dev/null
