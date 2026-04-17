@@ -7,7 +7,9 @@ class StatusGenerator::Consent
     patient:,
     consents:,
     vaccination_records:,
-    parents:
+    parents:,
+    sessions:,
+    consent_notifications:
   )
     @programme_type = programme_type
     @academic_year = academic_year
@@ -15,6 +17,8 @@ class StatusGenerator::Consent
     @consents = consents
     @vaccination_records = vaccination_records
     @parents = parents
+    @sessions = sessions
+    @consent_notifications = consent_notifications
   end
 
   def programme
@@ -32,6 +36,10 @@ class StatusGenerator::Consent
       :conflicts
     elsif status_should_be_no_contact_details?
       :no_contact_details
+    elsif status_should_be_request_scheduled?
+      :request_scheduled
+    elsif status_should_be_request_not_scheduled?
+      :request_not_scheduled
     elsif status_should_be_no_response?
       :no_response
     else
@@ -62,7 +70,9 @@ class StatusGenerator::Consent
               :patient,
               :consents,
               :vaccination_records,
-              :parents
+              :parents,
+              :sessions,
+              :consent_notifications
 
   def vaccinated?
     return @vaccinated if defined?(@vaccinated)
@@ -131,6 +141,20 @@ class StatusGenerator::Consent
     parents.none?(&:contactable?)
   end
 
+  def status_should_be_request_scheduled?
+    return false if vaccinated?
+
+    parents_contactable? && consent_notifications.empty? &&
+      sessions.any? { consent_request_scheduled_in_future?(it) }
+  end
+
+  def status_should_be_request_not_scheduled?
+    return false if vaccinated?
+
+    parents_contactable? && consent_notifications.empty? &&
+      (sessions.empty? || sessions.any? { consent_request_not_scheduled?(it) })
+  end
+
   def agreed_vaccine_methods
     @agreed_vaccine_methods ||=
       consents_for_status.map(&:vaccine_methods).inject(&:intersection)
@@ -161,5 +185,22 @@ class StatusGenerator::Consent
   def latest_consents
     @latest_consents ||=
       ConsentGrouper.call(consents, programme_type:, academic_year:)
+  end
+
+  def parents_contactable? = parents.any?(&:contactable?)
+
+  def consent_request_scheduled_in_future?(session)
+    send_at = session.send_consent_requests_at
+
+    # Not using future? because it doesn't work with Timecop
+    send_at.present? && send_at > Time.current
+  end
+
+  # Treat consent requests as not scheduled when send_consent_requests_at is
+  # missing or has already passed, such as for sessions activated on the
+  # same day they are created.
+  def consent_request_not_scheduled?(session)
+    send_at = session.send_consent_requests_at
+    send_at.nil? || send_at < Time.current
   end
 end
