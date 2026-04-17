@@ -2,11 +2,7 @@
 
 class AppPatientSearchFormComponent < ViewComponent::Base
   # Remove these statuses once implemented.
-  HIDDEN_PROGRAMME_STATUSES = %w[
-    needs_consent_request_failed
-    needs_consent_request_not_scheduled
-    needs_consent_request_scheduled
-  ].freeze
+  HIDDEN_PROGRAMME_STATUSES = %w[needs_consent_request_failed].freeze
 
   def initialize(
     form,

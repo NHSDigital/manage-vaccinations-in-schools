@@ -8,16 +8,53 @@ describe StatusGenerator::Consent do
       patient:,
       consents: patient.consents,
       vaccination_records: patient.vaccination_records,
-      parents: patient.parents
+      parents: patient.parents,
+      sessions: [session],
+      consent_notifications:
+        patient.consent_notifications.includes(session: :team_location)
     )
   end
 
   let(:parents) { [create(:parent)] }
   let(:patient) { create(:patient, parents:) }
   let(:programme) { Programme.sample }
+  let(:send_consent_requests_at) { nil }
+  let(:session) do
+    create(:session, programmes: [programme], send_consent_requests_at:)
+  end
 
   describe "#status" do
     subject { generator.status }
+
+    before do
+      create(
+        :consent_notification,
+        :request,
+        patient:,
+        session:,
+        programmes: [programme]
+      )
+    end
+
+    context "when a request has not yet been sent" do
+      before { ConsentNotification.delete_all }
+
+      context "with consent requests scheduled" do
+        let(:send_consent_requests_at) { 1.day.from_now }
+
+        it { should be(:request_scheduled) }
+      end
+
+      context "with consent requests not scheduled" do
+        it { should be(:request_not_scheduled) }
+      end
+
+      context "when consent requests scheduled date has already passed" do
+        let(:send_consent_requests_at) { 1.day.ago.to_date }
+
+        it { should be(:request_not_scheduled) }
+      end
+    end
 
     context "with no contactable parents" do
       let(:parents) { [] }

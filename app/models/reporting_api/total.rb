@@ -42,6 +42,20 @@ class ReportingAPI::Total < ApplicationRecord
   CONSENT_REFUSED = 2
   CONSENT_CONFLICTS = 3
   CONSENT_NOT_REQUIRED = 4
+  NO_CONTACT_DETAILS = 6
+  REQUEST_SCHEDULED = 7
+  REQUEST_NOT_SCHEDULED = 8
+
+  CONSENT_GIVEN_STATUSES = [CONSENT_GIVEN, CONSENT_NOT_REQUIRED].freeze
+
+  NO_CONSENT_STATUSES = [
+    CONSENT_NO_RESPONSE,
+    CONSENT_REFUSED,
+    CONSENT_CONFLICTS,
+    NO_CONTACT_DETAILS,
+    REQUEST_SCHEDULED,
+    REQUEST_NOT_SCHEDULED
+  ].freeze
 
   scope :not_archived, -> { where(is_archived: false) }
   scope :vaccinated,
@@ -70,15 +84,11 @@ class ReportingAPI::Total < ApplicationRecord
   end
 
   def self.consent_given_count
-    where(consent_status: [CONSENT_GIVEN, CONSENT_NOT_REQUIRED]).distinct.count(
-      :patient_id
-    )
+    where(consent_status: CONSENT_GIVEN_STATUSES).distinct.count(:patient_id)
   end
 
   def self.no_consent_count
-    where(
-      consent_status: [CONSENT_NO_RESPONSE, CONSENT_REFUSED, CONSENT_CONFLICTS]
-    ).distinct.count(:patient_id)
+    where(consent_status: NO_CONSENT_STATUSES).distinct.count(:patient_id)
   end
 
   def self.consent_no_response_count
@@ -96,10 +106,10 @@ class ReportingAPI::Total < ApplicationRecord
   def self.with_aggregate_metrics
     vaccinated_condition =
       "status IN (#{VACCINATED_STATUSES.join(",")}) OR has_already_vaccinated_consent = true"
-    no_consent_condition =
-      "consent_status IN (#{CONSENT_NO_RESPONSE}, #{CONSENT_REFUSED}, #{CONSENT_CONFLICTS})"
     consent_given_condition =
-      "consent_status IN (#{CONSENT_GIVEN}, #{CONSENT_NOT_REQUIRED})"
+      "consent_status IN (#{CONSENT_GIVEN_STATUSES.join(",")})"
+    no_consent_condition =
+      "consent_status IN (#{NO_CONSENT_STATUSES.join(",")})"
     select(
       "COUNT(DISTINCT patient_id) AS cohort",
       "COUNT(DISTINCT patient_id) FILTER (WHERE #{vaccinated_condition}) AS vaccinated",

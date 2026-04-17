@@ -14,6 +14,13 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
     @current_user = current_user
     @triage_form = triage_form || default_triage_form
     @parents = patient.parents
+    @patient_locations =
+      patient.patient_locations.includes(
+        location: [
+          :location_programme_year_groups,
+          { team_locations: { sessions: :session_programme_year_groups } }
+        ]
+      )
   end
 
   def render?
@@ -28,7 +35,8 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
               :programme,
               :current_user,
               :triage_form,
-              :parents
+              :parents,
+              :patient_locations
 
   delegate :academic_year, :team, to: :session
 
@@ -77,7 +85,9 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         consents:,
         triages:,
         vaccination_records:,
-        parents:
+        parents:,
+        sessions: [session],
+        consent_notifications:
       )
   end
 
@@ -89,7 +99,9 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         patient:,
         consents:,
         vaccination_records:,
-        parents:
+        parents:,
+        sessions: [session],
+        consent_notifications:
       )
   end
 
@@ -117,5 +129,13 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
 
   def default_triage_form
     TriageForm.new(patient:, session:, programme:, current_user:)
+  end
+
+  def consent_notifications
+    patient
+      .consent_notifications
+      .request
+      .has_all_programmes_of([programme])
+      .for_academic_year(academic_year)
   end
 end
