@@ -4,7 +4,7 @@
   <p>When imported records or a new consent response indicates that a child has changed school, Mavis flags this as a school move.</p>
   <p>You can then review the new information and confirm the school move or ignore it.</p>
 
-  <%= govuk_button_to "Download records", school_move_exports_path, secondary: true, class: "nhsuk-u-margin-bottom-5" %>
+  <%= govuk_button_link_to "Download records", new_school_moves_export_path, secondary: true, class: "nhsuk-u-margin-bottom-5" %>
 </div>
 
 <% if @school_moves.any? %>
