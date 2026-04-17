@@ -136,8 +136,9 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/cohort_imports/:id", to: redirect("/cohort-imports/%{id}")
   resources :cohort_imports,
-            path: "cohort_imports",
+            path: "cohort-imports",
             except: %i[index destroy] do
     member do
       get :re_review, to: "cohort_imports#re_review"
