@@ -65,7 +65,7 @@ jobs:
           bin/rails feature_flags:enable_for_development
           bin/mavis gias import --input-file=spec/fixtures/dfe-schools.zip
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@a89a83ec143615402a01f672b6e172b7b1875000 # v6.1.0
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
