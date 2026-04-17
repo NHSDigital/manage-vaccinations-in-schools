@@ -438,7 +438,7 @@ describe "Manage children" do
   end
 
   def and_i_can_see_a_button_to_download_offline
-    expect(page).to have_link("Download offline spreadsheet")
+    expect(page).to have_button("Download offline spreadsheet")
   end
 
   def when_i_click_on_download_offline_spreadsheet

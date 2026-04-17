@@ -9,7 +9,10 @@ describe "Offline vaccination" do
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway
-    when_i_choose_to_record_offline_from_a_school_session_page
+    perform_enqueued_jobs do
+      when_i_choose_to_record_offline_from_a_school_session_page
+    end
+    and_i_download_this_export_from_the_downloads_page
     then_i_see_an_excel_spreadsheet_for_recording_offline
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
@@ -27,7 +30,8 @@ describe "Offline vaccination" do
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway(clinic: true)
-    when_i_choose_to_record_offline_from_a_school_page
+    perform_enqueued_jobs { when_i_choose_to_record_offline_from_a_school_page }
+    and_i_download_this_export_from_the_downloads_page
     then_i_see_an_excel_spreadsheet_for_recording_offline
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
@@ -265,7 +269,7 @@ describe "Offline vaccination" do
   end
 
   def and_i_upload_a_file_with_duplicate_nhs_api_records
-    visit "/"
+    visit "/dashboard"
     click_on "Manage data", match: :first
     click_on "Upload records"
     choose "Vaccination records"
@@ -324,7 +328,8 @@ describe "Offline vaccination" do
   def when_i_choose_to_record_offline_from_a_school_session_page
     sign_in @team.users.first
     visit session_path(@session)
-    click_on "Download offline spreadsheet"
+    perform_enqueued_jobs { click_on "Download offline spreadsheet" }
+    @offline_export = SessionPatientsExport.last
   end
 
   def when_i_choose_to_record_offline_from_a_school_page
@@ -332,10 +337,14 @@ describe "Offline vaccination" do
     visit "/dashboard"
     click_link "Schools", match: :first
     click_link "Unknown school"
-    click_on "Download offline spreadsheet"
+    perform_enqueued_jobs { click_on "Download offline spreadsheet" }
+    @offline_export = LocationPatientsExport.last
   end
 
   def and_alter_an_existing_vaccination_record_to_create_a_duplicate
+    visit downloads_path
+    click_on @offline_export.name
+
     expect(page.status_code).to eq(200)
 
     @workbook = RubyXL::Parser.parse_buffer(page.body)
@@ -363,6 +372,9 @@ describe "Offline vaccination" do
   end
 
   def and_i_save_the_csv_file
+    visit downloads_path
+    click_on @offline_export.name
+
     expect(page.status_code).to eq(200)
 
     @workbook = RubyXL::Parser.parse_buffer(page.body)
@@ -417,6 +429,13 @@ describe "Offline vaccination" do
   end
   alias_method :and_i_choose_to_keep_the_duplicate_record,
                :when_i_choose_to_keep_the_duplicate_record
+
+  def when_i_download_this_export_from_the_downloads_page
+    visit downloads_path
+    click_on @offline_export.name
+  end
+  alias_method :and_i_download_this_export_from_the_downloads_page,
+               :when_i_download_this_export_from_the_downloads_page
 
   def then_i_see_an_excel_spreadsheet_for_recording_offline
     expect(page.status_code).to eq(200)
@@ -508,7 +527,7 @@ describe "Offline vaccination" do
   def and_i_upload_the_modified_csv_file
     travel 1.minute
 
-    visit "/"
+    visit "/dashboard"
 
     click_on "Manage data", match: :first
     click_on "Upload records"
