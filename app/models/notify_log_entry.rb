@@ -159,40 +159,6 @@ class NotifyLogEntry < ApplicationRecord
 
   def programmes = notify_log_entry_programmes.map(&:programme)
 
-  def self.purpose_for_template_name(template_name_sym)
-    name = template_name_sym.to_s
-
-    if name.include?("consent") && name.include?("request")
-      :consent_request
-    elsif name.include?("consent") && name.include?("reminder")
-      :consent_reminder
-    elsif name.include?("consent_confirmation")
-      :consent_confirmation
-    elsif name.include?("consent") && name.include?("warning")
-      :consent_warning
-    elsif name.include?("clinic") && name.include?("invitation")
-      :clinic_invitation
-    elsif name.include?("session_school_reminder")
-      :session_reminder
-    elsif name.include?("triage_vaccination_will_happen")
-      :triage_vaccination_will_happen
-    elsif name.include?("triage_vaccination_wont_happen")
-      :triage_vaccination_wont_happen
-    elsif name.include?("triage_vaccination_at_clinic")
-      :triage_vaccination_at_clinic
-    elsif name.include?("triage_delay_vaccination")
-      :triage_delay_vaccination
-    elsif name.include?("vaccination_administered")
-      :vaccination_administered
-    elsif name.include?("vaccination_already_had")
-      :vaccination_already_had
-    elsif name.include?("vaccination_not_administered")
-      :vaccination_not_administered
-    elsif name.include?("vaccination_deleted")
-      :vaccination_deleted
-    end
-  end
-
   private
 
   def template_name
