@@ -213,6 +213,34 @@ describe AppActivityLogComponent do
         created_at: Date.new(2025, 5, 10),
         sent_by: user
       )
+
+      consent_form =
+        create(
+          :consent_form,
+          :refused,
+          session:,
+          parent_email: "alex@example.net",
+          parent_full_name: "Alex Smith",
+          parent_relationship_type: "father"
+        )
+      create(
+        :notify_log_entry,
+        :email,
+        template_id:
+          NotifyTemplate.find(
+            :consent_confirmation_refused,
+            channel: :email
+          ).id,
+        consent_form:,
+        # Consent forms carry parent details as columns, not a Parent record.
+        parent: nil,
+        patient:,
+        purpose: :consent_confirmation_refused,
+        programme_types: %w[mmr],
+        recipient: "alex@example.net",
+        created_at: Time.zone.local(2025, 5, 10, 14),
+        sent_by: user
+      )
     end
 
     it "renders headings in correct order" do
@@ -235,7 +263,7 @@ describe AppActivityLogComponent do
     end
 
     it "has the expected number of timeline items" do
-      expect(rendered).to have_css(".app-timeline__item", count: 13)
+      expect(rendered).to have_css(".app-timeline__item", count: 14)
     end
 
     include_examples "card",
@@ -307,6 +335,12 @@ describe AppActivityLogComponent do
                      notes: "test@example.com",
                      by: "JOY, Nurse",
                      programme: "HPV"
+
+    include_examples "card",
+                     title: "Consent confirmation refused sent",
+                     date: "10 May 2025 at 2:00pm",
+                     notes: "alex@example.net",
+                     by: "JOY, Nurse"
 
     context "when filtering by programme" do
       let(:component) do
