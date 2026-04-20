@@ -57,43 +57,10 @@ class API::Testing::TeamsController < API::Testing::BaseController
       )
     )
 
-    patient_ids = team.patients.pluck(:id)
-
-    log_destroy(
-      PatientLocation.joins_team_locations.where(team_locations: { team_id: })
-    )
-
-    log_destroy(AccessLogEntry.where(patient_id: patient_ids))
-    log_destroy(ArchiveReason.where(patient_id: patient_ids))
-    log_destroy(AttendanceRecord.where(patient_id: patient_ids))
-    log_destroy(ConsentNotification.where(patient_id: patient_ids))
-    log_destroy(GillickAssessment.where(patient_id: patient_ids))
-    log_destroy(Note.where(patient_id: patient_ids))
     # In local dev we can end up with NotifyLogEntries without a patient
     log_destroy(NotifyLogEntry.where(patient_id: nil))
-    log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
-    log_destroy(PatientChangeset.where(patient_id: patient_ids))
-    log_destroy(PatientLocation.where(patient_id: patient_ids))
-    log_destroy(PatientMergeLogEntry.where(patient_id: patient_ids))
-    log_destroy(PatientSpecificDirection.where(patient_id: patient_ids))
-    log_destroy(PDSSearchResult.where(patient_id: patient_ids))
-    log_destroy(PreScreening.where(patient_id: patient_ids))
-    log_destroy(SchoolMove.where(patient_id: patient_ids))
-    log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
-    log_destroy(VaccinationRecord.where(patient_id: patient_ids))
-    log_destroy(Triage.where(patient_id: patient_ids))
-    log_destroy(ImportantNotice.where(patient_id: patient_ids))
 
-    log_destroy(ParentRelationship.where(patient_id: patient_ids))
-    log_destroy(
-      PatientProgrammeVaccinationsSearch.where(patient_id: patient_ids)
-    )
-    log_destroy(Patient.where(id: patient_ids))
-
-    log_destroy(
-      Consent.where(parent: Parent.where.missing(:parent_relationships))
-    )
-    log_destroy(Parent.where.missing(:parent_relationships))
+    log_destroy_patients(patients: team.patients)
 
     log_destroy(Batch.where(team:))
 
@@ -102,10 +69,6 @@ class API::Testing::TeamsController < API::Testing::BaseController
     )
 
     log_destroy(Triage.where(team:))
-
-    # These should have been deleted anyway due to the foreign key cascade, but
-    # just to be safe.
-    log_destroy(PatientTeam.where(team:))
 
     TeamCachedCounts.new(team).reset_all!
 
@@ -184,6 +147,12 @@ class API::Testing::TeamsController < API::Testing::BaseController
     response.stream.write(
       "#{query.model.name}.where(#{where_clause.to_h}): #{Time.zone.now - @log_time}s\n"
     )
+    @log_time = Time.zone.now
+  end
+
+  def log_destroy_patients(patients:)
+    PatientDeleter.call(patients:)
+    response.stream.write("PatientDeleter.call(patients: team.patients)")
     @log_time = Time.zone.now
   end
 end

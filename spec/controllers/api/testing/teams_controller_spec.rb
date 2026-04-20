@@ -4,7 +4,11 @@ describe API::Testing::TeamsController do
   include ActiveJob::TestHelper
   include ImportsHelper
 
-  before { Flipper.enable(:testing_api) }
+  before do
+    Flipper.enable(:testing_api)
+    allow(Rails.env).to receive(:production?).and_return(false)
+  end
+
   after { Flipper.disable(:testing_api) }
 
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
