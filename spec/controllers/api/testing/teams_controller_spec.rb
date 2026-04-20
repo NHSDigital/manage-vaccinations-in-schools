@@ -17,7 +17,7 @@ describe API::Testing::TeamsController do
     let(:cohort_import) do
       create(
         :cohort_import,
-        csv: fixture_file_upload("cohort_import/valid.csv"),
+        csv_data: file_fixture("cohort_import/valid.csv").read,
         team:
       )
     end
@@ -25,10 +25,8 @@ describe API::Testing::TeamsController do
     let(:immunisation_import) do
       create(
         :immunisation_import,
-        csv:
-          fixture_file_upload(
-            "immunisation_import/point_of_care/valid_hpv.csv"
-          ),
+        csv_data:
+          file_fixture("immunisation_import/point_of_care/valid_hpv.csv").read,
         team:
       )
     end
@@ -49,6 +47,7 @@ describe API::Testing::TeamsController do
         create(:session, team:, location: team.gias_schools.first, programmes:)
 
       process_and_approve_import(cohort_import)
+      immunisation_import.parse_rows!
       immunisation_import.process!
 
       Patient.find_each do |patient|

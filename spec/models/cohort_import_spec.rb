@@ -34,24 +34,29 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) { create(:cohort_import, csv:, team:) }
+  subject(:cohort_import) do
+    create(:cohort_import, csv_data:, team:, uploaded_csv_file:)
+  end
 
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
 
   let(:file) { "valid.csv" }
-  let(:csv) { fixture_file_upload("cohort_import/#{file}") }
-  let(:academic_year) { AcademicYear.current }
+  let(:csv_source) { file_fixture("cohort_import/#{file}") }
+  let(:csv_data) { csv_source.read }
+  # Used by shared examples in CSVImportable to test setting csv from an uploaded file
+  let(:uploaded_csv_file) { nil }
 
   # Ensure location URN matches the URN in our fixture files
   let!(:location) { create(:gias_school, urn: "123456", team:) } # rubocop:disable RSpec/LetSetup
 
+  # This is used by validation tests in the CSFVImportable shared specs.
+  let(:unsaved_import) { build(:cohort_import, csv_data:, team:) }
+
   it_behaves_like "a CSVImportable model"
 
   describe "#parse_rows!" do
-    subject(:parse_rows!) { cohort_import.parse_rows! }
-
-    before { parse_rows! }
+    before { cohort_import.parse_rows! }
 
     describe "with invalid fields" do
       let(:file) { "invalid_fields.csv" }
@@ -130,8 +135,6 @@ describe CohortImport do
   end
 
   describe "#process!" do
-    subject(:process!) { cohort_import.process! }
-
     let(:configured_job) { instance_double(ActiveJob::ConfiguredJob) }
     let(:file) { "valid.csv" }
 
@@ -140,6 +143,8 @@ describe CohortImport do
         queue: :imports
       ).and_return(configured_job)
       allow(configured_job).to receive(:perform_later)
+
+      cohort_import.parse_rows!
     end
 
     context "when pds_search_during_import flag is enabled" do
@@ -149,7 +154,7 @@ describe CohortImport do
       end
 
       it "enqueues PDSCascadingSearchJob for each changeset" do
-        process!
+        cohort_import.process!
 
         expect(configured_job).to have_received(:perform_later).exactly(3).times
       end
@@ -159,7 +164,7 @@ describe CohortImport do
       before { Flipper.disable(:pds_search_during_import) }
 
       it "enqueues ReviewPatientChangesetJob for each changeset" do
-        expect { process! }.to have_enqueued_job(
+        expect { cohort_import.process! }.to have_enqueued_job(
           ReviewPatientChangesetJob
         ).exactly(3).times
       end
