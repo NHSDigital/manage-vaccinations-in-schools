@@ -28,7 +28,6 @@ class ClassImportsController < ApplicationController
                   **class_import_params
                 )
 
-    @class_import.load_data!
     if @class_import.invalid?
       render :new, status: :unprocessable_content and return
     end

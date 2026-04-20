@@ -47,6 +47,7 @@ module ImportsHelper
   # Process and approve an import programmatically (for job/unit specs)
   # This simulates the full import flow including review and approval
   def process_and_approve_import(import)
+    import.parse_rows!
     import.process!
 
     unless import.is_a?(ImmunisationImport)
