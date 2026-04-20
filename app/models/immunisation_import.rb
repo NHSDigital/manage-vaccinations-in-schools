@@ -211,12 +211,12 @@ class ImmunisationImport < ApplicationRecord
       .find_each do |vaccination_record|
         NextDoseTriageFactory.call(vaccination_record:)
       end
-
-    PatientTeamUpdater.call(patient_scope: patients)
-    PatientStatusUpdater.call(patient_scope: Patient.where(id: patients.ids))
   end
 
   def post_commit!
+    PatientTeamUpdater.call(patient_scope: patients)
+    PatientStatusUpdater.call(patient_scope: Patient.where(id: patients.ids))
+
     vaccination_records.sync_all_to_nhs_immunisations_api
 
     vaccination_records
