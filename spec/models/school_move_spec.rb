@@ -132,19 +132,19 @@ describe SchoolMove do
 
     shared_examples "unarchives the patient" do
       it "unarchives the patient" do
-        expect(patient.archived?(team:)).to be(true)
+        expect(patient.archived?(team_id: team.id)).to be(true)
         confirm!
-        expect(patient.archived?(team:)).to be(false)
+        expect(patient.archived?(team_id: team.id)).to be(false)
       end
     end
 
     shared_examples "archives the patient in the original team" do
       it "archives the patient in the original team" do
-        expect(patient.archived?(team:)).to be(false)
-        expect(patient.archived?(team: new_team)).to be(false)
+        expect(patient.archived?(team_id: team.id)).to be(false)
+        expect(patient.archived?(team_id: new_team.id)).to be(false)
         confirm!
-        expect(patient.archived?(team:)).to be(true)
-        expect(patient.archived?(team: new_team)).to be(false)
+        expect(patient.archived?(team_id: team.id)).to be(true)
+        expect(patient.archived?(team_id: new_team.id)).to be(false)
       end
     end
 

@@ -88,4 +88,22 @@ describe ImportantNotice do
       end
     end
   end
+
+  describe "#can_dismiss?" do
+    subject(:can_dismiss) { important_notice.can_dismiss? }
+
+    let(:important_notice) do
+      create(:important_notice, :invalidated, team_id: team.id, patient:)
+    end
+
+    context "important notices for invalidated patients cannot be dismissed" do
+      it { should be(false) }
+    end
+
+    context "important notices for invalidated patients can be dismissed when archived" do
+      before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+
+      it { should be(true) }
+    end
+  end
 end
