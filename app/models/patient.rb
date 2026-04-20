@@ -511,11 +511,11 @@ class Patient < ApplicationRecord
       .distinct
   end
 
-  def archived?(team:)
+  def archived?(team_id:)
     if archive_reasons.loaded?
-      archive_reasons.any? { it.team_id == team.id }
+      archive_reasons.any? { it.team_id == team_id }
     else
-      archive_reasons.exists?(team:)
+      archive_reasons.exists?(team_id:)
     end
   end
 

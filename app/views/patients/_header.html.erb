@@ -3,7 +3,7 @@
 <% end %>
 
 <%= render AppActionListComponent.new do |action_list| %>
-  <% if @patient.archived?(team: current_team) && !current_team.has_national_reporting_access? %>
+  <% if @patient.archived?(team_id: current_team.id) && !current_team.has_national_reporting_access? %>
     <% action_list.with_item do %>
       <%= govuk_tag(text: "Archived", colour: "grey") %>
     <% end %>
