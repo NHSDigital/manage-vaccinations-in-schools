@@ -35,16 +35,40 @@
 #
 FactoryBot.define do
   factory :cohort_import do
+    transient do
+      # Can be used by the caller to pass in a file that simulates how it would
+      # come from the file upload field in the UI.
+      uploaded_csv_file { nil }
+    end
+
     team
     uploaded_by
 
+    # Callers should use `csv_data` to set the CSV content, this is faster than
+    # using `uploaded_csv_file`.
+    csv_data do
+      "CHILD_FIRST_NAME,CHILD_LAST_NAME,CHILD_DATE_OF_BIRTH\nJohn,Smith,2010-01-01\n"
+    end
+    csv_filename { csv_data && Faker::File.file_name(ext: "csv") }
+    rows_count { csv_data ? csv_data.lines.count - 1 : nil }
+
     academic_year { AcademicYear.pending }
-    csv_data { "my,csv\n" }
-    csv_filename { Faker::File.file_name(ext: "csv") }
-    rows_count { rand(100..1000) }
+
+    after(:build) do |import, evaluator|
+      if evaluator.uploaded_csv_file.present?
+        file = evaluator.uploaded_csv_file
+        import.csv =
+          ActionDispatch::Http::UploadedFile.new(
+            tempfile: File.open(file.path, "rb"),
+            filename: evaluator.uploaded_csv_file.original_filename,
+            type: evaluator.uploaded_csv_file.content_type || "text/csv"
+          )
+      end
+    end
 
     trait :csv_removed do
       csv_data { nil }
+      csv_filename { Faker::File.file_name(ext: "csv") }
       csv_removed_at { Time.zone.now }
     end
 

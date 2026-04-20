@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 shared_examples_for "a CSVImportable model" do
-  describe "#load_data!" do
-    before { subject.load_data! }
+  describe "validations" do
+    subject { unsaved_import }
 
     it { should be_valid }
 
@@ -52,12 +52,25 @@ shared_examples_for "a CSVImportable model" do
   end
 
   describe "#csv=" do
+    let(:csv_data) { nil }
+    let(:uploaded_csv_file) { fixture_file_upload(csv_source) }
+
     it "sets the data" do
-      expect(subject.csv_data).not_to be_empty
+      expect(subject.csv_data).to eq uploaded_csv_file.read
     end
 
     it "sets the filename" do
-      expect(subject.csv_filename).not_to be_empty
+      expect(subject.csv_filename).to eq uploaded_csv_file.original_filename
+    end
+
+    context "with a payload with a BOM" do
+      # This requires that each test using these shared example have a file with
+      # a BOM in their fixtures directory
+      let(:file) { "valid_with_bom.csv" }
+
+      it "results in a valid import" do
+        expect(subject).to be_valid
+      end
     end
   end
 
@@ -78,8 +91,12 @@ shared_examples_for "a CSVImportable model" do
   describe "#process!" do
     let(:today) { Time.zone.local(2025, 6, 1) }
 
-    it "sets processed_at" do
-      if subject.is_a?(ImmunisationImport)
+    before { subject.parse_rows! }
+
+    # TODO: Remove if ... when ImmunisationImport's implementation has been
+    #       updated to match the others (i.e. it uses changesets)
+    if described_class <= ImmunisationImport
+      it "sets processed_at" do
         expect { travel_to(today) { subject.process! } }.to change(
           subject,
           :processed_at
