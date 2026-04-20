@@ -9,7 +9,7 @@ module AuthenticationConcern
     # only return true if the given URL is part of this domain (relative or absolute)
     # or part of the mavis reporting app, or localhost (to support local dev)
     def is_valid_redirect?(url)
-      url.start_with?("/") || url.start_with?(request.base_url) ||
+      !url_from(url).nil? ||
         url.start_with?(
           Settings.reporting_api.client_app.root_url || "http://localhost"
         )

@@ -29,7 +29,7 @@ describe AuthenticationConcern do
       .new(request: mock_request)
   end
 
-  describe "set_user_cis2_info" do
+  describe "#set_user_cis2_info" do
     let(:user) { build(:user, cis2_info: nil) }
 
     context "when cis2 is disabled" do
@@ -53,9 +53,6 @@ describe AuthenticationConcern do
     end
   end
 
-  # The commented out code block you provided is a pending RSpec example group for a method called
-  # `#add_auth_code_to`. This method is expected to find or generate a `OneTimeToken` for a given user with
-  # the `cis2_info` from the current session. The example group contains two contexts:
   describe "#add_auth_code_to" do
     let(:user) { create(:user) }
     let(:token) do
@@ -100,7 +97,7 @@ describe AuthenticationConcern do
     end
   end
 
-  describe "reporting_app_redirect_uri_with_auth_code_for" do
+  describe "#reporting_app_redirect_uri_with_auth_code_for" do
     let(:session_cis2_info) { { "team_workgroup" => "r1l" } }
     let(:token) do
       build(:reporting_api_one_time_token, user: user, token: "mytoken")

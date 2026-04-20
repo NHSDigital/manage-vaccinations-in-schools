@@ -22,9 +22,17 @@ describe "User CIS2 authentication", :cis2 do
     and_the_return_url_has_a_token_param_added_to_it
   end
 
-  scenario "someone has supplied their own external redirect url" do
+  scenario "someone has supplied their own absolute redirect url" do
     given_a_test_team_is_setup_in_mavis_and_cis2
     when_i_go_to_the_start_page_with_a_redirect_uri_param_that_does_not_match_the_reporting_app
+
+    when_i_click_the_cis2_login_button
+    then_i_see_the_dashboard
+  end
+
+  scenario "someone has supplied their own schema-relative redirect url" do
+    given_a_test_team_is_setup_in_mavis_and_cis2
+    when_i_go_to_the_start_page_with_a_redirect_uri_param_that_is_schema_relative
 
     when_i_click_the_cis2_login_button
     then_i_see_the_dashboard
@@ -61,12 +69,14 @@ describe "User CIS2 authentication", :cis2 do
     visit [start_path, "redirect_uri=#{uri}"].join("?")
   end
 
-  def redirect_elsewhere_url
-    "https://some.example.com/redirect/elsewhere"
+  def when_i_go_to_the_start_page_with_a_redirect_uri_param_that_is_schema_relative
+    uri =
+      URI.encode_uri_component("https://some.example.com/redirect/elsewhere")
+    visit [start_path, "redirect_uri=#{uri}"].join("?")
   end
 
   def when_i_go_to_the_start_page_with_a_redirect_uri_param_that_does_not_match_the_reporting_app
-    uri = URI.encode_uri_component(redirect_elsewhere_url)
+    uri = URI.encode_uri_component("//some.example.com/redirect/elsewhere")
     visit [start_path, "redirect_uri=#{uri}"].join("?")
   end
 

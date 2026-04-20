@@ -89,6 +89,36 @@ describe AppFlashMessageComponent do
         include("Success body")
       )
     end
+
+    context "when heading contains HTML but is not marked as safe" do
+      before { flash[:success][:heading] = "<p>HTML</p>" }
+
+      it "doesn't render the heading as HTML" do
+        expect(
+          rendered.css(".nhsuk-notification-banner__content").inner_html
+        ).to(include("&lt;p&gt;HTML&lt;/p&gt;"))
+      end
+    end
+
+    context "when body contains HTML that is marked as safe" do
+      before { flash[:success][:body] = "<p>HTML</p>".html_safe }
+
+      it "doesn't render the body as HTML" do
+        expect(
+          rendered.css(".nhsuk-notification-banner__content").inner_html
+        ).to(include("<p>HTML</p>"))
+      end
+    end
+
+    context "when body contains HTML but is not marked as safe" do
+      before { flash[:success][:body] = "<p>HTML</p>" }
+
+      it "doesn't render the body as HTML" do
+        expect(
+          rendered.css(".nhsuk-notification-banner__content").inner_html
+        ).to(include("&lt;p&gt;HTML&lt;/p&gt;"))
+      end
+    end
   end
 
   describe "the role attribute" do
