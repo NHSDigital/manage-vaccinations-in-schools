@@ -694,8 +694,7 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">expiry_validator</span>.<span class="ruby-identifier">date_params_valid?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">save</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">vaccines_path</span>,
                 <span class="ruby-value">flash:</span> {
-                  <span class="ruby-value">success:</span>
-                    <span class="ruby-node">&quot;Batch &lt;span class=\&quot;nhsuk-u-text-break-word\&quot;&gt;#{batch.number}&lt;/span&gt; added&quot;</span>.<span class="ruby-identifier">html_safe</span>
+                  <span class="ruby-value">success:</span> <span class="ruby-node">&quot;Batch #{batch.number} added&quot;</span>
                 }
   <span class="ruby-keyword">else</span>
     <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">expiry</span> = <span class="ruby-identifier">expiry_validator</span>.<span class="ruby-identifier">date_params_as_struct</span>
@@ -740,7 +739,7 @@
             </details>
           </div>
           <div class="method-source-code" id="edit_archive-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 43</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 42</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">edit_archive</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">:archive</span>
 <span class="ruby-keyword">end</span></pre>
@@ -782,7 +781,7 @@
             </details>
           </div>
           <div class="method-source-code" id="make_default-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 38</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 37</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">make_default</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">todays_batch</span> = <span class="ruby-ivar">@batch</span>
   <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">vaccines_path</span>
@@ -868,7 +867,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update_archive-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 47</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/batches_controller.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_archive</span>
   <span class="ruby-ivar">@batch</span>.<span class="ruby-identifier">archive!</span>
 
