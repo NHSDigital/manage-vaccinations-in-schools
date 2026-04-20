@@ -50,11 +50,4 @@
     <% end %>
   <% end %>
 
-  <% if show_health_answers? %>
-    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
-
-    <h5 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">All answers to health questions</h5>
-
-    <%= render AppHealthAnswersSummaryComponent.new(grouped_consents) %>
-  <% end %>
 <% end %>

@@ -129,10 +129,6 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
     grouped_consents.find(&:response_refused?)&.who_responded
   end
 
-  def show_health_answers?
-    grouped_consents.any?(&:response_given?)
-  end
-
   def consent_notifications
     patient
       .consent_notifications
