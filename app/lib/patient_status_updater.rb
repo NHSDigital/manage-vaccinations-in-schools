@@ -92,8 +92,15 @@ class PatientStatusUpdater < PatientScopedUpdater
     merge_patient_scope(Patient::RegistrationStatus)
       .joins(session: :team_location)
       .where(team_location: { academic_year: academic_years })
-      .includes(:attendance_records, :patient, :session, :vaccination_records)
-      .find_in_batches do |batch|
+      .in_batches do |relation|
+        batch =
+          relation.includes(
+            :attendance_records,
+            :patient,
+            :session,
+            :vaccination_records
+          ).to_a
+
         batch.each(&:assign_status)
 
         Patient::RegistrationStatus.import!(
