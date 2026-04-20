@@ -1,0 +1,53 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: compose.Dockerfile
+    volumes:
+      # Mount the workspace into the container
+      - .:/rails:cached
+      # Persist the installed gem bundle across rebuilds
+      - bundle:/usr/local/bundle
+    command: foreman start -f Procfile.compose
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "4000:4000"
+    environment:
+      RAILS_ENV: development
+      SECRET_KEY_BASE: dev_local_only_do_not_use_in_production
+      # PostgreSQL service connection
+      DATABASE_HOST: postgres
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      # Redis service connection
+      REDIS_URL: redis://redis:6379/0
+      SIDEKIQ_REDIS_URL: redis://redis:6379/0
+      # Use polling instead of inotify for file watching. The host kernel's
+      # inotify instance limit is quickly exhausted inside Docker containers.
+      LIVERELOAD_FORCE_POLLING: "true"
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      # Expose on the host so you can connect with a local SQL client
+      - "5432:5432"
+
+  redis:
+    image: redis:8
+    volumes:
+      - redis_data:/data
+    ports:
+      # Expose on the host for inspection with redis-cli etc.
+      - "6379:6379"
+
+volumes:
+  bundle:
+  postgres_data:
+  redis_data:

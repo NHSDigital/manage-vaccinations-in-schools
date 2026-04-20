@@ -123,6 +123,46 @@ $ bin/dev
 ...
 ```
 
+#### Docker Compose (Docker-based, no local installs required)
+
+If you prefer not to install Ruby, Node, PostgreSQL and Redis on your host
+machine, you can use Docker Compose. It requires only
+[Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/).
+
+**First run:**
+
+```shell
+# Start the services (app, PostgreSQL, Redis)
+docker compose up -d
+
+# Enter the app container and run setup
+docker compose exec app bin/setup --skip-server
+
+# Optionally seed the database
+docker compose exec app bin/rails db:seed
+```
+
+**Subsequent runs:**
+
+```shell
+# Start the services (dev server starts automatically)
+docker compose up -d
+```
+
+The Rails server is available at <http://localhost:4000>. PostgreSQL and Redis
+are exposed on their default ports (5432 / 6379) so you can connect from host
+tools if needed.
+
+To stop all services:
+
+```shell
+docker compose down
+```
+
+> **Note:** The first build downloads ~1 GB of images and compiles native gems,
+> which can take several minutes. Subsequent starts are fast because gem and
+> database volumes are persisted.
+
 ### Branching strategy
 
 See the [branching strategy documentation](docs/branching.md) for more information.
