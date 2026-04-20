@@ -45,8 +45,8 @@ class AppPatientSessionProgrammeComponent < ViewComponent::Base
   end
 
   def details
-    if latest_triage
-      triage_summary(latest_triage)
+    if latest_triage && (summary = triage_summary(latest_triage)).present?
+      summary
     elsif programme_status.due?
       criteria_label =
         I18n.t(
