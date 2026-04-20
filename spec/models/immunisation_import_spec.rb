@@ -66,35 +66,6 @@ describe ImmunisationImport do
   describe "#load_data!" do
     before { immunisation_import.load_data! }
 
-    context "with malformed CSV" do
-      let(:file) { "malformed.csv" }
-
-      it "is invalid" do
-        expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors[:csv]).to include(/correct format/)
-      end
-    end
-
-    context "with empty CSV" do
-      let(:file) { "empty.csv" }
-
-      it "is invalid" do
-        expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors[:csv]).to include(/one record/)
-      end
-    end
-
-    context "with too many rows" do
-      let(:file) { "valid_flu.csv" }
-
-      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
-
-      it "is invalid" do
-        expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors[:csv]).to include(/less than 2 rows/)
-      end
-    end
-
     context "with a duplicated row" do
       let(:file) { "duplicate_row.csv" }
 

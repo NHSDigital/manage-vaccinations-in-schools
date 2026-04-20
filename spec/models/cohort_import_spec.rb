@@ -48,32 +48,6 @@ describe CohortImport do
 
   it_behaves_like "a CSVImportable model"
 
-  describe "#load_data!" do
-    subject(:load_data!) { cohort_import.load_data! }
-
-    before { load_data! }
-
-    describe "with malformed CSV" do
-      let(:file) { "malformed.csv" }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-        expect(cohort_import.errors[:csv]).to include(/correct format/)
-      end
-    end
-
-    describe "with too many rows" do
-      let(:file) { "valid.csv" }
-
-      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-        expect(cohort_import.errors[:csv]).to include(/less than 2 rows/)
-      end
-    end
-  end
-
   describe "#parse_rows!" do
     subject(:parse_rows!) { cohort_import.parse_rows! }
 
@@ -151,28 +125,6 @@ describe CohortImport do
       it "shows the right error information" do
         expect(cohort_import.errors.count).to eq(1)
         expect(cohort_import.errors.to_a[0]).to start_with("Row 2")
-      end
-    end
-
-    describe "with a valid file using ISO-8859-1 encoding" do
-      let(:file) { "valid_iso_8859_1_encoding.csv" }
-
-      let(:location) do
-        Location.find_by_urn_and_site("120026") ||
-          create(:gias_school, urn: "120026", team:)
-      end
-
-      it "is valid" do
-        expect(cohort_import).to be_valid
-        expect(cohort_import.rows.count).to eq(16)
-      end
-    end
-
-    describe "with an invalid file using ISO-8859-1 encoding" do
-      let(:file) { "invalid_iso_8859_1_encoding.csv" }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
       end
     end
   end
