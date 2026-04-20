@@ -682,7 +682,8 @@ fk_rails_...  (vaccination_record_id =&gt; vaccination_records.id)</pre>
           <div class="method-source-code" id="can_dismiss-3F-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/important_notice.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_dismiss?</span>
-  <span class="ruby-identifier">type</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%w[deceased restricted gillick_no_notify team_changed]</span>)
+  <span class="ruby-identifier">type</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%w[deceased restricted gillick_no_notify team_changed]</span>) <span class="ruby-operator">||</span>
+    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">archived?</span>(<span class="ruby-value">team_id:</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
