@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 shared_examples_for "a CSVImportable model" do
-  describe "validations" do
+  describe "#load_data!" do
+    before { subject.load_data! }
+
     it { should be_valid }
 
     it { should validate_presence_of(:csv_filename) }
@@ -19,6 +21,33 @@ shared_examples_for "a CSVImportable model" do
       expect {
         subject.update!(processed_at: Time.zone.now, status: :processed)
       }.to raise_error(/Count statistics must be set/)
+    end
+
+    describe "with malformed CSV" do
+      let(:file) { "malformed.csv" }
+
+      it "is invalid" do
+        expect(subject).to be_invalid
+        expect(subject.errors[:csv]).to include(/correct format/)
+      end
+    end
+
+    describe "with too many rows" do
+      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
+
+      it "is invalid" do
+        expect(subject).to be_invalid
+        expect(subject.errors[:csv]).to include(/less than 2 rows/)
+      end
+    end
+
+    context "with empty CSV" do
+      let(:file) { "empty.csv" }
+
+      it "is invalid" do
+        expect(subject).to be_invalid
+        expect(subject.errors[:csv]).to include(/one record/)
+      end
     end
   end
 
