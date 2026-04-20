@@ -38,11 +38,27 @@ describe "Import class lists" do
     when_i_go_to_the_session
     then_i_should_see_the_children_added_to_the_session
 
+    when_i_click_on_the_needs_consent_filter
+    and_i_click_on_the_link_to_view_the_child
+    and_i_click_on_the_link_to_view_the_full_child_record
+    then_i_should_see_the_parent_details
+  end
+
+  def when_i_click_on_the_needs_consent_filter
     click_on "Needs consent"
+  end
+
+  def and_i_click_on_the_link_to_view_the_child
     click_on "DOE, Mark"
-    # save_and_open_page
+  end
+
+  def and_i_click_on_the_link_to_view_the_full_child_record
     click_on "View full child record"
-    click_on "Edit child record"
+  end
+
+  def then_i_should_see_the_parent_details
+    expect(page).to have_content("Jane Doe")
+    expect(page).to have_content("Richard Doe")
   end
 
   context "when PDS lookup during import is enabled" do
