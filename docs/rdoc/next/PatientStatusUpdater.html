@@ -583,15 +583,11 @@
 
         <li ><a href="#method-i-patient_location_statuses_to_import">patient_location_statuses_to_import</a></li>
 
-        <li ><a href="#method-i-patient_statuses_to_import">patient_statuses_to_import</a></li>
-
         <li ><a href="#method-i-preload_location_programme_year_groups">preload_location_programme_year_groups</a></li>
 
         <li ><a href="#method-i-programme_statuses_to_import">programme_statuses_to_import</a></li>
 
         <li ><a href="#method-i-programme_types_per_session_id_and_year_group">programme_types_per_session_id_and_year_group</a></li>
-
-        <li ><a href="#method-i-programme_types_per_year_group">programme_types_per_year_group</a></li>
 
         <li ><a href="#method-i-update_programme_statuses-21">update_programme_statuses!</a></li>
 
@@ -756,8 +752,15 @@
     <span class="ruby-identifier">merge_patient_scope</span>(<span class="ruby-constant">Patient</span><span class="ruby-operator">::</span><span class="ruby-constant">RegistrationStatus</span>)
       .<span class="ruby-identifier">joins</span>(<span class="ruby-value">session:</span> <span class="ruby-value">:team_location</span>)
       .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_location:</span> { <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">academic_years</span> })
-      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:attendance_records</span>, <span class="ruby-value">:patient</span>, <span class="ruby-value">:session</span>, <span class="ruby-value">:vaccination_records</span>)
-      .<span class="ruby-identifier">find_in_batches</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">batch</span><span class="ruby-operator">|</span>
+      .<span class="ruby-identifier">in_batches</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">relation</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">batch</span> =
+          <span class="ruby-identifier">relation</span>.<span class="ruby-identifier">includes</span>(
+            <span class="ruby-value">:attendance_records</span>,
+            <span class="ruby-value">:patient</span>,
+            <span class="ruby-value">:session</span>,
+            <span class="ruby-value">:vaccination_records</span>
+          ).<span class="ruby-identifier">to_a</span>
+
         <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:assign_status</span>)
 
         <span class="ruby-constant">Patient</span><span class="ruby-operator">::</span><span class="ruby-constant">RegistrationStatus</span>.<span class="ruby-identifier">import!</span>(
@@ -768,23 +771,6 @@
           }
         )
       <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_statuses_to_import</span>
-    <span class="ruby-ivar">@patient_statuses_to_import</span> <span class="ruby-operator">||=</span>
-      (<span class="ruby-identifier">patient_scope</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">all</span>)
-        .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:id</span>, <span class="ruby-value">:birth_academic_year</span>)
-        .<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_id</span>, <span class="ruby-identifier">birth_academic_year</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">academic_years</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">academic_year</span><span class="ruby-operator">|</span>
-            <span class="ruby-identifier">year_group</span> = <span class="ruby-identifier">birth_academic_year</span>.<span class="ruby-identifier">to_year_group</span>(<span class="ruby-value">academic_year:</span>)
-
-            <span class="ruby-identifier">programme_types_per_year_group</span>
-              .<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">year_group</span>, [])
-              .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme_type</span><span class="ruby-operator">|</span>
-                [<span class="ruby-identifier">patient_id</span>, <span class="ruby-identifier">programme_type</span>, <span class="ruby-identifier">academic_year</span>]
-              <span class="ruby-keyword">end</span>
-          <span class="ruby-keyword">end</span>
-        <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_statuses_to_import</span>
@@ -823,19 +809,6 @@
 
         [<span class="ruby-identifier">patient_id</span>, <span class="ruby-identifier">session_id</span>]
       <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types_per_year_group</span>
-    <span class="ruby-ivar">@programme_types_per_year_group</span> <span class="ruby-operator">||=</span>
-      <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
-        .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:location_year_group</span>)
-        .<span class="ruby-identifier">where</span>(<span class="ruby-value">location_year_group:</span> { <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">academic_years</span> })
-        .<span class="ruby-identifier">distinct</span>
-        .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:programme_type</span>, <span class="ruby-value">:&quot;location_year_group.value&quot;</span>)
-        .<span class="ruby-identifier">each_with_object</span>({}) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span>(<span class="ruby-identifier">programme_type</span>, <span class="ruby-identifier">year_group</span>), <span class="ruby-identifier">hash</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">year_group</span>] <span class="ruby-operator">||=</span> []
-          <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">year_group</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">programme_type</span>
-        <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types_per_session_id_and_year_group</span>
@@ -1015,7 +988,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_location_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 139</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_location_statuses_to_import</span>
   <span class="ruby-identifier">merge_patient_scope</span>(<span class="ruby-constant">PatientLocation</span>)
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>)
@@ -1059,61 +1032,6 @@
       </div>
 
 
-      <div id="method-i-patient_statuses_to_import" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-patient_statuses_to_import" title="Link to this method">
-                <span class="method-name">patient_statuses_to_import</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="patient_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 109</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_statuses_to_import</span>
-  <span class="ruby-ivar">@patient_statuses_to_import</span> <span class="ruby-operator">||=</span>
-    (<span class="ruby-identifier">patient_scope</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">all</span>)
-      .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:id</span>, <span class="ruby-value">:birth_academic_year</span>)
-      .<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient_id</span>, <span class="ruby-identifier">birth_academic_year</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">academic_years</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">academic_year</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">year_group</span> = <span class="ruby-identifier">birth_academic_year</span>.<span class="ruby-identifier">to_year_group</span>(<span class="ruby-value">academic_year:</span>)
-
-          <span class="ruby-identifier">programme_types_per_year_group</span>
-            .<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">year_group</span>, [])
-            .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme_type</span><span class="ruby-operator">|</span>
-              [<span class="ruby-identifier">patient_id</span>, <span class="ruby-identifier">programme_type</span>, <span class="ruby-identifier">academic_year</span>]
-            <span class="ruby-keyword">end</span>
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
       <div id="method-i-preload_location_programme_year_groups" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1133,7 +1051,7 @@
             </details>
           </div>
           <div class="method-source-code" id="preload_location_programme_year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 200</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 177</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">preload_location_programme_year_groups</span>(<span class="ruby-identifier">batch</span>)
   <span class="ruby-identifier">locations</span> = <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:patient_locations</span>).<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:location</span>).<span class="ruby-identifier">uniq</span>
 
@@ -1184,7 +1102,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_statuses_to_import-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 126</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 116</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_statuses_to_import</span>
   <span class="ruby-ivar">@programme_statuses_to_import</span> <span class="ruby-operator">||=</span>
     (<span class="ruby-identifier">patient_scope</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">all</span>)
@@ -1235,7 +1153,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme_types_per_session_id_and_year_group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 177</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 154</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types_per_session_id_and_year_group</span>
   <span class="ruby-ivar">@programme_types_per_session_id_and_year_group</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Session</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
@@ -1248,57 +1166,6 @@
         <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">session_id</span>] <span class="ruby-operator">||=</span> {}
         <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">session_id</span>][<span class="ruby-identifier">year_group</span>] <span class="ruby-operator">||=</span> []
         <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">session_id</span>][<span class="ruby-identifier">year_group</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">programme_type</span>
-      <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-programme_types_per_year_group" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-programme_types_per_year_group" title="Link to this method">
-                <span class="method-name">programme_types_per_year_group</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="programme_types_per_year_group-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_status_updater.rb, line 164</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types_per_year_group</span>
-  <span class="ruby-ivar">@programme_types_per_year_group</span> <span class="ruby-operator">||=</span>
-    <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
-      .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:location_year_group</span>)
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">location_year_group:</span> { <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">academic_years</span> })
-      .<span class="ruby-identifier">distinct</span>
-      .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:programme_type</span>, <span class="ruby-value">:&quot;location_year_group.value&quot;</span>)
-      .<span class="ruby-identifier">each_with_object</span>({}) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span>(<span class="ruby-identifier">programme_type</span>, <span class="ruby-identifier">year_group</span>), <span class="ruby-identifier">hash</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">year_group</span>] <span class="ruby-operator">||=</span> []
-        <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">year_group</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">programme_type</span>
       <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1437,8 +1304,15 @@
   <span class="ruby-identifier">merge_patient_scope</span>(<span class="ruby-constant">Patient</span><span class="ruby-operator">::</span><span class="ruby-constant">RegistrationStatus</span>)
     .<span class="ruby-identifier">joins</span>(<span class="ruby-value">session:</span> <span class="ruby-value">:team_location</span>)
     .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_location:</span> { <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">academic_years</span> })
-    .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:attendance_records</span>, <span class="ruby-value">:patient</span>, <span class="ruby-value">:session</span>, <span class="ruby-value">:vaccination_records</span>)
-    .<span class="ruby-identifier">find_in_batches</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">batch</span><span class="ruby-operator">|</span>
+    .<span class="ruby-identifier">in_batches</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">relation</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">batch</span> =
+        <span class="ruby-identifier">relation</span>.<span class="ruby-identifier">includes</span>(
+          <span class="ruby-value">:attendance_records</span>,
+          <span class="ruby-value">:patient</span>,
+          <span class="ruby-value">:session</span>,
+          <span class="ruby-value">:vaccination_records</span>
+        ).<span class="ruby-identifier">to_a</span>
+
       <span class="ruby-identifier">batch</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:assign_status</span>)
 
       <span class="ruby-constant">Patient</span><span class="ruby-operator">::</span><span class="ruby-constant">RegistrationStatus</span>.<span class="ruby-identifier">import!</span>(
