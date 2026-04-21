@@ -26,14 +26,12 @@ class CohortImportsController < ApplicationController
                   **cohort_import_params
                 )
 
-    if @cohort_import.invalid?
+    if @cohort_import.save
+      ProcessImportJob.perform_later(@cohort_import)
+      redirect_to imports_path, flash: { success: "Import processing started" }
+    else
       render :new, status: :unprocessable_content and return
     end
-
-    @cohort_import.save!
-
-    ProcessImportJob.perform_later(@cohort_import)
-    redirect_to imports_path, flash: { success: "Import processing started" }
   end
 
   def show
