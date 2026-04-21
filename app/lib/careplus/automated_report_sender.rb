@@ -55,6 +55,8 @@ class Careplus::AutomatedReportSender
 
     attach_records!(careplus_report:, vaccination_records:)
 
+    record_send_attempt!(careplus_report:)
+
     response =
       Careplus::Client.send_csv(
         username: team.careplus_username,
@@ -108,8 +110,12 @@ class Careplus::AutomatedReportSender
     )
   end
 
+  def record_send_attempt!(careplus_report:)
+    careplus_report.update!(sent_at: Time.current)
+  end
+
   def mark_as_sent!(careplus_report:)
-    careplus_report.update!(status: :sent, sent_at: Time.current)
+    careplus_report.update!(status: :sent)
   end
 
   def csv_filename(date:, timestamp:)

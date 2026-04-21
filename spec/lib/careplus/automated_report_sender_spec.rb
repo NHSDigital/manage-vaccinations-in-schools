@@ -131,7 +131,8 @@ describe Careplus::AutomatedReportSender do
             )
 
       report = CareplusReport.last
-      expect(report).to have_attributes(status: "failed", sent_at: nil)
+      expect(report).to have_attributes(status: "failed")
+      expect(report.sent_at).to be_present
       expect(report.vaccination_records).to contain_exactly(record)
     end
   end
@@ -153,7 +154,8 @@ describe Careplus::AutomatedReportSender do
       expect { call }.to raise_error(Timeout::Error)
 
       report = CareplusReport.last
-      expect(report).to have_attributes(status: "failed", sent_at: nil)
+      expect(report).to have_attributes(status: "failed")
+      expect(report.sent_at).to be_present
       expect(report.vaccination_records).to contain_exactly(record)
     end
   end
