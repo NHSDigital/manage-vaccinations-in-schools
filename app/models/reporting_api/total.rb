@@ -57,6 +57,13 @@ class ReportingAPI::Total < ApplicationRecord
     REQUEST_NOT_SCHEDULED
   ].freeze
 
+  CONSENT_NO_RESPONSE_STATUSES = [
+    CONSENT_NO_RESPONSE,
+    NO_CONTACT_DETAILS,
+    REQUEST_SCHEDULED,
+    REQUEST_NOT_SCHEDULED
+  ].freeze
+
   scope :not_archived, -> { where(is_archived: false) }
   scope :vaccinated,
         -> do
@@ -92,7 +99,9 @@ class ReportingAPI::Total < ApplicationRecord
   end
 
   def self.consent_no_response_count
-    where(consent_status: CONSENT_NO_RESPONSE).distinct.count(:patient_id)
+    where(consent_status: CONSENT_NO_RESPONSE_STATUSES).distinct.count(
+      :patient_id
+    )
   end
 
   def self.consent_refused_count
