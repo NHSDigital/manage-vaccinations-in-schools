@@ -12,6 +12,7 @@
   - immunisations_api_sync
   - immunisations_api_search
   - third_party_data_imports
+  - careplus
   - metrics
   - default
 
@@ -87,3 +88,7 @@
       cron: "0 13,16,19 * * *"
       class: SendVaccinationConfirmationsJob
       description: Send vaccination confirmation emails to parents
+    automated_careplus_reports:
+      cron: "30 2 * * *"
+      class: EnqueueAutomatedCareplusReportsJob
+      description: Enqueue automated CarePlus reports for teams with CarePlus configured
