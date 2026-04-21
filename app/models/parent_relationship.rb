@@ -52,6 +52,8 @@ class ParentRelationship < ApplicationRecord
   accepts_nested_attributes_for :parent
   validates_associated :parent
 
+  before_destroy :set_removal_audit_comment, prepend: true
+
   def label
     other? ? "Other – #{other_name}" : human_enum_name(:type).capitalize
   end
@@ -70,5 +72,11 @@ class ParentRelationship < ApplicationRecord
     else
       "#{index.ordinalize} parent or guardian"
     end
+  end
+
+  private
+
+  def set_removal_audit_comment
+    self.audit_comment = "#{label_with_parent} removed from child record"
   end
 end
