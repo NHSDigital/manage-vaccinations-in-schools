@@ -97,7 +97,6 @@ class Patient::ProgrammeStatus < ApplicationRecord
     "needs_consent_request_scheduled" => 11,
     "needs_consent_request_failed" => 12,
     "needs_consent_no_response" => 13,
-    "needs_consent_follow_up_requested" => 14,
     "needs_consent_no_contact_details" => 15
   }.freeze
 

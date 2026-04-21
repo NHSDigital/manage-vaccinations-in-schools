@@ -61,7 +61,6 @@ en:
         has_refusal_consent_refused: Has a refusal
         needs_consent: Needs consent
         has_refusal_follow_up_requested: Has a refusal
-        needs_consent_follow_up_requested: Needs consent
         needs_consent_no_response: Needs consent
         needs_consent_request_failed: Needs consent
         needs_consent_request_not_scheduled: Needs consent
@@ -90,7 +89,6 @@ en:
         has_refusal_consent_refused: orange
         needs_consent: blue
         has_refusal_follow_up_requested: orange
-        needs_consent_follow_up_requested: blue
         needs_consent_no_response: blue
         needs_consent_request_failed: blue
         needs_consent_request_not_scheduled: blue
@@ -111,7 +109,6 @@ en:
         has_refusal_consent_conflicts: Conflicting consent
         has_refusal_consent_refused: Consent refused
         has_refusal_follow_up_requested: Follow-up requested
-        needs_consent_follow_up_requested: Follow-up requested
         needs_consent_no_response: No response
         needs_consent_request_failed: Request failed
         needs_consent_request_not_scheduled: Request not scheduled
