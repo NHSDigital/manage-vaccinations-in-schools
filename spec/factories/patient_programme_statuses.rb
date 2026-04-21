@@ -53,9 +53,9 @@ FactoryBot.define do
       status { "has_refusal_consent_conflicts" }
     end
 
-    trait :needs_consent_follow_up_requested do
+    trait :has_refusal_follow_up_requested do
       consent_status { "follow_up_requested" }
-      status { "needs_consent_follow_up_requested" }
+      status { "has_refusal_follow_up_requested" }
     end
 
     trait :needs_triage do

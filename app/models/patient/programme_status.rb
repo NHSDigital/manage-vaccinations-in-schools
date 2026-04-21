@@ -103,7 +103,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
 
   HAS_REFUSAL_STATUSES = {
     "has_refusal_consent_conflicts" => 20,
-    "has_refusal_consent_refused" => 21
+    "has_refusal_consent_refused" => 21,
+    "has_refusal_follow_up_requested" => 22
   }.freeze
 
   NEEDS_TRIAGE_STATUSES = { "needs_triage" => 30 }.freeze
