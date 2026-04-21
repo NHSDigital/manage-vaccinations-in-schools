@@ -45,7 +45,8 @@ class AppPatientSessionProgrammeComponent < ViewComponent::Base
   end
 
   def details
-    if latest_triage && (summary = triage_summary(latest_triage)).present?
+    if triage_driven_cannot_vaccinate? && latest_triage &&
+         (summary = triage_summary(latest_triage)).present?
       summary
     elsif programme_status.due?
       criteria_label =
@@ -75,10 +76,20 @@ class AppPatientSessionProgrammeComponent < ViewComponent::Base
         "#{patient.given_name} was vaccinated on #{record&.performed_at&.to_fs(:long)}."
       end
     elsif programme_status.needs_triage?
-      "You need to decide if it’s safe to vaccinate #{patient.given_name}."
+      if latest_triage&.invite_to_clinic? &&
+           (summary = triage_summary(latest_triage)).present?
+        summary
+      else
+        "You need to decide if it’s safe to vaccinate #{patient.given_name}."
+      end
     else
       resolver[:details_text]
     end
+  end
+
+  def triage_driven_cannot_vaccinate?
+    programme_status.cannot_vaccinate_do_not_vaccinate? ||
+      programme_status.cannot_vaccinate_delay_vaccination?
   end
 
   def latest_triage

@@ -129,6 +129,7 @@ describe AppPatientSessionProgrammeComponent do
 
     context "safe to vaccinate" do
       before do
+        create(:patient_programme_status, :due_injection, patient:, programme:)
         create(
           :triage,
           :safe_to_vaccinate,
@@ -138,14 +139,22 @@ describe AppPatientSessionProgrammeComponent do
         )
       end
 
-      it "shows triage summary" do
-        expect(rendered).to have_text("#{nurse.full_name} decided that")
-        expect(rendered).to have_text("is safe to vaccinate")
+      it "shows ready to vaccinate details, not triage summary" do
+        expect(rendered).to have_text(
+          "#{patient.given_name} is ready to vaccinate"
+        )
+        expect(rendered).not_to have_text("#{nurse.full_name} decided that")
       end
     end
 
     context "do not vaccinate" do
       before do
+        create(
+          :patient_programme_status,
+          :cannot_vaccinate_do_not_vaccinate,
+          patient:,
+          programme:
+        )
         create(
           :triage,
           :do_not_vaccinate,
@@ -173,6 +182,15 @@ describe AppPatientSessionProgrammeComponent do
         )
       end
 
+      before do
+        create(
+          :patient_programme_status,
+          :cannot_vaccinate_delay_vaccination,
+          patient:,
+          programme:
+        )
+      end
+
       it "shows triage summary with delay date" do
         expect(rendered).to have_text(
           "#{nurse.full_name} decided that #{patient.given_name}’s vaccination should be delayed " \
@@ -183,6 +201,7 @@ describe AppPatientSessionProgrammeComponent do
 
     context "invite to clinic" do
       before do
+        create(:patient_programme_status, :needs_triage, patient:, programme:)
         create(
           :triage,
           :invite_to_clinic,
