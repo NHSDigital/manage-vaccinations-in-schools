@@ -237,6 +237,8 @@ class Notifier::Patient
       SMSDeliveryJob.perform_later(sms_template, **params)
     end
 
+    PatientStatusUpdaterJob.perform_async(patient.id)
+
     consent_notification
   end
 
