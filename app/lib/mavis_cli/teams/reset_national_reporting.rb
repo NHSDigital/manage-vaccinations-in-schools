@@ -90,81 +90,77 @@ module MavisCLI
       end
 
       def reset_team(team)
-        patient_ids_to_update = Set.new
+        immunisation_imports = find_immunisation_imports_for_team(team)
+        puts "  - Found #{immunisation_imports.count} immunisation import(s) created before team's cut off date: " \
+               "#{team.national_reporting_cut_off_date}"
 
-        ActiveRecord::Base.transaction do
-          immunisation_imports = find_immunisation_imports_for_team(team)
-          puts "  - Found #{immunisation_imports.count} immunisation import(s) created before team's cut off date: " \
-                 "#{team.national_reporting_cut_off_date}"
+        patient_ids = find_patients_for_team(team).ids
+        puts "  - Found #{patient_ids.count} patient(s) in this team"
 
-          patient_ids = find_patients_for_team(team).ids
-          puts "  - Found #{patient_ids.count} patient(s) in this team"
+        vaccination_records = find_vaccination_records_for_team(team)
+        puts "  - Found #{vaccination_records.count} vaccination record(s) in this team's imports"
 
-          vaccination_records = find_vaccination_records_for_team(team)
-          puts "  - Found #{vaccination_records.count} vaccination record(s) in this team's imports"
-
-          not_synced_vaccination_records =
-            vaccination_records.not_synced_to_nhs_immunisations_api
-          synced_vaccination_records =
-            vaccination_records.synced_to_nhs_immunisations_api
-          patient_ids_of_not_synced_records =
-            not_synced_vaccination_records.pluck(:patient_id).uniq
-          if synced_vaccination_records.exists?
-            puts "    - #{synced_vaccination_records.count} vaccination" \
-                   " record(s) have been synced to NHS Immunisations API and" \
-                   " will NOT be deleted"
-            puts "    - #{not_synced_vaccination_records.count} vaccination" \
-                   " record(s) will be deleted"
-          end
-
-          puts "Destroying vaccination records..."
-          not_synced_vaccination_records.destroy_all
-
-          puts "Refreshing immunisations imports..."
-          if immunisation_imports.joins(:vaccination_records).any?
-            immunisation_imports_with_records =
-              immunisation_imports.joins(:vaccination_records).distinct
-            immunisation_imports =
-              immunisation_imports.where.not(
-                id: immunisation_imports_with_records.select(:id)
-              )
-            puts " - #{immunisation_imports_with_records.count} immunisation" \
-                   " import(s) have associated vaccination records and will NOT" \
-                   " be deleted"
-            puts " - #{immunisation_imports.count} immunisation import(s) will" \
-                   " be deleted"
-          end
-
-          puts "Destroying immunisation imports..."
-          immunisation_imports.destroy_all
-
-          archive_reasons =
-            ArchiveReason.where(
-              patient_id: patient_ids_of_not_synced_records,
-              team:
-            )
-          puts "Destroying #{archive_reasons.count} archive reasons..."
-          archive_reasons.destroy_all
-
-          puts "Updating patient-team relationships..."
-          PatientTeamUpdater.call(
-            patient_scope: Patient.where(id: patient_ids_of_not_synced_records)
-          )
-
-          patients_to_destroy =
-            find_patients_without_team(patient_ids_of_not_synced_records)
-
-          patient_ids_to_update +=
-            patient_ids_of_not_synced_records - patients_to_destroy.ids
-          puts "  - Found #{patients_to_destroy.count}" \
-                 " patient(s) who were in the imports, and no longer have teams"
-
-          puts "Destroying #{patients_to_destroy.count} patients..."
-          PatientDeleter.call(
-            patients: patients_to_destroy,
-            confirm_production_delete: true
-          )
+        not_synced_vaccination_records =
+          vaccination_records.not_synced_to_nhs_immunisations_api
+        synced_vaccination_records =
+          vaccination_records.synced_to_nhs_immunisations_api
+        patient_ids_of_not_synced_records =
+          not_synced_vaccination_records.pluck(:patient_id).uniq
+        if synced_vaccination_records.exists?
+          puts "    - #{synced_vaccination_records.count} vaccination" \
+                 " record(s) have been synced to NHS Immunisations API and" \
+                 " will NOT be deleted"
+          puts "    - #{not_synced_vaccination_records.count} vaccination" \
+                 " record(s) will be deleted"
         end
+
+        puts "Destroying vaccination records..."
+        not_synced_vaccination_records.destroy_all
+
+        puts "Refreshing immunisations imports..."
+        if immunisation_imports.joins(:vaccination_records).any?
+          immunisation_imports_with_records =
+            immunisation_imports.joins(:vaccination_records).distinct
+          immunisation_imports =
+            immunisation_imports.where.not(
+              id: immunisation_imports_with_records.select(:id)
+            )
+          puts " - #{immunisation_imports_with_records.count} immunisation" \
+                 " import(s) have associated vaccination records and will NOT" \
+                 " be deleted"
+          puts " - #{immunisation_imports.count} immunisation import(s) will" \
+                 " be deleted"
+        end
+
+        puts "Destroying immunisation imports..."
+        immunisation_imports.destroy_all
+
+        archive_reasons =
+          ArchiveReason.where(
+            patient_id: patient_ids_of_not_synced_records,
+            team:
+          )
+        puts "Destroying #{archive_reasons.count} archive reasons..."
+        archive_reasons.destroy_all
+
+        puts "Updating patient-team relationships..."
+        PatientTeamUpdater.call(
+          patient_scope: Patient.where(id: patient_ids_of_not_synced_records)
+        )
+
+        patients_to_destroy =
+          find_patients_without_team(patient_ids_of_not_synced_records)
+
+        patient_ids_to_update =
+          patient_ids_of_not_synced_records - patients_to_destroy.ids
+        puts "  - Found #{patients_to_destroy.count}" \
+               " patient(s) who were in the imports, and no longer have teams"
+
+        puts "Destroying #{patients_to_destroy.count} patients..."
+        PatientDeleter.call(
+          patients: patients_to_destroy,
+          confirm_production_delete: true
+        )
 
         puts "Enqueueing jobs to update statuses for" \
                " #{patient_ids_to_update.size} patient(s) left over..."
