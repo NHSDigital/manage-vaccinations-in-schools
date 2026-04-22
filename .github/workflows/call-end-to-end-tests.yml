@@ -3,7 +3,10 @@ name: Call end-to-end tests
 on:
   workflow_call:
     inputs:
-      cross_service_tests:
+      fhir_api_tests:
+        required: true
+        type: boolean
+      reporting_tests:
         required: true
         type: boolean
       endpoint:
@@ -31,7 +34,8 @@ jobs:
     # yamllint disable-line rule:line-length
     uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@main
     with:
-      cross_service_tests: ${{ inputs.cross_service_tests }}
+      fhir_api_tests: ${{ inputs.fhir_api_tests }}
+      reporting_tests: ${{ inputs.reporting_tests }}
       github_ref: ${{ inputs.github_ref }}
       endpoint: ${{ inputs.endpoint }}
     secrets:

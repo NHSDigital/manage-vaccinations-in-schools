@@ -28,7 +28,8 @@ jobs:
     uses: ./.github/workflows/call-end-to-end-tests.yml
     secrets: inherit
     with:
-      cross_service_tests: true
+      fhir_api_tests: true
+      reporting_tests: true
       endpoint: https://qa.mavistesting.com
       github_ref: main
   slack-notification:

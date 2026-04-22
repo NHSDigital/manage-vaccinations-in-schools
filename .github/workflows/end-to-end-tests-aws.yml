@@ -349,7 +349,8 @@ jobs:
       contents: write
       id-token: write
     with:
-      cross_service_tests: false
+      fhir_api_tests: false
+      reporting_tests: true
       github_ref: ${{ needs.find-correct-test-branch.outputs.test_branch }}
       endpoint: http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000
   stop-docker-environment:
