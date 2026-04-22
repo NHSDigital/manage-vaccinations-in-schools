@@ -74,8 +74,8 @@ describe "Verbal consent" do
         to: @parent.email,
         template: :consent_confirmation_triage
       ).with_content_including(
-        "we need to review your answers",
-        "We’ll let you know once we’ve done this"
+        "we’ll review your answers",
+        "We’ll contact you if we need to delay or cancel the vaccination."
       )
     )
   end
