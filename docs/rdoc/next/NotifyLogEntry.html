@@ -672,7 +672,7 @@ template_id     :uuid             not null</pre>
 
 <pre>fk_rails_...  (consent_form_id =&gt; consent_forms.id)
 fk_rails_...  (parent_id =&gt; parents.id) ON DELETE =&gt; nullify
-fk_rails_...  (patient_id =&gt; patients.id)
+fk_rails_...  (patient_id =&gt; patients.id) ON DELETE =&gt; cascade
 fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
 
   </section>

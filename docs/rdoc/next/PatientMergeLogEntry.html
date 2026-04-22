@@ -598,7 +598,7 @@ user_id                   :bigint</pre>
 
 <p>Foreign Keys</p>
 
-<pre>fk_rails_...  (patient_id =&gt; patients.id)
+<pre>fk_rails_...  (patient_id =&gt; patients.id) ON DELETE =&gt; cascade
 fk_rails_...  (user_id =&gt; users.id)</pre>
 
   </section>
