@@ -31,7 +31,7 @@
 #
 #  fk_rails_...  (consent_form_id => consent_forms.id)
 #  fk_rails_...  (parent_id => parents.id) ON DELETE => nullify
-#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #  fk_rails_...  (sent_by_user_id => users.id)
 #
 class NotifyLogEntry < ApplicationRecord

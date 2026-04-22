@@ -19,7 +19,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #
 class PatientProgrammeVaccinationsSearch < ApplicationRecord
   include BelongsToProgramme

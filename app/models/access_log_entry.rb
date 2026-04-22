@@ -20,7 +20,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (user_id => users.id)
 #
 class AccessLogEntry < ApplicationRecord

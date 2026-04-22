@@ -21,7 +21,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #
 class PDSSearchResult < ApplicationRecord
   belongs_to :patient

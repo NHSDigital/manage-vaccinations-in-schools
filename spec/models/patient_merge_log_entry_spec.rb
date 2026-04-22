@@ -21,7 +21,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #  fk_rails_...  (user_id => users.id)
 #
 describe PatientMergeLogEntry do
