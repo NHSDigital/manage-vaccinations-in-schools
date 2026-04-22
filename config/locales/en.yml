@@ -1114,7 +1114,9 @@ en:
       hint:
         existing:
           apply: The uploaded record will replace the existing record
-          discard: The existing record will be kept and the uploaded record will be deleted
+          discard: |
+            The existing record will be kept and the uploaded record, including its parent details,
+            will be deleted
           keep_both: The existing record will stay in Mavis and the uploaded record will be added
         archived:
           apply: >-

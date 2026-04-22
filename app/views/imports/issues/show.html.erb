@@ -6,7 +6,7 @@
                                         ]) %>
 <% end %>
 
-<% title = "Uploaded #{@type} record duplicates #{@existing_or_deleted.with_indefinite_article} record" %>
+<% title = "Uploaded record closely matches #{@existing_or_deleted.with_indefinite_article} record" %>
 
 <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
 <%= h1 title, page_title: "#{@patient.full_name} – #{title}" %>
@@ -16,7 +16,7 @@
     <%= render AppCardComponent.new(feature: true) do |c| %>
       <% c.with_heading(level: 2) { "Uploaded record" } %>
       <% if @type == "child" %>
-        <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
+        <%= render AppChildSummaryComponent.new(@patient_with_pending_changes, show_parents: true) %>
       <% else %>
         <%= render AppVaccinationRecordSummaryComponent.new(
               @vaccination_record.with_pending_changes, current_user:,
@@ -30,7 +30,7 @@
     <%= render AppCardComponent.new(feature: true) do |c| %>
       <% c.with_heading(level: 2) { "#{@existing_or_deleted.capitalize} record" } %>
       <% if @type == "child" %>
-        <%= render AppChildSummaryComponent.new(@patient) %>
+        <%= render AppChildSummaryComponent.new(@patient, show_parents: true) %>
       <% else %>
         <%= render AppVaccinationRecordSummaryComponent.new(
               @vaccination_record, current_user:, comparing: true,

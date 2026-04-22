@@ -29,6 +29,7 @@ describe "Class list imports duplicates" do
     when_i_visit_the_import_issues_page
     and_i_review_the_second_duplicate_record
     then_i_should_see_the_second_duplicate_record
+    and_i_see_parents_in_the_imported_record
 
     when_i_choose_to_keep_the_existing_record
     and_i_confirm_my_selection
@@ -270,6 +271,13 @@ describe "Class list imports duplicates" do
   def then_i_should_see_the_second_duplicate_record
     expect(page).to have_content("Full nameJONES, Sara")
     expect(page).to have_content("Full nameJONES, Sarah")
+  end
+
+  def and_i_see_parents_in_the_imported_record
+    expect(page).to have_content("First parent or guardian")
+    expect(page).to have_content("Jane Doe (mum)")
+    expect(page).to have_content("jane@example.com")
+    expect(page).to have_content("07412 345679")
   end
 
   def and_the_second_record_should_not_be_updated
