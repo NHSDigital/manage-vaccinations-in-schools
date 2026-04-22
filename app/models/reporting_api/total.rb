@@ -119,13 +119,15 @@ class ReportingAPI::Total < ApplicationRecord
       "consent_status IN (#{CONSENT_GIVEN_STATUSES.join(",")})"
     no_consent_condition =
       "consent_status IN (#{NO_CONSENT_STATUSES.join(",")})"
+    consent_no_response_condition =
+      "consent_status IN (#{CONSENT_NO_RESPONSE_STATUSES.join(",")})"
     select(
       "COUNT(DISTINCT patient_id) AS cohort",
       "COUNT(DISTINCT patient_id) FILTER (WHERE #{vaccinated_condition}) AS vaccinated",
       "COUNT(DISTINCT patient_id) FILTER (WHERE NOT (#{vaccinated_condition})) AS not_vaccinated",
       "COUNT(DISTINCT patient_id) FILTER (WHERE #{consent_given_condition}) AS consent_given",
       "COUNT(DISTINCT patient_id) FILTER (WHERE #{no_consent_condition}) AS no_consent",
-      "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_NO_RESPONSE}) AS consent_no_response",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE #{consent_no_response_condition}) AS consent_no_response",
       "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_REFUSED}) AS consent_refused",
       "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_CONFLICTS}) AS consent_conflicts"
     )

@@ -286,6 +286,77 @@ describe API::Reporting::TotalsController do
         "consent_conflicts" => 0
       )
     end
+
+    it "counts all no response consent statuses consistently in aggregate totals" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+
+      session = create(:session, team:, programmes: [programme])
+
+      no_response_patient =
+        create(:patient, session:, parents: [create(:parent)])
+      create(
+        :consent_notification,
+        :request,
+        patient: no_response_patient,
+        session:,
+        programmes: [programme]
+      )
+
+      create(:patient, session:, parents: [create(:parent, :non_contactable)])
+
+      request_scheduled_session =
+        create(
+          :session,
+          team:,
+          programmes: [programme],
+          send_consent_requests_at: Date.tomorrow
+        )
+      create(
+        :patient,
+        session: request_scheduled_session,
+        parents: [create(:parent)]
+      )
+
+      create(:patient, session:, parents: [create(:parent)])
+
+      refused_patient = create(:patient, session:, parents: [create(:parent)])
+      create(:consent, :refused, patient: refused_patient, programme:, team:)
+
+      conflict_patient = create(:patient, session:)
+      parent1 = create(:parent)
+      parent2 = create(:parent)
+      create(:parent_relationship, patient: conflict_patient, parent: parent1)
+      create(:parent_relationship, patient: conflict_patient, parent: parent2)
+      create(
+        :consent,
+        :given,
+        patient: conflict_patient,
+        programme:,
+        team:,
+        parent: parent1
+      )
+      create(
+        :consent,
+        :refused,
+        patient: conflict_patient,
+        programme:,
+        team:,
+        parent: parent2
+      )
+
+      PatientStatusUpdater.call
+
+      refresh_reporting_views!
+
+      get :index, params: { programme: "hpv" }
+
+      expect(parsed_response["no_consent"]).to eq(6)
+      expect(parsed_response["consent_refused"]).to eq(1)
+      expect(parsed_response["consent_conflicts"]).to eq(1)
+      expect(parsed_response["consent_no_response"]).to eq(4)
+    end
   end
 
   describe "#index.csv" do
