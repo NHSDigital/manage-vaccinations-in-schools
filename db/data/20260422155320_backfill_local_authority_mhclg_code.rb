@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-namespace :local_authority do
-  desc "Backfill local_authority_mhclg_code on patients (one-time)"
-  task backfill_patients: :environment do
+class BackfillLocalAuthorityMhclgCode < ActiveRecord::Migration[8.1]
+  def up
     scope = Patient.where(local_authority_mhclg_code: nil)
     total = scope.count
-    puts "Checking #{total} patients..."
+    Rails.logger.debug "Checking #{total} patients..."
 
     processed = 0
     updated = 0
@@ -26,13 +25,17 @@ namespace :local_authority do
       end
 
       if (processed % 10_000).zero?
-        puts "Processed #{processed}/#{total} (updated: #{updated})"
+        Rails.logger.debug "Processed #{processed}/#{total} (updated: #{updated})"
       end
     end
 
-    puts "Done. Processed #{processed} patients."
-    puts "  Updated: #{updated}"
-    puts "  Skipped (no postcode): #{skipped_no_postcode}"
-    puts "  Skipped (no LA match): #{skipped_no_match}"
+    Rails.logger.debug "Done. Processed #{processed} patients."
+    Rails.logger.debug "  Updated: #{updated}"
+    Rails.logger.debug "  Skipped (no postcode): #{skipped_no_postcode}"
+    Rails.logger.debug "  Skipped (no LA match): #{skipped_no_match}"
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration
   end
 end
