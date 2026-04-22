@@ -189,6 +189,21 @@ describe ImmunisationImport do
         expect(immunisation_import.errors).to include(:row_3, :row_4)
       end
     end
+
+    describe "with a row containing multiple errors" do
+      let(:file) { "invalid_with_multiple_errors_per_row.csv" }
+
+      it "aggregates the errors against the row" do
+        expect(immunisation_import).not_to be_valid
+        expect(immunisation_import.errors[:row_2][0].length).to eq(2)
+        expect(immunisation_import.errors[:row_2][0]).to include(
+          "<code>DATE_OF_VACCINATION</code>: must be in the current academic year"
+        )
+        expect(immunisation_import.errors[:row_2][0]).to include(
+          "<code>REASON_NOT_VACCINATED</code>: Enter a valid reason."
+        )
+      end
+    end
   end
 
   describe "#process!" do

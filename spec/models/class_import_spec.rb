@@ -152,6 +152,21 @@ describe ClassImport do
         )
       end
     end
+
+    describe "with a row containing multiple errors" do
+      let(:file) { "invalid_with_multiple_errors_per_row.csv" }
+
+      it "aggregates the errors against the row" do
+        expect(class_import).not_to be_valid
+        expect(class_import.errors[:row_2][0].length).to eq(2)
+        expect(class_import.errors[:row_2][0]).to include(
+          "<code>CHILD_DATE_OF_BIRTH</code>: Enter a date of birth."
+        )
+        expect(class_import.errors[:row_2][0]).to include(
+          "<code>CHILD_LAST_NAME</code>: Enter a last name."
+        )
+      end
+    end
   end
 
   describe "#process!" do
