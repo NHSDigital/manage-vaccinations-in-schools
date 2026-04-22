@@ -13,7 +13,14 @@ describe MavisCLI::Teams::SetNationalReportingCutOffDate do
 
     let(:cut_off_date) { Date.new(2026, 2, 1) }
 
-    let(:team) { create(:team, :national_reporting, workgroup: "NR-001") }
+    let(:team) do
+      create(
+        :team,
+        :national_reporting,
+        workgroup: "NR-001",
+        national_reporting_cut_off_date: nil
+      )
+    end
 
     it "sets the cut-off date" do
       expect { command }.to change {

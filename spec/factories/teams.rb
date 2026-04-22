@@ -68,6 +68,7 @@ FactoryBot.define do
       privacy_notice_url { nil }
       privacy_policy_url { nil }
 
+      national_reporting_cut_off_date { Date.new(2025, 11, 1) }
       programmes { [Programme.flu, Programme.hpv] }
     end
 
