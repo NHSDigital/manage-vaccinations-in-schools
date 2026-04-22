@@ -22,4 +22,10 @@ namespace :smoke do
       type: "gp_practice"
     )
   end
+
+  desc "Test the integration with the OS Places API by looking up a known location."
+  task os_places_api: :environment do
+    response = OrdnanceSurvey::PlacesAPI.find("The Shard, London")
+    puts "Found #{response[:results].count} results"
+  end
 end
