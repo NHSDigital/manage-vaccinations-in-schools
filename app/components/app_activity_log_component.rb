@@ -60,7 +60,14 @@ class AppActivityLogComponent < ViewComponent::Base
           :consent_form,
           :parent,
           :recorded_by,
-          patient: :parent_relationships
+          patient:
+            (
+              if Flipper.enabled?(:one_patient_per_parent)
+                :parents
+              else
+                :parent_relationships
+              end
+            )
         )
         .then do |scope|
           if programme_type

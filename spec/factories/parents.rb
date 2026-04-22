@@ -40,6 +40,8 @@ FactoryBot.define do
     type { %w[father guardian mother other].sample }
     other_name { type == "other" ? "Other" : nil }
 
+    traits_for_enum :type
+
     trait :non_contactable do
       phone { nil }
       email { nil }

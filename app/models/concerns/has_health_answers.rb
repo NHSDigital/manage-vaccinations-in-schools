@@ -27,7 +27,7 @@ module HasHealthAnswers
         parent_relationship_type
       ).capitalize
     else
-      (parent_relationship || parent).label
+      parent_relationship&.label || parent&.relationship_type_label
     end
   end
 end
