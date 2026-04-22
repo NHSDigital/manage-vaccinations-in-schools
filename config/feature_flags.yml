@@ -39,8 +39,6 @@ import_choose_academic_year: >-
 import_concurrency_per_server: >-
   Controls whether to limit the concurrency of the import jobs to be global or to be per-server.
 
-import_search_pds: Perform PDS lookups as part of the patient import processing.
-
 one_patient_per_parent: >-
   Changes the assocation between parent and patient from many-many to many-one.
 
