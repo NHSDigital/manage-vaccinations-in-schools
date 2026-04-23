@@ -37,7 +37,7 @@ RUN apt-get update -qq && \
 
 # Install JavaScript dependencies
 ARG NODE_VERSION=22.15.0
-ARG YARN_VERSION=1.22.19
+ARG YARN_VERSION=4.14.1
 ENV PATH=/usr/local/node/bin:$PATH
 RUN curl -sL --ssl https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
