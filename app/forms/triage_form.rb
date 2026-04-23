@@ -132,7 +132,8 @@ class TriageForm
         vaccination_records: [],
         parents: [],
         sessions: [],
-        consent_notifications: []
+        consent_notifications: [],
+        notify_log_entries: []
       )
   end
 

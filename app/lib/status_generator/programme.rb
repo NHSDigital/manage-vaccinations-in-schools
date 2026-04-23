@@ -18,7 +18,8 @@ class StatusGenerator::Programme
     attendance_record:,
     vaccination_records:,
     parents:,
-    consent_notifications:
+    consent_notifications:,
+    notify_log_entries:
   )
     @programme_type = programme_type
     @academic_year = academic_year
@@ -31,6 +32,7 @@ class StatusGenerator::Programme
     @parents = parents
     @consent_notifications =
       find_matching_consent_notifications(consent_notifications)
+    @notify_log_entries = notify_log_entries
 
     @vaccination_criteria =
       VaccinationCriteria.new(
@@ -176,7 +178,8 @@ class StatusGenerator::Programme
               :attendance_record,
               :vaccination_criteria,
               :parents,
-              :consent_notifications
+              :consent_notifications,
+              :notify_log_entries
 
   delegate :vaccinated?,
            :vaccinated_vaccination_record,
@@ -237,7 +240,7 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_consent_request_failed?
-    false # TODO: Implement this status.
+    is_eligible? && consent_status == :request_failed
   end
 
   def should_be_needs_consent_request_scheduled?
@@ -309,7 +312,8 @@ class StatusGenerator::Programme
         vaccination_records:,
         parents:,
         sessions:,
-        consent_notifications:
+        consent_notifications:,
+        notify_log_entries:
       )
   end
 
@@ -324,7 +328,8 @@ class StatusGenerator::Programme
         vaccination_records:,
         parents:,
         sessions:,
-        consent_notifications:
+        consent_notifications:,
+        notify_log_entries:
       )
   end
 

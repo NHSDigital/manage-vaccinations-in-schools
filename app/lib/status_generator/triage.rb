@@ -10,7 +10,8 @@ class StatusGenerator::Triage
     vaccination_records:,
     parents:,
     sessions:,
-    consent_notifications:
+    consent_notifications:,
+    notify_log_entries:
   )
     @programme_type = programme_type
     @academic_year = academic_year
@@ -21,6 +22,7 @@ class StatusGenerator::Triage
     @parents = parents
     @sessions = sessions
     @consent_notifications = consent_notifications
+    @notify_log_entries = notify_log_entries
   end
 
   def programme
@@ -86,7 +88,8 @@ class StatusGenerator::Triage
               :vaccination_records,
               :parents,
               :sessions,
-              :consent_notifications
+              :consent_notifications,
+              :notify_log_entries
 
   def vaccinated?
     return @vaccinated if defined?(@vaccinated)
@@ -141,7 +144,8 @@ class StatusGenerator::Triage
         vaccination_records:,
         parents:,
         sessions:,
-        consent_notifications:
+        consent_notifications:,
+        notify_log_entries:
       )
   end
 

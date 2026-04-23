@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class AppPatientSearchFormComponent < ViewComponent::Base
-  # Remove these statuses once implemented.
-  HIDDEN_PROGRAMME_STATUSES = %w[needs_consent_request_failed].freeze
-
   def initialize(
     form,
     url:,
@@ -25,7 +22,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
     @programmes = programmes
     @patient_specific_direction_statuses = patient_specific_direction_statuses
-    @programme_statuses = programme_statuses - HIDDEN_PROGRAMME_STATUSES
+    @programme_statuses = programme_statuses
     @registration_statuses = registration_statuses
     @year_groups = year_groups
     @heading_level = heading_level

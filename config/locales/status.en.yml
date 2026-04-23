@@ -21,6 +21,7 @@ en:
         no_contact_details: No contact details
         request_not_scheduled: Request not scheduled
         request_scheduled: Request scheduled
+        request_failed: Request failed
       colour:
         conflicts: orange
         follow_up_requested: orange
@@ -35,6 +36,7 @@ en:
         no_contact_details: grey
         request_not_scheduled: grey
         request_scheduled: blue
+        request_failed: red
     patient_specific_direction:
       label:
         added: PSD added

@@ -11,7 +11,9 @@ describe StatusGenerator::Consent do
       parents: patient.parents,
       sessions: [session],
       consent_notifications:
-        patient.consent_notifications.includes(session: :team_location)
+        patient.consent_notifications.includes(session: :team_location),
+      notify_log_entries:
+        patient.notify_log_entries.includes(:notify_log_entry_programmes)
     )
   end
 
@@ -60,6 +62,45 @@ describe StatusGenerator::Consent do
       let(:parents) { [] }
 
       it { should be(:no_contact_details) }
+    end
+
+    context "when the latest consent request delivery has failed" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :permanent_failure,
+          :consent_request,
+          patient:,
+          programme_types: [programme.type]
+        )
+      end
+
+      it { should be(:request_failed) }
+    end
+
+    context "when there are consent request deliveries with both failure and success" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :permanent_failure,
+          :consent_request,
+          patient:,
+          programme_types: [programme.type]
+        )
+
+        create(
+          :notify_log_entry,
+          :email,
+          :delivered,
+          :consent_request,
+          patient:,
+          programme_types: [programme.type]
+        )
+      end
+
+      it { should be(:no_response) }
     end
 
     context "with no consent" do

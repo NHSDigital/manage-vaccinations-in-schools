@@ -53,6 +53,7 @@ class PatientStatusUpdater < PatientScopedUpdater
             :vaccination_records,
             :parents,
             :consent_notifications,
+            :notify_log_entries,
             patient_locations: {
               location: [
                 { team_locations: { sessions: :session_programme_year_groups } }

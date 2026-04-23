@@ -9,7 +9,8 @@ class StatusGenerator::Consent
     vaccination_records:,
     parents:,
     sessions:,
-    consent_notifications:
+    consent_notifications:,
+    notify_log_entries:
   )
     @programme_type = programme_type
     @academic_year = academic_year
@@ -19,6 +20,7 @@ class StatusGenerator::Consent
     @parents = parents
     @sessions = sessions
     @consent_notifications = consent_notifications
+    @notify_log_entries = notify_log_entries
   end
 
   def programme
@@ -40,6 +42,8 @@ class StatusGenerator::Consent
       :request_scheduled
     elsif status_should_be_request_not_scheduled?
       :request_not_scheduled
+    elsif status_should_be_request_failed?
+      :request_failed
     elsif status_should_be_no_response?
       :no_response
     else
@@ -72,7 +76,8 @@ class StatusGenerator::Consent
               :vaccination_records,
               :parents,
               :sessions,
-              :consent_notifications
+              :consent_notifications,
+              :notify_log_entries
 
   def vaccinated?
     return @vaccinated if defined?(@vaccinated)
@@ -155,6 +160,13 @@ class StatusGenerator::Consent
       (sessions.empty? || sessions.any? { consent_request_not_scheduled?(it) })
   end
 
+  def status_should_be_request_failed?
+    relevant_entries = notify_log_entries.select { relevant_notify_entry?(it) }
+
+    relevant_entries.present? &&
+      relevant_entries.all? { it.delivery_status.to_s.include?("failure") }
+  end
+
   def agreed_vaccine_methods
     @agreed_vaccine_methods ||=
       consents_for_status.map(&:vaccine_methods).inject(&:intersection)
@@ -202,5 +214,19 @@ class StatusGenerator::Consent
   def consent_request_not_scheduled?(session)
     send_at = session.send_consent_requests_at
     send_at.nil? || send_at < Time.current
+  end
+
+  def relevant_notify_entry?(entry)
+    date_range = academic_year.to_academic_year_date_range
+
+    entry.patient_id == patient.id &&
+      date_range.cover?(entry.created_at.to_date) &&
+      notify_log_entry_matches_programme_type?(entry)
+  end
+
+  def notify_log_entry_matches_programme_type?(entry)
+    entry.notify_log_entry_programmes.any? do |programme|
+      programme.programme_type == programme_type
+    end
   end
 end

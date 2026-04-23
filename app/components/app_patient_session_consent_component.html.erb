@@ -25,6 +25,8 @@
       <p>No consent request is scheduled to be sent because the child has not been added to a scheduled session.</p>
     <% elsif consent_status_value == :request_scheduled %>
       <p>A consent request will be sent on <%= session.send_consent_requests_at.to_fs(:long) %>.</p>
+    <% elsif consent_status_value == :request_failed %>
+      <p>The consent request has failed to be delivered.</p>
     <% end %>
 
     <div class="nhsuk-button-group">

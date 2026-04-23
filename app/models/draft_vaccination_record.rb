@@ -354,7 +354,8 @@ class DraftVaccinationRecord
         vaccination_records: [],
         parents: [],
         sessions: [],
-        consent_notifications: []
+        consent_notifications: [],
+        notify_log_entries: []
       )
 
     triage_generator =
@@ -367,7 +368,8 @@ class DraftVaccinationRecord
         vaccination_records: [],
         parents: [],
         sessions: [],
-        consent_notifications: []
+        consent_notifications: [],
+        notify_log_entries: []
       )
 
     approved_vaccine_methods =

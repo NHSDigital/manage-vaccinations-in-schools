@@ -87,7 +87,8 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         vaccination_records:,
         parents:,
         sessions: [session],
-        consent_notifications:
+        consent_notifications:,
+        notify_log_entries:
       )
   end
 
@@ -101,7 +102,8 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         vaccination_records:,
         parents:,
         sessions: [session],
-        consent_notifications:
+        consent_notifications:,
+        notify_log_entries:
       )
   end
 
@@ -137,5 +139,12 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
       .request
       .has_all_programmes_of([programme])
       .for_academic_year(academic_year)
+  end
+
+  def notify_log_entries
+    patient
+      .notify_log_entries
+      .includes(:notify_log_entry_programmes)
+      .for_programme_type(programme_type)
   end
 end

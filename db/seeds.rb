@@ -158,6 +158,7 @@ def create_session(
       ]
 
       traits << :partially_vaccinated_triage_needed if programme.td_ipv?
+      traits << :needs_consent_request_failed unless in_the_future
 
       traits.each do |trait|
         patient =

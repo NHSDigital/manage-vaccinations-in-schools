@@ -11,7 +11,8 @@ describe StatusGenerator::Triage do
       vaccination_records: patient.vaccination_records,
       parents: patient.parents,
       sessions: [],
-      consent_notifications: patient.consent_notifications.request
+      consent_notifications: patient.consent_notifications.request,
+      notify_log_entries: patient.notify_log_entries
     )
   end
 

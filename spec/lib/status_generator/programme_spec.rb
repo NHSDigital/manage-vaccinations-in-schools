@@ -19,7 +19,9 @@ describe StatusGenerator::Programme do
       vaccination_records: patient.vaccination_records.order_by_performed_at,
       parents: patient.parents,
       consent_notifications:
-        patient.consent_notifications.includes(session: :team_location)
+        patient.consent_notifications.includes(session: :team_location),
+      notify_log_entries:
+        patient.notify_log_entries.includes(:notify_log_entry_programmes)
     )
   end
 
@@ -411,6 +413,22 @@ describe StatusGenerator::Programme do
       before { ConsentNotification.delete_all }
 
       its(:status) { should be(:needs_consent_request_not_scheduled) }
+    end
+
+    context "when the consent request delivery has failed" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :permanent_failure,
+          :consent_request,
+          patient:,
+          programme_types: [programme.type]
+        )
+      end
+
+      its(:consent_status) { should be(:request_failed) }
+      its(:status) { should be(:needs_consent_request_failed) }
     end
 
     context "when the patient only has a generic clinic location" do

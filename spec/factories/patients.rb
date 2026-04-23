@@ -273,6 +273,29 @@ FactoryBot.define do
       end
     end
 
+    trait :needs_consent_request_failed do
+      programme_statuses do
+        programmes.map do |programme|
+          create(
+            :notify_log_entry,
+            :email,
+            :consent_request,
+            :technical_failure,
+            patient: instance,
+            parent: instance.parents.first,
+            programme_types: [programme.type]
+          )
+
+          association(
+            :patient_programme_status,
+            :needs_consent_request_failed,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_given_triage_not_needed do
       consents do
         programmes.map do |programme|
