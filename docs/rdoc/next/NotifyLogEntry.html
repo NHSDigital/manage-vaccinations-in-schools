@@ -565,25 +565,6 @@
   
 
   
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-class-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Class Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-c-purpose_for_template_name">purpose_for_template_name</a></li>
-
-      </ul>
-    </details>
-  </div>
-
 
 
   <div class="nav-section">
@@ -647,7 +628,7 @@
 <pre>id              :bigint           not null, primary key
 body            :text
 delivery_status :integer          default(&quot;sending&quot;), not null
-purpose         :integer
+purpose         :integer          not null
 recipient       :string           not null
 subject         :text
 type            :integer          not null
@@ -709,86 +690,6 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
 
 
 
-     <section id="public-class-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
-       </header>
-
-
-      <div id="method-c-purpose_for_template_name" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-c-purpose_for_template_name" title="Link to this method">
-                <span class="method-name">purpose_for_template_name</span>
-                <span class="method-args">(template_name_sym)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="purpose_for_template_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 161</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">purpose_for_template_name</span>(<span class="ruby-identifier">template_name_sym</span>)
-  <span class="ruby-identifier">name</span> = <span class="ruby-identifier">template_name_sym</span>.<span class="ruby-identifier">to_s</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;consent&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;request&quot;</span>)
-    <span class="ruby-value">:consent_request</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;consent&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;reminder&quot;</span>)
-    <span class="ruby-value">:consent_reminder</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;consent_confirmation&quot;</span>)
-    <span class="ruby-value">:consent_confirmation</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;consent&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;warning&quot;</span>)
-    <span class="ruby-value">:consent_warning</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;clinic&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;invitation&quot;</span>)
-    <span class="ruby-value">:clinic_invitation</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;session_school_reminder&quot;</span>)
-    <span class="ruby-value">:session_reminder</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;triage_vaccination_will_happen&quot;</span>)
-    <span class="ruby-value">:triage_vaccination_will_happen</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;triage_vaccination_wont_happen&quot;</span>)
-    <span class="ruby-value">:triage_vaccination_wont_happen</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;triage_vaccination_at_clinic&quot;</span>)
-    <span class="ruby-value">:triage_vaccination_at_clinic</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;triage_delay_vaccination&quot;</span>)
-    <span class="ruby-value">:triage_delay_vaccination</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;vaccination_administered&quot;</span>)
-    <span class="ruby-value">:vaccination_administered</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;vaccination_already_had&quot;</span>)
-    <span class="ruby-value">:vaccination_already_had</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;vaccination_not_administered&quot;</span>)
-    <span class="ruby-value">:vaccination_not_administered</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;vaccination_deleted&quot;</span>)
-    <span class="ruby-value">:vaccination_deleted</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
-
 
 
 
@@ -820,42 +721,8 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="programmes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 159</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 160</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes</span> = <span class="ruby-identifier">notify_log_entry_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme</span>)
-
-  <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">purpose_for_template_name</span>(<span class="ruby-identifier">template_name_sym</span>)
-    <span class="ruby-identifier">name</span> = <span class="ruby-identifier">template_name_sym</span>.<span class="ruby-identifier">to_s</span>
-
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;consent&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;request&quot;</span>)
-      <span class="ruby-value">:consent_request</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;consent&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;reminder&quot;</span>)
-      <span class="ruby-value">:consent_reminder</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;consent_confirmation&quot;</span>)
-      <span class="ruby-value">:consent_confirmation</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;consent&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;warning&quot;</span>)
-      <span class="ruby-value">:consent_warning</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;clinic&quot;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;invitation&quot;</span>)
-      <span class="ruby-value">:clinic_invitation</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;session_school_reminder&quot;</span>)
-      <span class="ruby-value">:session_reminder</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;triage_vaccination_will_happen&quot;</span>)
-      <span class="ruby-value">:triage_vaccination_will_happen</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;triage_vaccination_wont_happen&quot;</span>)
-      <span class="ruby-value">:triage_vaccination_wont_happen</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;triage_vaccination_at_clinic&quot;</span>)
-      <span class="ruby-value">:triage_vaccination_at_clinic</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;triage_delay_vaccination&quot;</span>)
-      <span class="ruby-value">:triage_delay_vaccination</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;vaccination_administered&quot;</span>)
-      <span class="ruby-value">:vaccination_administered</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;vaccination_already_had&quot;</span>)
-      <span class="ruby-value">:vaccination_already_had</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;vaccination_not_administered&quot;</span>)
-      <span class="ruby-value">:vaccination_not_administered</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;vaccination_deleted&quot;</span>)
-      <span class="ruby-value">:vaccination_deleted</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">private</span>
 
@@ -904,7 +771,7 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="template_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 197</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_name</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">email?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">sms?</span>
 
@@ -949,7 +816,7 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="title-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 154</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 155</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">title</span>
   <span class="ruby-identifier">template_name</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">humanize</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
     <span class="ruby-node">&quot;Unknown #{human_enum_name(:type)}&quot;</span>

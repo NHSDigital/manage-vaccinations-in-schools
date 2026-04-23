@@ -545,6 +545,28 @@
 
 
   
+<div id="includes-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-includes"></use></svg>
+      </span>
+      <span class="nav-section-title">Included Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="nav-list">
+
+
+      <li><span class="include">ActiveModel::Model</span></li>
+
+
+    </ul>
+  </details>
+</div>
+
 
   
 
@@ -709,6 +731,22 @@
         </div>
       </div>
 
+      <div id="attribute-i-purpose" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-purpose" title="Link to this attribute">
+            <span class="method-name">purpose</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        
+
+        </div>
+      </div>
+
       <div id="attribute-i-subject" class="method-detail anchor-link">
         <div class="method-heading attribute-method-heading">
           <a href="#attribute-i-subject" title="Link to this attribute">
@@ -757,7 +795,7 @@
             </details>
           </div>
           <div class="method-source-code" id="all_ids-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 19</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 28</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_ids</span>(<span class="ruby-value">channel:</span>)
   <span class="ruby-identifier">local_templates</span>(<span class="ruby-identifier">channel</span>).<span class="ruby-identifier">values</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:id</span>).<span class="ruby-identifier">freeze</span>
 <span class="ruby-keyword">end</span></pre>
@@ -799,7 +837,7 @@
             </details>
           </div>
           <div class="method-source-code" id="exists-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 24</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">exists?</span>(<span class="ruby-identifier">name</span>, <span class="ruby-value">channel:</span>)
   <span class="ruby-identifier">local_templates</span>(<span class="ruby-identifier">channel</span>).<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">name</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -841,7 +879,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 5</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 14</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">name</span>, <span class="ruby-value">channel:</span>)
   <span class="ruby-identifier">local_templates</span>(<span class="ruby-identifier">channel</span>)[<span class="ruby-identifier">name</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -883,7 +921,7 @@
             </details>
           </div>
           <div class="method-source-code" id="find_by_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 9</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_by_id</span>(<span class="ruby-identifier">template_id</span>, <span class="ruby-value">channel:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">blank?</span>
 
@@ -927,13 +965,14 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 53</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 63</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">name:</span>, <span class="ruby-value">channel:</span>, <span class="ruby-value">content:</span>)
   <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-ivar">@channel</span> = <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">frontmatter</span>, <span class="ruby-ivar">@body</span> = <span class="ruby-identifier">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
   <span class="ruby-ivar">@id</span> = <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>]
   <span class="ruby-ivar">@subject</span> = <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;subject&quot;</span>].<span class="ruby-identifier">to_s</span>
+  <span class="ruby-ivar">@purpose</span> = <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;purpose&quot;</span>]&amp;.<span class="ruby-identifier">to_sym</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -987,7 +1026,7 @@
             </details>
           </div>
           <div class="method-source-code" id="render-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 61</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>(<span class="ruby-identifier">personalisation</span>)
   <span class="ruby-identifier">ctx</span> = <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">instance_eval</span> { <span class="ruby-identifier">binding</span> }
   <span class="ruby-identifier">body</span> = <span class="ruby-constant">ERB</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@body</span>, <span class="ruby-value">trim_mode:</span> <span class="ruby-string">&quot;-&quot;</span>).<span class="ruby-identifier">result</span>(<span class="ruby-identifier">ctx</span>)
