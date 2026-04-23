@@ -72,6 +72,15 @@ class ReportingAPI::Total < ApplicationRecord
           )
         end
 
+  attribute :cohort, :integer
+  attribute :vaccinated, :integer
+  attribute :not_vaccinated, :integer
+  attribute :consent_given, :integer
+  attribute :no_consent, :integer
+  attribute :consent_no_response, :integer
+  attribute :consent_refused, :integer
+  attribute :consent_conflicts, :integer
+
   def readonly? = true
 
   def self.refresh!(concurrently: true)

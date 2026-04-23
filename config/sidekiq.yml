@@ -51,6 +51,10 @@
       cron: "0 * * * *"
       class: ReportingAPI::RefreshJob
       description: Refresh the reporting API materialized view data
+    reporting_api_prometheus_metrics:
+      cron: "0 * * * *"
+      class: ReportingAPI::PrometheusMetricsJob
+      description: Export reporting API totals to Prometheus (ops; set EXPORT_REPORTING_METRICS)
     remove_import_csv:
       cron: "0 1 * * *"
       class: RemoveImportCSVJob
