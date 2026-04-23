@@ -10,7 +10,7 @@
 #  updated_at         :datetime         not null
 #  created_by_user_id :bigint           not null
 #  patient_id         :bigint           not null
-#  session_id         :bigint           not null
+#  session_id         :bigint
 #
 # Indexes
 #

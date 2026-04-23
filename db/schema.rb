@@ -558,7 +558,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
     t.datetime "created_at", null: false
     t.bigint "created_by_user_id", null: false
     t.bigint "patient_id", null: false
-    t.bigint "session_id", null: false
+    t.bigint "session_id"
     t.datetime "updated_at", null: false
     t.index ["created_by_user_id"], name: "index_notes_on_created_by_user_id"
     t.index ["patient_id"], name: "index_notes_on_patient_id"
