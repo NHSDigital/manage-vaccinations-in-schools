@@ -23,7 +23,7 @@ describe "mavis reports export-automated-careplus" do
       expect(@output).to include(
         "No records found. No CarePlus report was created."
       )
-      and_no_careplus_export_is_created
+      and_no_careplus_report_is_created
       expect(File.exist?(output_path)).to be(false)
     end
   end
@@ -38,9 +38,9 @@ describe "mavis reports export-automated-careplus" do
         "--output=#{output_path}"
       )
 
-      export = CareplusExport.last
-      expect(export.vaccination_records).to include(@vaccination_record)
-      expect(export.programme_types).to eq([@programme.type])
+      report = CareplusReport.last
+      expect(report.vaccination_records).to include(@vaccination_record)
+      expect(report.programme_types).to eq([@programme.type])
       and_the_output_file_is_written
       and_the_success_message_is_displayed
     end
@@ -51,7 +51,7 @@ describe "mavis reports export-automated-careplus" do
       given_an_organisation_with_a_single_team
       given_a_vaccination_record_for_the_team
 
-      allow(CareplusExportVaccinationRecord).to receive(:insert_all!).and_raise(
+      allow(CareplusReportVaccinationRecord).to receive(:insert_all!).and_raise(
         ActiveRecord::ActiveRecordError
       )
 
@@ -63,7 +63,7 @@ describe "mavis reports export-automated-careplus" do
           )
         end
       }.to raise_error(ActiveRecord::ActiveRecordError).and(
-        not_change(CareplusExport, :count)
+        not_change(CareplusReport, :count)
       )
     end
   end
@@ -76,7 +76,7 @@ describe "mavis reports export-automated-careplus" do
       then_the_error_output_includes(
         "Could not find organisation with ODS code 'UNKNOWN'"
       )
-      and_no_careplus_export_is_created
+      and_no_careplus_report_is_created
     end
   end
 
@@ -88,7 +88,7 @@ describe "mavis reports export-automated-careplus" do
         "--ods_code=#{@organisation.ods_code}"
       )
       then_the_error_output_includes("has multiple teams")
-      and_no_careplus_export_is_created
+      and_no_careplus_report_is_created
     end
   end
 
@@ -102,7 +102,7 @@ describe "mavis reports export-automated-careplus" do
         "--workgroup=#{@team.workgroup}",
         "--output=#{output_path}"
       )
-      then_a_careplus_export_is_created_with(team: @team)
+      then_a_careplus_report_is_created_with(team: @team)
     end
   end
 
@@ -123,7 +123,7 @@ describe "mavis reports export-automated-careplus" do
         "--academic_year=2024",
         "--output=#{output_path}"
       )
-      then_a_careplus_export_is_created_with(academic_year: 2024)
+      then_a_careplus_report_is_created_with(academic_year: 2024)
     end
   end
 
@@ -135,7 +135,7 @@ describe "mavis reports export-automated-careplus" do
         "--ods_code=#{@organisation.ods_code}"
       )
       then_the_error_output_includes("does not have CarePlus enabled")
-      and_no_careplus_export_is_created
+      and_no_careplus_report_is_created
     end
   end
 
@@ -195,8 +195,8 @@ describe "mavis reports export-automated-careplus" do
     @error = capture_error { command(*args) }
   end
 
-  def then_a_careplus_export_is_created_with(**kwargs)
-    expect(CareplusExport.last).to have_attributes(**kwargs)
+  def then_a_careplus_report_is_created_with(**kwargs)
+    expect(CareplusReport.last).to have_attributes(**kwargs)
   end
 
   def and_the_output_file_is_written
@@ -211,7 +211,7 @@ describe "mavis reports export-automated-careplus" do
     expect(@error).to include(message)
   end
 
-  def and_no_careplus_export_is_created
-    expect(CareplusExport.count).to eq(0)
+  def and_no_careplus_report_is_created
+    expect(CareplusReport.count).to eq(0)
   end
 end

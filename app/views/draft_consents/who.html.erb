@@ -2,43 +2,19 @@
   <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<% page_title = "Who are you trying to get consent from?" %>
-
-<%= h1 page_title: do %>
-  <span class="nhsuk-caption-l">
-    <%= @patient.full_name %>
-  </span>
-  <%= page_title %>
-<% end %>
-
-<% gillick_competent = @patient.gillick_assessments.order(created_at: :desc).for_session(@session).for_programme(@programme)&.first&.gillick_competent? %>
+<% legend = "Who are you trying to get consent from?" %>
+<% content_for :page_title, legend %>
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
   <%= f.mavis_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset(:new_or_existing_contact, legend: nil) do %>
-    <% if gillick_competent %>
-      <%= f.govuk_radio_button :new_or_existing_contact, "patient",
-                               label: { text: "Child (Gillick competent)" },
-                               link_errors: true %>
-    <% end %>
-
-    <% if @parent_options.present? %>
-      <% @parent_options.each.with_index do |parent_relationship, i| %>
-        <% parent = parent_relationship.parent %>
-        <%= f.govuk_radio_button :new_or_existing_contact, parent.id,
-                                 label: { text: parent_relationship.label_with_parent },
-                                 hint: { text: parent.contact_label },
-                                 link_errors: !gillick_competent && i == 0 %>
-      <% end %>
-
-      <%= f.govuk_radio_divider %>
-    <% end %>
-
-    <%= f.govuk_radio_button :new_or_existing_contact, "new",
-                             label: { text: "Add a new parental contact" },
-                             link_errors: !gillick_competent && @parent_options.empty? %>
-  <% end %>
+  <%= f.govuk_collection_radio_buttons :new_or_existing_contact,
+                                       @new_or_existing_contact_options,
+                                       :value,
+                                       :label,
+                                       :hint,
+                                       legend: { text: legend, tag: "h1", size: "l" },
+                                       caption: { text: @patient.full_name, size: "l" } %>
 
   <%= f.govuk_submit "Continue" %>
 <% end %>

@@ -9,17 +9,16 @@
 <%= render "schools/header" %>
 
 <% if @location.gias_school? %>
-  <%= govuk_button_link_to "Import class lists", new_school_import_path(@location), secondary: true %>
+  <%= render AppActionLinkComponent.new(
+        href: new_school_import_path(@location),
+        text: "Import class lists",
+      ) %>
 <% elsif @location.generic_school? %>
-  <div class="nhsuk-button-group">
-    <%= govuk_button_link_to "Send clinic invitations",
-                             edit_school_invite_to_clinic_path(@location),
-                             secondary: true %>
-
-    <%= govuk_button_link_to "Download offline spreadsheet",
-                             url_for(path_params: request.path_parameters, params: request.query_parameters, format: :xlsx),
-                             secondary: true %>
-  </div>
+  <%= render AppActionLinkComponent.new(
+        href: edit_school_invite_to_clinic_path(@location),
+        text: "Send clinic invitations",
+        class: "nhsuk-u-margin-right-4",
+      ) %>
 <% end %>
 
 <div class="nhsuk-grid-row">
@@ -37,6 +36,10 @@
 
   <div class="app-grid-column-results">
     <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
+      <%= govuk_button_link_to "Download offline spreadsheet",
+                               url_for(path_params: request.path_parameters, params: request.query_parameters, format: :xlsx),
+                               secondary: true %>
+
       <% @patients.each do |patient| %>
         <%= render AppPatientSearchResultCardComponent.new(
               patient,

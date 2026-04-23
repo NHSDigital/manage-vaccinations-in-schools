@@ -18,8 +18,8 @@ jobs:
       cancel-in-progress: true
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ruby/setup-ruby@60ecfba8750476ff216b59eee3b88218bb5111cc # v1.303.0
         with:
           bundler-cache: true
 
@@ -27,7 +27,7 @@ jobs:
         run: bundle exec rake rdoc:generate
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4.8.0
         with:
           branch: gh-pages
           folder: docs/rdoc

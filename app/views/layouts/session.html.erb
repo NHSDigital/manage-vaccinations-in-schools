@@ -1,21 +1,21 @@
 <% content_for :main_content do %>
-  <%= render "sessions/header" %>
+  <main id="main-content">
+    <%= render "sessions/header" %>
 
-  <div class="nhsuk-width-container">
-    <%= yield :navigation %>
+    <div class="nhsuk-width-container">
+      <div class="nhsuk-main-wrapper nhsuk-main-wrapper--s">
+        <%= yield :navigation %>
 
-    <div class="nhsuk-main-wrapper">
-      <%= render(AppFlashMessageComponent.new(flash: flash)) %>
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-full">
+            <%= yield :before_content %>
 
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          <%= yield :before_content %>
-
-          <%= yield %>
+            <%= yield %>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 <% end %>
 
 <%= render template: "layouts/application" %>

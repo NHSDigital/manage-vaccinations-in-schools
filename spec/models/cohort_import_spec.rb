@@ -34,50 +34,29 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) { create(:cohort_import, csv:, team:) }
+  subject(:cohort_import) do
+    create(:cohort_import, csv_data:, team:, uploaded_csv_file:)
+  end
 
   let(:programmes) { [Programme.hpv] }
   let(:team) { create(:team, programmes:) }
 
   let(:file) { "valid.csv" }
-  let(:csv) { fixture_file_upload("cohort_import/#{file}") }
-  let(:academic_year) { AcademicYear.current }
+  let(:csv_source) { file_fixture("cohort_import/#{file}") }
+  let(:csv_data) { csv_source.read }
+  # Used by shared examples in CSVImportable to test setting csv from an uploaded file
+  let(:uploaded_csv_file) { nil }
 
   # Ensure location URN matches the URN in our fixture files
   let!(:location) { create(:gias_school, urn: "123456", team:) } # rubocop:disable RSpec/LetSetup
 
+  # This is used by validation tests in the CSFVImportable shared specs.
+  let(:unsaved_import) { build(:cohort_import, csv_data:, team:) }
+
   it_behaves_like "a CSVImportable model"
 
-  describe "#load_data!" do
-    subject(:load_data!) { cohort_import.load_data! }
-
-    before { load_data! }
-
-    describe "with malformed CSV" do
-      let(:file) { "malformed.csv" }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-        expect(cohort_import.errors[:csv]).to include(/correct format/)
-      end
-    end
-
-    describe "with too many rows" do
-      let(:file) { "valid.csv" }
-
-      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-        expect(cohort_import.errors[:csv]).to include(/less than 2 rows/)
-      end
-    end
-  end
-
   describe "#parse_rows!" do
-    subject(:parse_rows!) { cohort_import.parse_rows! }
-
-    before { parse_rows! }
+    before { cohort_import.parse_rows! }
 
     describe "with invalid fields" do
       let(:file) { "invalid_fields.csv" }
@@ -153,33 +132,9 @@ describe CohortImport do
         expect(cohort_import.errors.to_a[0]).to start_with("Row 2")
       end
     end
-
-    describe "with a valid file using ISO-8859-1 encoding" do
-      let(:file) { "valid_iso_8859_1_encoding.csv" }
-
-      let(:location) do
-        Location.find_by_urn_and_site("120026") ||
-          create(:gias_school, urn: "120026", team:)
-      end
-
-      it "is valid" do
-        expect(cohort_import).to be_valid
-        expect(cohort_import.rows.count).to eq(16)
-      end
-    end
-
-    describe "with an invalid file using ISO-8859-1 encoding" do
-      let(:file) { "invalid_iso_8859_1_encoding.csv" }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-      end
-    end
   end
 
   describe "#process!" do
-    subject(:process!) { cohort_import.process! }
-
     let(:configured_job) { instance_double(ActiveJob::ConfiguredJob) }
     let(:file) { "valid.csv" }
 
@@ -188,25 +143,28 @@ describe CohortImport do
         queue: :imports
       ).and_return(configured_job)
       allow(configured_job).to receive(:perform_later)
+
+      cohort_import.parse_rows!
     end
 
-    context "when import_search_pds flag is enabled" do
-      before { Flipper.enable(:import_search_pds) }
-
-      after { Flipper.disable(:import_search_pds) }
+    context "when pds_search_during_import flag is enabled" do
+      before do
+        Flipper.enable(:pds)
+        Flipper.enable(:pds_search_during_import)
+      end
 
       it "enqueues PDSCascadingSearchJob for each changeset" do
-        process!
+        cohort_import.process!
 
         expect(configured_job).to have_received(:perform_later).exactly(3).times
       end
     end
 
-    context "when import_search_pds flag is disabled" do
-      before { Flipper.disable(:import_search_pds) }
+    context "when pds_search_during_import flag is disabled" do
+      before { Flipper.disable(:pds_search_during_import) }
 
       it "enqueues ReviewPatientChangesetJob for each changeset" do
-        expect { process! }.to have_enqueued_job(
+        expect { cohort_import.process! }.to have_enqueued_job(
           ReviewPatientChangesetJob
         ).exactly(3).times
       end

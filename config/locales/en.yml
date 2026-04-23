@@ -334,13 +334,13 @@ en:
               blank: Choose a programme
   activerecord:
     attributes:
-      careplus_export:
+      careplus_report:
         statuses:
           pending: Pending
           sending: Sending
           sent: Sent
           failed: Failed
-      careplus_export_vaccination_record:
+      careplus_report_vaccination_record:
         change_types:
           created: Created
           updated: Updated
@@ -518,7 +518,7 @@ en:
               taken: This batch expiry date already exists for this batch number
             number:
               blank: Enter a batch number
-        careplus_export:
+        careplus_report:
           attributes:
             academic_year:
               blank: Enter an academic year
@@ -532,7 +532,7 @@ en:
               blank: Enter a scheduled date
             status:
               inclusion: Choose a status
-        careplus_export_vaccination_record:
+        careplus_report_vaccination_record:
           attributes:
             change_type:
               inclusion: Choose a change type

@@ -41,7 +41,7 @@ jobs:
         steps.check-prod-image.outputs.ops-build-needed }}
     steps:
       - name: Configure AWS Dev Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GithubDeployECSService
           aws-region: eu-west-2
@@ -57,7 +57,7 @@ jobs:
           fi
       - name: Configure AWS Production credentials
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: arn:aws:iam::820242920762:role/GithubDeployECSService
           aws-region: eu-west-2
@@ -102,25 +102,25 @@ jobs:
         aws-role: ${{ fromJSON(needs.define-matrix.outputs.aws-roles) }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ env.git_ref }}
       - name: Write build SHA
         run: git rev-parse HEAD > public/sha
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
         with:
           role-to-assume: ${{ matrix.aws-role }}
           aws-region: eu-west-2
       - name: Login to ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@376925c9d111252e87ae59691e5a442dd100ef6a # v2.1.3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
         # yamllint disable rule:line-length
       - name: Build and push webapp image
         if: needs.check-image-presence.outputs.webapp-build-needed == 'true'
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
         with:
           context: .
           push: true
@@ -132,7 +132,7 @@ jobs:
             }}/mavis/webapp:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
       - name: Build and push ops image
         if: needs.check-image-presence.outputs.ops-build-needed == 'true'
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
         with:
           context: .
           file: ops.Dockerfile

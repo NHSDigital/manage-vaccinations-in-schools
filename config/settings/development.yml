@@ -18,8 +18,6 @@ nhs_api:
   disable_authentication: true
 
 pds:
-  enabled: false
-  enqueue_bulk_updates: false
   rate_limit_per_second: 5
 
 splunk:
@@ -28,3 +26,6 @@ splunk:
 reporting_api:
   client_app:
     root_url: http://localhost:4001
+
+careplus:
+  base_url: http://localhost:8080

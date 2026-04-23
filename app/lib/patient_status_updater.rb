@@ -42,16 +42,24 @@ class PatientStatusUpdater < PatientScopedUpdater
 
     merge_patient_scope(Patient::ProgrammeStatus)
       .where(academic_year: academic_years)
-      .includes(
-        :attendance_record,
-        :consents,
-        :patient,
-        :patient_locations,
-        :triages,
-        :vaccination_records,
-        :parents
-      )
-      .find_in_batches do |batch|
+      .in_batches do |relation|
+        batch =
+          relation.includes(
+            :attendance_record,
+            :consents,
+            :patient,
+            :patient_locations,
+            :triages,
+            :vaccination_records,
+            :parents,
+            :consent_notifications,
+            patient_locations: {
+              location: [
+                { team_locations: { sessions: :session_programme_year_groups } }
+              ]
+            }
+          ).to_a
+
         batch.each(&:assign)
 
         Patient::ProgrammeStatus.import!(
@@ -84,8 +92,15 @@ class PatientStatusUpdater < PatientScopedUpdater
     merge_patient_scope(Patient::RegistrationStatus)
       .joins(session: :team_location)
       .where(team_location: { academic_year: academic_years })
-      .includes(:attendance_records, :patient, :session, :vaccination_records)
-      .find_in_batches do |batch|
+      .in_batches do |relation|
+        batch =
+          relation.includes(
+            :attendance_records,
+            :patient,
+            :session,
+            :vaccination_records
+          ).to_a
+
         batch.each(&:assign_status)
 
         Patient::RegistrationStatus.import!(
@@ -96,23 +111,6 @@ class PatientStatusUpdater < PatientScopedUpdater
           }
         )
       end
-  end
-
-  def patient_statuses_to_import
-    @patient_statuses_to_import ||=
-      (patient_scope || Patient.all)
-        .pluck(:id, :birth_academic_year)
-        .flat_map do |patient_id, birth_academic_year|
-          academic_years.flat_map do |academic_year|
-            year_group = birth_academic_year.to_year_group(academic_year:)
-
-            programme_types_per_year_group
-              .fetch(year_group, [])
-              .map do |programme_type|
-                [patient_id, programme_type, academic_year]
-              end
-          end
-        end
   end
 
   def programme_statuses_to_import
@@ -153,19 +151,6 @@ class PatientStatusUpdater < PatientScopedUpdater
       end
   end
 
-  def programme_types_per_year_group
-    @programme_types_per_year_group ||=
-      Location::ProgrammeYearGroup
-        .joins(:location_year_group)
-        .where(location_year_group: { academic_year: academic_years })
-        .distinct
-        .pluck(:programme_type, :"location_year_group.value")
-        .each_with_object({}) do |(programme_type, year_group), hash|
-          hash[year_group] ||= []
-          hash[year_group] << programme_type
-        end
-  end
-
   def programme_types_per_session_id_and_year_group
     @programme_types_per_session_id_and_year_group ||=
       Session::ProgrammeYearGroup
@@ -179,5 +164,24 @@ class PatientStatusUpdater < PatientScopedUpdater
           hash[session_id][year_group] ||= []
           hash[session_id][year_group] << programme_type
         end
+  end
+
+  # We preload this association separately because including it in the nested
+  # `patient_locations` preload (see includes above) caused the updater process
+  # to be killed, even with very small batches. The likely cause is memory pressure
+  # from eager loading a deeply nested association graph.
+  #
+  # Preloading it here for the distinct `Location` records in each batch keeps
+  # `StatusGenerator::Programme` query-free without incurring the cost of the
+  # larger nested preload.
+  def preload_location_programme_year_groups(batch)
+    locations = batch.flat_map(&:patient_locations).map(&:location).uniq
+
+    ActiveRecord::Associations::Preloader.new(
+      records: locations,
+      associations: {
+        location_programme_year_groups: :location_year_group
+      }
+    ).call
   end
 end

@@ -16,6 +16,11 @@ module RSpec
           end
         stub_const("ProgressBar::Output::DEFAULT_OUTPUT_STREAM", output)
 
+        # Pretend that the terminal window is wide, so table cells aren't truncated.
+        allow(TableTennis::Util::Console).to receive(:winsize).and_return(
+          [48, 220]
+        )
+
         yield
 
         output.string

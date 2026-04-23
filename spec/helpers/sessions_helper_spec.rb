@@ -50,7 +50,7 @@ describe SessionsHelper do
         create(:session, dates: [Date.new(2025, 1, 1), Date.new(2025, 1, 2)])
       end
 
-      it { should eq("1 – 2 January 2025") }
+      it { should eq("1 to 2 January 2025") }
     end
 
     context "with three dates" do
@@ -65,7 +65,7 @@ describe SessionsHelper do
         )
       end
 
-      it { should eq("1 – 3 January 2025 (3 dates)") }
+      it { should eq("1 to 3 January 2025 (3 dates)") }
     end
 
     context "with dates across multiple months" do
@@ -73,7 +73,7 @@ describe SessionsHelper do
         create(:session, dates: [Date.new(2025, 1, 31), Date.new(2025, 2, 1)])
       end
 
-      it { should eq("31 January – 1 February 2025") }
+      it { should eq("31 January to 1 February 2025") }
     end
 
     context "with dates across multiple years" do
@@ -81,7 +81,7 @@ describe SessionsHelper do
         create(:session, dates: [Date.new(2025, 12, 31), Date.new(2026, 1, 1)])
       end
 
-      it { should eq("31 December 2025 – 1 January 2026") }
+      it { should eq("31 December 2025 to 1 January 2026") }
     end
   end
 
@@ -137,25 +137,12 @@ describe SessionsHelper do
     subject(:session_title) { helper.session_title(session) }
 
     let(:programmes) { [Programme.hpv, Programme.flu] }
+    let(:session) { create(:session, :unscheduled, programmes:, location:) }
 
     context "with a generic clinic location" do
       let(:location) { create(:generic_clinic, programmes:) }
 
-      context "when unscheduled" do
-        let(:session) { create(:session, :unscheduled, programmes:, location:) }
-
-        it { should eq("Flu and HPV community clinic") }
-      end
-
-      context "when scheduled" do
-        let(:session) { create(:session, :today, programmes:, location:) }
-
-        it do
-          expect(session_title).to eq(
-            "Flu and HPV community clinic on #{Date.current.to_fs(:long)}"
-          )
-        end
-      end
+      it { should eq("Flu and HPV community clinic") }
     end
 
     context "with a school location" do
@@ -163,20 +150,29 @@ describe SessionsHelper do
         create(:gias_school, name: "Waterloo Road", programmes:)
       end
 
-      context "when unscheduled" do
-        let(:session) { create(:session, :unscheduled, programmes:, location:) }
+      it { should eq("Flu and HPV session at Waterloo Road") }
+    end
+  end
 
-        it { should eq("Flu and HPV session at Waterloo Road") }
-      end
+  describe "#session_caption" do
+    subject(:session_caption) { helper.session_caption(session) }
 
-      context "when scheduled" do
-        let(:session) { create(:session, :today, programmes:, location:) }
+    let(:programmes) { [Programme.hpv, Programme.flu] }
+    let(:location) { create(:gias_school, name: "Waterloo Road", programmes:) }
 
-        it do
-          expect(session_title).to eq(
-            "Flu and HPV session at Waterloo Road on #{Date.current.to_fs(:long)}"
-          )
-        end
+    context "when unscheduled" do
+      let(:session) { create(:session, :unscheduled, programmes:, location:) }
+
+      it { should eq("Reception and years 1 to 11") }
+    end
+
+    context "when scheduled" do
+      let(:session) { create(:session, :today, programmes:, location:) }
+
+      it do
+        expect(session_caption).to eq(
+          "#{Date.current.to_fs(:long)} – Reception and years 1 to 11"
+        )
       end
     end
   end

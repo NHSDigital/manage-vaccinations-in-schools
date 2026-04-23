@@ -23,7 +23,7 @@ class AppSessionCardComponent < ViewComponent::Base
 
   def call
     render AppCardComponent.new(link_to:, compact: true) do |card|
-      card.with_heading(level: @heading_level) { heading }
+      card.with_heading(level: @heading_level, size: "s") { heading }
       safe_join([summary_list, button_group].compact)
     end
   end

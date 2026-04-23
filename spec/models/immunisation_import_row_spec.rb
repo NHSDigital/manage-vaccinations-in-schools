@@ -446,13 +446,46 @@ describe ImmunisationImportRow do
         end
       end
 
-      context "with an invalid patient date of birth" do
+      context "with a blank patient date of birth" do
+        let(:data) { { "PERSON_DOB" => "" } }
+
+        it "has errors" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors["PERSON_DOB"]).to eq(
+            ["Enter a date of birth."]
+          )
+        end
+      end
+
+      context "with an unparseable patient date of birth" do
+        let(:data) { { "PERSON_DOB" => "not-a-date" } }
+
+        it "has errors" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors["PERSON_DOB"]).to eq(
+            ["Enter a date of birth in the correct format."]
+          )
+        end
+      end
+
+      context "with a patient date of birth in the future" do
         let(:data) { { "PERSON_DOB" => "21000101" } }
 
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors["PERSON_DOB"]).to eq(
             ["Enter a date of birth in the past."]
+          )
+        end
+      end
+
+      context "with a patient date of birth before 2000-01-01" do
+        let(:data) { { "PERSON_DOB" => "19991231" } }
+
+        it "has errors" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors["PERSON_DOB"]).to eq(
+            ["is too old to still be in school"]
           )
         end
       end

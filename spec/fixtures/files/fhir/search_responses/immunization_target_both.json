@@ -4,7 +4,7 @@
   "link": [
     {
       "relation": "self",
-      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?-date.from=2025-08-01\u0026-date.to=2025-10-01\u0026-immunization.target=FLU,HPV,MENACWY,3IN1,MMR,MMRV\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
+      "url": "https://int.api.service.nhs.uk/immunisation-fhir-api/Immunization?-date.from=2025-08-01\u0026-date.to=2025-10-01\u0026-immunization.target=FLU,HPV,MENACWY,3IN1,MMR,MMRV\u0026immunization.target=FLU,HPV,MENACWY,3IN1,MMR,MMRV\u0026patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C9449308357"
     }
   ],
   "entry": [

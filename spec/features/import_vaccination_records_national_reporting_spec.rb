@@ -270,12 +270,12 @@ describe("National reporting immunisation imports") do
 
   def and_the_newly_created_patients_should_be_archived
     new_patient = Patient.find_by(nhs_number: "9999075320")
-    expect(new_patient.archived?(team: @team)).to be true
+    expect(new_patient.archived?(team_id: @team.id)).to be true
     expect(new_patient.archive_reasons.first.type).to eq "immunisation_import"
   end
 
   def and_the_existing_patients_should_not_be_archived
-    expect(@existing_patient.archived?(team: @team)).to be false
+    expect(@existing_patient.archived?(team_id: @team.id)).to be false
   end
 
   def and_the_vaccination_records_are_sent_to_the_imms_api

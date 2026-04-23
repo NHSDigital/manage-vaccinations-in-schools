@@ -42,6 +42,27 @@ class ReportingAPI::Total < ApplicationRecord
   CONSENT_REFUSED = 2
   CONSENT_CONFLICTS = 3
   CONSENT_NOT_REQUIRED = 4
+  NO_CONTACT_DETAILS = 6
+  REQUEST_SCHEDULED = 7
+  REQUEST_NOT_SCHEDULED = 8
+
+  CONSENT_GIVEN_STATUSES = [CONSENT_GIVEN, CONSENT_NOT_REQUIRED].freeze
+
+  NO_CONSENT_STATUSES = [
+    CONSENT_NO_RESPONSE,
+    CONSENT_REFUSED,
+    CONSENT_CONFLICTS,
+    NO_CONTACT_DETAILS,
+    REQUEST_SCHEDULED,
+    REQUEST_NOT_SCHEDULED
+  ].freeze
+
+  CONSENT_NO_RESPONSE_STATUSES = [
+    CONSENT_NO_RESPONSE,
+    NO_CONTACT_DETAILS,
+    REQUEST_SCHEDULED,
+    REQUEST_NOT_SCHEDULED
+  ].freeze
 
   scope :not_archived, -> { where(is_archived: false) }
   scope :vaccinated,
@@ -70,19 +91,17 @@ class ReportingAPI::Total < ApplicationRecord
   end
 
   def self.consent_given_count
-    where(consent_status: [CONSENT_GIVEN, CONSENT_NOT_REQUIRED]).distinct.count(
-      :patient_id
-    )
+    where(consent_status: CONSENT_GIVEN_STATUSES).distinct.count(:patient_id)
   end
 
   def self.no_consent_count
-    where(
-      consent_status: [CONSENT_NO_RESPONSE, CONSENT_REFUSED, CONSENT_CONFLICTS]
-    ).distinct.count(:patient_id)
+    where(consent_status: NO_CONSENT_STATUSES).distinct.count(:patient_id)
   end
 
   def self.consent_no_response_count
-    where(consent_status: CONSENT_NO_RESPONSE).distinct.count(:patient_id)
+    where(consent_status: CONSENT_NO_RESPONSE_STATUSES).distinct.count(
+      :patient_id
+    )
   end
 
   def self.consent_refused_count
@@ -96,17 +115,19 @@ class ReportingAPI::Total < ApplicationRecord
   def self.with_aggregate_metrics
     vaccinated_condition =
       "status IN (#{VACCINATED_STATUSES.join(",")}) OR has_already_vaccinated_consent = true"
-    no_consent_condition =
-      "consent_status IN (#{CONSENT_NO_RESPONSE}, #{CONSENT_REFUSED}, #{CONSENT_CONFLICTS})"
     consent_given_condition =
-      "consent_status IN (#{CONSENT_GIVEN}, #{CONSENT_NOT_REQUIRED})"
+      "consent_status IN (#{CONSENT_GIVEN_STATUSES.join(",")})"
+    no_consent_condition =
+      "consent_status IN (#{NO_CONSENT_STATUSES.join(",")})"
+    consent_no_response_condition =
+      "consent_status IN (#{CONSENT_NO_RESPONSE_STATUSES.join(",")})"
     select(
       "COUNT(DISTINCT patient_id) AS cohort",
       "COUNT(DISTINCT patient_id) FILTER (WHERE #{vaccinated_condition}) AS vaccinated",
       "COUNT(DISTINCT patient_id) FILTER (WHERE NOT (#{vaccinated_condition})) AS not_vaccinated",
       "COUNT(DISTINCT patient_id) FILTER (WHERE #{consent_given_condition}) AS consent_given",
       "COUNT(DISTINCT patient_id) FILTER (WHERE #{no_consent_condition}) AS no_consent",
-      "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_NO_RESPONSE}) AS consent_no_response",
+      "COUNT(DISTINCT patient_id) FILTER (WHERE #{consent_no_response_condition}) AS consent_no_response",
       "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_REFUSED}) AS consent_refused",
       "COUNT(DISTINCT patient_id) FILTER (WHERE consent_status = #{CONSENT_CONFLICTS}) AS consent_conflicts"
     )

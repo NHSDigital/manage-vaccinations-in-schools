@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Parental consent create patient" do
+describe "Parental consent create patient", :pds do
   before { given_the_app_is_setup }
 
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }

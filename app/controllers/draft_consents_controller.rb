@@ -12,9 +12,9 @@ class DraftConsentsController < ApplicationController
 
   include WizardControllerConcern
 
-  before_action :set_triage_form, if: :includes_triage_step?
-  before_action :set_parent_options, if: -> { current_step == :who }
   before_action :set_back_link_path
+  before_action :set_new_or_existing_contact_options, if: :is_who_step?
+  before_action :set_triage_form, if: :includes_triage_step?
 
   def show
     authorize Consent, :edit?
@@ -213,6 +213,58 @@ class DraftConsentsController < ApplicationController
     self.steps = @draft_consent.wizard_steps
   end
 
+  def set_back_link_path
+    @back_link_path =
+      if @draft_consent.editing?
+        wizard_path("confirm")
+      elsif current_step == @draft_consent.wizard_steps.first
+        session_patient_programme_path(@session, @patient, @programme)
+      else
+        previous_wizard_path
+      end
+  end
+
+  def is_who_step? = current_step == :who
+
+  NewOrExistingContactOption = Struct.new(:value, :label, :hint)
+
+  def set_new_or_existing_contact_options
+    @new_or_existing_contact_options = []
+
+    if @patient.can_self_consent_after_gillick_assessment?(
+         location: @session.location,
+         programme_type: @programme.type
+       )
+      @new_or_existing_contact_options << NewOrExistingContactOption.new(
+        value: "patient",
+        label: "Child (Gillick competent)"
+      )
+    end
+
+    parent_relationships =
+      (
+        @patient.parent_relationships.includes(:parent) +
+          @patient
+            .consents
+            .where(programme_type: @programme.type)
+            .filter_map(&:parent_relationship)
+      ).compact.uniq.sort_by(&:label)
+
+    @new_or_existing_contact_options +=
+      parent_relationships.map do |parent_relationship|
+        NewOrExistingContactOption.new(
+          value: parent_relationship.parent.id,
+          label: parent_relationship.label_with_parent,
+          hint: parent_relationship.parent.contact_label
+        )
+      end
+
+    @new_or_existing_contact_options << NewOrExistingContactOption.new(
+      value: "new",
+      label: "Add a new parental contact"
+    )
+  end
+
   def includes_triage_step?
     current_step.in?(%i[triage confirm]) && steps.include?("triage")
   end
@@ -232,28 +284,6 @@ class DraftConsentsController < ApplicationController
           programme: @programme,
           status_option: @draft_consent.triage_status_option
         )
-      end
-  end
-
-  def set_parent_options
-    @parent_options =
-      (
-        @patient.parent_relationships.includes(:parent) +
-          @patient
-            .consents
-            .select { it.programme_type == @programme.type }
-            .filter_map(&:parent_relationship)
-      ).compact.uniq.sort_by(&:label)
-  end
-
-  def set_back_link_path
-    @back_link_path =
-      if @draft_consent.editing?
-        wizard_path("confirm")
-      elsif current_step == @draft_consent.wizard_steps.first
-        session_patient_programme_path(@session, @patient, @programme)
-      else
-        previous_wizard_path
       end
   end
 

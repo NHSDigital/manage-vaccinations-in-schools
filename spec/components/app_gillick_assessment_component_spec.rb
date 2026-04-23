@@ -15,13 +15,25 @@ describe AppGillickAssessmentComponent do
     let(:patient) { create(:patient) }
     let(:session) { create(:session, :today, programmes:) }
 
-    before { create(:gillick_assessment, :competent, patient:, session:) }
+    let(:date) { Date.current }
+
+    before do
+      create(:gillick_assessment, :competent, patient:, session:, date:)
+    end
 
     context "with a nurse user" do
       before { stub_authorization(allowed: true) }
 
-      it { should have_link("Edit Gillick competence") }
       it { should have_heading("Gillick assessment") }
+      it { should have_link("Edit Gillick competence") }
+      it { should have_content("Child assessed as Gillick competent") }
+
+      context "when the assessment is for a different day" do
+        let(:date) { Date.yesterday }
+
+        it { should have_link("Assess Gillick competence") }
+        it { should_not have_content("Child assessed as Gillick competent") }
+      end
     end
 
     context "with an admin user" do

@@ -346,7 +346,7 @@ describe PatientMerger do
 
       it "removes the archive reasons from the patient" do
         expect { call }.to change(ArchiveReason, :count).by(-1)
-        expect(patient_to_keep.archived?(team:)).to be(false)
+        expect(patient_to_keep.archived?(team_id: team.id)).to be(false)
       end
     end
 
@@ -362,7 +362,7 @@ describe PatientMerger do
 
       it "removes the archive reason from the patient" do
         expect { call }.to change(ArchiveReason, :count).by(-1)
-        expect(patient_to_keep.archived?(team:)).to be(false)
+        expect(patient_to_keep.archived?(team_id: team.id)).to be(false)
       end
     end
 
@@ -405,7 +405,7 @@ describe PatientMerger do
 
       it "keeps the archive reason on the merged patient" do
         expect { call }.to change(ArchiveReason, :count).by(-1)
-        expect(patient_to_keep.archived?(team:)).to be(true)
+        expect(patient_to_keep.archived?(team_id: team.id)).to be(true)
       end
     end
 

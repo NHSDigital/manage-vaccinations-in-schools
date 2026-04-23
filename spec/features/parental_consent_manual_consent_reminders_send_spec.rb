@@ -53,6 +53,15 @@ describe "Manual consent reminders" do
         programmes:,
         parents: [@parents[0]]
       )
+
+    create(
+      :consent_notification,
+      :request,
+      patient: @patient_with_no_response,
+      session: @session,
+      programmes:
+    )
+
     @another_patient_with_no_response =
       create(
         :patient,
@@ -61,6 +70,15 @@ describe "Manual consent reminders" do
         programmes:,
         parents: [@parents[1]]
       )
+
+    create(
+      :consent_notification,
+      :request,
+      patient: @another_patient_with_no_response,
+      session: @session,
+      programmes:
+    )
+
     @third_patient_with_a_response =
       create(
         :patient,
@@ -144,16 +162,8 @@ describe "Manual consent reminders" do
   end
 
   def and_emails_are_sent_to_parents
-    expect_email_to(
-      @parents[0].email,
-      :consent_school_initial_reminder_hpv,
-      :any
-    )
-    expect_email_to(
-      @parents[1].email,
-      :consent_school_initial_reminder_hpv,
-      :any
-    )
+    expect_email_to(@parents[0].email, :consent_school_reminder_hpv, :any)
+    expect_email_to(@parents[1].email, :consent_school_reminder_hpv, :any)
 
     expect(sms_deliveries).to include(
       matching_notify_sms(

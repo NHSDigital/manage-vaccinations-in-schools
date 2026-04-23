@@ -5,8 +5,11 @@
 # Table name: teams
 #
 #  id                              :bigint           not null, primary key
+#  careplus_namespace              :string
+#  careplus_password               :string
 #  careplus_staff_code             :string
 #  careplus_staff_type             :string
+#  careplus_username               :string
 #  careplus_venue_code             :string
 #  days_before_consent_reminders   :integer          default(7), not null
 #  days_before_consent_requests    :integer          default(21), not null
@@ -127,6 +130,66 @@ describe Team do
     end
   end
 
+  describe ".has_careplus_credentials" do
+    subject(:has_careplus_credentials) do
+      described_class.has_careplus_credentials
+    end
+
+    let!(:team_with_credentials) { create(:team, :with_careplus_enabled) }
+
+    before do
+      create(:team, :with_careplus_enabled, careplus_username: nil)
+      create(:team, :with_careplus_enabled, careplus_password: nil)
+      create(:team, :with_careplus_enabled, careplus_namespace: nil)
+    end
+
+    it "returns teams with CarePlus credentials configured" do
+      expect(has_careplus_credentials).to contain_exactly(team_with_credentials)
+    end
+  end
+
+  describe ".careplus_enabled" do
+    subject(:careplus_enabled) { described_class.careplus_enabled }
+
+    let!(:enabled_team) { create(:team, :with_careplus_enabled) }
+
+    before do
+      create(:team, :with_careplus_enabled, careplus_staff_code: nil)
+      create(:team, :with_careplus_enabled, careplus_staff_type: nil)
+      create(:team, :with_careplus_enabled, careplus_venue_code: nil)
+    end
+
+    it "returns teams with CarePlus export fields configured" do
+      expect(careplus_enabled).to contain_exactly(enabled_team)
+    end
+  end
+
+  describe ".eligible_for_automated_careplus_reports" do
+    subject(:eligible_for_automated_careplus_reports) do
+      described_class.eligible_for_automated_careplus_reports
+    end
+
+    let!(:eligible_team) { create(:team, :with_careplus_enabled) }
+
+    before do
+      create(:team, :with_careplus_enabled, careplus_username: nil)
+      create(:team, :with_careplus_enabled, careplus_password: nil)
+      create(:team, :with_careplus_enabled, careplus_namespace: nil)
+      create(
+        :team,
+        careplus_username: "careplus_user",
+        careplus_password: "careplus_password",
+        careplus_namespace: "MOCK"
+      )
+    end
+
+    it "returns teams with CarePlus export fields and credentials configured" do
+      expect(eligible_for_automated_careplus_reports).to contain_exactly(
+        eligible_team
+      )
+    end
+  end
+
   describe "#careplus_enabled?" do
     subject(:careplus_enabled?) { team.careplus_enabled? }
 
@@ -139,6 +202,39 @@ describe Team do
     context "when careplus_staff_code or careplus_staff_type are not present" do
       let(:team) do
         create(:team, careplus_staff_code: nil, careplus_staff_type: nil)
+      end
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#eligible_for_automated_careplus_reports?" do
+    subject(:eligible_for_automated_careplus_reports?) do
+      team.eligible_for_automated_careplus_reports?
+    end
+
+    context "when CarePlus export fields and credentials are configured" do
+      let(:team) { create(:team, :with_careplus_enabled) }
+
+      it { should be(true) }
+    end
+
+    context "when CarePlus credentials are missing" do
+      let(:team) do
+        create(:team, :with_careplus_enabled, careplus_username: nil)
+      end
+
+      it { should be(false) }
+    end
+
+    context "when CarePlus export fields are missing" do
+      let(:team) do
+        create(
+          :team,
+          careplus_username: "careplus_user",
+          careplus_password: "careplus_password",
+          careplus_namespace: "MOCK"
+        )
       end
 
       it { should be(false) }

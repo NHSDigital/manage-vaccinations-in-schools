@@ -1,0 +1,11 @@
+#/usr/bin/env sh
+
+set -eu
+
+bin_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+root_dir=$(CDPATH= cd -- "$bin_dir/.." && pwd)
+
+export PYTHONPATH=$root_dir/python
+
+exec python -m mavis.server "$@"
+

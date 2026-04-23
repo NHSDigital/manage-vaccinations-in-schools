@@ -2,6 +2,8 @@
 
 shared_examples_for "a CSVImportable model" do
   describe "validations" do
+    subject { unsaved_import }
+
     it { should be_valid }
 
     it { should validate_presence_of(:csv_filename) }
@@ -20,15 +22,55 @@ shared_examples_for "a CSVImportable model" do
         subject.update!(processed_at: Time.zone.now, status: :processed)
       }.to raise_error(/Count statistics must be set/)
     end
+
+    describe "with malformed CSV" do
+      let(:file) { "malformed.csv" }
+
+      it "is invalid" do
+        expect(subject).to be_invalid
+        expect(subject.errors[:csv]).to include(/correct format/)
+      end
+    end
+
+    describe "with too many rows" do
+      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
+
+      it "is invalid" do
+        expect(subject).to be_invalid
+        expect(subject.errors[:csv]).to include(/less than 2 rows/)
+      end
+    end
+
+    context "with empty CSV" do
+      let(:file) { "empty.csv" }
+
+      it "is invalid" do
+        expect(subject).to be_invalid
+        expect(subject.errors[:csv]).to include(/one record/)
+      end
+    end
   end
 
   describe "#csv=" do
+    let(:csv_data) { nil }
+    let(:uploaded_csv_file) { fixture_file_upload(csv_source) }
+
     it "sets the data" do
-      expect(subject.csv_data).not_to be_empty
+      expect(subject.csv_data).to eq uploaded_csv_file.read
     end
 
     it "sets the filename" do
-      expect(subject.csv_filename).not_to be_empty
+      expect(subject.csv_filename).to eq uploaded_csv_file.original_filename
+    end
+
+    context "with a payload with a BOM" do
+      # This requires that each test using these shared example have a file with
+      # a BOM in their fixtures directory
+      let(:file) { "valid_with_bom.csv" }
+
+      it "results in a valid import" do
+        expect(subject).to be_valid
+      end
     end
   end
 
@@ -49,8 +91,12 @@ shared_examples_for "a CSVImportable model" do
   describe "#process!" do
     let(:today) { Time.zone.local(2025, 6, 1) }
 
-    it "sets processed_at" do
-      if subject.is_a?(ImmunisationImport)
+    before { subject.parse_rows! }
+
+    # TODO: Remove if ... when ImmunisationImport's implementation has been
+    #       updated to match the others (i.e. it uses changesets)
+    if described_class <= ImmunisationImport
+      it "sets processed_at" do
         expect { travel_to(today) { subject.process! } }.to change(
           subject,
           :processed_at

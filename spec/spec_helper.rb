@@ -108,25 +108,10 @@ if Rails.env.production?
 end
 require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
-require "capybara/cuprite"
-require "capybara-screenshot/rspec"
 require "rack_session_access/capybara"
 require "console"
 
 Faker::Config.locale = "en-GB"
-
-Capybara.register_driver(:cuprite_custom) do |app|
-  Capybara::Cuprite::Driver.new(
-    app,
-    inspector: ENV["DEBUG_TESTS"],
-    js_errors: true,
-    window_size: [1200, 800],
-    process_timeout: 30
-  )
-end
-
-Capybara.asset_host = "http://localhost:4000"
-Capybara.javascript_driver = :cuprite_custom
 
 Console.logger.off!
 Capybara.server = :falcon
@@ -186,14 +171,6 @@ RSpec.configure do |config|
 
   config.filter_run_excluding :local_users
 
-  if ENV["CI"].blank?
-    begin
-      Ferrum::Browser.new
-    rescue Ferrum::BinaryNotFoundError
-      config.filter_run_excluding :js
-    end
-  end
-
   config.infer_spec_type_from_file_location!
 
   config.define_derived_metadata(file_path: %r{/spec/components/}) do |metadata|
@@ -211,6 +188,9 @@ RSpec.configure do |config|
 
   config.before(:each, :js) { WebMock.allow_net_connect! }
   config.after(:each, :js) { WebMock.disable_net_connect! }
+
+  config.before(:each, :pds) { Flipper.enable(:pds) }
+  config.after(:each, :pds) { Flipper.disable(:pds) }
 
   config.before do
     EmailDeliveryJob.deliveries.clear

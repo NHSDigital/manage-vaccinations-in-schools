@@ -4,7 +4,8 @@ hk         1.37.0
 nodejs     22.15.0
 pkl        0.31.0
 postgres   17.2
+python     3.14.4
 redis      8.2.1
-ruby       4.0.2
+ruby       4.0.3
 shellcheck 0.11.0
 yamllint   1.38.0

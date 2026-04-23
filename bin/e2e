@@ -2,11 +2,14 @@
 set -euo pipefail
 
 # Rails
-RAILS_ENV="end_to_end"
-RAILS_PORT="4100"
-HEALTH_CHECK_URL="http://localhost:${RAILS_PORT}/up"
-MAVIS_TEST_REPO="${MAVIS_TEST_REPO:-"../manage-vaccinations-in-schools-testing"}"
-PYTEST_ARGS=("-m" "not accessibility and not reporting and not imms_api and not pds_api")
+rails_port="4100"
+health_check_url="http://localhost:${rails_port}/up"
+mavis_test_repo="${mavis_test_repo:-"../manage-vaccinations-in-schools-testing"}"
+pytest_args=("-m" "not accessibility and not reporting and not imms_api and not pds_api")
+
+export RAILS_ENV="end_to_end"
+export REDIS_URL="redis://localhost:6379/2"
+export BASE_URL="http://localhost:${rails_port}"
 
 # Argument handling
 
@@ -17,7 +20,7 @@ function print_help() {
   echo "run by default."
   echo ""
   echo "The pytest CLI command defaults to:"
-  echo "  uv run pytest ${PYTEST_ARGS[*]} <pytest-target>"
+  echo "  uv run pytest ${pytest_args[*]} <pytest-target>"
   echo ""
   echo "Options:"
   echo "  --main         Force sync testing repo to latest main branch. WARNING: this"
@@ -36,35 +39,35 @@ if ! command -v uv >/dev/null 2>&1; then
   exit 1
 fi
 
-if [ ! -d "$MAVIS_TEST_REPO/.git" ]; then
-  echo "[e2e] ERROR: Testing repo not found at: $MAVIS_TEST_REPO" >&2
-  echo "      Clone the repo there or set the MAVIS_TEST_REPO" >&2
+if [ ! -d "$mavis_test_repo/.git" ]; then
+  echo "[e2e] ERROR: Testing repo not found at: $mavis_test_repo" >&2
+  echo "      Clone the repo there or set the mavis_test_repo" >&2
   echo "      environment variable to the path of your repo" >&2
   exit 1
 fi
 
 # Consume --main flag if present
-USE_MAVIS_BRANCH=false
+use_mavis_branch=false
 
 for arg in "$@"; do
   case "$arg" in
     --main)
-      USE_MAVIS_BRANCH=true
+      use_mavis_branch=true
       ;;
     -h|--help)
       print_help
       exit 0
       ;;
     *)
-      PYTEST_ARGS+=("$arg")
+      pytest_args+=("$arg")
       ;;
   esac
 done
 
 # Update mavis testing repo
-if [ "${USE_MAVIS_BRANCH:-false}" = true ]; then
+if [ "${use_mavis_branch:-false}" = true ]; then
   echo "[e2e] Using latest main branch of testing repo."
-  pushd "$MAVIS_TEST_REPO" > /dev/null
+  pushd "$mavis_test_repo" > /dev/null
 
   git fetch origin
   git checkout main
@@ -78,48 +81,48 @@ else
   echo "[e2e] Checking branch alignment with testing repo..."
 
   # Service (main) repo branch
-  MAVIS_REPO="$(git rev-parse --show-toplevel 2>/dev/null || echo "")"
-  MAVIS_BRANCH="unknown"
-  if [ -n "$MAVIS_REPO" ]; then
-    MAVIS_BRANCH="$(git -C "$MAVIS_REPO" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")"
+  mavis_repo="$(git rev-parse --show-toplevel 2>/dev/null || echo "")"
+  mavis_branch="unknown"
+  if [ -n "$mavis_repo" ]; then
+    mavis_branch="$(git -C "$mavis_repo" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")"
   fi
 
   # Testing repo branch
-  MAVIS_TEST_BRANCH="unknown"
-  if git -C "$MAVIS_TEST_REPO" rev-parse --git-dir >/dev/null 2>&1; then
-    MAVIS_TEST_BRANCH="$(git -C "$MAVIS_TEST_REPO" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")"
+  mavis_test_branch="unknown"
+  if git -C "$mavis_test_repo" rev-parse --git-dir >/dev/null 2>&1; then
+    mavis_test_branch="$(git -C "$mavis_test_repo" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")"
   fi
 
   # If testing repo is on main, warn if it's behind origin/main
-  if [ "$MAVIS_TEST_BRANCH" = "main" ]; then
+  if [ "$mavis_test_branch" = "main" ]; then
     # Fetch without failing the whole script if it goes wrong
-    git -C "$MAVIS_TEST_REPO" fetch origin main >/dev/null 2>&1 || true
+    git -C "$mavis_test_repo" fetch origin main >/dev/null 2>&1 || true
 
-    LOCAL_MAIN_SHA="$(git -C "$MAVIS_TEST_REPO" rev-parse main 2>/dev/null || echo "")"
-    REMOTE_MAIN_SHA="$(git -C "$MAVIS_TEST_REPO" rev-parse origin/main 2>/dev/null || echo "")"
+    local_main_sha="$(git -C "$mavis_test_repo" rev-parse main 2>/dev/null || echo "")"
+    remote_main_sha="$(git -C "$mavis_test_repo" rev-parse origin/main 2>/dev/null || echo "")"
 
-    if [ -n "$LOCAL_MAIN_SHA" ] && [ -n "$REMOTE_MAIN_SHA" ] && [ "$LOCAL_MAIN_SHA" != "$REMOTE_MAIN_SHA" ]; then
-      AHEAD_BEHIND="$(git -C "$MAVIS_TEST_REPO" rev-list --left-right --count main...origin/main 2>/dev/null || echo "")"
-      set -- $AHEAD_BEHIND
-      LOCAL_AHEAD="$1"
-      LOCAL_BEHIND="$2"
+    if [ -n "$local_main_sha" ] && [ -n "$remote_main_sha" ] && [ "$local_main_sha" != "$remote_main_sha" ]; then
+      ahead_behind="$(git -C "$mavis_test_repo" rev-list --left-right --count main...origin/main 2>/dev/null || echo "")"
+      set -- $ahead_behind
+      local_ahead="$1"
+      local_behind="$2"
 
       # Warn if local main differs from remote
-      if [ -n "$LOCAL_BEHIND" ] && [ "$LOCAL_BEHIND" -gt 0 ] 2>/dev/null; then
-        echo "[e2e] !!! WARNING !!! Testing repo 'main' is behind origin/main by $LOCAL_BEHIND commit(s)."
-        echo "[e2e]                 Run 'git -C \"$MAVIS_TEST_REPO\" pull --ff-only origin main' "
+      if [ -n "$local_behind" ] && [ "$local_behind" -gt 0 ] 2>/dev/null; then
+        echo "[e2e] !!! WARNING !!! Testing repo 'main' is behind origin/main by $local_behind commit(s)."
+        echo "[e2e]                 Run 'git -C \"$mavis_test_repo\" pull --ff-only origin main' "
         echo "[e2e]                 or use --main to force-sync."
-      elif [ -n "$LOCAL_AHEAD" ] && [ "$LOCAL_AHEAD" -gt 0 ] 2>/dev/null; then
-        echo "[e2e] !!! WARNING !!! Testing repo 'main' is ahead of  origin/main by $LOCAL_AHEAD commit(s)."
-        echo "[e2e]                 Run 'git -C \"$MAVIS_TEST_REPO\" pull --ff-only origin main' "
+      elif [ -n "$local_ahead" ] && [ "$local_ahead" -gt 0 ] 2>/dev/null; then
+        echo "[e2e] !!! WARNING !!! Testing repo 'main' is ahead of  origin/main by $local_ahead commit(s)."
+        echo "[e2e]                 Run 'git -C \"$mavis_test_repo\" pull --ff-only origin main' "
         echo "[e2e]                 or use --main to force-sync."
       fi
     else
       echo "[e2e] Testing repo 'main' branch is up to date with origin/main."
     fi
-  elif [ "$MAVIS_BRANCH" != "$MAVIS_TEST_BRANCH" ]; then
-      echo "[e2e] !!! WARNING !!! Service repo branch ($MAVIS_BRANCH) "
-      echo "[e2e]                 does not match testing repo branch ($MAVIS_TEST_BRANCH)."
+  elif [ "$mavis_branch" != "$mavis_test_branch" ]; then
+      echo "[e2e] !!! WARNING !!! Service repo branch ($mavis_branch) "
+      echo "[e2e]                 does not match testing repo branch ($mavis_test_branch)."
       echo "[e2e]                 You may be running tests from a different branch than you desire."
   fi
 fi
@@ -128,7 +131,7 @@ fi
 
 echo "[e2e] Preparing Rails test DB schema (RAILS_ENV=$RAILS_ENV)..."
 bin/bundle install --quiet
-RAILS_ENV="$RAILS_ENV" bin/rails db:prepare
+bin/rails db:prepare
 
 # Start Rails server in end_to_end environment
 
@@ -137,43 +140,43 @@ gem install --silent foreman
 
 echo "[e2e] Starting end_to_end stack with foreman..."
 if command -v setsid >/dev/null 2>&1; then
-  START_FOREMAN=(setsid foreman start -f Procfile.e2e)
+  start_foreman=(setsid foreman start -f Procfile.e2e)
 else
   # macOS does not ship a setsid binary; use Perl to create a new session.
-  START_FOREMAN=(perl -MPOSIX -e 'POSIX::setsid() or die "setsid failed: $!"; exec @ARGV' foreman start -f Procfile.e2e)
+  start_foreman=(perl -MPOSIX -e 'POSIX::setsid() or die "setsid failed: $!"; exec @ARGV' foreman start -f Procfile.e2e)
 fi
 
 echo "[e2e] Starting rails server with foreman. Logs will be written to /tmp/e2e-foreman.log"
-RAILS_ENV="$RAILS_ENV" "${START_FOREMAN[@]}" >/tmp/e2e-foreman.log 2>&1 &
-E2E_PGID=$!
+"${start_foreman[@]}" >/tmp/e2e-foreman.log 2>&1 &
+e2e_pgid=$!
 
 
 cleanup() {
   echo "[e2e] Cleaning up end_to_end stack..."
 
-  if [[ -n "${E2E_PGID:-}" ]]; then
-    echo "[e2e] Stopping process group PGID=$E2E_PGID..."
+  if [[ -n "${e2e_pgid:-}" ]]; then
+    echo "[e2e] Stopping process group PGID=$e2e_pgid..."
 
     # Try INT (like Ctrl‑C) then TERM then KILL for the whole group
-    for SIG in INT TERM KILL; do
+    for sig in INT TERM KILL; do
       # If nothing in the group, stop
-      if ! kill -0 "-$E2E_PGID" 2>/dev/null; then
-        echo "[e2e] Process group $E2E_PGID already gone."
+      if ! kill -0 "-$e2e_pgid" 2>/dev/null; then
+        echo "[e2e] Process group $e2e_pgid already gone."
         break
       fi
 
-      echo "[e2e] Sending $SIG to process group $E2E_PGID..."
-      kill "-$SIG" "-$E2E_PGID" 2>/dev/null || true
+      echo "[e2e] Sending $sig to process group $e2e_pgid..."
+      kill "-$sig" "-$e2e_pgid" 2>/dev/null || true
       sleep 3
     done
   fi
 
-  # Final safety net: ensure nothing is listening on $RAILS_PORT
+  # Final safety net: ensure nothing is listening on $rails_port
   if command -v lsof >/dev/null 2>&1; then
-    PIDS="$(lsof -ti tcp:"$RAILS_PORT" || true)"
-    if [ -n "$PIDS" ]; then
-      echo "[e2e] Forcing kill of processes on port $RAILS_PORT: $PIDS"
-      kill -KILL $PIDS 2>/dev/null || true
+    pids="$(lsof -ti tcp:"$rails_port" || true)"
+    if [ -n "$pids" ]; then
+      echo "[e2e] Forcing kill of processes on port $rails_port: $pids"
+      kill -KILL $pids 2>/dev/null || true
     fi
   fi
 }
@@ -182,10 +185,10 @@ trap cleanup EXIT INT TERM
 
 # Wait for Rails health
 
-echo "[e2e] Waiting for Rails to become healthy on $HEALTH_CHECK_URL"
+echo "[e2e] Waiting for Rails to become healthy on $health_check_url"
 for i in {1..10}; do
   printf "."
-  if curl -fsS "$HEALTH_CHECK_URL" > /dev/null 2>&1; then
+  if curl -fsS "$health_check_url" > /dev/null 2>&1; then
     printf "\n[e2e] Rails is up.\n"
     break
   fi
@@ -201,13 +204,16 @@ done
 
 # Run pytest via uv
 
-pushd "$MAVIS_TEST_REPO" > /dev/null
+pushd "$mavis_test_repo" > /dev/null
 
 echo "[e2e] Running end-to-end tests:"
-echo "[e2e]   BASE_URL=\"http://localhost:${RAILS_PORT}\" uv run pytest ${PYTEST_ARGS[*]}"
-BASE_URL="http://localhost:${RAILS_PORT}" uv run pytest -m "not accessibility and not reporting and not imms_api and not pds_api" "${PYTEST_ARGS[@]}"
-PYTEST_EXIT_CODE=$?
+echo "    export RAILS_ENV=\"$RAILS_ENV\""
+echo "    export REDIS_URL=\"$REDIS_URL\""
+echo "    export BASE_URL=\"$BASE_URL\""
+echo "    uv run pytest ${pytest_args[*]}"
+uv run pytest "${pytest_args[@]}"
+pytest_exit_code=$?
 
 popd > /dev/null
 
-exit $PYTEST_EXIT_CODE
+exit $pytest_exit_code

@@ -21,7 +21,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
 #
 describe PDSSearchResult, type: :model do
   subject(:pds_search_result) { build(:pds_search_result) }

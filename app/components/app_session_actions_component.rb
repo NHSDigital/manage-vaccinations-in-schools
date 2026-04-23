@@ -6,8 +6,12 @@ class AppSessionActionsComponent < ViewComponent::Base
       <% card.with_heading(level: 3) { "Action required" } %>
       <% if rows.any? %>
         <%= govuk_summary_list(rows:) %>
-      <% else %>
-        <p>No action required</p>
+      <% end %>
+      <% if policy(session).invite_to_clinic? %>
+        <%= render AppActionLinkComponent.new(
+                    href: edit_session_invite_to_clinic_path(@session),
+                    text: "Send clinic invitations",
+                  ) %>
       <% end %>
     <% end %>
   ERB

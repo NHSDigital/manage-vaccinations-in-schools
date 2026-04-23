@@ -36,7 +36,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   def call
     render AppCardComponent.new(link_to: card_link, compact: true) do |card|
-      card.with_heading(level: @heading_level) { heading }
+      card.with_heading(level: @heading_level, size: "s") { heading }
       safe_join([summary_list, registration_buttons].compact)
     end
   end

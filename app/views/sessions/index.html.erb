@@ -1,6 +1,9 @@
 <%= h1 t(".title") %>
 
-<%= govuk_button_link_to "Add a new session", new_session_path, secondary: true %>
+<%= render AppActionLinkComponent.new(
+      href: new_session_path,
+      text: "Add a new session",
+    ) %>
 
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">

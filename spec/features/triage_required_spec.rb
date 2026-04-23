@@ -334,7 +334,7 @@ describe "Triage" do
 
   def and_i_see_the_safe_triage_decision
     expect(page).to have_content(
-      "#{@user.full_name} decided that #{@patient_triage_needed.full_name} is safe to vaccinate."
+      "#{@user.full_name} decided that #{@patient_triage_needed.given_name} is safe to vaccinate."
     )
   end
 
@@ -357,7 +357,7 @@ describe "Triage" do
       )
 
     expect(page).to have_content(
-      "#{@user.full_name} decided that #{patient.full_name} is safe to vaccinate using the #{method} vaccine only."
+      "#{@user.full_name} decided that #{patient.given_name} is safe to vaccinate using the #{method} vaccine only."
     )
   end
 

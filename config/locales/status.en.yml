@@ -19,6 +19,8 @@ en:
         not_required: No consent needed
         refused: Consent refused
         no_contact_details: No contact details
+        request_not_scheduled: Request not scheduled
+        request_scheduled: Request scheduled
       colour:
         conflicts: orange
         follow_up_requested: orange
@@ -31,6 +33,8 @@ en:
         not_required: grey
         refused: red
         no_contact_details: grey
+        request_not_scheduled: grey
+        request_scheduled: blue
     patient_specific_direction:
       label:
         added: PSD added

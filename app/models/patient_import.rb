@@ -34,13 +34,15 @@ class PatientImport < ApplicationRecord
     changesets.from_file.count
   end
 
-  def process_import!
+  def process!
+    raise "'rows' are empty. Call parse_rows! before processing." if rows.nil?
+
     changesets =
       rows.each_with_index.map do |row, row_number|
         PatientChangeset.from_import_row(row:, import: self, row_number:)
       end
 
-    if Flipper.enabled?(:import_search_pds)
+    if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
       process_no_postcode_changesets(self.changesets.without_postcode)
       if self.changesets.with_postcode.any?
         enqueue_pds_cascading_searches(self.changesets.with_postcode)
@@ -54,6 +56,8 @@ class PatientImport < ApplicationRecord
     return if changesets_are_invalid?
 
     enqueue_review_jobs(self.changesets)
+
+    TeamCachedCounts.new(team).reset_import_issues!
   end
 
   def validate_pds_match_rate!
@@ -158,7 +162,7 @@ class PatientImport < ApplicationRecord
 
   def enqueue_review_jobs(changesets)
     review_changesets =
-      if Flipper.enabled?(:import_search_pds)
+      if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
         changesets.with_postcode
       else
         changesets
@@ -179,6 +183,8 @@ class PatientImport < ApplicationRecord
     end
   end
 
+  # TODO: This is called by the `rows_are_valid` validation. Move it to it's own validation.
+  # TODO: Currently entested, unlike the equivalent in ImmunisationImport. Add tests.
   def check_rows_are_unique
     rows
       .map(&:nhs_number_value)

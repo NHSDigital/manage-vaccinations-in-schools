@@ -38,7 +38,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   def call
     render AppCardComponent.new(link_to:, compact: true) do |card|
-      card.with_heading(level: @heading_level) do
+      card.with_heading(level: @heading_level, size: "s") do
         patient.full_name_with_known_as
       end
       govuk_summary_list(rows:)

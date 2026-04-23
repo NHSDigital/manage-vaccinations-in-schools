@@ -19,7 +19,7 @@ class ProcessPatientChangesetJob < ApplicationJob
     if patient_changeset.import.changesets.pending.none?
       import = patient_changeset.import
 
-      if Flipper.enabled?(:import_search_pds)
+      if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
         import.validate_pds_match_rate!
         return if import.low_pds_match_rate?
       end

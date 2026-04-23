@@ -38,7 +38,18 @@ class Patient::ProgrammeStatus < ApplicationRecord
   belongs_to :location, optional: true
 
   has_many :patient_locations,
-           -> { includes(location: :location_programme_year_groups) },
+           -> do
+             includes(
+               location: [
+                 :location_programme_year_groups,
+                 {
+                   team_locations: {
+                     sessions: :session_programme_year_groups
+                   }
+                 }
+               ]
+             )
+           end,
            through: :patient
 
   has_many :consents,
@@ -64,6 +75,10 @@ class Patient::ProgrammeStatus < ApplicationRecord
           source: :attendance_records
 
   has_many :parents, through: :patient
+
+  has_many :consent_notifications,
+           -> { request.includes(session: :team_location) },
+           through: :patient
 
   GROUPS = %w[
     not_eligible
@@ -122,6 +137,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
        default: :not_eligible,
        validate: true
 
+  # If you add more consent_status enums here, check
+  # whether ReportingAPI::Total also needs updating.
   enum :consent_status,
        {
          no_response: 0,
@@ -130,7 +147,9 @@ class Patient::ProgrammeStatus < ApplicationRecord
          conflicts: 3,
          not_required: 4,
          follow_up_requested: 5,
-         no_contact_details: 6
+         no_contact_details: 6,
+         request_scheduled: 7,
+         request_not_scheduled: 8
        },
        default: :no_response,
        prefix: :consent,
@@ -153,6 +172,10 @@ class Patient::ProgrammeStatus < ApplicationRecord
   def has_refusal? = status.in?(HAS_REFUSAL_STATUSES.keys)
 
   def cannot_vaccinate? = status.in?(CANNOT_VACCINATE_STATUSES.keys)
+
+  def needs_triage? = status.in?(NEEDS_TRIAGE_STATUSES.keys)
+
+  def due? = status.in?(DUE_STATUSES.keys)
 
   def vaccinated? = status.in?(VACCINATED_STATUSES.keys)
 
@@ -205,7 +228,8 @@ class Patient::ProgrammeStatus < ApplicationRecord
         triages:,
         attendance_record:,
         vaccination_records:,
-        parents:
+        parents:,
+        consent_notifications:
       )
   end
 end

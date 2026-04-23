@@ -406,7 +406,7 @@ describe "School sessions" do
 
   def then_i_should_see_the_session_details
     expect(page).to have_content(@location.name.to_s)
-    expect(page).to have_content("10 – 11 March 2024")
+    expect(page).to have_content("10 to 11 March 2024")
   end
 
   def when_the_parent_visits_the_consent_form

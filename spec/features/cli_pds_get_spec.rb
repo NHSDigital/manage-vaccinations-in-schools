@@ -2,7 +2,7 @@
 
 require_relative "../../app/lib/mavis_cli"
 
-describe "mavis pds get" do
+describe "mavis pds get", :pds do
   it "runs successfully" do
     given_the_request_is_stubbed
 

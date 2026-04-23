@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -102,17 +102,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
-  create_table "careplus_export_vaccination_records", primary_key: ["careplus_export_id", "vaccination_record_id"], force: :cascade do |t|
-    t.bigint "careplus_export_id", null: false
+  create_table "careplus_report_vaccination_records", primary_key: ["careplus_report_id", "vaccination_record_id"], force: :cascade do |t|
+    t.bigint "careplus_report_id", null: false
     t.integer "change_type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "vaccination_record_id", null: false
-    t.index ["careplus_export_id"], name: "idx_on_careplus_export_id_8ce4ed1ff0"
-    t.index ["vaccination_record_id"], name: "idx_on_vaccination_record_id_d4c93aefb7"
+    t.index ["careplus_report_id"], name: "idx_on_careplus_report_id_98876049c7"
+    t.index ["vaccination_record_id"], name: "idx_on_vaccination_record_id_e7f05454ab"
   end
 
-  create_table "careplus_exports", force: :cascade do |t|
+  create_table "careplus_reports", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
     t.text "csv_data"
@@ -126,10 +126,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
     t.integer "status", default: 0, null: false
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["programme_types"], name: "index_careplus_exports_on_programme_types", using: :gin
-    t.index ["status", "scheduled_at"], name: "index_careplus_exports_on_status_and_scheduled_at"
-    t.index ["team_id", "academic_year"], name: "index_careplus_exports_on_team_id_and_academic_year"
-    t.index ["team_id"], name: "index_careplus_exports_on_team_id"
+    t.index ["programme_types"], name: "index_careplus_reports_on_programme_types", using: :gin
+    t.index ["status", "scheduled_at"], name: "index_careplus_reports_on_status_and_scheduled_at"
+    t.index ["team_id", "academic_year"], name: "index_careplus_reports_on_team_id_and_academic_year"
+    t.index ["team_id"], name: "index_careplus_reports_on_team_id"
   end
 
   create_table "class_imports", force: :cascade do |t|
@@ -904,8 +904,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
   end
 
   create_table "teams", force: :cascade do |t|
+    t.string "careplus_namespace"
+    t.string "careplus_password"
     t.string "careplus_staff_code"
     t.string "careplus_staff_type"
+    t.string "careplus_username"
     t.string "careplus_venue_code"
     t.datetime "created_at", null: false
     t.integer "days_before_consent_reminders", default: 7, null: false
@@ -1075,7 +1078,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
     t.index ["upload_name"], name: "index_vaccines_on_upload_name", unique: true
   end
 
-  add_foreign_key "access_log_entries", "patients"
   add_foreign_key "access_log_entries", "users"
   add_foreign_key "archive_reasons", "patients"
   add_foreign_key "archive_reasons", "teams"
@@ -1084,9 +1086,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
   add_foreign_key "attendance_records", "patients"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
-  add_foreign_key "careplus_export_vaccination_records", "careplus_exports", on_delete: :cascade
-  add_foreign_key "careplus_export_vaccination_records", "vaccination_records"
-  add_foreign_key "careplus_exports", "teams"
+  add_foreign_key "careplus_report_vaccination_records", "careplus_reports", on_delete: :cascade
+  add_foreign_key "careplus_report_vaccination_records", "vaccination_records"
+  add_foreign_key "careplus_reports", "teams"
   add_foreign_key "class_imports", "locations"
   add_foreign_key "class_imports", "teams"
   add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
@@ -1148,7 +1150,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
   add_foreign_key "notes", "users", column: "created_by_user_id"
   add_foreign_key "notify_log_entries", "consent_forms"
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
-  add_foreign_key "notify_log_entries", "patients"
+  add_foreign_key "notify_log_entries", "patients", on_delete: :cascade, validate: false
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
   add_foreign_key "notify_log_entry_programmes", "notify_log_entries", on_delete: :cascade
   add_foreign_key "parent_relationships", "parents"
@@ -1157,10 +1159,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
-  add_foreign_key "patient_merge_log_entries", "patients"
+  add_foreign_key "patient_merge_log_entries", "patients", on_delete: :cascade, validate: false
   add_foreign_key "patient_merge_log_entries", "users"
   add_foreign_key "patient_programme_statuses", "patients", on_delete: :cascade
-  add_foreign_key "patient_programme_vaccinations_searches", "patients"
+  add_foreign_key "patient_programme_vaccinations_searches", "patients", on_delete: :cascade, validate: false
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_specific_directions", "patients"
@@ -1171,13 +1173,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_120000) do
   add_foreign_key "patient_teams", "teams", on_delete: :cascade
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
-  add_foreign_key "pds_search_results", "patients"
+  add_foreign_key "pds_search_results", "patients", on_delete: :cascade, validate: false
   add_foreign_key "pre_screenings", "locations"
   add_foreign_key "pre_screenings", "patients"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
-  add_foreign_key "school_move_log_entries", "patients"
+  add_foreign_key "school_move_log_entries", "patients", on_delete: :cascade, validate: false
   add_foreign_key "school_move_log_entries", "teams"
   add_foreign_key "school_move_log_entries", "users"
   add_foreign_key "school_moves", "locations", column: "school_id"

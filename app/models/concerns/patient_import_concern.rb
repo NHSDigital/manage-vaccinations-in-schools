@@ -149,7 +149,8 @@ module PatientImportConcern
   end
 
   def patient_archived_and_not_in_another_team?(patient:, team:)
-    patient.archived?(team:) && patient.teams.where.not(id: team.id).empty?
+    patient.archived?(team_id: team.id) &&
+      patient.teams.where.not(id: team.id).empty?
   end
 
   def reset_counts(import)

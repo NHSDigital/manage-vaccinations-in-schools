@@ -64,10 +64,38 @@ class ImmunisationImport < ApplicationRecord
     end
   end
 
+  def process!
+    raise "'rows' are empty. Call parse_rows! before processing." if rows.nil?
+
+    counts = count_columns.index_with(0)
+
+    @vaccination_records_batch = Set.new
+    @patients_batch = Set.new
+    @patient_locations_batch = Set.new
+    @archive_reasons_batch = Set.new
+
+    ActiveRecord::Base.transaction do
+      rows.each do |row|
+        count_column_to_increment = process_row(row)
+        counts[count_column_to_increment] += 1
+        bulk_import(rows: 100)
+      end
+
+      bulk_import(rows: :all)
+
+      postprocess_rows!
+
+      update_columns(processed_at: Time.zone.now, status: :processed, **counts)
+    end
+
+    post_commit!
+  end
+
   private
 
+  # TODO: This is called by the `rows_are_valid` validation. Move it to it's own validation.
   def check_rows_are_unique
-    row_offset = has_instruction_row? ? 3 : 2
+    row_offset = csv_data_object.has_instruction_row? ? 3 : 2
 
     rows
       .map(&:full_row_deduplication_attributes)
@@ -122,32 +150,6 @@ class ImmunisationImport < ApplicationRecord
     end
 
     count_column_to_increment
-  end
-
-  def process_import!
-    counts = count_columns.index_with(0)
-
-    @vaccination_records_batch = Set.new
-    @patients_batch = Set.new
-    @patient_locations_batch = Set.new
-    @archive_reasons_batch = Set.new
-
-    ActiveRecord::Base.transaction do
-      rows.each do |row|
-        count_column_to_increment = process_row(row)
-        counts[count_column_to_increment] += 1
-        bulk_import(rows: 100)
-      end
-
-      bulk_import(rows: :all)
-
-      postprocess_rows!
-
-      update_columns(processed_at: Time.zone.now, status: :processed, **counts)
-    end
-
-    post_commit!
-    UpdatePatientsFromPDS.call(patients, queue: :imports)
   end
 
   def bulk_import(rows: 100)
@@ -209,18 +211,22 @@ class ImmunisationImport < ApplicationRecord
       .find_each do |vaccination_record|
         NextDoseTriageFactory.call(vaccination_record:)
       end
+  end
 
+  def post_commit!
     PatientTeamUpdater.call(patient_scope: patients)
     PatientStatusUpdater.call(patient_scope: Patient.where(id: patients.ids))
+
+    vaccination_records.sync_all_to_nhs_immunisations_api
 
     vaccination_records
       .includes(:patient, :team, :subteam)
       .find_each do |vaccination_record|
         AlreadyHadNotificationSender.call(vaccination_record:)
       end
-  end
 
-  def post_commit!
-    vaccination_records.sync_all_to_nhs_immunisations_api
+    UpdatePatientsFromPDS.call(patients, queue: :imports)
+
+    TeamCachedCounts.new(team).reset_import_issues!
   end
 end

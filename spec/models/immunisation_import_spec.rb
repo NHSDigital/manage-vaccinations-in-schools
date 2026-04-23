@@ -35,7 +35,13 @@
 
 describe ImmunisationImport do
   subject(:immunisation_import) do
-    create(:immunisation_import, team:, csv:, uploaded_by:)
+    create(
+      :immunisation_import,
+      team:,
+      csv_data:,
+      uploaded_by:,
+      uploaded_csv_file:
+    )
   end
 
   before do
@@ -56,44 +62,23 @@ describe ImmunisationImport do
   let(:school) { create(:gias_school, urn: "123456") }
 
   let(:file) { "valid_flu.csv" }
-  let(:csv) { fixture_file_upload("immunisation_import/#{type}/#{file}") }
+  let(:csv_source) { file_fixture("immunisation_import/#{type}/#{file}") }
+  let(:csv_data) { csv_source.read }
+  # Used by shared examples in CSVImportable to test setting csv from an uploaded file
+  let(:uploaded_csv_file) { nil }
   let(:uploaded_by) { create(:user, team:) }
 
   let(:type) { "point_of_care" }
 
+  # This is used by validation tests in the CSFVImportable shared specs.
+  let(:unsaved_import) do
+    build(:immunisation_import, team:, csv_data:, uploaded_by:)
+  end
+
   it_behaves_like "a CSVImportable model"
 
-  describe "#load_data!" do
-    before { immunisation_import.load_data! }
-
-    context "with malformed CSV" do
-      let(:file) { "malformed.csv" }
-
-      it "is invalid" do
-        expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors[:csv]).to include(/correct format/)
-      end
-    end
-
-    context "with empty CSV" do
-      let(:file) { "empty.csv" }
-
-      it "is invalid" do
-        expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors[:csv]).to include(/one record/)
-      end
-    end
-
-    context "with too many rows" do
-      let(:file) { "valid_flu.csv" }
-
-      before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
-
-      it "is invalid" do
-        expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors[:csv]).to include(/less than 2 rows/)
-      end
-    end
+  describe "validations" do
+    subject { unsaved_import }
 
     context "with a duplicated row" do
       let(:file) { "duplicate_row.csv" }
@@ -186,7 +171,6 @@ describe ImmunisationImport do
     context "with a national reporting upload" do
       let(:type) { "national_reporting" }
       let(:file) { "valid_mixed_flu_hpv.csv" }
-
       let(:test_date) { Date.new(2025, 12, 1) }
 
       it "populates the rows" do
@@ -208,9 +192,18 @@ describe ImmunisationImport do
   end
 
   describe "#process!" do
-    subject(:process!) { immunisation_import.process! }
-
     around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
+
+    before do
+      Flipper.enable(:pds)
+      Flipper.enable(:pds_enqueue_bulk_updates)
+
+      immunisation_import.parse_rows!
+    end
+
+    let(:duplicate_import) do
+      create(:immunisation_import, csv_data:, team:, uploaded_by:)
+    end
 
     context "with an empty CSV file (no data rows)" do
       let(:programmes) { [Programme.flu] }
@@ -223,7 +216,7 @@ describe ImmunisationImport do
         )
         # rubocop:enable RSpec/SubjectStub
 
-        expect { process! }.not_to raise_error
+        expect { immunisation_import.process! }.not_to raise_error
       end
     end
 
@@ -233,7 +226,7 @@ describe ImmunisationImport do
 
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
-        expect { process! }
+        expect { immunisation_import.process! }
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(11)
@@ -251,7 +244,7 @@ describe ImmunisationImport do
       end
 
       it "links the correct objects with each other" do
-        process!
+        immunisation_import.process!
 
         expect(VaccinationRecord.all.map(&:patient)).to match_array(Patient.all)
 
@@ -263,30 +256,29 @@ describe ImmunisationImport do
 
       it "stores statistics on the import" do
         # stree-ignore
-        expect { process! }
+        expect { immunisation_import.process! }
           .to change(immunisation_import, :exact_duplicate_record_count).to(0)
           .and change(immunisation_import, :new_record_count).to(11)
       end
 
       it "ignores and counts duplicate records" do
-        create(:immunisation_import, csv:, team:, uploaded_by:).process!
-        csv.rewind
+        duplicate_import.parse_rows!
+        duplicate_import.process!
 
-        process!
+        immunisation_import.process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { process! }.to have_enqueued_job(
+        expect { immunisation_import.process! }.to have_enqueued_job(
           PDSCascadingSearchJob
         ).once.on_queue(:imports)
       end
 
       it "enqueues jobs to update from PDS" do
-        expect { process! }.to have_enqueued_job(PatientUpdateFromPDSJob)
-          .exactly(10)
-          .times
-          .on_queue(:imports)
+        expect { immunisation_import.process! }.to have_enqueued_job(
+          PatientUpdateFromPDSJob
+        ).exactly(10).times.on_queue(:imports)
       end
     end
 
@@ -296,7 +288,7 @@ describe ImmunisationImport do
 
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
-        expect { process! }
+        expect { immunisation_import.process! }
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
@@ -315,30 +307,29 @@ describe ImmunisationImport do
 
       it "stores statistics on the import" do
         # stree-ignore
-        expect { process! }
+        expect { immunisation_import.process! }
           .to change(immunisation_import, :exact_duplicate_record_count).to(0)
           .and change(immunisation_import, :new_record_count).to(11)
       end
 
       it "ignores and counts duplicate records" do
-        create(:immunisation_import, csv:, team:, uploaded_by:).process!
-        csv.rewind
+        duplicate_import.parse_rows!
+        duplicate_import.process!
 
-        process!
+        immunisation_import.process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { process! }.to have_enqueued_job(
+        expect { immunisation_import.process! }.to have_enqueued_job(
           PDSCascadingSearchJob
         ).once.on_queue(:imports)
       end
 
       it "enqueues jobs to update from PDS" do
-        expect { process! }.to have_enqueued_job(PatientUpdateFromPDSJob)
-          .exactly(9)
-          .times
-          .on_queue(:imports)
+        expect { immunisation_import.process! }.to have_enqueued_job(
+          PatientUpdateFromPDSJob
+        ).exactly(9).times.on_queue(:imports)
       end
     end
 
@@ -348,7 +339,7 @@ describe ImmunisationImport do
 
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
-        expect { process! }
+        expect { immunisation_import.process! }
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
@@ -367,30 +358,29 @@ describe ImmunisationImport do
 
       it "stores statistics on the import" do
         # stree-ignore
-        expect { process! }
+        expect { immunisation_import.process! }
           .to change(immunisation_import, :exact_duplicate_record_count).to(0)
           .and change(immunisation_import, :new_record_count).to(11)
       end
 
       it "ignores and counts duplicate records" do
-        create(:immunisation_import, csv:, team:, uploaded_by:).process!
-        csv.rewind
+        duplicate_import.parse_rows!
+        duplicate_import.process!
 
-        process!
+        immunisation_import.process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { process! }.to have_enqueued_job(
+        expect { immunisation_import.process! }.to have_enqueued_job(
           PDSCascadingSearchJob
         ).once.on_queue(:imports)
       end
 
       it "enqueues jobs to update from PDS" do
-        expect { process! }.to have_enqueued_job(PatientUpdateFromPDSJob)
-          .exactly(9)
-          .times
-          .on_queue(:imports)
+        expect { immunisation_import.process! }.to have_enqueued_job(
+          PatientUpdateFromPDSJob
+        ).exactly(9).times.on_queue(:imports)
       end
     end
 
@@ -400,7 +390,7 @@ describe ImmunisationImport do
 
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
-        expect { process! }
+        expect { immunisation_import.process! }
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(4)
           .and change(immunisation_import.patients, :count).by(4)
@@ -434,11 +424,16 @@ describe ImmunisationImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(10)
+        expect { immunisation_import.process! }.to change(Patient, :count).by(
+          10
+        )
       end
 
       it "doesn't update the NHS number on the existing patient" do
-        expect { process! }.not_to change(patient, :nhs_number).from(nil)
+        expect { immunisation_import.process! }.not_to change(
+          patient,
+          :nhs_number
+        ).from(nil)
       end
     end
 
@@ -458,7 +453,9 @@ describe ImmunisationImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(10)
+        expect { immunisation_import.process! }.to change(Patient, :count).by(
+          10
+        )
       end
     end
 
@@ -478,7 +475,7 @@ describe ImmunisationImport do
       end
 
       it "ignores changes in the patient record" do
-        expect { process! }.not_to change(Patient, :count)
+        expect { immunisation_import.process! }.not_to change(Patient, :count)
         expect(existing_patient.reload.pending_changes).to be_empty
       end
     end
@@ -488,11 +485,11 @@ describe ImmunisationImport do
       let(:file) { "valid_duplicate_patient.csv" }
 
       it "only creates one patient record" do
-        expect { process! }.to change(Patient, :count).by(1)
+        expect { immunisation_import.process! }.to change(Patient, :count).by(1)
       end
 
       it "links both vaccination records to the same patient" do
-        process!
+        immunisation_import.process!
         patients =
           immunisation_import
             .vaccination_records
@@ -507,11 +504,11 @@ describe ImmunisationImport do
       let(:file) { "valid_duplicate_patient_no_nhs_number.csv" }
 
       it "only creates one patient record" do
-        expect { process! }.to change(Patient, :count).by(1)
+        expect { immunisation_import.process! }.to change(Patient, :count).by(1)
       end
 
       it "links both vaccination records to the same patient" do
-        process!
+        immunisation_import.process!
         patients =
           immunisation_import
             .vaccination_records
@@ -523,13 +520,12 @@ describe ImmunisationImport do
   end
 
   describe "#post_commit!" do
-    subject(:post_commit!) { immunisation_import.send(:post_commit!) }
-
     let(:immunisation_import) do
       create(
         :immunisation_import,
         team:,
-        vaccination_records: [vaccination_record]
+        vaccination_records: [vaccination_record],
+        patients: [create(:patient)]
       )
     end
     let(:session) { create(:session, location: school, programmes:) }
@@ -537,18 +533,38 @@ describe ImmunisationImport do
       create(:vaccination_record, programme: programmes.first, session:)
     end
 
-    before { Flipper.enable(:imms_api_sync_job) }
+    it "calls the PatientTeamUpdater with imported patients" do
+      expect(PatientTeamUpdater).to receive(:call).with(
+        patient_scope: immunisation_import.patients
+      )
+
+      immunisation_import.send :post_commit!
+    end
+
+    it "calls the PatientStatusUpdater with imported patients" do
+      expect(PatientStatusUpdater).to receive(:call).with(
+        patient_scope: Patient.where(id: immunisation_import.patients.ids)
+      )
+
+      immunisation_import.send :post_commit!
+    end
 
     it "syncs the flu vaccination record to the NHS Immunisations API" do
-      expect { post_commit! }.to enqueue_sidekiq_job(
+      expect { immunisation_import.send :post_commit! }.to enqueue_sidekiq_job(
         SyncVaccinationRecordToNHSJob
       ).with(vaccination_record.id).once.on("immunisations_api_sync")
+    end
+
+    it "calls the AlreadyHadNotificationSender for the vaccination record" do
+      expect(AlreadyHadNotificationSender).to receive(:call).with(
+        vaccination_record:
+      )
+
+      immunisation_import.send :post_commit!
     end
   end
 
   describe "#postprocess_rows!" do
-    subject(:postprocess_rows!) { immunisation_import.send(:postprocess_rows!) }
-
     let(:immunisation_import) do
       create(
         :immunisation_import,
@@ -566,7 +582,10 @@ describe ImmunisationImport do
       let(:programmes) { [Programme.hpv] }
 
       it "doesn't create a next dose triage" do
-        expect { postprocess_rows! }.not_to change(Triage, :count)
+        expect { immunisation_import.send :postprocess_rows! }.not_to change(
+          Triage,
+          :count
+        )
       end
     end
 
@@ -574,16 +593,11 @@ describe ImmunisationImport do
       let(:programmes) { [Programme.mmr] }
 
       it "creates a next dose triage" do
-        expect { postprocess_rows! }.to change(Triage, :count).by(1)
+        expect { immunisation_import.send :postprocess_rows! }.to change(
+          Triage,
+          :count
+        ).by(1)
       end
-    end
-
-    it "calls the AlreadyHadNotificationSender for the vaccination record" do
-      expect(AlreadyHadNotificationSender).to receive(:call).with(
-        vaccination_record:
-      )
-
-      postprocess_rows!
     end
   end
 end

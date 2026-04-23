@@ -22,7 +22,6 @@ class ImmunisationImportsController < ApplicationController
                   **immunisation_import_params
                 )
 
-    @immunisation_import.load_data!
     if @immunisation_import.invalid?
       render :new, status: :unprocessable_content and return
     end

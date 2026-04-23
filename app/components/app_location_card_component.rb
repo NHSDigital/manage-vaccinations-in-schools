@@ -10,7 +10,7 @@ class AppLocationCardComponent < ViewComponent::Base
 
   def call
     render AppCardComponent.new(link_to:, compact: true) do |card|
-      card.with_heading(level: @heading_level) { heading }
+      card.with_heading(level: @heading_level, size: "s") { heading }
       govuk_summary_list(rows:)
     end
   end

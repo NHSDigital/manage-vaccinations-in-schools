@@ -14,6 +14,8 @@
       padding-left: nhsuk-spacing(3);
       background-color: nhsuk-colour("grey-1");
 
+      @include nhsuk-font-size(22);
+
       // stylelint-disable-next-line max-nesting-depth
       @include nhsuk-media-query($from: tablet) {
         margin-left: #{nhsuk-spacing(-4) - 1px};

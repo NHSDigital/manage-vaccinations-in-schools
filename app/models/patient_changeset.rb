@@ -277,7 +277,7 @@ class PatientChangeset < ApplicationRecord
 
         if patient.new_record? || patient.school != school ||
              patient.not_in_team?(team:, academic_year:) ||
-             patient.archived?(team:) || patient.school_moves.any?
+             patient.archived?(team_id: team.id) || patient.school_moves.any?
           school_move =
             patient.school_moves.includes(:teams).first ||
               SchoolMove.new(patient:)

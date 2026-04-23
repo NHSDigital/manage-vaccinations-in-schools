@@ -412,6 +412,11 @@ module NHS::ImmunisationsAPI
       uri = URI(link)
       bundle_params = URI.decode_www_form(uri.query).to_h
 
+      # The Imms API used to have a bug where they referred to `immunization.target` instead of `-immunization.target`.
+      # They have since fixed this, but they now include both versions in the `bundle.link` field. We must exclude the
+      # deprecated version from the comparison.
+      bundle_params.delete("immunization.target")
+
       # We don't care about the order of the target values
       bundle_params["-immunization.target"] = bundle_params[
         "-immunization.target"

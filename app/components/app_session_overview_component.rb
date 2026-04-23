@@ -4,21 +4,11 @@ class AppSessionOverviewComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppSessionStatsComponent.new(session) %>
 
-    <section>
-      <%= render AppSessionVaccinationsComponent.new(session) %>
-    </section>
+    <%= render AppSessionVaccinationsComponent.new(session) %>
 
-    <section>
-      <%= render AppSessionActionsComponent.new(session) %>
-    </section>
+    <%= render AppSessionActionsComponent.new(session) %>
 
-    <section>
-      <%= render AppSessionDetailsComponent.new(session) %>
-    </section>
-
-    <section>
-      <%= render AppSessionButtonsComponent.new(session) %>
-    </section>
+    <%= render AppSessionDetailsComponent.new(session) %>
   ERB
 
   def initialize(session)

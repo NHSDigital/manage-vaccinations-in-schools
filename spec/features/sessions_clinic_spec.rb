@@ -103,7 +103,7 @@ describe "Clinic sessions" do
 
   def then_i_see_the_community_clinic_session
     click_on "Back"
-    expect(page).to have_content("HPV community clinic on 18 February 2024")
+    expect(page).to have_content("HPV community clinic")
     expect(page).to have_content("18 February 2024")
   end
 

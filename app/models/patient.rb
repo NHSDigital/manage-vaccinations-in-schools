@@ -511,11 +511,11 @@ class Patient < ApplicationRecord
       .distinct
   end
 
-  def archived?(team:)
+  def archived?(team_id:)
     if archive_reasons.loaded?
-      archive_reasons.any? { it.team_id == team.id }
+      archive_reasons.any? { it.team_id == team_id }
     else
-      archive_reasons.exists?(team:)
+      archive_reasons.exists?(team_id:)
     end
   end
 
@@ -545,6 +545,14 @@ class Patient < ApplicationRecord
           it.academic_year == academic_year && it.year_group == year_group
       end
     end
+  end
+
+  def can_self_consent_after_gillick_assessment?(location:, programme_type:)
+    gillick_assessments
+      .where(location:, programme_type:, date: Date.current)
+      .order(created_at: :desc)
+      &.first
+      &.gillick_competent? || false
   end
 
   def programme_status(programme, academic_year:)

@@ -126,8 +126,8 @@ module MavisCLI
         # prevent this tool from creating database entries at all
 
         ActiveRecord::Base.transaction do
-          careplus_export =
-            CareplusExport.create!(
+          careplus_report =
+            CareplusReport.create!(
               team:,
               academic_year: academic_year_value,
               date_from: parsed_start_date,
@@ -141,10 +141,10 @@ module MavisCLI
             )
 
           now_iso = now.iso8601(6)
-          CareplusExportVaccinationRecord.insert_all!(
+          CareplusReportVaccinationRecord.insert_all!(
             records.map do |record|
               {
-                careplus_export_id: careplus_export.id,
+                careplus_report_id: careplus_report.id,
                 vaccination_record_id: record.id,
                 change_type: 0,
                 created_at: now_iso,

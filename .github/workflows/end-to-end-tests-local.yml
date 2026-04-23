@@ -22,16 +22,16 @@ jobs:
       RAILS_ENV: end_to_end
     steps:
       - name: Checkout base branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ github.base_ref }}
       - name: Setup Node.js on base branch
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: .tool-versions
           cache: yarn
       - name: Setup Ruby on base branch
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@60ecfba8750476ff216b59eee3b88218bb5111cc # v1.303.0
         with:
           bundler-cache: true
       - name: Install JS dependencies on base branch
@@ -39,16 +39,16 @@ jobs:
       - name: Setup database
         run: bin/rails db:setup
       - name: Checkout head branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ github.head_ref }}
       - name: Setup Node.js on head branch
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version-file: .tool-versions
           cache: yarn
       - name: Setup Ruby on head branch
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@60ecfba8750476ff216b59eee3b88218bb5111cc # v1.303.0
         with:
           bundler-cache: true
       - name: Install JS dependencies on head branch
@@ -81,7 +81,7 @@ jobs:
           HEAD_REF: ${{ github.head_ref }}
           BASE_REF: ${{ github.base_ref }}
       - name: Clone testing repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: NHSDigital/manage-vaccinations-in-schools-testing
           ref: ${{ steps.check-branch.outputs.test_branch }}
@@ -89,7 +89,7 @@ jobs:
       - name: Setup testing repository environment file
         run: mv ${{ env.MAVIS_TEST_REPO }}/.env.generic ${{ env.MAVIS_TEST_REPO }}/.env
       - name: Setup uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       - name: Setup Playwright
         working-directory: ${{ env.MAVIS_TEST_REPO }}
         run: |

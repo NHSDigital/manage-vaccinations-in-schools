@@ -35,4 +35,4 @@ sso_registration_scopes = sso:account:access
 - Run `aws configure sso`. This will prompt you to log in to your AWS account and grant the necessary permissions for the CLI to access AWS services. When prompted for a region enter `eu-west-2` and for output format enter `json`.
 - Install the Session Manager plugin for the AWS CLI by following the instructions in the [AWS Systems Manager Session Manager documentation](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html).
 - Run `aws sso login` to log in to your AWS account and establish a session. This will allow you to access AWS resources using the CLI.
-- You should now be able to shell into a running service. The simplest way to do this is using the `script/shell.sh` script, e.g. `script/shell.sh qa`.
+- You should now be able to shell into a running service. The simplest way to do this is using the `bin/mavis-server shell` command, e.g. `bin/mavis-server shell qa`.
