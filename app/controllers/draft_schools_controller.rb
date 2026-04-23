@@ -231,7 +231,7 @@ class DraftSchoolsController < ApplicationController
         address_town
         address_postcode
       ],
-      year_groups: [year_groups: []],
+      year_groups: [{ year_groups: [] }],
       confirm: []
     }.fetch(current_step)
 

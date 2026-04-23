@@ -27,7 +27,7 @@ class NHSNumberValidator < ActiveModel::EachValidator
         digits
           .slice(0, 9)
           .each_with_index
-          .map { |digit, index| ((11 - (index + 1)) * digit) }
+          .map { |digit, index| (11 - (index + 1)) * digit }
 
       digits_sum_remainder = digits_multiplied_by_weighting_factor.sum % 11
 
