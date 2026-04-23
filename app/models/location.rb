@@ -15,6 +15,7 @@
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
+#  position                  :geography        point, 4326
 #  site                      :string
 #  status                    :integer          default("unknown"), not null
 #  systm_one_code            :string
@@ -247,9 +248,15 @@ class Location < ApplicationRecord
   end
 
   def as_json
-    super.except("created_at", "systm_one_code", "updated_at").merge(
+    super.except(
+      "created_at",
+      "systm_one_code",
+      "updated_at",
+      "position"
+    ).merge(
       "is_attached_to_team" =>
-        team_locations.any? { it.academic_year == AcademicYear.pending }
+        team_locations.any? { it.academic_year == AcademicYear.pending },
+      "position" => position ? [position.x, position.y] : nil
     )
   end
 

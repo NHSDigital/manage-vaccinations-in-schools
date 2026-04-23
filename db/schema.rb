@@ -536,6 +536,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
     t.integer "gias_year_groups", default: [], null: false, array: true
     t.text "name", null: false
     t.string "ods_code"
+    t.geography "position", limit: {srid: 4326, type: "st_point", geographic: true}
     t.string "site"
     t.integer "status", default: 0, null: false
     t.string "systm_one_code"
