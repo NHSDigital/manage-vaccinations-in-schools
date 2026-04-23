@@ -39,6 +39,10 @@
       description: Send vaccination confirmation emails to parents
 
     # Nightly
+    EnqueueLocationPositionUpdaterJob:
+      cron: "0 0 * * *"
+      description:
+        Enqueue jobs to fetch latitude and longitude for locations with addresses but no position
     RemoveImportCSVJob:
       cron: "0 1 * * *"
       description: Remove CSV data from old cohort and immunisation imports
