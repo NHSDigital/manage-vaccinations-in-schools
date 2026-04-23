@@ -14,6 +14,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
+  enable_extension "postgis"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.

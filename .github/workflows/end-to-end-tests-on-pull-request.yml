@@ -1,4 +1,4 @@
-name: E2E tests on PR
+name: End-to-end tests
 
 on: [pull_request]
 
@@ -11,7 +11,7 @@ permissions: {}
 jobs:
   aws-e2e-flow:
     if: github.event.pull_request.head.repo.full_name == github.repository
-    name: AWS deployment E2E tests
+    name: AWS
     permissions:
       id-token: write
       contents: write
@@ -22,7 +22,7 @@ jobs:
 
   local-e2e-flow:
     if: github.event.pull_request.head.repo.full_name != github.repository
-    name: Local E2E tests
+    name: Local
     uses: ./.github/workflows/end-to-end-tests-local.yml
 
   ensure-run-success:

@@ -1,5 +1,5 @@
 default: &default
-  adapter: postgresql
+  adapter: postgis
   encoding: unicode
   pool: <%= 5 * ENV.fetch("RAILS_MAX_THREADS", 5).to_i %>
 
@@ -18,8 +18,7 @@ end_to_end:
 test:
   <<: *default
   database: manage_vaccinations_test<%= ENV['TEST_ENV_NUMBER'] %>
-  # Needed by CI server
-  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  host: <%= ENV.fetch("DATABASE_HOST", "") %>
   username: <%= ENV.fetch("DATABASE_USER", "") %>
   password: <%= ENV.fetch("DATABASE_PASSWORD", "") %>
 staging:
