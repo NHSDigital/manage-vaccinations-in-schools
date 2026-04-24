@@ -211,6 +211,12 @@ Rails.application.routes.draw do
       get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
     end
 
+    resources :parents,
+              path: "parent_details",
+              only: %i[new create edit update destroy] do
+      get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
+    end
+
     resources :programmes,
               only: :show,
               param: :type,

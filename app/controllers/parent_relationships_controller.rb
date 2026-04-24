@@ -51,15 +51,22 @@ class ParentRelationshipsController < ApplicationController
   end
 
   def set_parent_relationship
-    @parent_relationship =
-      authorize @patient
-                  .parent_relationships
-                  .includes(:parent)
-                  .find_by!(parent_id: params[:id])
+    unless Flipper.enabled?(:one_patient_per_parent)
+      @parent_relationship =
+        authorize @patient
+                    .parent_relationships
+                    .includes(:parent)
+                    .find_by!(parent_id: params[:id])
+    end
   end
 
   def set_parent
-    @parent = @parent_relationship.parent
+    @parent =
+      if Flipper.enabled?(:one_patient_per_parent)
+        @patient.parents.find(params[:id])
+      else
+        @parent_relationship.parent
+      end
   end
 
   def parent_relationship_params

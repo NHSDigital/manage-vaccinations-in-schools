@@ -1,0 +1,34 @@
+<%= f.govuk_text_field :full_name, label: { text: "Name" } %>
+
+<%= f.govuk_radio_buttons_fieldset :type, legend: { text: "Relationship to child", size: "s" } do %>
+  <%= f.govuk_radio_button :type, :mother, label: { text: "Mum" }, link_errors: true %>
+  <%= f.govuk_radio_button :type, :father, label: { text: "Dad" } %>
+  <%= f.govuk_radio_button :type, :guardian, label: { text: "Guardian" } %>
+  <%= f.govuk_radio_button :type, :other, label: { text: "Other" } do %>
+    <%= f.govuk_text_field :other_name, label: { text: "Relationship to the child" }, hint: { text: "For example, carer" } %>
+  <% end %>
+<% end %>
+
+<%= f.govuk_text_field :email, label: { text: "Email address" } %>
+<%= f.govuk_text_field :phone, label: { text: "Phone number" } %>
+
+<%= f.govuk_check_boxes_fieldset :phone_receive_updates, multiple: false, legend: nil do %>
+  <%= f.govuk_check_box :phone_receive_updates, 1, 0, multiple: false, link_errors: true, label: { text: "Get updates by text message" } %>
+<% end %>
+
+<%= f.govuk_radio_buttons_fieldset :contact_method_type,
+                                   legend: { text: "Does the parent have any specific needs?", size: "s" } do %>
+  <%= f.govuk_radio_button :contact_method_type, "text",
+                           label: { text: "They can only receive text messages" },
+                           link_errors: true %>
+  <%= f.govuk_radio_button :contact_method_type, "voice",
+                           label: { text: "They can only receive voice calls" } %>
+  <%= f.govuk_radio_button :contact_method_type, "other",
+                           label: { text: "Other" } do %>
+    <%= f.govuk_text_area :contact_method_other_details,
+                          label: { text: "Give details" } %>
+  <% end %>
+  <%= f.govuk_radio_divider %>
+  <%= f.govuk_radio_button :contact_method_type, "any",
+                           label: { text: "They do not have specific needs" } %>
+<% end %>

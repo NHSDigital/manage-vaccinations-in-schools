@@ -4,15 +4,7 @@
 
 <%= h1 "Edit child record" %>
 
-<% change_links = {
-     nhs_number: edit_nhs_number_patient_path(@patient),
-     ethnicity: edit_ethnic_group_patient_path(@patient),
-     school: edit_school_patient_path(@patient),
-     parent: @patient.parent_relationships.each_with_object({}) do |parent_relationship, memo|
-       memo[parent_relationship.parent_id] = edit_patient_parent_relationship_path(@patient, parent_relationship.parent_id)
-     end,
-   } %>
-
+<%# TODO: Flipper.enabled?(:one_patient_per_parent) %>
 <% remove_links = {
      parent: @patient.parent_relationships.each_with_object({}) do |parent_relationship, memo|
        memo[parent_relationship.parent_id] = destroy_patient_parent_relationship_path(@patient, parent_relationship.parent_id)
@@ -24,7 +16,7 @@
       current_team:,
       show_parents: !current_team.has_national_reporting_access?,
       show_add_parent: !current_team.has_national_reporting_access?,
-      change_links:,
+      change_links: @change_links,
       remove_links:,
       heading_level: 2,
     ) %>

@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 describe "Edit parent" do
-  before do
-    Flipper.enable(:one_patient_per_parent)
-    given_a_patient_with_a_parent_exists
-  end
+  before { given_a_patient_with_a_parent_exists }
 
   scenario "User edits the name of a parent" do
     when_i_visit_the_patient_page
@@ -49,8 +46,9 @@ describe "Edit parent" do
     session = create(:session, team:, programmes:)
     @patient = create(:patient, session:)
 
-    @parent = create(:parent, :father, patient: @patient)
-    @patient.reload
+    @parent = create(:parent)
+
+    create(:parent_relationship, patient: @patient, parent: @parent)
   end
 
   def when_i_visit_the_patient_page

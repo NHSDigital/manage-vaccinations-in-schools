@@ -1,0 +1,32 @@
+<% content_for :navigation do %>
+  <%= govuk_back_link(href: edit_patient_path(@patient)) %>
+<% end %>
+
+<% page_title = "Are you sure you want to remove the parent #{@parent.label_with_parent} and #{@patient.full_name(context: :parents)}?" %>
+
+<%= h1 page_title do %>
+  <span class="nhsuk-caption-l">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<% if @patient.consents.not_invalidated.exists?(parent: @parent) %>
+  <div class="nhsuk-inset-text">
+    <span class="nhsuk-u-visually-hidden">Information: </span>
+    <p><%= @parent.label %> has submitted the following consent responses for this child:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <% @patient.consents.not_invalidated.where(parent: @parent).find_each do |consent| %>
+        <li><%= consent.human_enum_name(:response).upcase_first %> (<%= consent.created_at.to_date.to_fs(:long) %> for <%= consent.programme.name_in_sentence %>)</li>
+      <% end %>
+    </ul>
+    <p>You should review these before continuing.</p>
+  </div>
+<% end %>
+
+<%= form_with url: patient_parent_path, method: :delete do |f| %>
+  <div class="nhsuk-button-group">
+    <%= f.govuk_submit "Yes, remove this relationship", warning: true %>
+    <%= link_to "No, return to child record", edit_patient_path(@patient) %>
+  </div>
+<% end %>

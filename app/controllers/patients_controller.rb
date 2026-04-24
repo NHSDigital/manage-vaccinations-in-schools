@@ -9,6 +9,7 @@ class PatientsController < ApplicationController
   before_action :set_programme_statuses, only: :index
   before_action :set_visibility_flags, only: :index
   before_action :set_patient, except: :index
+  before_action :set_change_links, only: :edit
   before_action :record_access_log_entry, only: :show
 
   layout "full"
@@ -120,6 +121,40 @@ class PatientsController < ApplicationController
                   consents: %i[parent patient],
                   parent_relationships: :parent
                 ).find(params[:id])
+  end
+
+  def set_change_links
+    @change_links =
+      if Flipper.enabled?(:one_patient_per_parent)
+        {
+          nhs_number: edit_nhs_number_patient_path(@patient),
+          ethnicity: edit_ethnic_group_patient_path(@patient),
+          school: edit_school_patient_path(@patient),
+          parent:
+            @patient
+              .parents
+              .each_with_object({}) do |parent, memo|
+                memo[parent.id] = edit_patient_parent_path(@patient, parent.id)
+              end
+        }
+      else
+        {
+          nhs_number: edit_nhs_number_patient_path(@patient),
+          ethnicity: edit_ethnic_group_patient_path(@patient),
+          school: edit_school_patient_path(@patient),
+          parent:
+            @patient
+              .parent_relationships
+              .each_with_object({}) do |parent_relationship, memo|
+                memo[
+                  parent_relationship.parent_id
+                ] = edit_patient_parent_relationship_path(
+                  @patient,
+                  parent_relationship.parent_id
+                )
+              end
+        }
+      end
   end
 
   def record_access_log_entry

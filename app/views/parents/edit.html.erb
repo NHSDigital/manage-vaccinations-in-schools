@@ -1,0 +1,17 @@
+<% content_for :navigation do %>
+  <%= govuk_back_link(href: edit_patient_path(@patient)) %>
+<% end %>
+
+<%= form_with model: @parent, url: patient_parent_path(@patient, @parent), method: :put do |f| %>
+  <%= f.mavis_error_summary %>
+
+  <% page_title = "Details for #{@parent.ordinal_label}" %>
+  <%= h1 page_title: do %>
+    <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+    <%= page_title %>
+  <% end %>
+
+  <%= render "fields", f: %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>
