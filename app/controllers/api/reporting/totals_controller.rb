@@ -148,9 +148,51 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
              consent_no_response: metrics.consent_no_response,
              consent_refused: metrics.consent_refused,
              consent_conflicts: metrics.consent_conflicts,
+             consent_refusal_reasons: team_consent_refusal_reasons,
+             consent_routes: team_consent_routes,
              vaccinations_given: team_vaccinations_given_count,
              monthly_vaccinations_given: team_monthly_vaccinations_given
            }
+  end
+
+  def team_consent_refusal_reasons
+    counts =
+      latest_scoped_consents
+        .where(response: :refused)
+        .where.not(reason_for_refusal: nil)
+        .group(:reason_for_refusal)
+        .count
+
+    Consent.reason_for_refusals.keys.index_with { |key| counts[key] || 0 }
+  end
+
+  def team_consent_routes
+    counts = latest_scoped_consents.group(:route).count
+    Consent.routes.keys.index_with { |key| counts[key] || 0 }
+  end
+
+  def latest_scoped_consents
+    base =
+      Consent
+        .where(patient_id: @totals_scope.select(:patient_id))
+        .where(team_id: @team&.id || current_user.team_ids)
+        .where(academic_year: params[:academic_year])
+        .not_invalidated
+        .not_withdrawn
+        .response_provided
+
+    if params[:programme].present?
+      base = base.where(programme_type: params[:programme])
+    end
+
+    Consent.where(
+      id:
+        base.select(
+          "DISTINCT ON (patient_id, programme_type, parent_id) id"
+        ).order(
+          Arel.sql("patient_id, programme_type, parent_id, submitted_at DESC")
+        )
+    )
   end
 
   def apply_workgroup_filter

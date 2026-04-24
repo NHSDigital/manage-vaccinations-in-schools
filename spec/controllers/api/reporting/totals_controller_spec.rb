@@ -19,6 +19,8 @@ describe API::Reporting::TotalsController do
       expect(parsed_response).to have_key("not_vaccinated")
       expect(parsed_response).to have_key("vaccinations_given")
       expect(parsed_response).to have_key("monthly_vaccinations_given")
+      expect(parsed_response).to have_key("consent_refusal_reasons")
+      expect(parsed_response).to have_key("consent_routes")
     end
 
     it "calculates statistics correctly" do
@@ -356,6 +358,248 @@ describe API::Reporting::TotalsController do
       expect(parsed_response["consent_refused"]).to eq(1)
       expect(parsed_response["consent_conflicts"]).to eq(1)
       expect(parsed_response["consent_no_response"]).to eq(4)
+    end
+
+    describe "consent breakdowns" do
+      let(:team) { Team.last }
+      let(:programme) { Programme.hpv }
+      let(:session) { create(:session, team:, programmes: [programme]) }
+
+      before { team.programmes << programme }
+
+      it "returns the breakdown shape with zero counts when no consents exist" do
+        create(:patient, session:)
+
+        refresh_reporting_views!
+
+        get :index, params: { programme: "hpv" }
+
+        expect(parsed_response["consent_refusal_reasons"]).to eq(
+          "contains_gelatine" => 0,
+          "already_vaccinated" => 0,
+          "will_be_vaccinated_elsewhere" => 0,
+          "medical_reasons" => 0,
+          "personal_choice" => 0,
+          "other" => 0,
+          "do_not_want_vaccination_at_school" => 0
+        )
+        expect(parsed_response["consent_routes"]).to eq(
+          "website" => 0,
+          "phone" => 0,
+          "paper" => 0,
+          "in_person" => 0,
+          "self_consent" => 0
+        )
+      end
+
+      it "counts each parent's refusal reason when two parents refuse the same patient" do
+        patient = create(:patient, session:)
+        parent_one = create(:parent)
+        parent_two = create(:parent)
+        create(:parent_relationship, patient:, parent: parent_one)
+        create(:parent_relationship, patient:, parent: parent_two)
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          team:,
+          parent: parent_one,
+          reason_for_refusal: "medical_reasons"
+        )
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          team:,
+          parent: parent_two,
+          reason_for_refusal: "personal_choice"
+        )
+        PatientStatusUpdater.call(patient:)
+
+        refresh_reporting_views!
+
+        get :index, params: { programme: "hpv" }
+
+        reasons = parsed_response["consent_refusal_reasons"]
+        expect(reasons["medical_reasons"]).to eq(1)
+        expect(reasons["personal_choice"]).to eq(1)
+      end
+
+      it "counts each parent's route when two parents respond via different routes" do
+        patient = create(:patient, session:)
+        parent_one = create(:parent)
+        parent_two = create(:parent)
+        recorded_by = create(:user)
+        create(:parent_relationship, patient:, parent: parent_one)
+        create(:parent_relationship, patient:, parent: parent_two)
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          team:,
+          parent: parent_one,
+          route: "website"
+        )
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          team:,
+          parent: parent_two,
+          route: "phone",
+          recorded_by:
+        )
+        PatientStatusUpdater.call(patient:)
+
+        refresh_reporting_views!
+
+        get :index, params: { programme: "hpv" }
+
+        routes = parsed_response["consent_routes"]
+        expect(routes["website"]).to eq(1)
+        expect(routes["phone"]).to eq(1)
+      end
+
+      it "counts only the latest consent when one parent updates their refusal reason" do
+        patient = create(:patient, session:)
+        parent = create(:parent)
+        create(:parent_relationship, patient:, parent:)
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          team:,
+          parent:,
+          reason_for_refusal: "medical_reasons",
+          submitted_at: 2.days.ago
+        )
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          team:,
+          parent:,
+          reason_for_refusal: "personal_choice",
+          submitted_at: 1.day.ago
+        )
+        PatientStatusUpdater.call(patient:)
+
+        refresh_reporting_views!
+
+        get :index, params: { programme: "hpv" }
+
+        reasons = parsed_response["consent_refusal_reasons"]
+        expect(reasons["medical_reasons"]).to eq(0)
+        expect(reasons["personal_choice"]).to eq(1)
+      end
+
+      it "counts the refusal reason for a patient in conflicts status" do
+        patient = create(:patient, session:)
+        parent_giving = create(:parent)
+        parent_refusing = create(:parent)
+        create(:parent_relationship, patient:, parent: parent_giving)
+        create(:parent_relationship, patient:, parent: parent_refusing)
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          team:,
+          parent: parent_giving,
+          route: "website"
+        )
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          team:,
+          parent: parent_refusing,
+          reason_for_refusal: "medical_reasons",
+          route: "phone",
+          recorded_by: create(:user)
+        )
+        PatientStatusUpdater.call(patient:)
+
+        refresh_reporting_views!
+
+        get :index, params: { programme: "hpv" }
+
+        expect(parsed_response["consent_conflicts"]).to eq(1)
+        expect(
+          parsed_response["consent_refusal_reasons"]["medical_reasons"]
+        ).to eq(1)
+        expect(parsed_response["consent_routes"]["website"]).to eq(1)
+        expect(parsed_response["consent_routes"]["phone"]).to eq(1)
+      end
+
+      it "counts both self-consent and parental consent on the same patient" do
+        patient = create(:patient, session:, year_group: 11)
+        parent = create(:parent)
+        create(:parent_relationship, patient:, parent:)
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          team:,
+          parent:,
+          route: "website"
+        )
+        create(:consent, :given, :self_consent, patient:, programme:, team:)
+        PatientStatusUpdater.call(patient:)
+
+        refresh_reporting_views!
+
+        get :index, params: { programme: "hpv" }
+
+        routes = parsed_response["consent_routes"]
+        expect(routes["website"]).to eq(1)
+        expect(routes["self_consent"]).to eq(1)
+      end
+
+      it "excludes invalidated and withdrawn consents" do
+        patient = create(:patient, session:)
+        parent_one = create(:parent)
+        parent_two = create(:parent)
+        create(:parent_relationship, patient:, parent: parent_one)
+        create(:parent_relationship, patient:, parent: parent_two)
+        create(
+          :consent,
+          :refused,
+          :invalidated,
+          patient:,
+          programme:,
+          team:,
+          parent: parent_one,
+          reason_for_refusal: "medical_reasons"
+        )
+        create(
+          :consent,
+          :refused,
+          :withdrawn,
+          patient:,
+          programme:,
+          team:,
+          parent: parent_two,
+          reason_for_refusal: "personal_choice"
+        )
+        PatientStatusUpdater.call(patient:)
+
+        refresh_reporting_views!
+
+        get :index, params: { programme: "hpv" }
+
+        reasons = parsed_response["consent_refusal_reasons"]
+        expect(reasons["medical_reasons"]).to eq(0)
+        expect(reasons["personal_choice"]).to eq(0)
+      end
     end
   end
 
