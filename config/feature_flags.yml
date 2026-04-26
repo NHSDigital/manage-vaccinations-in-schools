@@ -36,9 +36,6 @@ import_bulk_remove_parents: Allow user to bulk remove parent relationships from 
 import_choose_academic_year: >-
   Add an option to choose the academic year when importing patients during the preparation period.
 
-import_concurrency_per_server: >-
-  Controls whether to limit the concurrency of the import jobs to be global or to be per-server.
-
 ops_tools: Enable the operational support tools; timeline and graph.
 
 pds: Main switch for PDS integration. Turning this off will disable all PDS-related features.
