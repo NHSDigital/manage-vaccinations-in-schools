@@ -17,6 +17,9 @@ describe "/api/testing/vaccinations-search-in-nhs" do
     context "with wait=true" do
       before do
         allow(EnqueueVaccinationsSearchInNHSJob).to receive(:perform_now)
+        allow(Sidekiq::Queue).to receive(:new).with(
+          "immunisations_api_search"
+        ).and_return(instance_double(Sidekiq::Queue, size: 0))
       end
 
       it "runs the job synchronously and responds with ok" do
