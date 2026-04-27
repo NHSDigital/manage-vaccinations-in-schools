@@ -74,6 +74,14 @@ describe Careplus::Client do
     end
   end
 
+  context "when base_url is not configured" do
+    before { allow(Settings.careplus).to receive(:base_url).and_return(nil) }
+
+    it "raises a RuntimeError" do
+      expect { response }.to raise_error(RuntimeError)
+    end
+  end
+
   context "when base_url uses HTTPS" do
     before do
       allow(Settings.careplus).to receive(:base_url).and_return(
