@@ -116,6 +116,8 @@ Rails.application.routes.draw do
         resources :teams, only: :destroy, param: :workgroup
         post "/onboard", to: "onboard#create"
         get "refresh-reporting", to: "reporting_refresh#create"
+        post "vaccinations-search-in-nhs",
+             to: "vaccinations_search_in_nhs#create"
       end
     end
 
