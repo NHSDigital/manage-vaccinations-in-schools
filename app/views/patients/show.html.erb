@@ -40,3 +40,5 @@
 <% end %>
 
 <%= render AppPatientActivityComponent.new(@patient, team: current_team) %>
+
+<%= render AppCreateNoteComponent.new(@note, url: patient_note_path(@patient), open: action_name == "create") %>

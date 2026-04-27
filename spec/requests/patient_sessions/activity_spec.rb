@@ -16,7 +16,7 @@ describe "Patient sessions activity" do
 
     it "renders the add note form" do
       get path
-      expect(response.body).to include("Add a note")
+      expect(response.body).to include("Add a session note")
     end
 
     it "creates a note and redirects to the activity log" do

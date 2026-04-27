@@ -203,6 +203,8 @@ Rails.application.routes.draw do
   resources :patients, only: %i[index show edit] do
     post "", action: :index, on: :collection
 
+    resource :note, only: :create, controller: "patients/notes"
+
     resource :archive,
              path: "archive",
              only: %i[new create],

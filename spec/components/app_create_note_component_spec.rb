@@ -11,6 +11,12 @@ describe AppCreateNoteComponent do
   let(:patient) { create(:patient) }
   let(:session) { create(:session) }
 
-  it { should have_css(".nhsuk-details.nhsuk-expander") }
-  it { should have_css(".nhsuk-details__summary", text: "Add a note") }
+  it { expect(rendered).to have_css(".nhsuk-details.nhsuk-expander") }
+
+  it do
+    expect(rendered).to have_css(
+      ".nhsuk-details__summary",
+      text: "Add a note to this record"
+    )
+  end
 end

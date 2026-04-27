@@ -30,7 +30,7 @@ describe Note do
   describe "associations" do
     it { should belong_to(:created_by).with_foreign_key("created_by_user_id") }
     it { should belong_to(:patient) }
-    it { should belong_to(:session) }
+    it { should belong_to(:session).optional }
 
     it { should have_one(:team).through(:session) }
   end
@@ -45,17 +45,25 @@ describe Note do
   describe "#programmes" do
     subject(:programmes) { note.programmes }
 
-    let(:note) { create(:note, patient:, session:) }
-
     let(:patient) { create(:patient, year_group: 8) }
     let(:hpv_programme) { Programme.hpv }
     let(:menacwy_programme) { Programme.menacwy }
-    let(:session) do
-      create(:session, programmes: [hpv_programme, menacwy_programme])
+
+    context "with a session" do
+      let(:note) { create(:note, patient:, session:) }
+      let(:session) do
+        create(:session, programmes: [hpv_programme, menacwy_programme])
+      end
+
+      it "only shows programmes valid for the patient at the time" do
+        expect(programmes).to contain_exactly(hpv_programme)
+      end
     end
 
-    it "only show programmes valid for the patient at the time" do
-      expect(programmes).to contain_exactly(hpv_programme)
+    context "without a session" do
+      let(:note) { create(:note, patient:, session: nil) }
+
+      it { should be_empty }
     end
   end
 end

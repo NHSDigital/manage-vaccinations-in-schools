@@ -27,7 +27,7 @@
 class Note < ApplicationRecord
   belongs_to :created_by, class_name: "User", foreign_key: :created_by_user_id
   belongs_to :patient
-  belongs_to :session
+  belongs_to :session, optional: true
 
   has_one :team, through: :session
 
@@ -35,7 +35,7 @@ class Note < ApplicationRecord
 
   validates :body, presence: true, length: { maximum: 1000 }
 
-  def programmes = session.programmes_for(year_group:)
+  def programmes = session&.programmes_for(year_group:) || []
 
   private
 

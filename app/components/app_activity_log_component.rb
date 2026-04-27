@@ -249,7 +249,7 @@ class AppActivityLogComponent < ViewComponent::Base
   def note_events
     notes.map do |note|
       {
-        title: "Note",
+        title: note.session_id? ? "Note" : "Note added to child record",
         body: note.body,
         at: note.created_at,
         by: note.created_by,
@@ -508,13 +508,15 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def notes
-    return [] unless include_programme_specific_events?
-
     @notes ||=
-      @patient
-        .notes
-        .includes(:created_by, :patient, :session)
-        .then { |scope| @session ? scope.where(session: @session) : scope }
+      begin
+        scope = @patient.notes.includes(:created_by, :patient, :session)
+        scope =
+          scope.where(session_id: nil) unless include_programme_specific_events?
+        scope = scope.where(session: @session) if @session
+        scope = scope.where.not(session_id: nil) if @programme_type
+        scope
+      end
   end
 
   def notify_log_entries
