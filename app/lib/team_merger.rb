@@ -380,7 +380,8 @@ class TeamMerger
           .where.not(id: patient_location_ids_to_keep)
           .delete_all
         PatientLocation.where(id: patient_location_ids_to_keep).update_all(
-          location_id: merged_loc.id
+          location_id: merged_loc.id,
+          school_id: merged_loc.id
         )
       end
 

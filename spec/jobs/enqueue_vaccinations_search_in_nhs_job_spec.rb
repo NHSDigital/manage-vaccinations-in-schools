@@ -357,12 +357,12 @@ describe EnqueueVaccinationsSearchInNHSJob do
 
           Patient.import(build_list(:patient, 50, team:, school:, session:))
           PatientLocation.import(
-            Patient.all.map do
-              {
-                patient_id: it.id,
-                location_id: location.id,
+            Patient.all.map do |patient|
+              PatientLocation.new(
+                patient:,
+                location:,
                 academic_year: AcademicYear.pending
-              }
+              )
             end
           )
           PatientTeamUpdater.call

@@ -37,6 +37,16 @@ describe PatientLocation do
   let(:programme) { Programme.sample }
   let(:session) { create(:session, programmes: [programme]) }
 
+  describe "associations" do
+    it { should belong_to(:patient) }
+
+    it do
+      expect(patient_location).to belong_to(:school).class_name(
+        "Location"
+      ).optional(true)
+    end
+  end
+
   describe "scopes" do
     describe "#appear_in_programmes" do
       subject(:scope) do

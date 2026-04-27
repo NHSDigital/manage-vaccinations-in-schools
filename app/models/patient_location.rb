@@ -37,6 +37,7 @@ class PatientLocation < ApplicationRecord
 
   belongs_to :patient
   belongs_to :location
+  belongs_to :school, class_name: "Location", optional: true
 
   has_and_belongs_to_many :immunisation_imports
 
@@ -83,6 +84,16 @@ class PatientLocation < ApplicationRecord
               .exists
           )
         end
+
+  def location=(location)
+    super
+    self.school = location
+  end
+
+  def location_id=(location_id)
+    super
+    self.school_id = location_id
+  end
 
   def begin_date
     value = date_range.begin
