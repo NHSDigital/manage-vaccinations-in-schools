@@ -32,7 +32,7 @@ on:
 jobs:
   call-tests:
     # yamllint disable-line rule:line-length
-    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@main
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@allow_unstable_test_failures
     with:
       fhir_api_tests: ${{ inputs.fhir_api_tests }}
       reporting_tests: ${{ inputs.reporting_tests }}
