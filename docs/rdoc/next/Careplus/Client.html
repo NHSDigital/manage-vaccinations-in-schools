@@ -745,7 +745,7 @@
             </details>
           </div>
           <div class="method-source-code" id="send_csv-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/careplus/client.rb, line 25</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/careplus/client.rb, line 27</span>
     <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">send_csv</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">send_csv</span>
 
     <span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
@@ -837,7 +837,7 @@
             </details>
           </div>
           <div class="method-source-code" id="build_soap_envelope-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/careplus/client.rb, line 33</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/careplus/client.rb, line 35</span>
     <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">build_soap_envelope</span>
       <span class="ruby-identifier">escaped_payload</span> = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">payload</span>)
       <span class="ruby-identifier">target_namespace</span> = <span class="ruby-node">&quot;#{TARGET_NAMESPACE_BASE}/#{namespace}/webservices&quot;</span>
@@ -895,7 +895,7 @@
             </details>
           </div>
           <div class="method-source-code" id="post_soap_request-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/careplus/client.rb, line 53</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/careplus/client.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">post_soap_request</span>(<span class="ruby-identifier">uri</span>, <span class="ruby-identifier">body</span>)
   <span class="ruby-identifier">http</span> = <span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">host</span>, <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">port</span>)
   <span class="ruby-identifier">http</span>.<span class="ruby-identifier">use_ssl</span> = <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">scheme</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;https&quot;</span>
@@ -946,8 +946,10 @@
           <div class="method-source-code" id="send_csv-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/careplus/client.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">send_csv</span>
-  <span class="ruby-identifier">uri</span> =
-    <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-node">&quot;#{Settings.careplus.base_url}/#{namespace}/soap.SchImms.cls&quot;</span>)
+  <span class="ruby-identifier">base_url</span> = <span class="ruby-constant">Settings</span>.<span class="ruby-identifier">careplus</span>.<span class="ruby-identifier">base_url</span>.<span class="ruby-identifier">presence</span> <span class="ruby-keyword">or</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Settings.careplus.base_url is empty or has not been configured &quot;</span> \
+            <span class="ruby-string">&quot;(if this is a deployed service, the MOCK_CAREPLUS_URL environment variable may not be set)&quot;</span>
+  <span class="ruby-identifier">uri</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-node">&quot;#{base_url}/#{namespace}/soap.SchImms.cls&quot;</span>)
   <span class="ruby-identifier">soap_body</span> = <span class="ruby-identifier">build_soap_envelope</span>
   <span class="ruby-identifier">post_soap_request</span>(<span class="ruby-identifier">uri</span>, <span class="ruby-identifier">soap_body</span>)
 <span class="ruby-keyword">end</span></pre>
