@@ -46,18 +46,13 @@ class PatientStatusUpdater < PatientScopedUpdater
         batch =
           relation.includes(
             :attendance_record,
+            :consent_notifications,
             :consents,
+            :parents,
             :patient,
             :patient_locations,
             :triages,
-            :vaccination_records,
-            :parents,
-            :consent_notifications,
-            patient_locations: {
-              location: [
-                { team_locations: { sessions: :session_programme_year_groups } }
-              ]
-            }
+            :vaccination_records
           ).to_a
 
         batch.each(&:assign)

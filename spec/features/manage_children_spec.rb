@@ -75,7 +75,6 @@ describe "Manage children" do
     and_the_vaccination_record_is_updated_with_the_nhs
 
     when_i_go_back_to_the_patient_page
-    and_i_click_on_a_programme
     then_i_see_the_patient_merge_in_the_activity_log
   end
 

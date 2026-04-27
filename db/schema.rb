@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_20_122440) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
+  enable_extension "postgis"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
@@ -535,6 +536,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
     t.integer "gias_year_groups", default: [], null: false, array: true
     t.text "name", null: false
     t.string "ods_code"
+    t.geography "position", limit: {srid: 4326, type: "st_point", geographic: true}
     t.string "site"
     t.integer "status", default: 0, null: false
     t.string "systm_one_code"
@@ -568,7 +570,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
     t.integer "delivery_status", default: 0, null: false
     t.bigint "parent_id"
     t.bigint "patient_id"
-    t.integer "purpose"
+    t.integer "purpose", null: false
     t.string "recipient", null: false
     t.bigint "sent_by_user_id"
     t.text "subject"
@@ -1150,7 +1152,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
   add_foreign_key "notes", "users", column: "created_by_user_id"
   add_foreign_key "notify_log_entries", "consent_forms"
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
-  add_foreign_key "notify_log_entries", "patients", on_delete: :cascade, validate: false
+  add_foreign_key "notify_log_entries", "patients", on_delete: :cascade
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
   add_foreign_key "notify_log_entry_programmes", "notify_log_entries", on_delete: :cascade
   add_foreign_key "parent_relationships", "parents"
@@ -1159,10 +1161,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
-  add_foreign_key "patient_merge_log_entries", "patients", on_delete: :cascade, validate: false
+  add_foreign_key "patient_merge_log_entries", "patients", on_delete: :cascade
   add_foreign_key "patient_merge_log_entries", "users"
   add_foreign_key "patient_programme_statuses", "patients", on_delete: :cascade
-  add_foreign_key "patient_programme_vaccinations_searches", "patients", on_delete: :cascade, validate: false
+  add_foreign_key "patient_programme_vaccinations_searches", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_registration_statuses", "sessions", on_delete: :cascade
   add_foreign_key "patient_specific_directions", "patients"
@@ -1173,13 +1175,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_101139) do
   add_foreign_key "patient_teams", "teams", on_delete: :cascade
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
-  add_foreign_key "pds_search_results", "patients", on_delete: :cascade, validate: false
+  add_foreign_key "pds_search_results", "patients", on_delete: :cascade
   add_foreign_key "pre_screenings", "locations"
   add_foreign_key "pre_screenings", "patients"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
-  add_foreign_key "school_move_log_entries", "patients", on_delete: :cascade, validate: false
+  add_foreign_key "school_move_log_entries", "patients", on_delete: :cascade
   add_foreign_key "school_move_log_entries", "teams"
   add_foreign_key "school_move_log_entries", "users"
   add_foreign_key "school_moves", "locations", column: "school_id"

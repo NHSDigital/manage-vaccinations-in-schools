@@ -575,6 +575,18 @@ describe ImmunisationImportRow do
         end
       end
 
+      context "with an invalid dose sequence for MMR" do
+        let(:programmes) { [Programme.mmr] }
+        let(:data) { { "PROGRAMME" => "MMR", "DOSE_SEQUENCE" => "unknown" } }
+
+        it "has the correct error message" do
+          immunisation_import_row.valid?
+          expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to include(
+            "Enter a dose sequence number, for example, 1 or 2."
+          )
+        end
+      end
+
       context "with an invalid dose sequence" do
         let(:programmes) { [Programme.hpv] }
 
@@ -2148,10 +2160,26 @@ describe ImmunisationImportRow do
 
         context "matching logic" do
           context "with a brand new patient" do
+            let(:local_authority) do
+              create(:local_authority, mhclg_code: "abc", gss_code: "123")
+            end
+
+            before do
+              create(
+                :local_authority_postcode,
+                gss_code: local_authority.gss_code,
+                value: address_postcode
+              )
+            end
+
             its(:given_name) { should eq given_name }
             its(:family_name) { should eq family_name }
             its(:date_of_birth) { should eq Date.parse(date_of_birth) }
             its(:address_postcode) { should eq address_postcode }
+
+            its(:local_authority_mhclg_code) do
+              should eq local_authority.mhclg_code
+            end
 
             it "doesn't add a patient to the database" do
               expect { patient }.not_to change(Patient, :count)

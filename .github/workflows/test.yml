@@ -11,8 +11,8 @@ jobs:
     name: RSpec
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:17.2
+      postgresql:
+        image: postgis/postgis:17-master
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -50,8 +50,8 @@ jobs:
     name: Seeds
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:17.2
+      postgresql:
+        image: postgis/postgis:17-master
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -60,7 +60,8 @@ jobs:
           - 5432:5432
     env:
       RAILS_ENV: development
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/manage_vaccinations_development
+      DATABASE_URL: >-
+        postgis://postgres:postgres@localhost:5432/manage_vaccinations_development
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
@@ -70,7 +71,7 @@ jobs:
       - uses: ruby/setup-ruby@60ecfba8750476ff216b59eee3b88218bb5111cc # v1.303.0
         with:
           bundler-cache: true
-      - name: Check seeds run
+      - name: Run seeds
         run: bin/rails db:prepare
 
   jest:
@@ -82,5 +83,7 @@ jobs:
         with:
           node-version-file: .tool-versions
           cache: yarn
-      - run: yarn install --immutable --immutable-cache --check-cache
-      - run: yarn test
+      - name: Install dependencies
+        run: yarn install --immutable --immutable-cache --check-cache
+      - name: Run tests
+        run: yarn test

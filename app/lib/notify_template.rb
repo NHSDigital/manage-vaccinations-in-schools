@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 class NotifyTemplate
+  include ActiveModel::Model
+
+  validates :purpose, presence: true
+  validates :purpose,
+            inclusion: {
+              in: ->(_) { NotifyLogEntry.purposes.keys.map(&:to_sym) }
+            },
+            if: -> { purpose.present? }
+
   class << self
     def find(name, channel:)
       local_templates(channel)[name]
@@ -43,12 +52,13 @@ class NotifyTemplate
           template = new(name:, channel:, content:)
           next unless template.id
 
+          template.validate!
           hash[name] = template
         end
     end
   end
 
-  attr_reader :name, :channel, :id, :body, :subject
+  attr_reader :name, :channel, :id, :body, :subject, :purpose
 
   def initialize(name:, channel:, content:)
     @name = name.to_sym
@@ -56,6 +66,7 @@ class NotifyTemplate
     frontmatter, @body = parse_frontmatter(content)
     @id = frontmatter["template_id"]
     @subject = frontmatter["subject"].to_s
+    @purpose = frontmatter["purpose"]&.to_sym
   end
 
   def render(personalisation)

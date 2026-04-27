@@ -41,147 +41,12 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def initialize(team:, patient:, programme_type: nil, session: nil)
     @patient = patient
-
-    @archive_reasons =
-      @patient.archive_reasons.where(team:).includes(:created_by)
-
-    @attendance_records =
-      patient
-        .attendance_records
-        .includes(:location)
-        .then do |scope|
-          session ? scope.where(location: session.location) : scope
-        end
-
-    @consents =
-      @patient
-        .consents
-        .includes(
-          :consent_form,
-          :parent,
-          :recorded_by,
-          patient: :parent_relationships
-        )
-        .then do |scope|
-          if programme_type
-            scope.where(programme_type:)
-          elsif session
-            scope.for_session(session)
-          else
-            scope
-          end
-        end
-
-    @gillick_assessments =
-      @patient
-        .gillick_assessments
-        .includes(:performed_by)
-        .order(:created_at)
-        .then do |scope|
-          if programme_type
-            scope.where(programme_type:)
-          elsif session
-            scope.for_session(session)
-          else
-            scope
-          end
-        end
-
-    @notes =
-      @patient
-        .notes
-        .includes(:created_by, :patient, :session)
-        .then { |scope| session ? scope.where(session:) : scope }
-
-    @notify_log_entries =
-      @patient
-        .notify_log_entries
-        .includes(:sent_by)
-        .preload(:notify_log_entry_programmes)
-        .then do |scope|
-          if programme_type
-            scope.for_programme_type(programme_type)
-          elsif session
-            scope.for_session(session)
-          else
-            scope
-          end
-        end
-
-    @patient_locations =
-      @patient
-        .patient_locations
-        .includes(:location)
-        .then do |scope|
-          session ? scope.where(location: session.location) : scope
-        end
-
-    @patient_merge_log_entries =
-      @patient.patient_merge_log_entries.includes(:user)
-
-    @patient_specific_directions =
-      @patient
-        .patient_specific_directions
-        .includes(:created_by)
-        .then do |scope|
-          if programme_type
-            scope.where(programme_type:)
-          elsif session
-            scope.for_session(session)
-          else
-            scope
-          end
-        end
-
-    @pre_screenings =
-      @patient
-        .pre_screenings
-        .includes(:performed_by)
-        .then do |scope|
-          if programme_type
-            scope.where(programme_type:)
-          elsif session
-            scope.for_session(session)
-          else
-            scope
-          end
-        end
-
-    @triages =
-      @patient
-        .triages
-        .includes(:performed_by)
-        .then do |scope|
-          if programme_type
-            scope.where(programme_type:)
-          elsif session
-            scope.for_session(session)
-          else
-            scope
-          end
-        end
-
-    @vaccination_records =
-      @patient
-        .vaccination_records
-        .with_discarded
-        .includes(:performed_by_user, :vaccine)
-        .then { |scope| programme_type ? scope.where(programme_type:) : scope }
+    @team = team
+    @programme_type = programme_type
+    @session = session
   end
 
-  attr_reader :archive_reasons,
-              :consents,
-              :gillick_assessments,
-              :notes,
-              :notify_log_entries,
-              :patient,
-              :patient_locations,
-              :patient_merge_log_entries,
-              :patient_specific_directions,
-              :pre_screenings,
-              :attendance_records,
-              :triages,
-              :vaccination_records
+  attr_reader :patient
 
   def all_events
     [
@@ -290,6 +155,8 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def expiration_events
+    return [] unless include_programme_specific_events?
+
     all_programmes = Programme.all.to_a
 
     AcademicYear.all.flat_map do |academic_year|
@@ -567,6 +434,186 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   private
+
+  def include_programme_specific_events?
+    @programme_type.present? || @session.present?
+  end
+
+  def archive_reasons
+    return [] if include_programme_specific_events?
+
+    @archive_reasons ||=
+      @patient.archive_reasons.where(team: @team).includes(:created_by)
+  end
+
+  def patient_merge_log_entries
+    return [] if include_programme_specific_events?
+
+    @patient_merge_log_entries ||=
+      @patient.patient_merge_log_entries.includes(:user)
+  end
+
+  def attendance_records
+    return [] unless include_programme_specific_events?
+
+    @attendance_records ||=
+      patient
+        .attendance_records
+        .includes(:location)
+        .then do |scope|
+          @session ? scope.where(location: @session.location) : scope
+        end
+  end
+
+  def consents
+    return [] unless include_programme_specific_events?
+
+    @consents ||=
+      @patient
+        .consents
+        .includes(
+          :consent_form,
+          :parent,
+          :recorded_by,
+          patient: :parent_relationships
+        )
+        .then do |scope|
+          if @programme_type
+            scope.where(programme_type: @programme_type)
+          elsif @session
+            scope.for_session(@session)
+          else
+            scope
+          end
+        end
+  end
+
+  def gillick_assessments
+    return [] unless include_programme_specific_events?
+
+    @gillick_assessments ||=
+      @patient
+        .gillick_assessments
+        .includes(:performed_by)
+        .order(:created_at)
+        .then do |scope|
+          if @programme_type
+            scope.where(programme_type: @programme_type)
+          elsif @session
+            scope.for_session(@session)
+          else
+            scope
+          end
+        end
+  end
+
+  def notes
+    return [] unless include_programme_specific_events?
+
+    @notes ||=
+      @patient
+        .notes
+        .includes(:created_by, :patient, :session)
+        .then { |scope| @session ? scope.where(session: @session) : scope }
+  end
+
+  def notify_log_entries
+    return [] unless include_programme_specific_events?
+
+    @notify_log_entries ||=
+      @patient
+        .notify_log_entries
+        .includes(:sent_by)
+        .preload(:notify_log_entry_programmes)
+        .then do |scope|
+          if @programme_type
+            scope.for_programme_type(@programme_type)
+          elsif @session
+            scope.for_session(@session)
+          else
+            scope
+          end
+        end
+  end
+
+  def patient_locations
+    return [] unless include_programme_specific_events?
+
+    @patient_locations ||=
+      @patient
+        .patient_locations
+        .includes(:location)
+        .then do |scope|
+          @session ? scope.where(location: @session.location) : scope
+        end
+  end
+
+  def patient_specific_directions
+    return [] unless include_programme_specific_events?
+
+    @patient_specific_directions ||=
+      @patient
+        .patient_specific_directions
+        .includes(:created_by)
+        .then do |scope|
+          if @programme_type
+            scope.where(programme_type: @programme_type)
+          elsif @session
+            scope.for_session(@session)
+          else
+            scope
+          end
+        end
+  end
+
+  def pre_screenings
+    return [] unless include_programme_specific_events?
+
+    @pre_screenings ||=
+      @patient
+        .pre_screenings
+        .includes(:performed_by)
+        .then do |scope|
+          if @programme_type
+            scope.where(programme_type: @programme_type)
+          elsif @session
+            scope.for_session(@session)
+          else
+            scope
+          end
+        end
+  end
+
+  def triages
+    return [] unless include_programme_specific_events?
+
+    @triages ||=
+      @patient
+        .triages
+        .includes(:performed_by)
+        .then do |scope|
+          if @programme_type
+            scope.where(programme_type: @programme_type)
+          elsif @session
+            scope.for_session(@session)
+          else
+            scope
+          end
+        end
+  end
+
+  def vaccination_records
+    return [] unless include_programme_specific_events?
+
+    @vaccination_records ||=
+      @patient
+        .vaccination_records
+        .with_discarded
+        .includes(:performed_by_user, :vaccine)
+        .then do |scope|
+          @programme_type ? scope.where(programme_type: @programme_type) : scope
+        end
+  end
 
   def expired_items_for(academic_year:, programmes:)
     {

@@ -216,6 +216,11 @@ en:
           attributes:
             apply_changes:
               inclusion: Choose which record to keep
+        notify_template:
+          attributes:
+            purpose:
+              blank: Add a purpose to the template frontmatter
+              inclusion: Use a purpose from the list of known purposes in NotifyLogEntry
         onboarding:
           attributes:
             clinics:
@@ -803,6 +808,8 @@ en:
               blank: Enter a template ID
             type:
               inclusion: Choose a type
+            purpose:
+              blank: Add a purpose to the template frontmatter
         offline_password:
           attributes:
             password:

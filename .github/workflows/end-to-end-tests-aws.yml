@@ -1,4 +1,4 @@
-name: AWS deployment E2E tests
+name: AWS
 
 on:
   workflow_call:
@@ -122,7 +122,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: ./.github/workflows/create_dockerized_db.yml
+    uses: ./.github/workflows/build-and-push-database-image.yml
     with:
       github_ref: ${{ needs.check-database-image-presence.outputs.db_git_ref_sha }}
   launch-dockerized-devimage:

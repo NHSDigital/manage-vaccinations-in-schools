@@ -60,6 +60,10 @@ reporting_api:
 careplus:
   base_url: https://careplus.syhapp.thirdparty.nhs.uk
 
+ordnance_survey:
+  api_key: <%= Rails.application.credentials.ordnance_survey&.api_key %>
+  secret_key: <%= Rails.application.credentials.ordnance_survey&.secret_key %>
+
 # Set a value to override the default values set in config/initializers/devise.rb
 devise:
   timeout_in_seconds:

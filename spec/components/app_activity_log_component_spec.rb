@@ -76,6 +76,8 @@ describe AppActivityLogComponent do
   end
 
   describe "archive reasons" do
+    let(:component) { described_class.new(patient:, team:) }
+
     before do
       create(
         :archive_reason,
@@ -787,6 +789,8 @@ describe AppActivityLogComponent do
   end
 
   describe "patient merge events" do
+    let(:component) { described_class.new(patient:, team:) }
+
     before do
       create(
         :patient_merge_log_entry,

@@ -16,8 +16,10 @@ module Careplus
     end
 
     def send_csv
-      uri =
-        URI.parse("#{Settings.careplus.base_url}/#{namespace}/soap.SchImms.cls")
+      base_url = Settings.careplus.base_url.presence or
+        raise "Settings.careplus.base_url is empty or has not been configured " \
+                "(if this is a deployed service, the MOCK_CAREPLUS_URL environment variable may not be set)"
+      uri = URI.parse("#{base_url}/#{namespace}/soap.SchImms.cls")
       soap_body = build_soap_envelope
       post_soap_request(uri, soap_body)
     end

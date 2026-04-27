@@ -41,7 +41,7 @@ module ManageVaccinations
       dbname = db_config["dbname"]
       ENV[
         "DATABASE_URL"
-      ] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
+      ] = "postgis://#{username}:#{password}@#{host}:#{port}/#{dbname}"
     elsif ENV["DB_CREDENTIALS"].present?
       # for environment which uses RDS aurora managed credentials only the the username
       # and password is automatically set. The environment variable is then DB_CREDENTIALS
@@ -53,7 +53,7 @@ module ManageVaccinations
       port = ENV.fetch("DB_PORT", 5432)
       ENV[
         "DATABASE_URL"
-      ] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
+      ] = "postgis://#{username}:#{password}@#{host}:#{port}/#{dbname}"
     end
 
     # Configuration for the application, engines, and railties goes here.

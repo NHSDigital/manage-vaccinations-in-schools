@@ -99,6 +99,41 @@ describe NotifyTemplate do
     end
   end
 
+  describe "#purpose" do
+    it "returns the symbol declared in frontmatter" do
+      content = "---\ntemplate_id: \"abc\"\npurpose: consent_request\n---\nbody"
+      template = described_class.new(name: :test, channel: :email, content:)
+      expect(template.purpose).to eq(:consent_request)
+    end
+  end
+
+  describe "purpose validation" do
+    def build(extra_frontmatter = "")
+      content = "---\ntemplate_id: \"abc\"\n#{extra_frontmatter}---\nbody"
+      described_class.new(name: :test, channel: :email, content:)
+    end
+
+    it "is valid with a known purpose" do
+      expect(build("purpose: consent_request\n")).to be_valid
+    end
+
+    it "is invalid when purpose is missing" do
+      template = build
+      expect(template).to be_invalid
+      expect(template.errors[:purpose]).to include(
+        "Add a purpose to the template frontmatter"
+      )
+    end
+
+    it "is invalid when purpose is unknown" do
+      template = build("purpose: nonsense_value\n")
+      expect(template).to be_invalid
+      expect(template.errors[:purpose]).to include(
+        "Use a purpose from the list of known purposes in NotifyLogEntry"
+      )
+    end
+  end
+
   describe "frontmatter parsing" do
     it "parses frontmatter and body from ERB content" do
       content = "---\ntemplate_id: \"abc\"\n---\nHello world\n"

@@ -182,7 +182,7 @@ describe "National reporting team homepage and navigation" do
 
   def then_i_should_see_vaccinations_then_child_details
     app_cards = page.all(".app-card")
-    expect(app_cards.count).to eq(2)
+    expect(app_cards.count).to eq(3)
     expect(app_cards[0]).to have_content("Vaccinations")
     expect(app_cards[1]).to have_content("Child record")
   end
