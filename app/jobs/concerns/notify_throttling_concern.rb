@@ -7,7 +7,7 @@ module NotifyThrottlingConcern
   include Sidekiq::Throttled::Job
 
   included do
-    sidekiq_throttle_as :notify
+    sidekiq_throttle_as :govuk_notify
 
     queue_as :notifications
   end

@@ -82,7 +82,7 @@ Sidekiq::Throttled::Registry.add(
 
 # https://docs.notifications.service.gov.uk/rest-api.html#rate-limits
 Sidekiq::Throttled::Registry.add(
-  :notify,
+  :govuk_notify,
   threshold: {
     limit: Settings.govuk_notify.rate_limit_per_second.to_i,
     period: 1.second
