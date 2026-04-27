@@ -97,6 +97,8 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
         fhir_bundle =
           NHS::ImmunisationsAPI.search_immunisations(patient, programmes:)
 
+        return [] if fhir_bundle.nil?
+
         extract_fhir_vaccination_records(fhir_bundle)
           .then { convert_to_vaccination_records(it) }
           .then { reject_service_sourced_records(it) }

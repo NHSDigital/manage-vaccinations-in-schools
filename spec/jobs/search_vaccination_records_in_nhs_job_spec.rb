@@ -18,6 +18,51 @@ describe SearchVaccinationRecordsInNHSJob do
     Flipper.disable(:imms_api_search_job)
   end
 
+  describe "#incoming_vaccination_records" do
+    subject(:incoming_vaccination_records) do
+      injected_described_class =
+        described_class.new.tap do |job|
+          job.instance_variable_set(:@patient, patient)
+          job.instance_variable_set(:@programmes, Programme.all_as_variants)
+        end
+      injected_described_class.send(:incoming_vaccination_records)
+    end
+
+    let(:bundle) do
+      FHIR.from_contents(
+        file_fixture("fhir/search_responses/2_results.json").read
+      )
+    end
+
+    before do
+      allow(NHS::ImmunisationsAPI).to receive(:search_immunisations).with(
+        patient,
+        programmes: Programme.all_as_variants
+      ).and_return(bundle)
+    end
+
+    it "returns only VaccinationRecords" do
+      expect(incoming_vaccination_records).to all(be_a(VaccinationRecord))
+      expect(incoming_vaccination_records.size).to eq 2
+    end
+
+    context "when the patient has no NHS number" do
+      let(:nhs_number) { nil }
+
+      it "returns an empty array" do
+        expect(incoming_vaccination_records).to be_empty
+      end
+    end
+
+    context "when the bundle is nil" do
+      let(:bundle) { nil }
+
+      it "returns an empty array" do
+        expect(incoming_vaccination_records).to be_empty
+      end
+    end
+  end
+
   describe "#extract_vaccination_records" do
     let(:bundle) do
       FHIR.from_contents(
