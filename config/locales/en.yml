@@ -1163,6 +1163,28 @@ en:
           unconsented_only:
             Parent–child relationships without a submitted consent response are being removed.
           all: All parent-child relationships included in this import are being removed.
+    bulk_remove_vaccination_records:
+      new:
+        title: Are you sure you want to remove all vaccination records included in this import?
+        warning:
+          exclusive:
+            one: >-
+              This will permanently delete 1 vaccination record that is only linked to this import.
+            other: >-
+              This will permanently delete %{count} vaccination records that are only linked to this
+              import.
+          shared:
+            one: >-
+              1 record that is linked to other imports will be unlinked from this import but not
+              deleted.
+            other: >-
+              %{count} records that are linked to other imports will be unlinked from this import
+              but not deleted.
+        buttons:
+          continue: Remove all vaccination records
+          cancel: Cancel
+      create:
+        success_flash: All vaccination records included in this import are being removed.
   mailers:
     consent_form_mailer:
       reasons_for_refusal:

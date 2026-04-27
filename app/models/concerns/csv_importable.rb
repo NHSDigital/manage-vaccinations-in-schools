@@ -44,6 +44,7 @@ module CSVImportable
                 processed
                 partially_processed
                 removing_parent_relationships
+                removing_vaccination_records
               ]
             )
           end
@@ -61,7 +62,8 @@ module CSVImportable
            committing: 8,
            partially_processed: 9,
            cancelled: 10,
-           removing_parent_relationships: 11
+           removing_parent_relationships: 11,
+           removing_vaccination_records: 12
          },
          default: :pending_import,
          validate: true

@@ -21,6 +21,7 @@ class AppImportStatusComponent < ViewComponent::Base
       "committing" => "Importing",
       "processed" => "Completed",
       "removing_parent_relationships" => "Completed",
+      "removing_vaccination_records" => "Completed",
       "partially_processed" => "Partially completed",
       "low_pds_match_rate" => "Failed",
       "cancelled" => "Cancelled"
@@ -38,6 +39,7 @@ class AppImportStatusComponent < ViewComponent::Base
       "committing" => "blue",
       "processed" => "green",
       "removing_parent_relationships" => "green",
+      "removing_vaccination_records" => "green",
       "partially_processed" => "green",
       "low_pds_match_rate" => "red",
       "cancelled" => "grey"

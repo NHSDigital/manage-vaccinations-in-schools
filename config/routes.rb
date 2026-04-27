@@ -195,6 +195,13 @@ Rails.application.routes.draw do
 
     post "bulk_remove_parents/:import_type/:import_id",
          to: "bulk_remove_parents#create"
+
+    get "bulk_remove_vaccination_records/:import_id",
+        to: "bulk_remove_vaccination_records#new",
+        as: :bulk_remove_vaccination_records
+
+    post "bulk_remove_vaccination_records/:import_id",
+         to: "bulk_remove_vaccination_records#create"
   end
 
   resources :notifications, only: :create

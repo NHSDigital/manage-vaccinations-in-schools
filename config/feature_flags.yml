@@ -33,6 +33,9 @@ imms_api_sync_job: >-
 
 import_bulk_remove_parents: Allow user to bulk remove parent relationships from imports.
 
+import_bulk_remove_vaccination_records: >-
+  Allow user to bulk remove vaccination records from an immunisation import.
+
 import_choose_academic_year: >-
   Add an option to choose the academic year when importing patients during the preparation period.
 

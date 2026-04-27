@@ -1,0 +1,23 @@
+<% content_for :navigation do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("imports.index.title"), href: imports_path },
+                                        ]) %>
+<% end %>
+
+<%= h1 t(".title") %>
+
+<% if @exclusive_count.positive? %>
+  <p><%= t(".warning.exclusive", count: @exclusive_count) %></p>
+<% end %>
+<% if @shared_count.positive? %>
+  <p><%= t(".warning.shared", count: @shared_count) %></p>
+<% end %>
+
+<%= form_with url: imports_bulk_remove_vaccination_records_path(import_id: @import.id),
+              local: true do |f| %>
+  <div class="nhsuk-button-group">
+    <%= f.govuk_submit t(".buttons.continue"), warning: true, class: "govuk-button govuk-button--warning" %>
+    <%= link_to t(".buttons.cancel"), immunisation_import_path(@import) %>
+  </div>
+<% end %>

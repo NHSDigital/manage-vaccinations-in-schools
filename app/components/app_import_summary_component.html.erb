@@ -74,4 +74,16 @@
       </p>
     <% end %>
   <% end %>
+
+  <% if Flipper.enabled?(:import_bulk_remove_vaccination_records) &&
+        import.is_a?(ImmunisationImport) &&
+        import.vaccination_records.any? %>
+    <% if import.removing_vaccination_records? %>
+      <p class="nhsuk-u-secondary-text-colour">Vaccination records are currently being removed from this import</p>
+    <% elsif import.processed? %>
+      <p>
+        <%= link_to "Remove all vaccination records from import", imports_bulk_remove_vaccination_records_path(import.id) %>
+      </p>
+    <% end %>
+  <% end %>
 <% end %>
