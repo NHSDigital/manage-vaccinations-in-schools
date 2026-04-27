@@ -18,18 +18,48 @@
 
 :scheduler:
   :schedule:
-    EnqueueVaccinationsSearchInNHSJob:
-      cron: "0 6 * * *"
-      description: Find upcoming sessions and enqueue jobs to find vaccinations for patients in them
+    # Half-hourly
+    Metrics::ExportSchoolMovesCountJob:
+      every: 30m
+      description: Export school moves count metric
+
+    # Hourly
+    ReportingAPI::RefreshJob:
+      cron: "0 * * * *"
+      description: Refresh the reporting API materialized view data
+
+    # 6-hourly
+    EnqueueUpdatePatientsFromPDSJob:
+      cron: "0 0,6,12,18 * * *"
+      description: Keep patient details up to date with PDS
+
+    # Each afternoon and evening
+    SendVaccinationConfirmationsJob:
+      cron: "0 13,16,19 * * *"
+      description: Send vaccination confirmation emails to parents
+
+    # Nightly
+    RemoveImportCSVJob:
+      cron: "0 1 * * *"
+      description: Remove CSV data from old cohort and immunisation imports
     GIASImportJob:
       cron: "30 1 * * *"
       description: Download and import GIAS data
     InvalidateSelfConsentsJob:
       cron: "0 2 * * *"
       description: Invalidate all self-consents and associated triage for the previous day
-    Metrics::ExportSchoolMovesCountJob:
-      every: 30m
-      description: Export school moves count metric
+    TrimActiveRecordSessionsJob:
+      cron: "0 2 * * *"
+      description: Remove ActiveRecord sessions older than 30 days
+    EnqueueAutomatedCareplusReportsJob:
+      cron: "30 2 * * *"
+      description: Enqueue automated CarePlus reports for teams with CarePlus configured
+    PatientStatusUpdaterJob:
+      cron: "0 3 * * *"
+      description: Updates the status of all patients
+    EnqueueProcessUnmatchedConsentFormsJob:
+      cron: "0 4 * * *"
+      description: Re-process unmatched consent forms to attempt automatic matching
     EnqueuePatientsAgedOutOfSchoolsJob:
       cron: "0 5 * * *"
       description: Moves patients who have aged out of their school to unknown school
@@ -41,36 +71,17 @@
       description: >-
         Record already vaccinated for patients who refused consent in the previous academic year for
         that reason
-    ReportingAPI::RefreshJob:
-      cron: "0 * * * *"
-      description: Refresh the reporting API materialized view data
-    RemoveImportCSVJob:
-      cron: "0 1 * * *"
-      description: Remove CSV data from old cohort and immunisation imports
+    EnqueueVaccinationsSearchInNHSJob:
+      cron: "0 6 * * *"
+      description: Find upcoming sessions and enqueue jobs to find vaccinations for patients in them
+
+    # Daily
+    EnqueueSchoolSessionRemindersJob:
+      cron: "0 9 * * *"
+      description: Send school session reminder emails to parents
     EnqueueSchoolConsentRequestsJob:
       cron: "0 16 * * *"
       description: Send school consent request emails to parents for each session
     EnqueueSchoolConsentRemindersJob:
       cron: "15 16 * * *"
       description: Send school consent reminder emails to parents for each session
-    EnqueueSchoolSessionRemindersJob:
-      cron: "0 9 * * *"
-      description: Send school session reminder emails to parents
-    PatientStatusUpdaterJob:
-      cron: "0 3 * * *"
-      description: Updates the status of all patients
-    TrimActiveRecordSessionsJob:
-      cron: "0 2 * * *"
-      description: Remove ActiveRecord sessions older than 30 days
-    EnqueueUpdatePatientsFromPDSJob:
-      cron: "0 0,6,12,18 * * *"
-      description: Keep patient details up to date with PDS
-    EnqueueProcessUnmatchedConsentFormsJob:
-      cron: "0 4 * * *"
-      description: Re-process unmatched consent forms to attempt automatic matching
-    SendVaccinationConfirmationsJob:
-      cron: "0 13,16,19 * * *"
-      description: Send vaccination confirmation emails to parents
-    EnqueueAutomatedCareplusReportsJob:
-      cron: "30 2 * * *"
-      description: Enqueue automated CarePlus reports for teams with CarePlus configured
