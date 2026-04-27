@@ -4,47 +4,8 @@ module PatientImportConcern
   extend ActiveSupport::Concern
 
   def import_patients_and_parents(changesets, import)
-    unless Flipper.enabled?(:one_patient_per_parent)
-      return(
-        import_patients_and_parents_without_one_patient_per_parent_feature_flag(
-          changesets,
-          import
-        )
-      )
-    end
-
     patients = changesets.map(&:patient)
     parents = changesets.flat_map(&:parents)
-    relationships =
-      changesets
-        .flat_map(&:parent_relationships)
-        .uniq { [_1.parent, _1.patient] }
-
-    deduplicate_patients!(patients, relationships)
-
-    patients_with_nhs_number_changes =
-      patients.select(&:nhs_number_previously_changed?)
-
-    Patient.import(patients.to_a, on_duplicate_key_update: :all)
-    link_records_to_import(import, Patient, patients)
-
-    SearchVaccinationRecordsInNHSJob.perform_bulk(
-      patients_with_nhs_number_changes.pluck(:id).zip
-    )
-
-    changesets.each(&:assign_patient_id)
-    PatientChangeset.import(changesets, on_duplicate_key_update: :all)
-
-    Parent.import(parents.to_a, on_duplicate_key_update: :all)
-    link_records_to_import(import, Parent, parents)
-  end
-
-  def import_patients_and_parents_without_one_patient_per_parent_feature_flag(
-    changesets,
-    import
-  )
-    patients = changesets.map(&:patient)
-    parents = changesets.flat_map(&:parents).uniq
     relationships =
       changesets
         .flat_map(&:parent_relationships)

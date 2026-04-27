@@ -42,6 +42,9 @@ describe "Import class lists" do
     and_i_click_on_the_link_to_view_the_child
     and_i_click_on_the_link_to_view_the_full_child_record
     then_i_should_see_the_parent_details
+
+    when_i_switch_off_the_feature_flag_and_return_to_the_child_record
+    then_i_should_see_the_parent_details
   end
 
   context "when PDS lookup during import is enabled" do
@@ -280,5 +283,13 @@ describe "Import class lists" do
   def then_i_should_see_the_parent_details
     expect(page).to have_content("Jane Doe")
     expect(page).to have_content("Richard Doe")
+  end
+
+  def when_i_switch_off_the_feature_flag_and_return_to_the_child_record
+    Flipper.disable(:one_patient_per_parent)
+    when_i_go_to_the_session
+    when_i_click_on_the_needs_consent_filter
+    and_i_click_on_the_link_to_view_the_child
+    and_i_click_on_the_link_to_view_the_full_child_record
   end
 end
