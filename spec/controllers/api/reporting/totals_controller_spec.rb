@@ -564,7 +564,7 @@ describe API::Reporting::TotalsController do
         expect(routes["self_consent"]).to eq(1)
       end
 
-      it "excludes invalidated and withdrawn consents" do
+      it "excludes invalidated consents but includes withdrawn consents" do
         patient = create(:patient, session:)
         parent_one = create(:parent)
         parent_two = create(:parent)
@@ -578,17 +578,18 @@ describe API::Reporting::TotalsController do
           programme:,
           team:,
           parent: parent_one,
-          reason_for_refusal: "medical_reasons"
+          reason_for_refusal: "medical_reasons",
+          route: "website"
         )
         create(
           :consent,
-          :refused,
           :withdrawn,
           patient:,
           programme:,
           team:,
           parent: parent_two,
-          reason_for_refusal: "personal_choice"
+          reason_for_refusal: "personal_choice",
+          route: "self_consent"
         )
         PatientStatusUpdater.call(patient:)
 
@@ -598,7 +599,11 @@ describe API::Reporting::TotalsController do
 
         reasons = parsed_response["consent_refusal_reasons"]
         expect(reasons["medical_reasons"]).to eq(0)
-        expect(reasons["personal_choice"]).to eq(0)
+        expect(reasons["personal_choice"]).to eq(1)
+
+        routes = parsed_response["consent_routes"]
+        expect(routes["website"]).to eq(0)
+        expect(routes["self_consent"]).to eq(1)
       end
     end
   end

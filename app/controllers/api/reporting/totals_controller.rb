@@ -178,7 +178,6 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
         .where(team_id: @team&.id || current_user.team_ids)
         .where(academic_year: params[:academic_year])
         .not_invalidated
-        .not_withdrawn
         .response_provided
 
     if params[:programme].present?
