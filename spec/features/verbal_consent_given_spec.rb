@@ -12,7 +12,8 @@ describe "Verbal consent" do
 
     when_i_confirm_the_consent_response
     then_the_parent_details_are_saved_to_the_consent
-    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_the_parent_details_are_saved_to_both_parent_and_parent_relationship_records
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_i_can_see_the_consent_response_details(number_of_health_questions: 4)
     and_i_can_see_the_log_entries_for_the_email_and_sms
@@ -27,7 +28,9 @@ describe "Verbal consent" do
     and_i_see_the_flu_injection_consent_given
 
     when_i_confirm_the_consent_response
-    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    then_the_parent_details_are_saved_to_the_consent
+    and_the_parent_details_are_saved_to_both_parent_and_parent_relationship_records
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
   end
 
@@ -41,7 +44,9 @@ describe "Verbal consent" do
     and_i_see_the_flu_injection_consent_given
 
     when_i_confirm_the_consent_response
-    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    then_the_parent_details_are_saved_to_the_consent
+    and_the_parent_details_are_saved_to_both_parent_and_parent_relationship_records
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_the_psd_is_invalidated
   end
@@ -55,7 +60,9 @@ describe "Verbal consent" do
     and_i_see_the_flu_nasal_consent_given
 
     when_i_confirm_the_consent_response
-    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    then_the_parent_details_are_saved_to_the_consent
+    and_the_parent_details_are_saved_to_both_parent_and_parent_relationship_records
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
   end
 
@@ -68,7 +75,9 @@ describe "Verbal consent" do
     and_i_see_the_flu_nasal_and_injection_consent_given
 
     when_i_confirm_the_consent_response
-    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    then_the_parent_details_are_saved_to_the_consent
+    and_the_parent_details_are_saved_to_both_parent_and_parent_relationship_records
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
   end
 
@@ -80,7 +89,9 @@ describe "Verbal consent" do
     then_i_see_the_check_and_confirm_page
 
     when_i_confirm_the_consent_response
-    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    then_the_parent_details_are_saved_to_the_consent
+    and_the_parent_details_are_saved_to_both_parent_and_parent_relationship_records
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_i_can_see_the_consent_response_details(number_of_health_questions: 3)
   end
@@ -93,7 +104,9 @@ describe "Verbal consent" do
     then_i_see_the_check_and_confirm_page
 
     when_i_confirm_the_consent_response
-    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    then_the_parent_details_are_saved_to_the_consent
+    and_the_parent_details_are_saved_to_both_parent_and_parent_relationship_records
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_i_can_see_the_consent_response_details(number_of_health_questions: 3)
   end
@@ -284,6 +297,23 @@ describe "Verbal consent" do
     )
   end
 
+  def and_the_parent_details_are_saved_to_both_parent_and_parent_relationship_records
+    @patient.reload
+    consent = @patient.consents.last
+    parent = @patient.parents.first
+    parent_relationship = @patient.parent_relationships.first
+
+    expect(parent).to have_attributes(
+      type: consent.parent_relationship_type,
+      full_name: consent.parent_full_name,
+      phone: consent.parent_phone,
+      email: consent.parent_email
+    )
+    expect(parent_relationship).to have_attributes(
+      type: consent.parent_relationship_type
+    )
+  end
+
   def and_i_can_see_the_consent_response_details(number_of_health_questions:)
     click_link @patient.full_name, match: :first
     click_link @parent.full_name
@@ -313,7 +343,7 @@ describe "Verbal consent" do
     )
   end
 
-  def then_an_email_is_sent_to_the_parent_confirming_their_consent
+  def and_an_email_is_sent_to_the_parent_confirming_their_consent
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @parent.email,
