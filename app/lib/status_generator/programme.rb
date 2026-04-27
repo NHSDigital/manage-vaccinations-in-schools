@@ -266,7 +266,7 @@ class StatusGenerator::Programme
         patient_locations
           .select { it.academic_year == academic_year }
           .any? do |patient_location|
-            patient_location.location.location_programme_year_groups.any? do
+            patient_location.school.location_programme_year_groups.any? do
               it.programme_type == programme_type &&
                 it.academic_year == academic_year && it.year_group == year_group
             end
@@ -329,16 +329,18 @@ class StatusGenerator::Programme
   end
 
   def sessions
+    # TODO: We can remove the call to `reject` once we have a dedicated model
+    #  for clinic sessions.
     @sessions ||=
       patient_locations
-        .reject { it.location.generic_clinic? }
+        .reject { it.school.generic_clinic? }
         .flat_map { sessions_for(it) }
         .uniq
   end
 
   def sessions_for(patient_location)
     patient_location
-      .location
+      .school
       .team_locations
       .select { it.academic_year == academic_year }
       .flat_map(&:sessions)

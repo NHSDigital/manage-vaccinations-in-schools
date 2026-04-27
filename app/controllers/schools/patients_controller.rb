@@ -7,12 +7,13 @@ class Schools::PatientsController < Schools::BaseController
   before_action :set_patient_search_form
 
   def index
+    # FIXME: Do we really need to filter on patient-locations?
     scope =
       Patient
         .joins(:patient_locations)
         .where(
           patient_locations: {
-            location: @location,
+            school: @location,
             academic_year: @academic_year
           }
         )

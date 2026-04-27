@@ -56,7 +56,7 @@ class Location < ApplicationRecord
 
   has_many :attendance_records
   has_many :gillick_assessments
-  has_many :patient_locations
+  has_many :patient_locations, foreign_key: :school_id
   has_many :pre_screenings
   has_many :team_locations
 

@@ -163,7 +163,7 @@ class ImmunisationImportRow
 
   def to_patient_location
     if patient && session
-      PatientLocation.new(patient:, location: session.location, academic_year:)
+      PatientLocation.new(patient:, school: session.location, academic_year:)
     end
   end
 

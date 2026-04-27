@@ -19,7 +19,7 @@ class SchoolsController < ApplicationController
     @patient_count_by_school_id =
       Patient
         .joins(:patient_locations)
-        .where(patient_locations: { location: @locations, academic_year: })
+        .where(patient_locations: { school: @locations, academic_year: })
         .not_archived(team: current_team)
         .appear_in_programmes(current_team.programmes, academic_year:)
         .distinct

@@ -286,11 +286,11 @@ describe Patient do
           create(:session, location:, programmes: [flu_programme])
           create(:session, location:, programmes: [hpv_programme])
 
-          create(:patient_location, patient:, location:, academic_year:)
+          create(:patient_location, patient:, school: location, academic_year:)
           create(
             :patient_location,
             patient: another_patient,
-            location:,
+            school: location,
             academic_year:
           )
         end
@@ -379,11 +379,11 @@ describe Patient do
           create(:session, location:, programmes: [flu_programme])
           create(:session, location:, programmes: [hpv_programme])
 
-          create(:patient_location, patient:, location:, academic_year:)
+          create(:patient_location, patient:, school: location, academic_year:)
           create(
             :patient_location,
             patient: another_patient,
-            location:,
+            school: location,
             academic_year:
           )
         end
@@ -820,7 +820,7 @@ describe Patient do
     context "with preloading" do
       subject(:not_in_team?) do
         described_class
-          .includes(patient_locations: { location: :team_locations })
+          .includes(patient_locations: { school: :team_locations })
           .find(patient.id)
           .not_in_team?(team:, academic_year:)
       end
@@ -1404,16 +1404,14 @@ describe Patient do
         create(
           :patient_location,
           patient: old_patient,
-          location:,
+          school: location,
           academic_year: AcademicYear.pending
         )
       end
 
       it "adds the new patient to any upcoming sessions" do
         expect(new_patient.patient_locations.size).to eq(1)
-        expect(new_patient.patient_locations.first.location_id).to eq(
-          location.id
-        )
+        expect(new_patient.patient_locations.first.school_id).to eq(location.id)
       end
 
       it "adds the new patient to the teams" do

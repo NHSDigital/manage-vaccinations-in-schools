@@ -56,7 +56,7 @@ class Session < ApplicationRecord
     INNER JOIN team_locations
     ON team_locations.id = sessions.team_location_id
     INNER JOIN patient_locations
-    ON patient_locations.location_id = team_locations.location_id
+    ON patient_locations.school_id = team_locations.location_id
     AND patient_locations.academic_year = team_locations.academic_year
     AND (sessions.dates = '{}' OR patient_locations.date_range @> ANY(sessions.dates))
   SQL

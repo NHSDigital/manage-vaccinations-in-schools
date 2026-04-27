@@ -490,13 +490,13 @@ describe TeamMerger do
           patient = create(:patient)
           create(
             :patient_location,
-            location: tl_a.location,
+            school: tl_a.location,
             patient:,
             academic_year: year
           )
           create(
             :patient_location,
-            location: tl_b.location,
+            school: tl_b.location,
             patient:,
             academic_year: year
           )
@@ -504,7 +504,7 @@ describe TeamMerger do
           merged_team
           expect(
             PatientLocation.where(
-              location: merged_team.generic_clinics.first,
+              school: merged_team.generic_clinics.first,
               patient:,
               academic_year: year
             ).count

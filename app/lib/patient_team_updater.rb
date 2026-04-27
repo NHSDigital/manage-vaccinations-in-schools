@@ -199,7 +199,7 @@ class PatientTeamUpdater < PatientScopedUpdater
   def joins_team_locations_alias_on_patient_locations(scope)
     scope.joins(<<-SQL).references(:team_locations_alias)
       INNER JOIN team_locations team_locations_alias
-      ON team_locations_alias.location_id = patient_locations.location_id
+      ON team_locations_alias.location_id = patient_locations.school_id
       AND team_locations_alias.academic_year = patient_locations.academic_year
     SQL
   end

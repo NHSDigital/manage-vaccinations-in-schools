@@ -9,7 +9,6 @@
 #  date_range    :daterange        default(-Infinity...Infinity), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  location_id   :bigint
 #  patient_id    :bigint           not null
 #  school_id     :bigint           not null
 #
@@ -31,13 +30,13 @@ FactoryBot.define do
     transient { session { association(:session) } }
 
     patient
-    location { session.location }
+    school { session.location }
     academic_year { session.academic_year }
 
     after(:create) do |patient_location|
       PatientTeamUpdater.call(
         patient_scope: Patient.where(id: patient_location.patient_id),
-        team_scope: patient_location.location.teams
+        team_scope: patient_location.school.teams
       )
     end
   end

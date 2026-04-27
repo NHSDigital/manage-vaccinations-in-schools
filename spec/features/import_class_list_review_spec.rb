@@ -284,7 +284,7 @@ describe "Import class lists" do
         session: @session
       )
 
-    expect(PatientLocation.where(location: @school).count).to eq(2)
+    expect(PatientLocation.where(school: @school).count).to eq(2)
   end
 
   def when_a_patient_is_moved_into_the_school

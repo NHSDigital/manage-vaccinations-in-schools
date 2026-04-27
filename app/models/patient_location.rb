@@ -9,7 +9,6 @@
 #  date_range    :daterange        default(-Infinity...Infinity), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  location_id   :bigint
 #  patient_id    :bigint           not null
 #  school_id     :bigint           not null
 #
@@ -28,11 +27,12 @@
 #
 
 class PatientLocation < ApplicationRecord
+  self.ignored_columns = %i[location_id]
+
   audited associated_with: :patient
   has_associated_audits
 
   belongs_to :patient
-  belongs_to :location, optional: true
   belongs_to :school, class_name: "Location"
 
   has_and_belongs_to_many :immunisation_imports
@@ -44,7 +44,7 @@ class PatientLocation < ApplicationRecord
 
   scope :joins_team_locations, -> { references(:teams_locations).joins(<<-SQL) }
     INNER JOIN team_locations
-    ON team_locations.location_id = patient_locations.location_id
+    ON team_locations.location_id = patient_locations.school_id
     AND team_locations.academic_year = patient_locations.academic_year
   SQL
 
@@ -65,7 +65,7 @@ class PatientLocation < ApplicationRecord
             Location::ProgrammeYearGroup
               .joins(:location_year_group)
               .where(
-                "location_year_groups.location_id = patient_locations.location_id"
+                "location_year_groups.location_id = patient_locations.school_id"
               )
               .where(
                 "location_year_groups.academic_year = patient_locations.academic_year"
@@ -80,16 +80,6 @@ class PatientLocation < ApplicationRecord
               .exists
           )
         end
-
-  def location=(location)
-    super
-    self.school = location
-  end
-
-  def location_id=(location_id)
-    super
-    self.school_id = location_id
-  end
 
   def begin_date
     value = date_range.begin

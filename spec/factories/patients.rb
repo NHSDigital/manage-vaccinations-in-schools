@@ -144,8 +144,8 @@ FactoryBot.define do
 
     after(:create) do |patient, evaluator|
       if (academic_year = evaluator.academic_year)
-        [evaluator.location, evaluator.school].uniq.compact.each do |location|
-          create(:patient_location, patient:, location:, academic_year:)
+        [evaluator.location, evaluator.school].uniq.compact.each do |school|
+          create(:patient_location, patient:, school:, academic_year:)
         end
       end
     end

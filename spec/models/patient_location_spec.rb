@@ -9,7 +9,6 @@
 #  date_range    :daterange        default(-Infinity...Infinity), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  location_id   :bigint
 #  patient_id    :bigint           not null
 #  school_id     :bigint           not null
 #

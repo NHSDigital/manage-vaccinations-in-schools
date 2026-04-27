@@ -90,7 +90,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     AttendanceRecord.where(location_id: location_ids_to_delete).delete_all
     ClassImport.where(location_id: location_ids_to_delete).delete_all
     GillickAssessment.where(location_id: location_ids_to_delete).delete_all
-    PatientLocation.where(location_id: location_ids_to_delete).delete_all
+    PatientLocation.where(school_id: location_ids_to_delete).delete_all
     PreScreening.where(location_id: location_ids_to_delete).delete_all
     SchoolMove.where(school_id: location_ids_to_delete).delete_all
 

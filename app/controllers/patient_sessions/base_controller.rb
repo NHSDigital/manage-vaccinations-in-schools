@@ -38,7 +38,7 @@ class PatientSessions::BaseController < ApplicationController
     @patient_location =
       PatientLocation.find_by!(
         patient: @patient,
-        location: @session.location,
+        school: @session.location,
         academic_year: @session.academic_year
       )
   end

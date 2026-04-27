@@ -44,7 +44,7 @@ class Patients::ProgrammesController < Patients::BaseController
         patient_location =
           PatientLocation.find_or_initialize_by(
             patient: @patient,
-            location: session.location,
+            school: session.location,
             academic_year: @academic_year
           )
 

@@ -40,7 +40,7 @@ class Patient::ProgrammeStatus < ApplicationRecord
   has_many :patient_locations,
            -> do
              includes(
-               location: [
+               school: [
                  :location_programme_year_groups,
                  {
                    team_locations: {

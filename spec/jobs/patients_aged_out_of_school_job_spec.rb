@@ -55,9 +55,9 @@ describe PatientsAgedOutOfSchoolJob do
       )
     end
 
-    it "adds the patient to the clinic session" do
-      expect { perform }.to change { patient.locations.count }.by(1)
-      expect(patient.locations).to include(team.unknown_school)
+    it "adds the patient to the unknown school" do
+      expect { perform }.to change { patient.schools.count }.by(1)
+      expect(patient.schools).to contain_exactly(school, team.unknown_school)
     end
   end
 end
