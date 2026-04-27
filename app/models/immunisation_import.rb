@@ -84,11 +84,11 @@ class ImmunisationImport < ApplicationRecord
       bulk_import(rows: :all)
 
       postprocess_rows!
-
-      update_columns(processed_at: Time.zone.now, status: :processed, **counts)
     end
 
     post_commit!
+
+    update_columns(processed_at: Time.zone.now, status: :processed, **counts)
   end
 
   private
