@@ -30,7 +30,7 @@ jobs:
         with:
           node-version-file: .tool-versions
           cache: yarn
-      - uses: ruby/setup-ruby@60ecfba8750476ff216b59eee3b88218bb5111cc # v1.303.0
+      - uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
         with:
           bundler-cache: true
       - name: Precompile assets
@@ -68,7 +68,7 @@ jobs:
         with:
           node-version-file: .tool-versions
           cache: yarn
-      - uses: ruby/setup-ruby@60ecfba8750476ff216b59eee3b88218bb5111cc # v1.303.0
+      - uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
         with:
           bundler-cache: true
       - name: Run seeds
