@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe EnqueueSchoolConsentRemindersJob do
-  subject(:perform_now) { described_class.perform_now }
+  subject(:perform) { described_class.new.perform }
 
   let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }
@@ -27,7 +27,7 @@ describe EnqueueSchoolConsentRemindersJob do
     let(:today) { dates.first - 2.weeks }
 
     it "doesn't queue any jobs" do
-      expect { perform_now }.not_to have_enqueued_job(
+      expect { perform }.not_to have_enqueued_job(
         SendAutomaticSchoolConsentRemindersJob
       )
     end
@@ -37,7 +37,7 @@ describe EnqueueSchoolConsentRemindersJob do
     let(:today) { dates.first - 1.week }
 
     it "queues a job for the session" do
-      expect { perform_now }.to have_enqueued_job(
+      expect { perform }.to have_enqueued_job(
         SendAutomaticSchoolConsentRemindersJob
       ).with(session)
     end
@@ -46,7 +46,7 @@ describe EnqueueSchoolConsentRemindersJob do
       let(:location) { create(:generic_clinic, team:) }
 
       it "doesn't queue any jobs" do
-        expect { perform_now }.not_to have_enqueued_job(
+        expect { perform }.not_to have_enqueued_job(
           SendAutomaticSchoolConsentRemindersJob
         )
       end
@@ -57,7 +57,7 @@ describe EnqueueSchoolConsentRemindersJob do
     let(:today) { dates.last - 1.week }
 
     it "queues a job for the session" do
-      expect { perform_now }.to have_enqueued_job(
+      expect { perform }.to have_enqueued_job(
         SendAutomaticSchoolConsentRemindersJob
       ).with(session)
     end
@@ -66,7 +66,7 @@ describe EnqueueSchoolConsentRemindersJob do
       let(:location) { create(:generic_clinic, team:) }
 
       it "doesn't queue any jobs" do
-        expect { perform_now }.not_to have_enqueued_job(
+        expect { perform }.not_to have_enqueued_job(
           SendAutomaticSchoolConsentRemindersJob
         )
       end

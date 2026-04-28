@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class EnqueueUpdatePatientsFromPDSJob < ApplicationJobActiveJob
+class EnqueueUpdatePatientsFromPDSJob < ApplicationJobSidekiq
   include SingleConcurrencyConcern
 
-  queue_as :pds
+  sidekiq_options queue: :pds
 
   def perform
     scope = Patient.not_deceased

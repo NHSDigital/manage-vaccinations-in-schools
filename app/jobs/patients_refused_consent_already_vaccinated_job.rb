@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJobActiveJob
-  queue_as :patients
+class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJobSidekiq
+  sidekiq_options queue: :patients
 
   def perform
     return unless should_perform?

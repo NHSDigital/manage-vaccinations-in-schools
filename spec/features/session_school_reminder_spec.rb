@@ -38,7 +38,7 @@ describe "Session school reminders" do
   end
 
   def when_school_session_reminders_are_sent
-    EnqueueSchoolSessionRemindersJob.perform_now
+    EnqueueSchoolSessionRemindersJob.new.perform
     perform_enqueued_jobs
     Sidekiq::Job.drain_all
   end

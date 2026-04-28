@@ -128,7 +128,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def when_vaccination_confirmations_are_sent
-    SendVaccinationConfirmationsJob.perform_now
+    SendVaccinationConfirmationsJob.new.perform
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccinations

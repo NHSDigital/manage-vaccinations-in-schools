@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class EnqueueSchoolConsentRemindersJob < ApplicationJobActiveJob
-  queue_as :notifications
+class EnqueueSchoolConsentRemindersJob < ApplicationJobSidekiq
+  sidekiq_options queue: :notifications
 
   def perform
     sessions =

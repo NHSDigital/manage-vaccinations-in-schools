@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class PatientsClearRegistrationJob < ApplicationJobActiveJob
-  queue_as :patients
+class PatientsClearRegistrationJob < ApplicationJobSidekiq
+  sidekiq_options queue: :patients
 
   def perform
     academic_year = AcademicYear.pending

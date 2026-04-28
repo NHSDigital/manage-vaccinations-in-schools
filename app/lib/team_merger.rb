@@ -394,9 +394,7 @@ class TeamMerger
   end
 
   def refresh_materialized_views
-    ReportingAPI::RefreshJob.perform_later
-  rescue StandardError => e
-    Rails.logger.warn "TeamMerge: could not refresh materialized views: #{e.message}"
+    ReportingAPI::RefreshJob.perform_async
   end
 
   def append_migration_counts

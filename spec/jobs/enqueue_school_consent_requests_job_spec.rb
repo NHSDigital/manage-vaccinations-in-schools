@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 describe EnqueueSchoolConsentRequestsJob do
-  subject(:perform_now) { described_class.perform_now }
+  subject(:perform) { described_class.new.perform }
 
   context "when session is unscheduled" do
     let(:session) { create(:session, :unscheduled) }
 
     it "doesn't queue any jobs" do
-      expect { perform_now }.not_to have_enqueued_job(
-        SendSchoolConsentRequestsJob
-      )
+      expect { perform }.not_to have_enqueued_job(SendSchoolConsentRequestsJob)
     end
   end
 
@@ -19,9 +17,7 @@ describe EnqueueSchoolConsentRequestsJob do
     end
 
     it "doesn't queue any jobs" do
-      expect { perform_now }.not_to have_enqueued_job(
-        SendSchoolConsentRequestsJob
-      )
+      expect { perform }.not_to have_enqueued_job(SendSchoolConsentRequestsJob)
     end
   end
 
@@ -35,7 +31,7 @@ describe EnqueueSchoolConsentRequestsJob do
     end
 
     it "queues a job for the session" do
-      expect { perform_now }.to have_enqueued_job(
+      expect { perform }.to have_enqueued_job(
         SendSchoolConsentRequestsJob
       ).with(session)
     end
@@ -47,7 +43,7 @@ describe EnqueueSchoolConsentRequestsJob do
       end
 
       it "doesn't queue any jobs" do
-        expect { perform_now }.not_to have_enqueued_job(
+        expect { perform }.not_to have_enqueued_job(
           SendSchoolConsentRequestsJob
         )
       end

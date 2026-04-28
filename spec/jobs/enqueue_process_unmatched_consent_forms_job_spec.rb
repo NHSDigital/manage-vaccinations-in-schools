@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe EnqueueProcessUnmatchedConsentFormsJob do
-  subject(:perform_now) { described_class.perform_now }
+  subject(:perform) { described_class.new.perform }
 
   let(:programme) { Programme.hpv }
   let(:team) { create(:team, programmes: [programme]) }
@@ -20,25 +20,25 @@ describe EnqueueProcessUnmatchedConsentFormsJob do
   end
 
   it "enqueues a job for each unmatched consent form" do
-    expect { perform_now }.to have_enqueued_job(ProcessConsentFormJob).exactly(
+    expect { perform }.to have_enqueued_job(ProcessConsentFormJob).exactly(
       1
     ).times
   end
 
   it "enqueues a job for the unmatched consent form" do
-    expect { perform_now }.to have_enqueued_job(ProcessConsentFormJob).with(
+    expect { perform }.to have_enqueued_job(ProcessConsentFormJob).with(
       unmatched_consent_form.id
     )
   end
 
   it "does not enqueue a job for the draft consent form" do
-    expect { perform_now }.not_to have_enqueued_job(ProcessConsentFormJob).with(
+    expect { perform }.not_to have_enqueued_job(ProcessConsentFormJob).with(
       draft_consent_form.id
     )
   end
 
   it "does not enqueue a job for the archived consent form" do
-    expect { perform_now }.not_to have_enqueued_job(ProcessConsentFormJob).with(
+    expect { perform }.not_to have_enqueued_job(ProcessConsentFormJob).with(
       archived_consent_form.id
     )
   end

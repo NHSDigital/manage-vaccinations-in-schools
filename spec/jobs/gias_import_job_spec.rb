@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe GIASImportJob do
-  subject(:perform_now) { described_class.perform_now(dry_run:) }
+  subject(:perform) { described_class.new.perform }
 
   before do
     allow(GIAS).to receive(:download)
@@ -10,29 +10,12 @@ describe GIASImportJob do
     allow(GIAS).to receive(:import)
   end
 
-  context "when a dry run" do
-    let(:dry_run) { true }
+  it "runs the import" do
+    expect(GIAS).to receive(:download)
+    expect(GIAS).to receive(:check_import)
+    expect(GIAS).to receive(:log_import_check_results)
+    expect(GIAS).to receive(:import)
 
-    it "doesn't import" do
-      expect(GIAS).to receive(:download)
-      expect(GIAS).to receive(:check_import)
-      expect(GIAS).to receive(:log_import_check_results)
-      expect(GIAS).not_to receive(:import)
-
-      perform_now
-    end
-  end
-
-  context "when not a dry run" do
-    let(:dry_run) { false }
-
-    it "does import" do
-      expect(GIAS).to receive(:download)
-      expect(GIAS).to receive(:check_import)
-      expect(GIAS).to receive(:log_import_check_results)
-      expect(GIAS).to receive(:import)
-
-      perform_now
-    end
+    perform
   end
 end
