@@ -731,11 +731,11 @@ fk_rails_...  (uploaded_by_user_id =&gt; users.id)</pre>
     <span class="ruby-identifier">bulk_import</span>(<span class="ruby-value">rows:</span> <span class="ruby-value">:all</span>)
 
     <span class="ruby-identifier">postprocess_rows!</span>
-
-    <span class="ruby-identifier">update_columns</span>(<span class="ruby-value">processed_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>, <span class="ruby-value">status:</span> <span class="ruby-value">:processed</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">counts</span>)
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">post_commit!</span>
+
+  <span class="ruby-identifier">update_columns</span>(<span class="ruby-value">processed_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>, <span class="ruby-value">status:</span> <span class="ruby-value">:processed</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">counts</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
