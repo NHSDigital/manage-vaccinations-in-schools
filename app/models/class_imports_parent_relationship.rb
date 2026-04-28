@@ -10,6 +10,7 @@
 # Indexes
 #
 #  idx_on_class_import_id_parent_relationship_id_8225058195  (class_import_id,parent_relationship_id) UNIQUE
+#  idx_on_parent_relationship_id_class_import_id_d7c05d6c2c  (parent_relationship_id,class_import_id) UNIQUE
 #
 # Foreign Keys
 #

@@ -10,6 +10,7 @@
 # Indexes
 #
 #  idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8  (cohort_import_id,parent_relationship_id) UNIQUE
+#  idx_on_parent_relationship_id_cohort_import_id_40fb9846d6  (parent_relationship_id,cohort_import_id) UNIQUE
 #
 # Foreign Keys
 #
