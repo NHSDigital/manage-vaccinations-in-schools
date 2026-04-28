@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-class EnqueueAutomatedCareplusReportsJob
-  include Sidekiq::Job
-
-  sidekiq_options queue: :careplus
+class EnqueueAutomatedCareplusReportsJob < ApplicationJob
+  queue_as :careplus
 
   def perform
-    Team.eligible_for_automated_careplus_reports.ids.each do |team_id|
-      SendAutomatedCareplusReportsJob.perform_async(team_id)
-    end
+    ids = Team.eligible_for_automated_careplus_reports.ids
+    SendAutomatedCareplusReportsJob.perform_bulk(ids.zip)
   end
 end
