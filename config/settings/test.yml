@@ -27,3 +27,6 @@ reporting_api:
 
 careplus:
   base_url: http://localhost:8080
+
+location_position_updater_job:
+  capture_exception: false

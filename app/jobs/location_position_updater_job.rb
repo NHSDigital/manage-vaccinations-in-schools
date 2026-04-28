@@ -9,6 +9,13 @@ class LocationPositionUpdaterJob
     location = Location.find(location_id)
     LocationPositionUpdater.call(location)
   rescue LocationPositionUpdater::NoResults => e
-    Sentry.capture_exception(e, level: "warning")
+    if Settings.location_position_updater_job.capture_exception
+      Sentry.capture_exception(e, level: "warning")
+    else
+      Rails.logger.warn(
+        "Could not fetch position for: #{location.name} (#{location.id})"
+      )
+      Rails.logger.warn(e.backtrace.join("\n"))
+    end
   end
 end

@@ -39,16 +39,35 @@ describe LocationPositionUpdaterJob do
         allow(LocationPositionUpdater).to receive(:call).and_raise(error)
       end
 
-      it "captures the exception in Sentry at warning level" do
-        expect(Sentry).to receive(:capture_exception).with(
-          error,
-          level: "warning"
-        )
-        perform
+      context "when not capturing the exception" do
+        it "doesn't capture the exception in Sentry" do
+          expect(Sentry).not_to receive(:capture_exception)
+          perform
+        end
+
+        it "does not raise the error" do
+          expect { perform }.not_to raise_error
+        end
       end
 
-      it "does not raise the error" do
-        expect { perform }.not_to raise_error
+      context "when capturing the exception" do
+        before do
+          Settings.location_position_updater_job.capture_exception = true
+        end
+
+        after { Settings.reload! }
+
+        it "captures the exception in Sentry at warning level" do
+          expect(Sentry).to receive(:capture_exception).with(
+            error,
+            level: "warning"
+          )
+          perform
+        end
+
+        it "does not raise the error" do
+          expect { perform }.not_to raise_error
+        end
       end
     end
 

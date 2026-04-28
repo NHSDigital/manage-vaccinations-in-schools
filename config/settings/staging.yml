@@ -20,3 +20,6 @@ pds:
 
 careplus:
   base_url: <%= ENV.fetch("MOCK_CAREPLUS_URL", nil) %>
+
+location_position_updater_job:
+  capture_exception: false

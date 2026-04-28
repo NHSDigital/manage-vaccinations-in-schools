@@ -26,3 +26,6 @@ splunk:
 reporting_api:
   client_app:
     root_url: http://localhost:4101
+
+location_position_updater_job:
+  capture_exception: false
