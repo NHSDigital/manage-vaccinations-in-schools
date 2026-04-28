@@ -9,8 +9,8 @@ module OrdnanceSurvey
       @base_url = "https://api.os.uk"
     end
 
-    def find(query)
-      params = { query:, format: "json" }
+    def find(query, max_results: 1, output_srs: "EPSG:4326")
+      params = { query:, maxresults: max_results, output_srs:, format: "json" }
       response = connection.get("/search/places/v1/find", params)
       response.body.deep_transform_keys(&:downcase).deep_symbolize_keys
     end

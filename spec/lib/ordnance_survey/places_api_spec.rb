@@ -72,7 +72,12 @@ describe OrdnanceSurvey::PlacesAPI do
 
       before do
         stub_request(:get, "#{api_url}/search/places/v1/find").with(
-          query: hash_including(query:, format: "json"),
+          query: {
+            query:,
+            format: "json",
+            maxresults: 1,
+            output_srs: "EPSG:4326"
+          },
           headers: {
             "Key" => api_key
           }
@@ -103,7 +108,12 @@ describe OrdnanceSurvey::PlacesAPI do
     context "when the request is invalid" do
       before do
         stub_request(:get, "#{api_url}/search/places/v1/find").with(
-          query: hash_including(query:, format: "json"),
+          query: {
+            query:,
+            format: "json",
+            maxresults: 1,
+            output_srs: "EPSG:4326"
+          },
           headers: {
             "Key" => api_key
           }
@@ -123,7 +133,12 @@ describe OrdnanceSurvey::PlacesAPI do
     context "when rate limit is exceeded" do
       before do
         stub_request(:get, "#{api_url}/search/places/v1/find").with(
-          query: hash_including(query:, format: "json"),
+          query: {
+            query:,
+            format: "json",
+            maxresults: 1,
+            output_srs: "EPSG:4326"
+          },
           headers: {
             "Key" => api_key
           }
@@ -138,7 +153,12 @@ describe OrdnanceSurvey::PlacesAPI do
     context "when there is an unexpected error" do
       before do
         stub_request(:get, "#{api_url}/search/places/v1/find").with(
-          query: hash_including(query:, format: "json"),
+          query: {
+            query:,
+            format: "json",
+            maxresults: 1,
+            output_srs: "EPSG:4326"
+          },
           headers: {
             "Key" => api_key
           }

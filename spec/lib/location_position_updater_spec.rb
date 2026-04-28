@@ -7,6 +7,7 @@ describe LocationPositionUpdater do
     let(:location) do
       create(
         :community_clinic,
+        name: "Westminster Clinic",
         address_line_1: "1 High Street",
         address_town: "London",
         address_postcode: "SW1A 1AA",
@@ -49,7 +50,7 @@ describe LocationPositionUpdater do
 
       it "calls the API with the address" do
         expect(OrdnanceSurvey::PlacesAPI).to receive(:find).with(
-          "1 High Street, London, SW1A 1AA"
+          "Westminster Clinic, 1 High Street, London, SW1A 1AA"
         )
         call
       end
@@ -93,6 +94,7 @@ describe LocationPositionUpdater do
       let(:location) do
         create(
           :community_clinic,
+          name: "Westminster Clinic",
           address_line_1: "1 High Street",
           address_town: nil,
           address_postcode: "SW1A 1AA",
@@ -115,7 +117,7 @@ describe LocationPositionUpdater do
 
       it "calls the API with partial address" do
         expect(OrdnanceSurvey::PlacesAPI).to receive(:find).with(
-          "1 High Street, SW1A 1AA"
+          "Westminster Clinic, 1 High Street, SW1A 1AA"
         )
         call
       end

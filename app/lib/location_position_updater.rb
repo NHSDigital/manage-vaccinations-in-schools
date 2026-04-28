@@ -28,10 +28,10 @@ class LocationPositionUpdater
 
   private
 
-  def full_address = location.address_parts.join(", ")
+  def query = [location.name, location.address_parts].join(", ")
 
   def position
-    response = OrdnanceSurvey::PlacesAPI.find(full_address)
+    response = OrdnanceSurvey::PlacesAPI.find(query)
 
     results = response[:results]
     raise NoResults if results.blank?
