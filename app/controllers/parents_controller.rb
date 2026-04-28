@@ -3,6 +3,15 @@
 class ParentsController < ApplicationController
   before_action :set_patient
   before_action :set_parent, except: %i[new create]
+  before_action :set_parent_relationship, except: %i[new create]
+
+  def set_parent_relationship
+    @parent_relationship =
+      authorize @patient
+                  .parent_relationships
+                  .includes(:parent)
+                  .find_by!(parent_id: params[:id])
+  end
 
   def new
     @parent = authorize Parent.new(patient: @patient)
@@ -23,7 +32,8 @@ class ParentsController < ApplicationController
   end
 
   def update
-    if @parent.update(parent_params)
+    if @parent.update(parent_params) &&
+         @parent_relationship.update(parent_relationship_params)
       redirect_to edit_patient_path(@patient)
     else
       render :edit, status: :unprocessable_content
@@ -65,5 +75,9 @@ class ParentsController < ApplicationController
         contact_method_type
       ]
     )
+  end
+
+  def parent_relationship_params
+    params.expect(parent: %i[id type other_name])
   end
 end

@@ -24,10 +24,12 @@ describe "Edit parent" do
 
     when_i_change_the_relationship_of_the_parent_to_mother
     then_i_see_the_new_relationship_of_the_parent_of_mother
+    and_the_parent_relationship_is_updated_to_mother_in_the_database
 
     when_i_click_on_change_parent
     and_i_change_the_relationship_of_the_parent_to_other
     then_i_see_the_new_relationship_of_the_parent_of_other
+    and_the_parent_relationship_is_updated_to_other_in_the_database
   end
 
   scenario "User edits the contact details of a parent" do
@@ -50,6 +52,10 @@ describe "Edit parent" do
     @patient = create(:patient, session:)
 
     @parent = create(:parent, :father, patient: @patient)
+
+    @parent_relationship =
+      create(:parent_relationship, :father, parent: @parent, patient: @patient)
+
     @patient.reload
   end
 
@@ -98,6 +104,17 @@ describe "Edit parent" do
 
   def then_i_see_the_new_relationship_of_the_parent_of_other
     expect(page).to have_content("other – Someone")
+  end
+
+  def and_the_parent_relationship_is_updated_to_mother_in_the_database
+    @parent_relationship.reload
+    expect(@parent_relationship.type).to eq("mother")
+  end
+
+  def and_the_parent_relationship_is_updated_to_other_in_the_database
+    @parent_relationship.reload
+    expect(@parent_relationship.type).to eq("other")
+    expect(@parent_relationship.other_name).to eq("Someone")
   end
 
   def when_i_change_the_contact_details_of_the_parent
