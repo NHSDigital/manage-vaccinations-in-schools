@@ -66,6 +66,8 @@ class StatusGenerator::Programme
       :needs_consent_no_response
     elsif should_be_cannot_vaccinate_delay_vaccination?
       :cannot_vaccinate_delay_vaccination
+    elsif should_be_review_vaccination_history?
+      :review_vaccination_history
     elsif should_be_due?
       :due
     elsif should_be_needs_triage?
@@ -216,6 +218,13 @@ class StatusGenerator::Programme
 
   def should_be_cannot_vaccinate_delay_vaccination?
     is_eligible? && triage_generator.status == :delay_vaccination
+  end
+
+  def should_be_review_vaccination_history?
+    is_eligible? && triage_generator.status == :safe_to_vaccinate &&
+      vaccination_records.any? do |r|
+        r.created_at > triage_generator.created_at
+      end
   end
 
   def should_be_due? = is_due?

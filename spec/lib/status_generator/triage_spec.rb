@@ -4,7 +4,7 @@ describe StatusGenerator::Triage do
   subject(:generator) do
     described_class.new(
       programme_type: programme.type,
-      academic_year: AcademicYear.current,
+      academic_year: current_academic_year,
       patient:,
       consents: patient.consents,
       triages: patient.triages,
@@ -15,6 +15,7 @@ describe StatusGenerator::Triage do
     )
   end
 
+  let(:current_academic_year) { AcademicYear.current }
   let(:patient) { create(:patient) }
   let(:programme) { Programme.hpv }
 
@@ -212,7 +213,6 @@ describe StatusGenerator::Triage do
     end
 
     describe "academic year filtering" do
-      let(:current_academic_year) { AcademicYear.current }
       let(:previous_academic_year) { current_academic_year - 1 }
       let(:patient) { create(:patient) }
       let(:programme) { Programme.sample }
@@ -355,6 +355,76 @@ describe StatusGenerator::Triage do
       before { create(:triage, :delay_vaccination, patient:, programme:) }
 
       it { should be_nil }
+    end
+
+    context "with an invalidated safe to vaccinate triage" do
+      before do
+        create(:triage, :safe_to_vaccinate, :invalidated, patient:, programme:)
+      end
+
+      it { should be_nil }
+    end
+  end
+
+  describe "#created_at" do
+    subject { generator.created_at }
+
+    context "with no triage" do
+      it { should be_nil }
+    end
+
+    context "with a safe to vaccinate triage" do
+      let!(:triage) do
+        create(:triage, :safe_to_vaccinate, patient:, programme:)
+      end
+
+      it { should eq(triage.created_at) }
+    end
+
+    context "with a safe to vaccinate triage and vaccinated" do
+      let!(:triage) do
+        create(:triage, :safe_to_vaccinate, patient:, programme:)
+      end
+
+      before { create(:vaccination_record, patient:, programme:) }
+
+      it { should eq(triage.created_at) }
+    end
+
+    context "with a do not vaccinate triage" do
+      let!(:triage) { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should eq(triage.created_at) }
+    end
+
+    context "with multiple triages" do
+      let!(:latest_triage) do
+        create(
+          :triage,
+          :safe_to_vaccinate,
+          patient:,
+          programme:,
+          created_at: latest_created_at
+        )
+      end
+
+      let(:older_created_at) do
+        Date.new(current_academic_year, 10, 15).in_time_zone
+      end
+
+      let(:latest_created_at) { older_created_at + 2.days }
+
+      before do
+        create(
+          :triage,
+          :safe_to_vaccinate,
+          patient:,
+          programme:,
+          created_at: older_created_at
+        )
+      end
+
+      it { should eq(latest_triage.created_at) }
     end
 
     context "with an invalidated safe to vaccinate triage" do
