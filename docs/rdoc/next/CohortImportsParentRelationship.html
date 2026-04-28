@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class CohortImportsParentRelationship: bigint not null Indexes idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8 (cohort_import_id,parent_relationship_id) UNIQUE Fore"
+      content="class CohortImportsParentRelationship: bigint not null Indexes idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8 (cohort_import_id,parent_relationship_id) UNIQUE idx_"
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="bigint not null Indexes idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8 (cohort_import_id,parent_relationship_id) UNIQUE Fore">
+    <meta property="og:description" content="bigint not null Indexes idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8 (cohort_import_id,parent_relationship_id) UNIQUE idx_">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="bigint not null Indexes idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8 (cohort_import_id,parent_relationship_id) UNIQUE Fore">
+    <meta name="twitter:description" content="bigint not null Indexes idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8 (cohort_import_id,parent_relationship_id) UNIQUE idx_">
 
 
 
@@ -585,7 +585,8 @@ parent_relationship_id :bigint           not null</pre>
 
 <p>Indexes</p>
 
-<pre>idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8  (cohort_import_id,parent_relationship_id) UNIQUE</pre>
+<pre>idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8  (cohort_import_id,parent_relationship_id) UNIQUE
+idx_on_parent_relationship_id_cohort_import_id_40fb9846d6  (parent_relationship_id,cohort_import_id) UNIQUE</pre>
 
 <p>Foreign Keys</p>
 
