@@ -539,34 +539,12 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li>Object</li></ul>
+    <ul><li><a href="ApplicationJob.html">ApplicationJob</a><ul><li>ActiveJob::Base</li></ul></li></ul>
   </details>
 </div>
 
 
   
-<div id="includes-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-includes"></use></svg>
-      </span>
-      <span class="nav-section-title">Included Modules</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-
-    <ul class="nav-list">
-
-
-      <li><span class="include">Sidekiq::Job</span></li>
-
-
-    </ul>
-  </details>
-</div>
-
 
   
 
@@ -670,11 +648,10 @@
             </details>
           </div>
           <div class="method-source-code" id="perform-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/enqueue_automated_careplus_reports_job.rb, line 8</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/enqueue_automated_careplus_reports_job.rb, line 6</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>
-  <span class="ruby-constant">Team</span>.<span class="ruby-identifier">eligible_for_automated_careplus_reports</span>.<span class="ruby-identifier">ids</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">team_id</span><span class="ruby-operator">|</span>
-    <span class="ruby-constant">SendAutomatedCareplusReportsJob</span>.<span class="ruby-identifier">perform_async</span>(<span class="ruby-identifier">team_id</span>)
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">ids</span> = <span class="ruby-constant">Team</span>.<span class="ruby-identifier">eligible_for_automated_careplus_reports</span>.<span class="ruby-identifier">ids</span>
+  <span class="ruby-constant">SendAutomatedCareplusReportsJob</span>.<span class="ruby-identifier">perform_bulk</span>(<span class="ruby-identifier">ids</span>.<span class="ruby-identifier">zip</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
