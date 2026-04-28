@@ -141,10 +141,6 @@ module CSVImportable
     end
   end
 
-  def processed?
-    processed_at != nil
-  end
-
   def remove!
     return if csv_removed?
     update!(csv_data: nil, csv_removed_at: Time.zone.now)
@@ -218,7 +214,7 @@ module CSVImportable
   end
 
   def ensure_processed_with_count_statistics
-    if processed? && count_columns.any? { |column| send(column).nil? }
+    if processed_at? && count_columns.any? { |column| send(column).nil? }
       raise "Count statistics must be set for a processed import."
     end
   end

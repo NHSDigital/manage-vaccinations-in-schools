@@ -77,7 +77,7 @@
       ) %>
 <% end %>
 
-<% if import.processed? || import.partially_processed? || import.removing_parent_relationships? %>
+<% if import.processed_at? || import.partially_processed? || import.removing_parent_relationships? %>
 
   <% if @cancelled.present? %>
     <h2 class="nhsuk-u-reading-width">
