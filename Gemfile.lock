@@ -178,7 +178,7 @@ GEM
       protocol-websocket (~> 0.17)
     attr_required (1.0.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1240.0)
+    aws-partitions (1.1241.0)
     aws-sdk-accessanalyzer (1.88.0)
       aws-sdk-core (~> 3, >= 3.244.0)
       aws-sigv4 (~> 1.5)
@@ -193,7 +193,7 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-ec2 (1.611.0)
+    aws-sdk-ec2 (1.612.0)
       aws-sdk-core (~> 3, >= 3.244.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.125.0)
