@@ -1,0 +1,41 @@
+<h2 class="nhsuk-heading-m nhsuk-u-margin-top-6">Your Care Identity details</h2>
+
+<p>
+  You can share these details with your registration authority and the Mavis team to help them identify the problem:
+</p>
+
+<%= govuk_summary_list do |summary_list|
+      summary_list.with_row do |row|
+        row.with_key { "ODS code" }
+        row.with_value { @cis2_info.organisation_code.presence || "Not provided" }
+      end
+    
+      summary_list.with_row do |row|
+        row.with_key { "Workgroup".pluralize(@cis2_info.workgroups&.length || 0) }
+        row.with_value do
+          if @cis2_info.workgroups.present?
+            @cis2_info.workgroups.join(", ")
+          else
+            "Not provided"
+          end
+        end
+      end
+    
+      summary_list.with_row do |row|
+        row.with_key { "Role" }
+        row.with_value { @cis2_info.role_code.presence || "Not provided" }
+      end
+    
+      summary_list.with_row do |row|
+        row.with_key do
+          "Activity code".pluralize(@cis2_info.activity_codes&.length || 0)
+        end
+        row.with_value do
+          if @cis2_info.activity_codes.present?
+            @cis2_info.activity_codes.join(", ")
+          else
+            "Not provided"
+          end
+        end
+      end
+    end %>

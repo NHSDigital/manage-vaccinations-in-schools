@@ -8,6 +8,7 @@ describe "User CIS2 authentication", :cis2 do
 
     when_i_click_the_cis2_login_button
     then_i_see_the_organisation_not_found_error
+    and_i_see_my_care_identity_details
 
     given_my_team_has_been_setup_in_mavis
     when_i_click_the_change_role_button
@@ -77,6 +78,13 @@ describe "User CIS2 authentication", :cis2 do
     expect(page).to have_heading(
       "Your organisation is not using this service yet"
     )
+  end
+
+  def and_i_see_my_care_identity_details
+    expect(page).to have_heading("Your Care Identity details")
+    expect(page).to have_content("ODS codeA9A5A")
+    expect(page).to have_content("Workgroupa9a5a")
+    expect(page).to have_content("RoleS8000:G8000:R8001")
   end
 
   def when_i_click_the_change_role_button

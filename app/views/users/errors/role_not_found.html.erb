@@ -4,7 +4,7 @@
   <%= govuk_button_to "Change role", user_cis2_omniauth_authorize_path, params: { change_role: true } %>
 <% end %>
 
-<h2 class="nhsuk-heading-m">Contact your registration authority</h2>
+<h2 class="nhsuk-heading-m nhsuk-u-margin-top-6">Contact your registration authority</h2>
 
 <p>
   If you think you should have permission to use this service, contact your
@@ -24,3 +24,5 @@
       "Nurse Access Role (R8001)",
       "Medical Secretary Access Role (R8006)",
     ], type: "bullet") %>
+
+<%= render "cis2_details" %>

@@ -9,3 +9,5 @@
 <% if @cis2_info.has_other_roles %>
   <%= govuk_button_to "Change role", user_cis2_omniauth_authorize_path, params: { change_role: true } %>
 <% end %>
+
+<%= render "cis2_details" %>

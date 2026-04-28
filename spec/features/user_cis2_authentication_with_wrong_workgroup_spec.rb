@@ -7,6 +7,7 @@ describe "User CIS2 authentication", :cis2 do
     then_i_am_on_the_start_page
     when_i_click_the_cis2_login_button
     then_i_see_the_wrong_workgroup_error
+    and_i_see_my_care_identity_details
 
     when_i_click_the_change_role_button_and_select_the_right_role
     then_i_see_the_session_page
@@ -15,7 +16,10 @@ describe "User CIS2 authentication", :cis2 do
   def given_i_am_setup_in_mavis_and_cis2_but_with_the_wrong_role
     @team = create(:team, ods_code: "A9A5A")
 
-    mock_cis2_auth(workgroups: ["wrong-workgroup"])
+    mock_cis2_auth(
+      workgroups: ["wrong-workgroup"],
+      activity_codes: [CIS2Info::INDEPENDENT_PRESCRIBING_ACTIVITY_CODE]
+    )
   end
 
   def when_i_click_the_cis2_login_button
@@ -37,6 +41,16 @@ describe "User CIS2 authentication", :cis2 do
   def then_i_see_the_wrong_workgroup_error
     expect(page).to have_heading(
       "You’re not in the right workgroup to use this service"
+    )
+  end
+
+  def and_i_see_my_care_identity_details
+    expect(page).to have_heading("Your Care Identity details")
+    expect(page).to have_content("ODS codeA9A5A")
+    expect(page).to have_content("Workgroupwrong-workgroup")
+    expect(page).to have_content("RoleS8000:G8000:R8001")
+    expect(page).to have_content(
+      "Activity code#{CIS2Info::INDEPENDENT_PRESCRIBING_ACTIVITY_CODE}"
     )
   end
 

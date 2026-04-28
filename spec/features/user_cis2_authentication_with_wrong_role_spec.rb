@@ -7,6 +7,7 @@ describe "User CIS2 authentication", :cis2 do
     then_i_am_on_the_start_page
     when_i_click_the_cis2_login_button
     then_i_see_the_wrong_role_error
+    and_i_see_my_care_identity_details
 
     when_i_click_the_change_role_button_and_select_the_right_role
     then_i_see_the_session_page
@@ -38,6 +39,13 @@ describe "User CIS2 authentication", :cis2 do
     expect(page).to have_heading(
       "You do not have permission to use this service"
     )
+  end
+
+  def and_i_see_my_care_identity_details
+    expect(page).to have_heading("Your Care Identity details")
+    expect(page).to have_content("ODS codeA9A5A")
+    expect(page).to have_content("WorkgroupsNot provided")
+    expect(page).to have_content("RoleS8000:G8000:R8004")
   end
 
   def when_i_click_the_change_role_button_and_select_the_right_role
