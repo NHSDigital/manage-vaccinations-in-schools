@@ -4,6 +4,7 @@ class PatientNHSNumberLookupJob < ApplicationJob
   include PDSThrottlingConcern
 
   queue_as :pds
+  retry_on Faraday::ServerError, wait: :polynomially_longer
 
   def perform(patient)
     return if patient.nhs_number.present? && !patient.invalidated?

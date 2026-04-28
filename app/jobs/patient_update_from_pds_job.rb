@@ -4,6 +4,7 @@ class PatientUpdateFromPDSJob < ApplicationJob
   include PDSThrottlingConcern
 
   queue_as :pds
+  retry_on Faraday::ServerError, wait: :polynomially_longer
 
   def perform(patient, search_results = [])
     raise MissingNHSNumber if patient.nhs_number.nil? && search_results.empty?

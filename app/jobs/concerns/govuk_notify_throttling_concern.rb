@@ -6,9 +6,5 @@ module GovukNotifyThrottlingConcern
   include Sidekiq::Job
   include Sidekiq::Throttled::Job
 
-  included do
-    sidekiq_throttle_as :govuk_notify
-
-    queue_as :notifications
-  end
+  included { sidekiq_throttle_as :govuk_notify }
 end
