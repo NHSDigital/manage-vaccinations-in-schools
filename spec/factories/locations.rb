@@ -58,6 +58,14 @@ FactoryBot.define do
       end
     end
 
+    trait :without_address do
+      address_line_1 { nil }
+      address_line_2 { nil }
+      address_town { nil }
+      address_postcode { nil }
+      position { nil }
+    end
+
     factory :community_clinic do
       type { :community_clinic }
       name { "#{Faker::University.name} Clinic" }

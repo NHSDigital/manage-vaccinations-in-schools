@@ -7,6 +7,7 @@ describe "mavis clinics create" do
     it "runs successfully" do
       when_i_run_the_command
       then_the_clinic_is_created
+      and_a_location_position_updater_job_is_enqueued
     end
   end
 
@@ -28,5 +29,11 @@ describe "mavis clinics create" do
     expect(clinic.address_line_1).to eq("Line")
     expect(clinic.address_town).to eq("Town")
     expect(clinic.address_postcode).to eq("SW1A 1AA")
+  end
+
+  def and_a_location_position_updater_job_is_enqueued
+    expect(LocationPositionUpdaterJob).to have_enqueued_sidekiq_job(
+      Location.last.id
+    )
   end
 end

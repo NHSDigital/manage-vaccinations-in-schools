@@ -71,10 +71,16 @@ describe Onboarding do
       clinic1 = subteam1.community_clinics.find_by!(ods_code: nil)
       expect(clinic1.name).to eq("10 Downing Street")
       expect(clinic1.address_postcode).to eq("SW1A 1AA")
+      expect(LocationPositionUpdaterJob).to have_enqueued_sidekiq_job(
+        clinic1.id
+      )
 
       clinic2 = subteam2.community_clinics.find_by!(ods_code: "SW1A11")
       expect(clinic2.name).to eq("11 Downing Street")
       expect(clinic2.address_postcode).to eq("SW1A 1AA")
+      expect(LocationPositionUpdaterJob).to have_enqueued_sidekiq_job(
+        clinic2.id
+      )
     end
   end
 

@@ -26,14 +26,17 @@ module MavisCLI
       )
         MavisCLI.load_rails
 
-        Location.create!(
-          type: :community_clinic,
-          name:,
-          address_line_1:,
-          address_town:,
-          address_postcode:,
-          ods_code:
-        )
+        location =
+          Location.create!(
+            type: :community_clinic,
+            name:,
+            address_line_1:,
+            address_town:,
+            address_postcode:,
+            ods_code:
+          )
+
+        LocationPositionUpdaterJob.perform_async(location.id)
       end
     end
   end

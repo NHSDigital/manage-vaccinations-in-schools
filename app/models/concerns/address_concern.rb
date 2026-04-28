@@ -18,6 +18,16 @@ module AddressConcern
     has_one :local_authority_from_postcode,
             through: :local_authority_postcode,
             source: :local_authority
+
+    scope :has_address,
+          -> do
+            where("address_line_1 IS NOT NULL AND address_line_1 <> ''")
+              .or(where("address_line_2 IS NOT NULL AND address_line_2 <> ''"))
+              .or(where("address_town IS NOT NULL AND address_town <> ''"))
+              .or(
+                where("address_postcode IS NOT NULL AND address_postcode <> ''")
+              )
+          end
   end
 
   def address_parts

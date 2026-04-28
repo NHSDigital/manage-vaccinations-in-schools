@@ -249,6 +249,10 @@ class Onboarding
       end
 
       PatientTeamUpdater.call(team_scope: Team.where(id: team.id))
+
+      location_ids =
+        schools.map(&:id) + clinics.keys.filter(&:has_address?).map(&:id)
+      LocationPositionUpdaterJob.perform_bulk(location_ids.zip)
     end
   end
 
@@ -311,7 +315,7 @@ class Onboarding
       @location ||= Location.gias_school.find_by_urn_and_site(urn)
     end
 
-    delegate :status, to: :location, allow_nil: true
+    delegate :id, :status, to: :location, allow_nil: true
     delegate :team, to: :subteam
 
     def save!
@@ -346,6 +350,8 @@ class Onboarding
     validates :status, inclusion: %w[open opening]
     validates :name, presence: true
     validates :site, presence: true
+
+    delegate :id, to: :location
 
     def original_location
       @original_location ||= Location.gias_school.find_by_urn_and_site(urn)
