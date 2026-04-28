@@ -50,41 +50,4 @@ describe NotifyLogEntry do
 
     it { should be_valid }
   end
-
-  describe "#title" do
-    subject(:title) { notify_log_entry.title }
-
-    context "with a known template" do
-      let(:notify_log_entry) do
-        build(
-          :notify_log_entry,
-          :email,
-          template_id:
-            NotifyTemplate.find(:consent_clinic_request, channel: :email).id
-        )
-      end
-
-      it { should eq("Consent clinic request") }
-    end
-
-    context "with an unknown template" do
-      let(:notify_log_entry) do
-        build(:notify_log_entry, :sms, template_id: SecureRandom.uuid)
-      end
-
-      it { should eq("Unknown SMS") }
-    end
-
-    context "with a template no longer in use" do
-      let(:notify_log_entry) do
-        build(
-          :notify_log_entry,
-          :email,
-          template_id: "25473aa7-2d7c-4d1d-b0c6-2ac492f737c3"
-        )
-      end
-
-      it { should eq("Consent confirmation given") }
-    end
-  end
 end

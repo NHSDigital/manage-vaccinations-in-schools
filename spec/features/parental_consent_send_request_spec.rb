@@ -434,27 +434,26 @@ describe "Parental consent" do
 
   def then_an_activity_log_entry_is_visible_for_the_email(
     programme_name,
-    setting: :clinic,
-    outbreak: false,
-    programme_display_name: nil
+    programme_display_name: nil,
+    **
   )
-    outbreak_text = outbreak ? " outbreak" : ""
-    location_text = setting.to_s
-    programme_text = setting == :clinic ? "" : " #{programme_name.downcase}"
-    title =
-      "Consent #{location_text} request#{programme_text}#{outbreak_text} sent"
     display_name = programme_display_name || programme_name
+    parent_label =
+      @parent.parent_relationships.find_by(patient: @patient).label_with_parent
 
     expect(page).to have_content(
-      "#{title}\n" \
+      "Consent request sent to #{parent_label}\n" \
         "#{display_name} 1 January 2024 at 12:00am · USER, Test\n#{@parent.email}"
     )
   end
 
   def and_an_activity_log_entry_is_visible_for_the_text(programme_name)
     click_on "Session activity and notes"
+    parent_label =
+      @parent.parent_relationships.find_by(patient: @patient).label_with_parent
+
     expect(page).to have_content(
-      "Consent clinic request sent\n" \
+      "Consent request sent to #{parent_label}\n" \
         "#{programme_name} 1 January 2024 at 12:00am · USER, Test\n#{@parent.phone}"
     )
   end

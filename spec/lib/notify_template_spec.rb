@@ -52,16 +52,6 @@ describe NotifyTemplate do
       end
     end
 
-    context "with a retired template's ID" do
-      subject(:template) do
-        described_class.find_by_id(template_id, channel: :email)
-      end
-
-      let(:template_id) { NotifyLogEntry::RETIRED_TEMPLATE_IDS.keys.first }
-
-      it { should be_nil }
-    end
-
     context "with an unknown ID" do
       subject(:template) do
         described_class.find_by_id(

@@ -1035,6 +1035,30 @@ en:
             snomed_product_term:
               blank: Enter a SNOMED product term
               taken: This SNOMED product term already exists
+  activity_log:
+    notify_event_labels:
+      consent_request: "Consent request"
+      consent_reminder: "Consent reminder"
+      consent_confirmation: "Confirmation of consent"
+      consent_confirmation_given: "Confirmation of consent given"
+      consent_confirmation_refused: "Confirmation of consent refused"
+      consent_confirmation_given_triage: "Confirmation of consent given (triage needed)"
+      consent_confirmation_given_clinic: "Confirmation of consent given (clinic booking needed)"
+      consent_warning: "Unknown parent contact details warning"
+      clinic_invitation: "Clinic invitation"
+      clinic_initial_invitation: "Clinic invitation"
+      clinic_subsequent_invitation: "Clinic invitation reminder"
+      session_reminder: "Session reminder"
+      triage_vaccination_will_happen: "Confirmation of triage decision (safe to vaccinate)"
+      triage_vaccination_will_happen_second_dose:
+        "Confirmation of triage decision (2nd dose will be given in school)"
+      triage_vaccination_wont_happen: "Confirmation of triage decision (unable to vaccinate)"
+      triage_vaccination_at_clinic: "Confirmation of triage decision (invite to clinic)"
+      triage_delay_vaccination: "Confirmation of triage decision (delay vaccination)"
+      vaccination_administered: "Confirmation the vaccination was given"
+      vaccination_already_had: "Confirmation previous vaccination discovered since consent"
+      vaccination_not_administered: "Confirmation the vaccination was not given"
+      vaccination_deleted: "Apology for incorrect message"
   consent_forms:
     index:
       title: Unmatched consent responses

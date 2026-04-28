@@ -118,9 +118,11 @@ describe "Parental consent given with an inexact automatic match" do
   def and_they_see_consent_contact_warning_notifications
     click_on "SMITH, Joanna"
     click_on "Session activity and notes"
-    expect(page).to have_content("Consent unknown contact details warning sent")
+    expect(page).to have_content(
+      "Unknown parent contact details warning sent to"
+    )
     expect(page).to have_content(@parent.email)
     expect(page).to have_content(@parent.phone)
-    expect(page).to have_content("Consent confirmation given sent")
+    expect(page).to have_content("Confirmation of consent given sent to")
   end
 end

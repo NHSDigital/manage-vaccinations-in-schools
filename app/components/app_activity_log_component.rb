@@ -259,14 +259,34 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def notify_events
-    notify_log_entries.map do |notify_log_entry|
+    notify_log_entries.map do |entry|
+      event_label =
+        I18n.t(
+          entry.purpose,
+          scope: "activity_log.notify_event_labels",
+          default: "Notification"
+        )
+      title = "#{event_label} sent to #{notify_parent_label(entry)}"
+
       {
-        title: "#{notify_log_entry.title} sent",
-        body: patient.restricted? ? "" : notify_log_entry.recipient,
-        at: notify_log_entry.created_at,
-        by: notify_log_entry.sent_by,
-        programmes: notify_log_entry.programmes
+        title:,
+        body: patient.restricted? ? "" : entry.recipient,
+        at: entry.created_at,
+        by: entry.sent_by,
+        programmes: entry.programmes
       }
+    end
+  end
+
+  def notify_parent_label(entry)
+    if entry.parent
+      relationship =
+        entry.parent.parent_relationships.find { it.patient_id == patient.id }
+      relationship&.label_with_parent || entry.parent.label
+    elsif entry.consent_form
+      entry.consent_form.parent_relationship.label_with_parent
+    else
+      "unknown recipient"
     end
   end
 
@@ -523,7 +543,7 @@ class AppActivityLogComponent < ViewComponent::Base
     @notify_log_entries ||=
       @patient
         .notify_log_entries
-        .includes(:sent_by)
+        .includes(:consent_form, :sent_by, parent: :parent_relationships)
         .preload(:notify_log_entry_programmes)
         .then do |scope|
           if @programme_type

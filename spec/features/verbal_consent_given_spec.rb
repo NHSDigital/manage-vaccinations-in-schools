@@ -345,7 +345,10 @@ describe "Verbal consent" do
   def and_i_can_see_the_log_entries_for_the_email_and_sms
     click_on "Back"
     click_on "Session activity and notes"
-    expect(page).to have_content("Consent confirmation given", count: 2)
+    expect(page).to have_content(
+      "Confirmation of consent given sent to",
+      count: 2
+    )
     expect(page).to have_content(@parent.email)
     expect(page).to have_content(@parent.phone)
   end

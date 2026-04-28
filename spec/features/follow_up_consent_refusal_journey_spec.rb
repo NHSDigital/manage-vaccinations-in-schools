@@ -38,7 +38,7 @@ describe "Follow-up parent journey" do
     then_i_see_the_follow_up_requested_event_in_the_activity_log
     and_i_see_the_refusal_confirmed_follow_up_resolution_in_the_activity_log
     and_i_do_not_see_an_invalidated_consent_event_in_the_activity_log
-    and_i_see_email_and_sms_notifications_in_the_activity_log("confirmed")
+    and_i_see_consent_confirmation_notifications_in_the_activity_log("refused")
   end
 
   scenario "Nurse follows up and records new consent (refusal withdrawn)" do
@@ -69,7 +69,7 @@ describe "Follow-up parent journey" do
     and_i_see_the_refusal_withdrawn_follow_up_resolution_in_the_activity_log
     and_i_do_not_see_an_invalidated_consent_event_in_the_activity_log
     and_i_see_the_new_consent_given_event_in_the_activity_log
-    and_i_see_email_and_sms_notifications_in_the_activity_log("withdrawn")
+    and_i_see_consent_confirmation_notifications_in_the_activity_log("given")
   end
 
   def given_an_hpv_programme_is_underway
@@ -295,12 +295,9 @@ describe "Follow-up parent journey" do
     end
   end
 
-  def and_i_see_email_and_sms_notifications_in_the_activity_log(
-    follow_up_outcome
-  )
-    outcome = follow_up_outcome == "confirmed" ? "refused" : "given"
+  def and_i_see_consent_confirmation_notifications_in_the_activity_log(outcome)
     within(".app-card", text: "Programme activity") do
-      expect(page).to have_content("Consent confirmation #{outcome} sent")
+      expect(page).to have_content("Confirmation of consent #{outcome} sent to")
     end
   end
 end
