@@ -19,11 +19,11 @@ class AppActivityLogComponent < ViewComponent::Base
             <% if (subtitle = event[:subtitle]).present? %>
               <%= subtitle %>
             <% else %>
-              <% if (by = event[:by]) %>
-                <%= by.respond_to?(:full_name) ? by.full_name : by %>
-                &middot;
-              <% end %>
               <%= event[:at].to_fs(:long) %>
+              <% if (by = event[:by]) %>
+                &middot;
+                <%= by.respond_to?(:full_name) ? by.full_name : by %>
+              <% end %>
             <% end %>
 
             <% if event[:invalidated] %></s><% end %>

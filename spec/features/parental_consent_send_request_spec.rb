@@ -447,7 +447,7 @@ describe "Parental consent" do
 
     expect(page).to have_content(
       "#{title}\n" \
-        "#{display_name} USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
+        "#{display_name} 1 January 2024 at 12:00am · USER, Test\n#{@parent.email}"
     )
   end
 
@@ -455,7 +455,7 @@ describe "Parental consent" do
     click_on "Session activity and notes"
     expect(page).to have_content(
       "Consent clinic request sent\n" \
-        "#{programme_name} USER, Test · 1 January 2024 at 12:00am\n#{@parent.phone}"
+        "#{programme_name} 1 January 2024 at 12:00am · USER, Test\n#{@parent.phone}"
     )
   end
 
