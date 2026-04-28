@@ -66,12 +66,6 @@ RSpec/ContextWording:
 RSpec/ImplicitExpect:
   EnforcedStyle: should
 
-RSpec/VerifiedDoubles:
-  Exclude:
-    - spec/controllers/concerns/consent_form_mailer_concern_spec.rb
-    - spec/controllers/concerns/triage_mailer_concern_spec.rb
-    - spec/controllers/concerns/vaccination_mailer_concern_spec.rb
-
 Style/FrozenStringLiteralComment:
   Enabled: true
   EnforcedStyle: always_true
