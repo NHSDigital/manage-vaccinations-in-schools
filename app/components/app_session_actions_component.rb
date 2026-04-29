@@ -81,7 +81,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   def follow_up_requested_row
     count =
       patients.has_programme_status(
-        "needs_consent_follow_up_requested",
+        "has_refusal_follow_up_requested",
         programme: programmes,
         academic_year:
       ).count
@@ -89,8 +89,8 @@ class AppSessionActionsComponent < ViewComponent::Base
     href =
       session_patients_path(
         session,
-        programme_status_group: "needs_consent",
-        programme_statuses: %w[needs_consent_follow_up_requested]
+        programme_status_group: "has_refusal",
+        programme_statuses: %w[has_refusal_follow_up_requested]
       )
 
     generate_row(:children_with_follow_up_requested, count:, href:)

@@ -239,7 +239,7 @@ FactoryBot.define do
         programmes.map do |programme|
           association(
             :patient_programme_status,
-            :needs_consent_follow_up_requested,
+            :has_refusal_follow_up_requested,
             patient: instance,
             programme:,
             academic_year:

@@ -368,7 +368,7 @@ describe StatusGenerator::Programme do
     its(:disease_types) { should be_nil }
     its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
-    its(:status) { should be(:needs_consent_follow_up_requested) }
+    its(:status) { should be(:has_refusal_follow_up_requested) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end

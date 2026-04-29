@@ -74,8 +74,8 @@ class StatusGenerator::Programme
       :has_refusal_consent_conflicts
     elsif should_be_has_refusal_consent_refused?
       :has_refusal_consent_refused
-    elsif should_be_needs_consent_follow_up_requested?
-      :needs_consent_follow_up_requested
+    elsif should_be_has_refusal_follow_up_requested?
+      :has_refusal_follow_up_requested
     elsif should_be_needs_consent_request_failed?
       :needs_consent_request_failed
     elsif should_be_needs_consent_request_scheduled?
@@ -232,7 +232,7 @@ class StatusGenerator::Programme
     consent_status == :refused
   end
 
-  def should_be_needs_consent_follow_up_requested?
+  def should_be_has_refusal_follow_up_requested?
     consent_status == :follow_up_requested
   end
 
