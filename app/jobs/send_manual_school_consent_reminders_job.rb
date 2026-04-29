@@ -3,6 +3,8 @@
 class SendManualSchoolConsentRemindersJob < ApplicationJob
   include SendSchoolConsentNotificationConcern
 
+  queue_as :notifications
+
   def perform(session, current_user:)
     patient_programmes_eligible_for_notification(
       session:

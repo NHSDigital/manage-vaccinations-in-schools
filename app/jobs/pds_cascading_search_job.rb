@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class PDSCascadingSearchJob < ApplicationJob
-  include PDSAPIThrottlingConcern
+  include PDSThrottlingConcern
 
   queue_as :pds
+  retry_on Faraday::ServerError, wait: :polynomially_longer
 
   def perform(searchable, step_name: nil, search_results: [], queue: :pds)
     step_name ||= :no_fuzzy_with_history

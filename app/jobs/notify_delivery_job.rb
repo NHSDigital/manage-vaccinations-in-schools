@@ -6,6 +6,8 @@ class NotifyDeliveryJob < ApplicationJob
   TEAM_ONLY_API_KEY_MESSAGE =
     "Can’t send to this recipient using a team-only API key"
 
+  queue_as :notifications
+
   def self.client
     @client ||=
       Notifications::Client.new(

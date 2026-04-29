@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SMSDeliveryJob < NotifyDeliveryJob
-  include NotifyThrottlingConcern
+  include GovukNotifyThrottlingConcern
 
   PASSTHROUGH_TEMPLATE_ID = "c242b359-73d6-4b74-bda2-136093550636"
 

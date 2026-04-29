@@ -3,8 +3,6 @@
 module SendSchoolConsentNotificationConcern
   extend ActiveSupport::Concern
 
-  included { queue_as :notifications }
-
   def patient_programmes_eligible_for_notification(session:)
     return unless session.school? && session.can_receive_consent?
 

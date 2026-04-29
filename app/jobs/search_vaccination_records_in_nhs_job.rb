@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
+class SearchVaccinationRecordsInNHSJob
+  include Sidekiq::Job
+  include ImmunisationsAPIThrottlingConcern
+
   sidekiq_options queue: :immunisations_api_search
 
   ACADEMIC_YEAR_2025_CUTOFF_DATE = 2025.to_academic_year_date_range.first.freeze
