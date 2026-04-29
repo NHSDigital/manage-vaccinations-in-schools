@@ -111,6 +111,43 @@ describe ImportDuplicateForm do
     end
   end
 
+  describe "#apply_pending_changes!" do
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:user) { create(:user) }
+    let(:cohort_import) { create(:cohort_import, uploaded_by: user) }
+    let(:patient) { create(:patient, given_name: "Original") }
+
+    before do
+      patient.update!(pending_changes: { "given_name" => "Updated" })
+      create(
+        :patient_changeset,
+        :cohort_import,
+        :import_issue,
+        import: cohort_import,
+        patient:,
+        status: :processed
+      )
+    end
+
+    it "creates a change log entry for the patient" do
+      form =
+        described_class.new(
+          apply_changes: "apply",
+          object: patient,
+          current_team: team,
+          current_user: user
+        )
+
+      expect { form.save }.to change(PatientChangeLogEntry, :count).by(1)
+
+      entry = PatientChangeLogEntry.last
+      expect(entry.patient).to eq(patient)
+      expect(entry.user).to eq(user)
+      expect(entry.source).to eq("cohort_import")
+      expect(entry.recorded_changes["given_name"]).to eq(%w[Original Updated])
+    end
+  end
+
   describe "#can_apply?" do
     subject { form.can_apply? }
 
@@ -214,8 +251,8 @@ describe ImportDuplicateForm do
     end
   end
 
-  describe "#changeset_for_keep_both" do
-    subject(:selected_changeset) { form.send(:changeset_for_keep_both) }
+  describe "#changeset_for_pending_changes" do
+    subject(:selected_changeset) { form.send(:changeset_for_pending_changes) }
 
     let(:team) { create(:team, programmes: [programme]) }
     let(:session) { create(:session, team:, programmes: [programme]) }

@@ -55,6 +55,10 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
 
+      patient_to_destroy.patient_change_log_entries.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.patient_merge_log_entries.update_all(
         patient_id: patient_to_keep.id
       )

@@ -29,6 +29,7 @@ describe "Child record imports duplicates" do
     then_i_should_see_a_success_message
     and_i_should_return_to_the_import_page
     and_the_first_duplicate_record_should_be_persisted
+    and_a_change_log_entry_is_created_for_the_cohort_import_change
 
     when_i_visit_the_import_issues_page
     and_i_review_the_second_duplicate_record
@@ -79,6 +80,7 @@ describe "Child record imports duplicates" do
       then_i_should_see_a_success_message
       and_i_should_return_to_the_import_page
       and_the_first_duplicate_record_should_be_persisted
+      and_a_change_log_entry_is_created_for_the_cohort_import_change
 
       when_i_visit_the_import_issues_page
       and_i_review_the_second_duplicate_record
@@ -383,6 +385,18 @@ describe "Child record imports duplicates" do
     expect(@first_patient.pending_changes).to eq({})
   end
 
+  def and_a_change_log_entry_is_created_for_the_cohort_import_change
+    visit patient_path(@first_patient)
+    within(".nhsuk-card", text: "Activity log") do
+      expect(page).to have_content(
+        "Record updated after new details were imported in a cohort upload"
+      )
+      expect(page).to have_css(".nhsuk-summary-list__key", text: "Postcode")
+      expect(page).to have_content("SW11 1AA")
+      expect(page).to have_css("mark.app-highlight", text: "SW1A 1AA")
+    end
+  end
+
   def and_the_second_record_should_not_be_updated
     @second_patient.reload
     expect(@second_patient.given_name).to eq("James")
@@ -448,8 +462,10 @@ describe "Child record imports duplicates" do
   end
 
   def then_i_should_see_the_address_is_updated
-    expect(page).to have_content("10 Downing Street")
-    expect(page).not_to have_content("11 Downing Street")
+    within(".nhsuk-card", text: "Child record") do
+      expect(page).to have_content("10 Downing Street")
+      expect(page).not_to have_content("11 Downing Street")
+    end
   end
 
   def and_the_required_feature_flags_are_enabled

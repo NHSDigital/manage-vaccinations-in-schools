@@ -22,6 +22,11 @@ class Patients::EditController < Patients::BaseController
     @patient.invalidated_at = nil
 
     if @patient.save
+      PatientChangeLogEntry.log_saved_changes!(
+        patient: @patient,
+        user: current_user,
+        source: :manual_edit
+      )
       PatientUpdateFromPDSJob.perform_later(@patient)
 
       redirect_to edit_patient_path(@patient)

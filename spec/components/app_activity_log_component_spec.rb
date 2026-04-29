@@ -788,6 +788,117 @@ describe AppActivityLogComponent do
     end
   end
 
+  describe "patient change log events" do
+    let(:component) { described_class.new(patient:, team:) }
+
+    context "with a manual edit" do
+      before do
+        create(
+          :patient_change_log_entry,
+          patient:,
+          user:,
+          source: :manual_edit,
+          recorded_changes: {
+            "nhs_number" => %w[9990000018 9758623168]
+          },
+          created_at: Time.zone.local(2025, 6, 1, 12)
+        )
+      end
+
+      include_examples "card",
+                       title: "Record updated manually",
+                       date: "1 June 2025 at 12:00pm",
+                       by: "JOY, Nurse"
+
+      it "renders a details expandable with the number of changed fields" do
+        expect(rendered).to have_css(
+          "details.nhsuk-details[open]",
+          text: "1 field updated"
+        )
+      end
+
+      it "renders the field label and formatted old and new values" do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__key",
+          text: "NHS number"
+        )
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__value",
+          text: "999 000 0018"
+        )
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__value mark.app-highlight",
+          text: "975 862 3168"
+        )
+      end
+    end
+
+    context "with a cohort import" do
+      before do
+        create(
+          :patient_change_log_entry,
+          patient:,
+          user:,
+          source: :cohort_import,
+          recorded_changes: {
+            "given_name" => %w[Sarah Sara]
+          },
+          created_at: Time.zone.local(2025, 6, 1, 12)
+        )
+      end
+
+      include_examples "card",
+                       title:
+                         "Record updated after new details were imported in a cohort upload",
+                       date: "1 June 2025 at 12:00pm",
+                       by: "JOY, Nurse"
+    end
+
+    context "with a class import" do
+      before do
+        create(
+          :patient_change_log_entry,
+          patient:,
+          user:,
+          source: :class_import,
+          recorded_changes: {
+            "given_name" => %w[Sarah Sara]
+          },
+          created_at: Time.zone.local(2025, 6, 1, 12)
+        )
+      end
+
+      include_examples "card",
+                       title:
+                         "Record updated after new details were imported in a class upload",
+                       date: "1 June 2025 at 12:00pm",
+                       by: "JOY, Nurse"
+    end
+
+    context "with multiple changed fields" do
+      before do
+        create(
+          :patient_change_log_entry,
+          patient:,
+          user:,
+          source: :manual_edit,
+          recorded_changes: {
+            "given_name" => %w[Sarah Sara],
+            "family_name" => %w[Doe Dow]
+          },
+          created_at: Time.zone.local(2025, 6, 1, 12)
+        )
+      end
+
+      it "renders the count of changed fields in the disclosure" do
+        expect(rendered).to have_css(
+          "details.nhsuk-details[open]",
+          text: "2 fields updated"
+        )
+      end
+    end
+  end
+
   describe "patient merge events" do
     let(:component) { described_class.new(patient:, team:) }
 

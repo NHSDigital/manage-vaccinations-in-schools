@@ -70,6 +70,9 @@ describe PatientMerger do
     let(:patient_location) do
       create(:patient_location, session:, patient: patient_to_destroy)
     end
+    let(:patient_change_log_entry) do
+      create(:patient_change_log_entry, patient: patient_to_destroy)
+    end
     let(:patient_merge_log_entry) do
       create(:patient_merge_log_entry, patient: patient_to_destroy)
     end
@@ -186,6 +189,12 @@ describe PatientMerger do
 
     it "moves parent relationships" do
       expect { call }.to change { parent_relationship.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
+    it "moves patient change log entries" do
+      expect { call }.to change { patient_change_log_entry.reload.patient }.to(
         patient_to_keep
       )
     end

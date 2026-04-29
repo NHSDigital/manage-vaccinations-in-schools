@@ -25,6 +25,7 @@ describe "Class list imports duplicates", :pds do
     and_i_confirm_my_selection
     then_i_should_see_a_success_message
     and_the_first_record_should_be_updated
+    and_a_change_log_entry_is_created_for_the_class_import_change
 
     when_i_visit_the_import_issues_page
     and_i_review_the_second_duplicate_record
@@ -69,6 +70,7 @@ describe "Class list imports duplicates", :pds do
       and_i_confirm_my_selection
       then_i_should_see_a_success_message
       and_the_first_record_should_be_updated
+      and_a_change_log_entry_is_created_for_the_class_import_change
 
       when_i_visit_the_import_issues_page
       and_i_review_the_second_duplicate_record
@@ -261,6 +263,18 @@ describe "Class list imports duplicates", :pds do
     @existing_patient.reload
     expect(@existing_patient.address_postcode).to eq("SW1A 1BB")
     expect(@existing_patient.pending_changes).to eq({})
+  end
+
+  def and_a_change_log_entry_is_created_for_the_class_import_change
+    visit patient_path(@existing_patient)
+    within(".nhsuk-card", text: "Activity log") do
+      expect(page).to have_content(
+        "Record updated after new details were imported in a class upload"
+      )
+      expect(page).to have_css(".nhsuk-summary-list__key", text: "Postcode")
+      expect(page).to have_content("SW1A 1AA")
+      expect(page).to have_css("mark.app-highlight", text: "SW1A 1BB")
+    end
   end
 
   def and_i_review_the_second_duplicate_record

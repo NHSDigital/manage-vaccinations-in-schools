@@ -62,6 +62,7 @@ describe "Manage children" do
     when_i_enter_an_nhs_number
     then_i_see_the_edit_child_record_page
     and_i_see_the_nhs_number
+    then_a_change_log_entry_is_created_for_the_nhs_number_change
 
     when_i_wait_for_the_sync_to_complete
     then_the_vaccination_record_is_created_with_the_nhs
@@ -515,6 +516,16 @@ describe "Manage children" do
 
   def and_i_see_the_nhs_number
     expect(page).to have_content("975 862 3168")
+  end
+
+  def then_a_change_log_entry_is_created_for_the_nhs_number_change
+    visit patient_path(@patient)
+    within(".nhsuk-card", text: "Activity log") do
+      expect(page).to have_content("Record updated manually")
+      expect(page).to have_css(".nhsuk-summary-list__key", text: "NHS number")
+      expect(page).to have_css("mark.app-highlight", text: "975 862 3168")
+    end
+    visit edit_patient_path(@patient)
   end
 
   def when_i_click_on_add_new_parent

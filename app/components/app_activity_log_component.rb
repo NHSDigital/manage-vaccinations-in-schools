@@ -34,6 +34,13 @@ class AppActivityLogComponent < ViewComponent::Base
               <%= event[:invalidated] ? tag.s(body) : body %>
             </p></blockquote>
           <% end %>
+
+          <% if (changes = event[:changes]).present? %>
+            <%= render AppDetailsComponent.new(open: true) do |details| %>
+              <% details.with_summary { pluralize(changes.size, "field") + " updated" } %>
+              <%= changes_summary_list(changes) %>
+            <% end %>
+          <% end %>
         <% end %>
       <% end %>
     </div>
@@ -57,6 +64,7 @@ class AppActivityLogComponent < ViewComponent::Base
       gillick_assessment_events,
       note_events,
       notify_events,
+      patient_change_events,
       patient_merge_events,
       patient_specific_direction_events,
       pre_screening_events,
@@ -270,6 +278,28 @@ class AppActivityLogComponent < ViewComponent::Base
     end
   end
 
+  def patient_change_events
+    patient_change_log_entries.map do |entry|
+      title =
+        case entry.source
+        when "manual_edit"
+          "Record updated manually"
+        when "cohort_import"
+          "Record updated after new details were imported in a cohort upload"
+        when "class_import"
+          "Record updated after new details were imported in a class upload"
+        else
+          raise "Unknown change source: #{entry.source}"
+        end
+      {
+        title:,
+        at: entry.created_at,
+        by: entry.user,
+        changes: entry.recorded_changes
+      }
+    end
+  end
+
   def patient_merge_events
     patient_merge_log_entries.map do |patient_merge_log_entry|
       {
@@ -435,6 +465,8 @@ class AppActivityLogComponent < ViewComponent::Base
 
   private
 
+  delegate :format_nhs_number, :govuk_summary_list, to: :helpers
+
   def include_programme_specific_events?
     @programme_type.present? || @session.present?
   end
@@ -444,6 +476,13 @@ class AppActivityLogComponent < ViewComponent::Base
 
     @archive_reasons ||=
       @patient.archive_reasons.where(team: @team).includes(:created_by)
+  end
+
+  def patient_change_log_entries
+    return [] if include_programme_specific_events?
+
+    @patient_change_log_entries ||=
+      @patient.patient_change_log_entries.includes(:user)
   end
 
   def patient_merge_log_entries
@@ -613,6 +652,75 @@ class AppActivityLogComponent < ViewComponent::Base
         .then do |scope|
           @programme_type ? scope.where(programme_type: @programme_type) : scope
         end
+  end
+
+  def changes_summary_list(changes)
+    rows =
+      PatientChangeLogEntry::TRACKED_ATTRIBUTES.filter_map do |attr|
+        next unless changes.key?(attr)
+
+        old_val, new_val = changes[attr]
+        {
+          key: {
+            text: PatientChangeLogEntry.label_for(attr)
+          },
+          value: {
+            text: change_value_html(attr, old_val, new_val)
+          }
+        }
+      end
+    govuk_summary_list(rows:)
+  end
+
+  def change_value_html(attr, old_val, new_val)
+    arrow =
+      tag.svg(
+        safe_join(
+          [
+            tag.title("changed to"),
+            tag.path(
+              d:
+                "m14.7 6.3 5 5c.2.2.3.4.3.7 0 .3-.1.5-.3.7l-5 5" \
+                  "a1 1 0 0 1-1.4-1.4l3.3-3.3H5a1 1 0 0 1 0-2" \
+                  "h11.6l-3.3-3.3a1 1 0 1 1 1.4-1.4Z"
+            )
+          ]
+        ),
+        class: "nhsuk-icon nhsuk-icon--arrow-right",
+        style: "vertical-align: middle",
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 24 24",
+        width: "16",
+        height: "16",
+        focusable: "false",
+        role: "img",
+        "aria-label": "changed to"
+      )
+
+    safe_join(
+      [
+        format_change_value(attr, old_val),
+        " ",
+        arrow,
+        " ",
+        tag.mark(format_change_value(attr, new_val), class: "app-highlight")
+      ]
+    )
+  end
+
+  def format_change_value(attr, value)
+    return "Not provided" if value.nil? || value.to_s.empty?
+
+    case attr
+    when "date_of_birth"
+      Date.parse(value.to_s).to_fs(:long)
+    when "gender_code"
+      Patient.human_enum_name(:gender_code, value)
+    when "nhs_number"
+      format_nhs_number(value.to_s)
+    else
+      value.to_s
+    end
   end
 
   def expired_items_for(academic_year:, programmes:)

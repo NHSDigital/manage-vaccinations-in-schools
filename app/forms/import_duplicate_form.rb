@@ -3,7 +3,7 @@
 class ImportDuplicateForm
   include ActiveModel::Model
 
-  attr_accessor :current_team, :object, :apply_changes
+  attr_accessor :current_team, :current_user, :object, :apply_changes
 
   validates :apply_changes, inclusion: { in: :apply_changes_options }
 
@@ -55,6 +55,14 @@ class ImportDuplicateForm
     object.patient.apply_pending_changes! if object.respond_to?(:patient)
 
     object.apply_pending_changes!
+
+    if object.is_a?(Patient)
+      PatientChangeLogEntry.log_saved_changes!(
+        patient: object,
+        user: current_user,
+        source: patient_import_source(object)
+      )
+    end
   end
 
   def discard_pending_changes!
@@ -68,11 +76,11 @@ class ImportDuplicateForm
     return unless can_apply?
 
     object.apply_pending_changes_to_new_record!(
-      changeset: changeset_for_keep_both
+      changeset: changeset_for_pending_changes
     )
   end
 
-  def changeset_for_keep_both
+  def changeset_for_pending_changes
     scope = object.changesets.includes(:import).order(:created_at)
 
     completed_import_statuses = %w[
@@ -89,5 +97,10 @@ class ImportDuplicateForm
 
   def reset_count!
     TeamCachedCounts.new(current_team).reset_import_issues!
+  end
+
+  def patient_import_source(_patient)
+    import = changeset_for_pending_changes&.import
+    import.is_a?(ClassImport) ? :class_import : :cohort_import
   end
 end
