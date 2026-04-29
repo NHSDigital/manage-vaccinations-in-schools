@@ -38,13 +38,15 @@ class PatientDeleter
       parent_ids =
         Parent.joins(parent_relationships: :patient).merge(@patients).ids
       delete_related(ParentRelationship)
-      Parent
-        .where(id: parent_ids)
-        .where
-        .missing(:parent_relationships)
-        .destroy_all
+      floating_parents =
+        Parent.where(id: parent_ids).where.missing(:parent_relationships)
+      Rails.logger.info "Deleting #{floating_parents.count} floating parents"
+      floating_parents.destroy_all
 
+      Rails.logger.info "Deleting #{@patients.count} patient records"
       @patients.each(&:destroy)
+
+      Rails.logger.info "PatientDeleter complete"
     end
   end
 
@@ -55,6 +57,9 @@ class PatientDeleter
   private
 
   def delete_related(scope)
-    scope.joins(:patient).merge(@patients).delete_all
+    deletion_scope = scope.joins(:patient).merge(@patients)
+
+    Rails.logger.info "Deleting #{deletion_scope.count} #{scope.name.pluralize}"
+    deletion_scope.delete_all
   end
 end
