@@ -27,13 +27,21 @@ describe Notifier::VaccinationRecord do
       it "sends an email" do
         expect { send_confirmation }.to deliver_email(
           :vaccination_administered
-        ).with(parent:, vaccination_record:, sent_by:)
+        ).with(
+          parent_id: parent.id,
+          vaccination_record_id: vaccination_record.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "sends a text message" do
         expect { send_confirmation }.to deliver_sms(
           :vaccination_administered
-        ).with(parent:, vaccination_record:, sent_by:)
+        ).with(
+          parent_id: parent.id,
+          vaccination_record_id: vaccination_record.id,
+          sent_by_user_id: sent_by.id
+        )
       end
     end
 
@@ -53,13 +61,21 @@ describe Notifier::VaccinationRecord do
       it "sends an email" do
         expect { send_confirmation }.to deliver_email(
           :vaccination_not_administered
-        ).with(parent:, vaccination_record:, sent_by:)
+        ).with(
+          parent_id: parent.id,
+          vaccination_record_id: vaccination_record.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "sends a text message" do
         expect { send_confirmation }.to deliver_sms(
           :vaccination_not_administered
-        ).with(parent:, vaccination_record:, sent_by:)
+        ).with(
+          parent_id: parent.id,
+          vaccination_record_id: vaccination_record.id,
+          sent_by_user_id: sent_by.id
+        )
       end
     end
 
@@ -91,13 +107,21 @@ describe Notifier::VaccinationRecord do
         it "sends an email" do
           expect { send_confirmation }.to deliver_email(
             :vaccination_administered
-          ).with(parent:, vaccination_record:, sent_by:)
+          ).with(
+            parent_id: parent.id,
+            vaccination_record_id: vaccination_record.id,
+            sent_by_user_id: sent_by.id
+          )
         end
 
         it "sends a text message" do
           expect { send_confirmation }.to deliver_sms(
             :vaccination_administered
-          ).with(parent:, vaccination_record:, sent_by:)
+          ).with(
+            parent_id: parent.id,
+            vaccination_record_id: vaccination_record.id,
+            sent_by_user_id: sent_by.id
+          )
         end
       end
 

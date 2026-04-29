@@ -24,7 +24,11 @@ describe Notifier::Consent do
       it "sends an email saying triage was needed and vaccination will happen" do
         expect { send_confirmation }.to deliver_email(
           :triage_vaccination_will_happen
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "doesn't send a text message" do
@@ -44,7 +48,11 @@ describe Notifier::Consent do
       it "sends a different email tailored to MMR second dose" do
         expect { send_confirmation }.to deliver_email(
           :triage_vaccination_will_happen_mmr_second_dose
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
     end
 
@@ -61,7 +69,11 @@ describe Notifier::Consent do
       it "sends an email saying triage was needed but vaccination won't happen" do
         expect { send_confirmation }.to deliver_email(
           :triage_vaccination_wont_happen
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "doesn't send a text message" do
@@ -77,7 +89,11 @@ describe Notifier::Consent do
       it "sends an email saying triage was needed but vaccination won't happen" do
         expect { send_confirmation }.to deliver_email(
           :triage_vaccination_at_clinic
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "doesn't send a text message" do
@@ -91,7 +107,11 @@ describe Notifier::Consent do
         it "enqueues an email using the CWPT-specific template" do
           expect { send_confirmation }.to deliver_email(
             :triage_vaccination_at_clinic_ryg
-          ).with(consent:, session:, sent_by:)
+          ).with(
+            consent_id: consent.id,
+            session_id: session.id,
+            sent_by_user_id: sent_by.id
+          )
         end
       end
 
@@ -102,7 +122,11 @@ describe Notifier::Consent do
         it "enqueues an email using the LPT-specific template" do
           expect { send_confirmation }.to deliver_email(
             :triage_vaccination_at_clinic_rt5
-          ).with(consent:, session:, sent_by:)
+          ).with(
+            consent_id: consent.id,
+            session_id: session.id,
+            sent_by_user_id: sent_by.id
+          )
         end
       end
     end
@@ -115,13 +139,21 @@ describe Notifier::Consent do
       it "sends an email saying vaccination will happen" do
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_given
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "sends a text message" do
         expect { send_confirmation }.to deliver_sms(
           :consent_confirmation_given
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
     end
 
@@ -131,7 +163,11 @@ describe Notifier::Consent do
       it "sends an email saying triage is required" do
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_triage
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "doesn't send a text message" do
@@ -172,13 +208,21 @@ describe Notifier::Consent do
       it "sends an email confirming they've refused consent" do
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_refused
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "sends a text message" do
         expect { send_confirmation }.to deliver_sms(
           :consent_confirmation_refused
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
     end
 
@@ -252,13 +296,21 @@ describe Notifier::Consent do
       it "sends an email" do
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_given
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
 
       it "sends a text message" do
         expect { send_confirmation }.to deliver_sms(
           :consent_confirmation_given
-        ).with(consent:, session:, sent_by:)
+        ).with(
+          consent_id: consent.id,
+          session_id: session.id,
+          sent_by_user_id: sent_by.id
+        )
       end
     end
   end

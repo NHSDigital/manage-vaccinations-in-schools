@@ -15,7 +15,7 @@ describe Notifier::ConsentForm do
 
       expect { send_confirmation }.to deliver_email(
         :consent_confirmation_given
-      ).with(consent_form:, programme_types:, disease_types:)
+      ).with(consent_form_id: consent_form.id, programme_types:, disease_types:)
     end
 
     it "sends a consent given text" do
@@ -25,7 +25,7 @@ describe Notifier::ConsentForm do
 
       expect { send_confirmation }.to deliver_sms(
         :consent_confirmation_given
-      ).with(consent_form:, programme_types:, disease_types:)
+      ).with(consent_form_id: consent_form.id, programme_types:, disease_types:)
     end
 
     context "when user refuses consent" do
@@ -34,13 +34,13 @@ describe Notifier::ConsentForm do
       it "sends an confirmation refused email" do
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_refused
-        ).with(consent_form:)
+        ).with(consent_form_id: consent_form.id)
       end
 
       it "sends a consent refused text" do
         expect { send_confirmation }.to deliver_sms(
           :consent_confirmation_refused
-        ).with(consent_form:)
+        ).with(consent_form_id: consent_form.id)
       end
     end
 
@@ -62,11 +62,11 @@ describe Notifier::ConsentForm do
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_given
         ).with(
-          consent_form:,
+          consent_form_id: consent_form.id,
           programme_types: [menacwy_programme.type],
           disease_types: menacwy_programme.disease_types
         ).and deliver_email(:consent_confirmation_refused).with(
-                consent_form:,
+                consent_form_id: consent_form.id,
                 programme_types: [td_ipv_programme.type],
                 disease_types: td_ipv_programme.disease_types
               )
@@ -76,11 +76,11 @@ describe Notifier::ConsentForm do
         expect { send_confirmation }.to deliver_sms(
           :consent_confirmation_given
         ).with(
-          consent_form:,
+          consent_form_id: consent_form.id,
           programme_types: [menacwy_programme.type],
           disease_types: menacwy_programme.disease_types
         ).and deliver_sms(:consent_confirmation_refused).with(
-                consent_form:,
+                consent_form_id: consent_form.id,
                 programme_types: [td_ipv_programme.type],
                 disease_types: td_ipv_programme.disease_types
               )
@@ -97,7 +97,11 @@ describe Notifier::ConsentForm do
 
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_triage
-        ).with(consent_form:, programme_types:, disease_types:)
+        ).with(
+          consent_form_id: consent_form.id,
+          programme_types:,
+          disease_types:
+        )
       end
 
       it "doesn't send a text" do
@@ -127,7 +131,11 @@ describe Notifier::ConsentForm do
 
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_clinic
-        ).with(consent_form:, programme_types:, disease_types:)
+        ).with(
+          consent_form_id: consent_form.id,
+          programme_types:,
+          disease_types:
+        )
       end
 
       it "doesn't send a text" do
@@ -166,7 +174,7 @@ describe Notifier::ConsentForm do
         expect { send_confirmation }.to deliver_email(
           :consent_confirmation_given
         ).with(
-          consent_form:,
+          consent_form_id: consent_form.id,
           programme_types: consent_form.programme_types,
           disease_types: %w[measles mumps rubella varicella]
         )
@@ -199,9 +207,15 @@ describe Notifier::ConsentForm do
     it "sends warning email and SMS to existing parent" do
       expect { send_unknown_contact_details_warning }.to deliver_email(
         :consent_unknown_contact_details_warning
-      ).with(parent:, patient:, consent_form:).and deliver_sms(
-              :consent_unknown_contact_details_warning
-            ).with(parent:, patient:, consent_form:)
+      ).with(
+        parent_id: parent.id,
+        patient_id: patient.id,
+        consent_form_id: consent_form.id
+      ).and deliver_sms(:consent_unknown_contact_details_warning).with(
+              parent_id: parent.id,
+              patient_id: patient.id,
+              consent_form_id: consent_form.id
+            )
     end
 
     context "when parent has phone_receive_updates disabled" do
@@ -217,7 +231,11 @@ describe Notifier::ConsentForm do
       it "sends warning email" do
         expect { send_unknown_contact_details_warning }.to deliver_email(
           :consent_unknown_contact_details_warning
-        ).with(parent:, patient:, consent_form:)
+        ).with(
+          parent_id: parent.id,
+          patient_id: patient.id,
+          consent_form_id: consent_form.id
+        )
       end
 
       it "does not send warning SMS" do
@@ -239,13 +257,25 @@ describe Notifier::ConsentForm do
       it "sends warnings to all existing parents" do
         expect { send_unknown_contact_details_warning }.to deliver_email(
           :consent_unknown_contact_details_warning
-        ).with(parent:, patient:, consent_form:).and deliver_email(
-                :consent_unknown_contact_details_warning
-              ).with(parent: parent2, patient:, consent_form:).and deliver_sms(
-                      :consent_unknown_contact_details_warning
-                    ).with(parent:, patient:, consent_form:).and deliver_sms(
+        ).with(
+          parent_id: parent.id,
+          patient_id: patient.id,
+          consent_form_id: consent_form.id
+        ).and deliver_email(:consent_unknown_contact_details_warning).with(
+                parent_id: parent2.id,
+                patient_id: patient.id,
+                consent_form_id: consent_form.id
+              ).and deliver_sms(:consent_unknown_contact_details_warning).with(
+                      parent_id: parent.id,
+                      patient_id: patient.id,
+                      consent_form_id: consent_form.id
+                    ).and deliver_sms(
                             :consent_unknown_contact_details_warning
-                          ).with(parent: parent2, patient:, consent_form:)
+                          ).with(
+                            parent_id: parent2.id,
+                            patient_id: patient.id,
+                            consent_form_id: consent_form.id
+                          )
       end
     end
   end

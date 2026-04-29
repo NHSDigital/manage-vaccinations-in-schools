@@ -29,31 +29,31 @@ describe AlreadyHadNotificationSender do
   shared_examples "sends one email to all parents with valid consents" do
     it "sends email notifications to all parents with valid consents" do
       expect { call }.to deliver_email(:vaccination_already_had).with(
-        parent: first_parent,
-        vaccination_record:,
-        consent: first_consent
-      ).once.and deliver_email(:vaccination_already_had).with(
-                   parent: second_parent,
-                   vaccination_record:,
-                   consent: second_consent
-                 ).once
+        parent_id: first_parent.id,
+        vaccination_record_id: vaccination_record.id,
+        consent_id: first_consent.id
+      ).and deliver_email(:vaccination_already_had).with(
+              parent_id: second_parent.id,
+              vaccination_record_id: vaccination_record.id,
+              consent_id: second_consent.id
+            )
     end
   end
 
   shared_examples "sends one SMS only to opted-in parents" do
     it "sends SMS notifications to parents who opted in for updates" do
       expect { call }.to deliver_sms(:vaccination_already_had).with(
-        parent: first_parent,
-        vaccination_record:,
-        consent: first_consent
+        parent_id: first_parent.id,
+        vaccination_record_id: vaccination_record.id,
+        consent_id: first_consent.id
       )
     end
 
     it "doesn't send SMS notifications to parents who haven't opted in" do
       expect { call }.not_to deliver_sms(:vaccination_already_had).with(
-        parent: second_parent,
-        vaccination_record:,
-        consent: second_consent
+        parent_id: second_parent.id,
+        vaccination_record_id: vaccination_record.id,
+        consent_id: second_consent.id
       )
     end
   end

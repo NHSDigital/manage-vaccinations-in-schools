@@ -18,7 +18,7 @@ class NotifyTemplate
     def find_by_id(template_id, channel:)
       return nil if template_id.blank?
 
-      local_templates(channel).values.find { _1.id == template_id.to_s }
+      local_templates(channel).values.find { it.id == template_id.to_s }
     end
 
     def exists?(name, channel:)

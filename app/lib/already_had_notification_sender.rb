@@ -29,21 +29,17 @@ class AlreadyHadNotificationSender
       ).parents_with_consent
 
     parents_with_consent.each do |parent, consent|
+      params = {
+        "parent_id" => parent.id,
+        "vaccination_record_id" => vaccination_record.id,
+        "consent_id" => consent.id
+      }
+
       if parent.phone_receive_updates
-        SMSDeliveryJob.perform_later(
-          :vaccination_already_had,
-          parent:,
-          vaccination_record:,
-          consent:
-        )
+        SMSDeliverySidekiqJob.perform_async("vaccination_already_had", params)
       end
 
-      EmailDeliveryJob.perform_later(
-        :vaccination_already_had,
-        parent:,
-        vaccination_record:,
-        consent:
-      )
+      EmailDeliverySidekiqJob.perform_async("vaccination_already_had", params)
 
       consent.update!(
         patient_already_vaccinated_notification_sent_at: Time.current

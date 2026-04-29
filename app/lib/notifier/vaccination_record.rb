@@ -10,18 +10,22 @@ class Notifier::VaccinationRecord
 
     template_name =
       if vaccination_record.administered?
-        :vaccination_administered
+        "vaccination_administered"
       else
-        :vaccination_not_administered
+        "vaccination_not_administered"
       end
 
     parents.each do |parent|
-      params = { parent:, vaccination_record:, sent_by: }
+      params = {
+        "parent_id" => parent.id,
+        "vaccination_record_id" => vaccination_record.id,
+        "sent_by_user_id" => sent_by&.id
+      }
 
-      EmailDeliveryJob.perform_later(template_name, **params)
+      EmailDeliverySidekiqJob.perform_async(template_name, params)
 
       if parent.phone_receive_updates
-        SMSDeliveryJob.perform_later(template_name, **params)
+        SMSDeliverySidekiqJob.perform_async(template_name, params)
       end
     end
   end
@@ -30,12 +34,13 @@ class Notifier::VaccinationRecord
     return if parents.empty?
 
     parents.each do |parent|
-      EmailDeliveryJob.perform_later(
-        :vaccination_deleted,
-        parent:,
-        vaccination_record:,
-        sent_by:
-      )
+      params = {
+        "parent_id" => parent.id,
+        "vaccination_record_id" => vaccination_record.id,
+        "sent_by_user_id" => sent_by&.id
+      }
+
+      EmailDeliverySidekiqJob.perform_async("vaccination_deleted", params)
     end
   end
 
