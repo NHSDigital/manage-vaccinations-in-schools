@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/environment"
+require "prometheus_exporter/instrumentation"
+
+PrometheusExporter::Instrumentation::SidekiqStats.start
+PrometheusExporter::Instrumentation::SidekiqQueue.start(all_queues: true)
+
+at_exit { PrometheusExporter::Client.default.stop(wait_timeout_seconds: 10) }
+
+Kernel.sleep
