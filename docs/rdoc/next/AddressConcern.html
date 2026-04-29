@@ -659,7 +659,7 @@
             </details>
           </div>
           <div class="method-source-code" id="address_changed-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/address_concern.rb, line 44</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/address_concern.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">address_changed?</span>
   <span class="ruby-identifier">address_line_1_changed?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">address_line_2_changed?</span> <span class="ruby-operator">||</span>
     <span class="ruby-identifier">address_town_changed?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">address_postcode_changed?</span>
@@ -702,7 +702,7 @@
             </details>
           </div>
           <div class="method-source-code" id="address_parts-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/address_concern.rb, line 33</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/address_concern.rb, line 36</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">address_parts</span>
   [
     <span class="ruby-identifier">address_line_1</span>,
@@ -749,7 +749,7 @@
             </details>
           </div>
           <div class="method-source-code" id="has_address-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/address_concern.rb, line 42</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/address_concern.rb, line 45</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">has_address?</span> = <span class="ruby-identifier">address_parts</span>.<span class="ruby-identifier">present?</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">address_changed?</span>
