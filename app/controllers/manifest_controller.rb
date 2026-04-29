@@ -6,6 +6,7 @@ class ManifestController < ApplicationController
   skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
   skip_after_action :set_navigation_items_cookie
+  skip_after_action :set_reporting_app_context_cookie
 
   before_action :set_assets_name
 

@@ -150,3 +150,14 @@ en:
         safe_to_vaccinate_nasal: green
         safe_to_vaccinate_injection_without_gelatine: green
         safe_to_vaccinate_injection_without_gelatine_flu: green
+    careplus_report:
+      label:
+        pending: Pending
+        sending: Sending
+        sent: Sent
+        failed: Failed
+      colour:
+        pending: blue
+        sending: blue
+        sent: green
+        failed: red

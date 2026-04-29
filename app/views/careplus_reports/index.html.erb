@@ -1,0 +1,65 @@
+<% content_for :navigation do %>
+  <%= govuk_back_link(href: reports_path) %>
+<% end %>
+
+<h1 class="nhsuk-heading-l">
+  <%= content_for(:page_title, t(".title")); t(".title") %>
+</h1>
+
+<p class="nhsuk-body"><%= t(".description") %></p>
+
+<% if @careplus_reports.any? %>
+  <%= render AppCardComponent.new(feature: true) do |card| %>
+    <% card.with_heading(level: 2) do %>
+      <%= pluralize(@pagy.count, t(".table.record")) %>
+    <% end %>
+
+    <%= govuk_table(html_attributes: { class: "nhsuk-table nhsuk-table-responsive" }) do |table| %>
+      <%= table.with_head do |head|
+            head.with_row do |row|
+              row.with_cell(text: t(".table.sent_at"))
+              row.with_cell(text: t(".table.programmes"))
+              row.with_cell(text: t(".table.status"))
+              row.with_cell(text: t(".table.records"))
+            end
+          end %>
+
+      <%= table.with_body do |body| %>
+        <% @careplus_reports.each do |report| %>
+          <%= body.with_row do |row| %>
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.sent_at") %></span>
+              <%= link_to(report.sent_at ? report.sent_at.to_fs(:long) : t(".not_sent"),
+                          careplus_report_path(report)) %>
+              <% if report.csv_filename.present? %>
+                <br>
+                <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">
+                  <%= report.csv_filename %>
+                </span>
+              <% end %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.programmes") %></span>
+              <%= render AppProgrammeTagsComponent.new(report.programmes) %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.status") %></span>
+              <%= careplus_report_status_tag(report) %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading"><%= t(".table.records") %></span>
+              <%= @careplus_report_records_count_by_report_id[report.id].to_i %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% else %>
+  <p class="nhsuk-body"><%= t(".empty") %></p>
+<% end %>
+
+<%= render AppPaginationComponent.new(pagy: @pagy) %>

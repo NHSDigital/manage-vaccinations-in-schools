@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
 
   include NavigationConcern
 
+  after_action :set_reporting_app_context_cookie
   after_action :verify_authorized, if: -> { Rails.env.local? }
   after_action :verify_policy_scoped, if: -> { Rails.env.local? }
 
@@ -103,5 +104,25 @@ class ApplicationController < ActionController::Base
 
   def set_sentry_user
     Sentry.set_user(id: current_user&.id)
+  end
+
+  def set_reporting_app_context_cookie
+    return unless current_user
+
+    cookies[:mavis_reporting_context] = {
+      navigation_items: reporting_app_navigation_items,
+      careplus_reports_tab_visible: careplus_reports_tab_visible?
+    }.to_json
+  end
+
+  def reporting_app_navigation_items
+    @navigation_items || []
+  end
+
+  def careplus_reports_tab_visible?
+    return false unless current_user&.cis2_info
+    return false unless current_team
+
+    current_team.eligible_for_automated_careplus_reports?
   end
 end

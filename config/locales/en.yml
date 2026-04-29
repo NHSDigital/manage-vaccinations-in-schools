@@ -1235,6 +1235,40 @@ en:
     mmr_and_mmrv: MMR(V)
     mmrv: MMRV
     td_ipv: Td/IPV
+  careplus_reports:
+    index:
+      title: CarePlus reports
+      description: >-
+        A record of vaccination reports automatically sent to your CHIS provider's CarePlus system,
+        every day that new records are available.
+      not_sent: "—"
+      empty: No CarePlus reports found.
+      table:
+        sent_at: Sent at
+        programmes: Programmes
+        status: Status
+        records: Records
+        record: CarePlus report
+    show:
+      title: CarePlus report
+      summary:
+        heading: Report details
+        filename: Filename
+        programme: Programmes
+        status: Status
+        records: Records
+        file: File
+        download: Download CSV
+      table:
+        record: vaccination record
+        name: Name
+        postcode: Postcode
+        school: School
+        date_of_birth: Date of birth
+      records:
+        heading: Records
+    download:
+      no_file: No file is available for this report.
   reports:
     index:
       title: Reports

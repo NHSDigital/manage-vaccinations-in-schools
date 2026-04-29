@@ -82,6 +82,7 @@ module NavigationConcern
     end
   end
 
+  # TODO: remove this cookie once the reporting app is using the new mavis_reporting_context cookie
   def set_navigation_items_cookie
     return unless current_user
 
