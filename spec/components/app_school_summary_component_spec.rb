@@ -53,6 +53,9 @@ describe AppSchoolSummaryComponent do
           link: "/address",
           text: "Change address"
         },
+        phase: {
+          link: "/phase"
+        },
         year_groups: {
           link: "/year-groups"
         }
@@ -62,6 +65,7 @@ describe AppSchoolSummaryComponent do
 
     it { should have_link("Change name", href: "/name") }
     it { should have_link("Change address", href: "/address") }
+    it { should have_link("Change phase", href: "/phase") }
     it { should have_link("Change year groups", href: "/year-groups") }
   end
 
@@ -140,6 +144,12 @@ describe AppSchoolSummaryComponent do
     it "shows phase from the underlying location" do
       expect(rendered).to have_content("Phase")
       expect(rendered).to have_content("Secondary")
+    end
+
+    it "shows the selected phase when overridden in the draft" do
+      draft_school.phase = "primary"
+      expect(rendered).to have_content("Primary")
+      expect(rendered).not_to have_content("Secondary")
     end
 
     it "shows programmes from the underlying location" do

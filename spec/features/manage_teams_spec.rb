@@ -50,6 +50,10 @@ describe "Manage teams" do
 
     when_i_confirm_the_school
     and_i_continue
+    then_i_see_the_phase_screen
+
+    when_i_select_a_phase
+    and_i_continue
     then_i_see_the_year_groups_screen
     and_year_groups_are_pre_selected
 
@@ -79,6 +83,10 @@ describe "Manage teams" do
     then_i_see_the_school_site_details_form
 
     when_i_fill_in_the_school_site_details
+    and_i_continue
+    then_i_see_the_phase_screen
+
+    when_i_select_a_phase
     and_i_continue
     then_i_see_the_year_groups_screen
     and_year_groups_are_pre_selected
@@ -136,6 +144,25 @@ describe "Manage teams" do
     and_the_site_details_are_updated
   end
 
+  scenario "Editing a school phase" do
+    given_my_team_exists
+
+    when_i_click_on_team_settings
+    when_i_click_on_schools
+
+    when_i_click_on_edit_a_school
+    then_i_see_the_school_summary_with_phase_and_year_groups_links
+
+    when_i_click_on_change_phase
+    and_i_select_a_new_phase
+    and_i_continue
+    then_i_see_the_phase_is_updated
+
+    when_i_click_save_changes
+    then_i_see_the_team_schools
+    and_the_school_phase_is_updated
+  end
+
   scenario "Editing a school" do
     given_my_team_exists
 
@@ -144,7 +171,7 @@ describe "Manage teams" do
     then_i_see_the_team_schools
 
     when_i_click_on_edit_a_school
-    then_i_see_the_school_summary_with_only_year_groups_link
+    then_i_see_the_school_summary_with_phase_and_year_groups_links
 
     when_i_click_on_change_year_groups
     when_i_try_to_remove_a_year_group
@@ -241,11 +268,13 @@ describe "Manage teams" do
     expect(page).to have_content("Site B")
     expect(page).to have_link("Change", text: /name/i)
     expect(page).to have_link("Change", text: /address/i)
+    expect(page).to have_link("Change", text: /phase/i)
     expect(page).to have_link("Change", text: /year groups/i)
   end
 
-  def then_i_see_the_school_summary_with_only_year_groups_link
+  def then_i_see_the_school_summary_with_phase_and_year_groups_links
     expect(page).to have_content(@school.name)
+    expect(page).to have_link("Change", text: /phase/i)
     expect(page).to have_link("Change", text: /year groups/i)
     expect(page).not_to have_link("Change", text: /name/i)
     expect(page).not_to have_link("Change", text: /address/i)
@@ -528,5 +557,32 @@ describe "Manage teams" do
   def and_the_school_has_the_correct_year_groups
     @available_school.reload
     expect(@available_school.location_year_groups.pluck(:value)).to include(12)
+  end
+
+  def then_i_see_the_phase_screen
+    expect(page).to have_content("Phase")
+    expect(page).to have_field("Primary", type: :radio)
+    expect(page).to have_field("Secondary", type: :radio)
+  end
+
+  def when_i_select_a_phase
+    choose "Secondary"
+  end
+
+  def when_i_click_on_change_phase
+    click_on "Change phase"
+  end
+
+  def and_i_select_a_new_phase
+    choose "Primary"
+  end
+
+  def then_i_see_the_phase_is_updated
+    expect(page).to have_content("Primary")
+  end
+
+  def and_the_school_phase_is_updated
+    @school.reload
+    expect(@school.phase).to eq("primary")
   end
 end

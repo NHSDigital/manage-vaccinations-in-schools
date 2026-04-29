@@ -14,6 +14,7 @@ class DraftSchool
   attribute :address_town, :string
   attribute :address_postcode, :string
   attribute :selected_year_groups, default: []
+  attribute :phase, :string
   attribute :context, :string
 
   attr_reader :current_team
@@ -51,6 +52,7 @@ class DraftSchool
       (:details if add_site_context? || editing?),
       (:urn if add_school_context?),
       (:confirm_urn if add_school_context?),
+      :phase,
       :year_groups,
       :confirm
     ].compact
@@ -91,6 +93,10 @@ class DraftSchool
     validates :address_line_1, presence: true
     validates :address_town, presence: true
     validates :address_postcode, postcode: true
+  end
+
+  on_wizard_step :phase, exact: true do
+    validates :phase, presence: true, inclusion: { in: Location::PHASES }
   end
 
   on_wizard_step :year_groups, exact: true do
@@ -141,7 +147,7 @@ class DraftSchool
   end
 
   def writable_attribute_names
-    %w[name address_line_1 address_line_2 address_town address_postcode]
+    %w[name address_line_1 address_line_2 address_town address_postcode phase]
   end
 
   def resolved_urn
@@ -167,6 +173,10 @@ class DraftSchool
     existing_sites.max_by { [it.length, it] }.next
   end
 
+  def phase
+    super.presence || source_location&.phase
+  end
+
   def existing_year_groups
     source_location&.year_groups.presence ||
       source_location&.gias_year_groups || []
@@ -190,7 +200,7 @@ class DraftSchool
   end
 
   def human_enum_name(attr)
-    source_location&.human_enum_name(attr)
+    Location.human_enum_name(attr, public_send(attr))
   end
 
   def schools_with_urn

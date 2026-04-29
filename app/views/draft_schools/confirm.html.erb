@@ -24,10 +24,14 @@
            {
              name: { link: wizard_path(:details) },
              address: { link: wizard_path(:details) },
+             phase: { link: wizard_path(:phase) },
              year_groups: { link: wizard_path("year-groups") },
            }
          else
-           { year_groups: { link: wizard_path("year-groups") } }
+           {
+             phase: { link: wizard_path(:phase) },
+             year_groups: { link: wizard_path("year-groups") },
+           }
          end
        elsif @draft_school.add_site_context?
          { urn: { link: wizard_path(:school), text: "Change parent school" } }

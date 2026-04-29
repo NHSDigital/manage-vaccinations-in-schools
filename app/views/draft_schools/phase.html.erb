@@ -1,0 +1,15 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<% legend = "Phase" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @draft_school, url: wizard_path, method: :put do |f| %>
+  <%= f.mavis_error_summary %>
+  <%= f.govuk_collection_radio_buttons :phase, @phases, :itself, ->(v) { Location.human_enum_name(:phase, v) },
+                                       legend: { text: legend, size: "l", tag: "h1" },
+                                       caption: { text: @draft_school.name || @draft_school.source_location&.name, size: "l" } %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

@@ -8,7 +8,7 @@ class AppLocationSearchFormComponent < ViewComponent::Base
 
   private
 
-  PHASES = %w[nursery primary secondary other].freeze
+  PHASES = Location::PHASES
 
   attr_reader :form, :url
 

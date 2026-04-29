@@ -12,6 +12,7 @@ class DraftSchoolsController < ApplicationController
   before_action :set_name, if: -> { current_step == :confirm_urn }
   before_action :set_address,
                 if: -> { %i[details confirm_urn].include?(current_step) }
+  before_action :set_phases, if: -> { current_step == :phase }
   before_action :set_year_groups, if: -> { current_step == :year_groups }
   before_action :set_back_link_path
 
@@ -89,6 +90,10 @@ class DraftSchoolsController < ApplicationController
 
   def set_name
     @draft_school.name ||= @draft_school.source_location&.name
+  end
+
+  def set_phases
+    @phases = Location::PHASES
   end
 
   def set_year_groups
@@ -231,6 +236,7 @@ class DraftSchoolsController < ApplicationController
         address_town
         address_postcode
       ],
+      phase: [:phase],
       year_groups: [{ year_groups: [] }],
       confirm: []
     }.fetch(current_step)

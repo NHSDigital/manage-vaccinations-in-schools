@@ -62,7 +62,7 @@ class AppSchoolSummaryComponent < ViewComponent::Base
   end
 
   def phase_row
-    {
+    row = {
       key: {
         text: "Phase"
       },
@@ -70,6 +70,18 @@ class AppSchoolSummaryComponent < ViewComponent::Base
         text: schoolable.human_enum_name(:phase)
       }
     }
+
+    if change_links[:phase]
+      row[:actions] = [
+        {
+          text: change_links[:phase][:text] || "Change",
+          href: change_links[:phase][:link],
+          visually_hidden_text: "phase"
+        }
+      ]
+    end
+
+    row
   end
 
   def programmes_row

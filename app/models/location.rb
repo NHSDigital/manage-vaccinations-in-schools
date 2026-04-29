@@ -15,6 +15,7 @@
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
+#  phase                     :string
 #  position                  :geography        point, 4326
 #  site                      :string
 #  status                    :integer          default("unknown"), not null
@@ -125,8 +126,23 @@ class Location < ApplicationRecord
           )
         end
 
+  GIAS_PHASE_MAPPINGS = {
+    "nursery" => %w[nursery],
+    "primary" => %w[primary middle_deemed_primary],
+    "secondary" => %w[secondary middle_deemed_secondary],
+    "other" => %w[sixteen_plus all_through not_applicable]
+  }.freeze
+
+  PHASES = GIAS_PHASE_MAPPINGS.keys.freeze
+
   scope :where_phase,
-        ->(phase) { where(gias_phase: GIAS_PHASE_MAPPINGS.fetch(phase)) }
+        ->(phase) do
+          where(phase:).or(
+            where(phase: nil).where(
+              gias_phase: GIAS_PHASE_MAPPINGS.fetch(phase)
+            )
+          )
+        end
 
   scope :with_team,
         ->(academic_year:) do
@@ -190,6 +206,7 @@ class Location < ApplicationRecord
     validates :gias_local_authority_code, presence: true
     validates :gias_phase, inclusion: Location.gias_phases.keys
     validates :ods_code, absence: true
+    validates :phase, inclusion: { in: PHASES }, allow_nil: true
     validates :site, uniqueness: { scope: :urn }, allow_nil: true
     validates :urn, presence: true, uniqueness: { unless: :site }
   end
@@ -240,11 +257,10 @@ class Location < ApplicationRecord
   end
 
   def phase
-    if gias_phase
+    super.presence ||
       GIAS_PHASE_MAPPINGS
         .find { |_, values| values.include?(gias_phase) }
         &.first
-    end
   end
 
   def as_json
@@ -305,13 +321,6 @@ class Location < ApplicationRecord
   private
 
   def organisation_ods_codes = Organisation.pluck(:ods_code)
-
-  GIAS_PHASE_MAPPINGS = {
-    "nursery" => %w[nursery],
-    "primary" => %w[primary middle_deemed_primary],
-    "secondary" => %w[secondary middle_deemed_secondary],
-    "other" => %w[sixteen_plus all_through not_applicable]
-  }.freeze
 
   def fhir_mapper
     @fhir_mapper ||= FHIRMapper::Location.new(self)

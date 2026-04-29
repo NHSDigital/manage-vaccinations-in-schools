@@ -15,6 +15,7 @@
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
+#  phase                     :string
 #  position                  :geography        point, 4326
 #  site                      :string
 #  status                    :integer          default("unknown"), not null
@@ -407,6 +408,14 @@ describe Location do
       it { should eq("other") }
     end
 
+    context "with a phase override" do
+      let(:location) do
+        build(:gias_school, gias_phase: "secondary", phase: "primary")
+      end
+
+      it { should eq("primary") }
+    end
+
     context "with something other than a school" do
       let(:location) { build(:community_clinic) }
 
@@ -434,6 +443,7 @@ describe Location do
           "is_attached_to_team" => false,
           "name" => location.name,
           "ods_code" => location.ods_code,
+          "phase" => nil,
           "position" => [location.position.x, location.position.y],
           "site" => location.site,
           "status" => "unknown",

@@ -15,6 +15,7 @@
 #  gias_year_groups          :integer          default([]), not null, is an Array
 #  name                      :text             not null
 #  ods_code                  :string
+#  phase                     :string
 #  position                  :geography        point, 4326
 #  site                      :string
 #  status                    :integer          default("unknown"), not null

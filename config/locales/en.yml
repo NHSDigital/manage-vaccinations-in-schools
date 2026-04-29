@@ -94,6 +94,9 @@ en:
               inclusion: Choose if this is the correct school
             name:
               blank: Enter a name
+            phase:
+              blank: Choose a phase
+              inclusion: Choose a phase
             parent_urn_and_site:
               blank: Choose a school
             selected_year_groups:
@@ -778,6 +781,8 @@ en:
               inclusion: Choose a GIAS phase
             name:
               blank: Enter a name
+            phase:
+              inclusion: Choose a phase
             ods_code:
               blank: Enter an ODS code
               exclusion: This ODS code is not allowed

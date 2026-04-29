@@ -209,7 +209,7 @@ describe DraftSchool do
 
       it "returns all steps including school selection" do
         expect(draft_school.wizard_steps).to eq(
-          %i[school details year_groups confirm]
+          %i[school details phase year_groups confirm]
         )
       end
     end
@@ -219,7 +219,7 @@ describe DraftSchool do
 
       it "returns URN flow steps" do
         expect(draft_school.wizard_steps).to eq(
-          %i[urn confirm_urn year_groups confirm]
+          %i[urn confirm_urn phase year_groups confirm]
         )
       end
     end
@@ -228,7 +228,9 @@ describe DraftSchool do
       let(:attributes) { { editing_id: school.id, context: "add_site" } }
 
       it "skips the school selection step" do
-        expect(draft_school.wizard_steps).to eq(%i[details year_groups confirm])
+        expect(draft_school.wizard_steps).to eq(
+          %i[details phase year_groups confirm]
+        )
       end
     end
 
@@ -236,7 +238,9 @@ describe DraftSchool do
       let(:attributes) { { editing_id: school.id } }
 
       it "includes only details, year_groups and confirm" do
-        expect(draft_school.wizard_steps).to eq(%i[details year_groups confirm])
+        expect(draft_school.wizard_steps).to eq(
+          %i[details phase year_groups confirm]
+        )
       end
     end
   end
@@ -447,6 +451,7 @@ describe DraftSchool do
           "editing_id" => nil,
           "name" => "New Site Name",
           "parent_urn_and_site" => school.urn_and_site,
+          "phase" => nil,
           "selected_year_groups" => [],
           "urn" => nil
         }
@@ -467,6 +472,7 @@ describe DraftSchool do
           "editing_id" => nil,
           "name" => nil,
           "parent_urn_and_site" => nil,
+          "phase" => nil,
           "selected_year_groups" => nil,
           "urn" => nil
         }
@@ -621,35 +627,19 @@ describe DraftSchool do
     end
   end
 
-  describe "#human_enum_name" do
-    context "when creating a new site" do
-      let(:attributes) { valid_attributes }
-
-      it "delegates to the parent school" do
-        expect(draft_school.human_enum_name(:phase)).to eq(
-          school.human_enum_name(:phase)
-        )
-      end
-    end
-
-    context "when editing an existing site" do
-      let(:existing_site) do
-        create(:gias_school, :primary, urn: school.urn, site: "A")
-      end
-      let(:attributes) { { editing_id: existing_site.id } }
-
-      it "delegates to the location being edited" do
-        expect(draft_school.human_enum_name(:phase)).to eq("Primary")
-      end
-    end
-  end
-
   describe "#readable_attribute_names" do
     let(:attributes) { {} }
 
     it "returns the list of readable attributes" do
       expect(draft_school.readable_attribute_names).to eq(
-        %w[name address_line_1 address_line_2 address_town address_postcode]
+        %w[
+          name
+          address_line_1
+          address_line_2
+          address_town
+          address_postcode
+          phase
+        ]
       )
     end
   end
@@ -659,7 +649,14 @@ describe DraftSchool do
 
     it "returns the list of writable attributes" do
       expect(draft_school.writable_attribute_names).to eq(
-        %w[name address_line_1 address_line_2 address_town address_postcode]
+        %w[
+          name
+          address_line_1
+          address_line_2
+          address_town
+          address_postcode
+          phase
+        ]
       )
     end
   end
