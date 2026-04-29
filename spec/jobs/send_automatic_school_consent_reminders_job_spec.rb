@@ -130,6 +130,59 @@ describe SendAutomaticSchoolConsentRemindersJob do
       )
     end
 
+    context "when the patient's initial reminder was last year" do
+      let(:patient_with_initial_reminder) do
+        previous_session =
+          create(
+            :session,
+            :unscheduled,
+            programmes:,
+            academic_year: AcademicYear.previous
+          )
+        create(
+          :patient,
+          :consent_request_sent,
+          :initial_consent_reminder_sent,
+          :consent_no_response,
+          year_group: 8,
+          parents:,
+          programmes:,
+          session: previous_session
+        ).tap do |patient|
+          create(
+            :consent_notification,
+            :request,
+            patient:,
+            session:,
+            programmes:,
+            sent_at: 1.week.ago
+          )
+
+          programmes.each do |programme|
+            create(
+              :patient_programme_status,
+              :needs_consent_no_response,
+              patient:,
+              programme:
+            )
+          end
+        end
+      end
+
+      it "sends notifications to one patient" do
+        expect { perform_now }.to change(ConsentNotification, :count).by(1)
+
+        consent_notification = ConsentNotification.last
+        expect(consent_notification).to be_initial_reminder
+        expect(consent_notification.patient_id).to eq(
+          patient_not_sent_reminder.id
+        )
+        expect(consent_notification.programmes).to contain_exactly(
+          programmes.first
+        )
+      end
+    end
+
     context "when location is a generic clinic" do
       let(:location) { create(:generic_clinic, team:) }
 

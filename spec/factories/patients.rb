@@ -241,7 +241,8 @@ FactoryBot.define do
             :patient_programme_status,
             :needs_consent_follow_up_requested,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -254,7 +255,8 @@ FactoryBot.define do
             :patient_programme_status,
             :needs_consent_no_response,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -267,7 +269,8 @@ FactoryBot.define do
             :patient_programme_status,
             :needs_consent_no_contact_details,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -292,7 +295,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_injection,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -317,7 +321,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_nasal,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -343,7 +348,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_injection,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -368,7 +374,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_nasal_injection,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -394,7 +401,8 @@ FactoryBot.define do
             :patient_programme_status,
             :needs_triage,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -420,7 +428,8 @@ FactoryBot.define do
             :patient_programme_status,
             :needs_triage,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -446,7 +455,8 @@ FactoryBot.define do
             :patient_programme_status,
             :needs_triage,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -472,7 +482,8 @@ FactoryBot.define do
             :patient_programme_status,
             :needs_triage,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -497,7 +508,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_injection_without_gelatine,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -538,7 +550,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_injection,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -564,7 +577,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_nasal,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -601,7 +615,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_nasal,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -638,7 +653,8 @@ FactoryBot.define do
             :patient_programme_status,
             :due_injection_without_gelatine,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -663,7 +679,8 @@ FactoryBot.define do
             :patient_programme_status,
             :has_refusal_consent_refused,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -715,7 +732,8 @@ FactoryBot.define do
             :patient_programme_status,
             :has_refusal_consent_conflicts,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -772,7 +790,8 @@ FactoryBot.define do
             :patient_programme_status,
             :cannot_vaccinate_do_not_vaccinate,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -818,7 +837,8 @@ FactoryBot.define do
             :patient_programme_status,
             :cannot_vaccinate_delay_vaccination,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end
@@ -880,7 +900,8 @@ FactoryBot.define do
             :patient_programme_status,
             :vaccinated_fully,
             patient: instance,
-            programme:
+            programme:,
+            academic_year:
           )
         end
       end

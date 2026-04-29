@@ -606,6 +606,8 @@ describe Notifier::Patient do
       end
     end
 
+    before { patient.strict_loading!(false) }
+
     let(:today) { Date.new(2024, 1, 1) }
 
     let(:parents) { create_list(:parent, 2) }
@@ -725,6 +727,10 @@ describe Notifier::Patient do
       context "for the MMR(V) programme" do
         let(:programmes) { [Programme.mmr] }
 
+        before do
+          allow(patient).to receive(:eligible_for_mmrv?).and_return(false)
+        end
+
         it "enqueues an email" do
           expect { send_consent_reminder }.to have_delivered_email(
             :consent_school_reminder_mmr
@@ -755,7 +761,7 @@ describe Notifier::Patient do
           end
         end
 
-        context "and a patient that is eligible for mmrv" do
+        context "and a patient that is eligible for MMRV" do
           before do
             allow(patient).to receive(:eligible_for_mmrv?).and_return(true)
           end
@@ -813,6 +819,33 @@ describe Notifier::Patient do
             )
           end
         end
+      end
+    end
+
+    context "when the patient has already got an initial reminder from a previous academic year" do
+      before do
+        session =
+          create(:session, programmes:, academic_year: AcademicYear.previous)
+        create(
+          :consent_notification,
+          :initial_reminder,
+          patient:,
+          programmes:,
+          session:
+        )
+      end
+
+      it "creates a record" do
+        expect { send_consent_reminder }.to change(
+          ConsentNotification,
+          :count
+        ).by(1)
+
+        consent_notification = ConsentNotification.last
+        expect(consent_notification).to be_an_initial_reminder
+        expect(consent_notification.programmes).to eq(programmes)
+        expect(consent_notification.patient).to eq(patient)
+        expect(consent_notification.sent_at).to eq(today)
       end
     end
 

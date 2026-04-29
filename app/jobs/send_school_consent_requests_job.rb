@@ -15,16 +15,17 @@ class SendSchoolConsentRequestsJob < ApplicationJob
     patient_programmes_eligible_for_notification(
       session:
     ) do |patient, programmes|
-      if should_send_notification?(patient:, programmes:)
+      if should_send_notification?(patient:, session:, programmes:)
         yield patient, programmes
       end
     end
   end
 
-  def should_send_notification?(patient:, programmes:)
+  def should_send_notification?(patient:, session:, programmes:)
     programmes.any? do |programme|
       patient.consent_notifications.none? do
-        it.request? && it.programmes.include?(programme)
+        it.academic_year == session.academic_year && it.request? &&
+          it.programmes.include?(programme)
       end
     end
   end
