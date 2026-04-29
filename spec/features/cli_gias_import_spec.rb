@@ -13,6 +13,11 @@ describe "mavis gias import" do
     and_sites_are_updated_too
   end
 
+  it "displays a helpful message if the import file doesn't exist" do
+    when_i_run_the_import_command_with_a_non_existent_file
+    then_i_should_see_a_helpful_error_message
+  end
+
   def given_a_gias_file_exists
     # Nothing to do here, it's a part of the fixtures
   end
@@ -42,6 +47,25 @@ describe "mavis gias import" do
         arguments: %w[gias import -i spec/fixtures/files/dfe-schools.zip]
       )
     end
+  end
+
+  def when_i_run_the_import_command_with_a_non_existent_file
+    @msg, @exit_status =
+      capture_error do
+        Dry::CLI.new(MavisCLI).call(
+          arguments: %w[gias import -i /non/existent/file]
+        )
+      end
+  end
+
+  def then_i_should_see_a_helpful_error_message
+    expect(@msg.chomp).to eq(
+      "Input file (/non/existent/file) not found. Run `bin/mavis gias download` first."
+    )
+  end
+
+  def and_the_exit_status_should_indicate_that_it_was_unsuccessful
+    expect(@exit_status.status).to eq(1)
   end
 
   def then_schools_are_imported_correctly

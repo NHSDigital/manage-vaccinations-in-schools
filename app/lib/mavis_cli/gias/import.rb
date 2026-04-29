@@ -11,6 +11,11 @@ module MavisCLI
              desc: "GIAS database file to use"
 
       def call(input_file:, **)
+        unless File.exist?(input_file)
+          warn "Input file (#{input_file}) not found. Run `bin/mavis gias download` first."
+          exit 1 # rubocop:disable Rails/Exit
+        end
+
         MavisCLI.load_rails
 
         logger = Logger.new($stdout)

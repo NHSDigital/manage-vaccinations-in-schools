@@ -38,8 +38,8 @@ module RSpec
         $stderr = error
         yield
         error.string
-      rescue SystemExit
-        error.string
+      rescue SystemExit => e
+        [error.string, e]
       ensure
         $stderr = original_stderr
       end
