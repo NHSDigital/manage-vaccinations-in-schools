@@ -60,31 +60,33 @@ Sentry.init do |config|
 
   config.before_send =
     lambda do |event, hint|
+      exception = hint[:exception]
+
       # We don't want to send these errors to Sentry as they are too noisy. We
       # don't want to not raise them, however, since they trigger a retry with
       # Sidekiq, which we want. It can also be handy to have them in Splunk and
       # Cloudwatch to help with debugging.
-      next if hint[:exception].is_a?(Faraday::TooManyRequestsError)
-      if hint[:exception].is_a?(Faraday::ServerError) &&
-           hint[:exception].message.include?(
+      next if exception.is_a?(Faraday::TooManyRequestsError)
+
+      if exception.is_a?(Faraday::ServerError) &&
+           exception.message.include?(
              "https://api.service.nhs.uk/immunisation-fhir-api"
-           ) && hint[:exception].message.include?("502")
+           ) && exception.message.include?("502")
         next
       end
 
+      # We don't want these errors in Sentry in non-production environments as
+      # they're not actionable.
       unless Rails.env.production?
         team_only_api_key_error =
-          hint[:exception].is_a?(Notifications::Client::BadRequestError) &&
-            hint[:exception].message.include?(
+          exception.is_a?(Notifications::Client::BadRequestError) &&
+            exception.message.include?(
               NotifyDeliveryJob::TEAM_ONLY_API_KEY_MESSAGE
             )
 
         next if team_only_api_key_error
 
-        too_many_requests_error =
-          hint[:exception].is_a?(Faraday::TooManyRequestsError)
-
-        next if too_many_requests_error
+        next if exception.is_a?(Faraday::TooManyRequestsError)
       end
 
       event.extra = combined_filter.filter(event.extra) if event.extra
