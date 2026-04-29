@@ -25,7 +25,7 @@ describe AppGillickAssessmentComponent do
       before { stub_authorization(allowed: true) }
 
       it { should have_heading("Gillick assessment") }
-      it { should have_link("Edit Gillick competence") }
+      it { should have_link("Update Gillick competence") }
       it { should have_content("Child assessed as Gillick competent") }
 
       context "when the assessment is for a different day" do
@@ -39,7 +39,21 @@ describe AppGillickAssessmentComponent do
     context "with an admin user" do
       before { stub_authorization(allowed: false) }
 
-      it { should_not have_link("Edit Gillick competence") }
+      it { should_not have_link("Update Gillick competence") }
+    end
+
+    context "with a not-competent Gillick assessment" do
+      before { create(:gillick_assessment, :not_competent, patient:, session:) }
+
+      it { should have_text("Child assessed as not Gillick competent") }
+      it { should have_link("Update Gillick competence") }
+    end
+
+    context "when the session is not today" do
+      let(:session) { create(:session, :scheduled, programmes:) }
+
+      it { should_not have_heading("Gillick assessment") }
+      it { should_not have_link("Assess Gillick competence") }
     end
   end
 end
