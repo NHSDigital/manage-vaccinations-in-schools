@@ -27,18 +27,6 @@
   <%= patient_year_group(@patient, academic_year: @academic_year) %>
 </p>
 
-<%= render AppActionListComponent.new do |action_list| %>
-  <% if @programme && @session.psd_enabled? %>
-    <% action_list.with_item do %>
-      <% if @patient.has_patient_specific_direction?(academic_year: @academic_year, programme_type: @programme.type, team: current_team) %>
-        <%= render AppStatusTagComponent.new(:added, context: :patient_specific_direction) %>
-      <% else %>
-        <%= render AppStatusTagComponent.new(:not_added, context: :patient_specific_direction) %>
-      <% end %>
-    <% end %>
-  <% end %>
-<% end %>
-
 <%= render AppStickyNavigationComponent.new do %>
   <%= render AppSecondaryNavigationComponent.new do |nav|
         @session.programmes_for(patient: @patient).each do |programme|

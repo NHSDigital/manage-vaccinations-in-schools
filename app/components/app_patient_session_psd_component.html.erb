@@ -1,0 +1,5 @@
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading(level: 2) { "Patient Specific Directions (PSD)" } %>
+
+  <p><%= psd_status %></p>
+<% end %>

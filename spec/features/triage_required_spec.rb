@@ -456,11 +456,11 @@ describe "Triage" do
   end
 
   def then_i_should_see_the_patient_tagged_psd_added
-    within(".app-action-list") { expect(page).to have_content("PSD added") }
+    expect(page).to have_content("PSD added")
   end
 
   def then_i_should_see_the_patient_tagged_psd_not_added
-    within(".app-action-list") { expect(page).to have_content("PSD not added") }
+    expect(page).to have_content("PSD not added")
   end
 
   def then_i_should_see_the_patient_with_status_psd_added
