@@ -10,6 +10,7 @@
 # Indexes
 #
 #  idx_on_cohort_import_id_patient_id_7864d1a8b0  (cohort_import_id,patient_id) UNIQUE
+#  idx_on_patient_id_cohort_import_id_5e41b290b4  (patient_id,cohort_import_id) UNIQUE
 #
 # Foreign Keys
 #

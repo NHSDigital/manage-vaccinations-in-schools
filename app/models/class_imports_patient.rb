@@ -10,6 +10,7 @@
 # Indexes
 #
 #  index_class_imports_patients_on_class_import_id_and_patient_id  (class_import_id,patient_id) UNIQUE
+#  index_class_imports_patients_on_patient_id_and_class_import_id  (patient_id,class_import_id) UNIQUE
 #
 # Foreign Keys
 #
