@@ -17,7 +17,7 @@ class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
 
   def should_send_notification?(patient:, session:, programmes:)
     programmes.any? do |programme|
-      initial_request = initial_request(patient:, programme:)
+      initial_request = initial_request(patient:, session:, programme:)
       return false if initial_request.nil?
 
       date_to_send_reminder =
@@ -33,11 +33,14 @@ class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
     end
   end
 
-  def initial_request(patient:, programme:)
+  def initial_request(patient:, session:, programme:)
     patient
       .consent_notifications
       .sort_by(&:sent_at)
-      .find { it.request? && it.programmes.include?(programme) }
+      .find do
+        it.academic_year == session.academic_year && it.request? &&
+          it.programmes.include?(programme)
+      end
   end
 
   def earliest_date_to_send_reminder(
@@ -54,13 +57,21 @@ class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
         it - session.days_before_consent_reminders.days
       end
 
-    date_index_to_send_reminder_for =
-      already_sent_automatic_consent_reminders_count(patient:, programme:) +
-        manual_consent_reminders_replacing_automatic_count(
-          patient:,
-          programme:,
-          scheduled_automatic_reminder_dates:
-        )
+    automatic_count =
+      already_sent_automatic_consent_reminders_count(
+        patient:,
+        session:,
+        programme:
+      )
+
+    manual_count =
+      manual_consent_reminders_replacing_automatic_count(
+        patient:,
+        programme:,
+        scheduled_automatic_reminder_dates:
+      )
+
+    date_index_to_send_reminder_for = automatic_count + manual_count
 
     if date_index_to_send_reminder_for >=
          scheduled_automatic_reminder_dates.length
@@ -70,9 +81,14 @@ class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
     scheduled_automatic_reminder_dates[date_index_to_send_reminder_for]
   end
 
-  def already_sent_automatic_consent_reminders_count(patient:, programme:)
+  def already_sent_automatic_consent_reminders_count(
+    patient:,
+    session:,
+    programme:
+  )
     patient.consent_notifications.count do
-      it.automated_reminder? && it.programmes.include?(programme)
+      it.academic_year == session.academic_year && it.automated_reminder? &&
+        it.programmes.include?(programme)
     end
   end
 

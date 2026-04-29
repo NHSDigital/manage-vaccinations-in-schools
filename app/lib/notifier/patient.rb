@@ -49,6 +49,7 @@ class Notifier::Patient
       programmes.all? do |programme|
         patient
           .consent_notifications
+          .select { it.academic_year == session.academic_year }
           .select { it.programmes.include?(programme) }
           .any?(&:initial_reminder?)
       end
