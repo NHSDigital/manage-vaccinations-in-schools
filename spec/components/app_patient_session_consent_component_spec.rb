@@ -16,7 +16,7 @@ describe AppPatientSessionConsentComponent do
     it { should_not have_css("details", text: /Consent (given|refused) by/) }
     it { should_not have_css("details", text: "Responses to health questions") }
     it { should have_css("p", text: "No consent request is scheduled") }
-    it { should have_css("button", text: "Record a new consent response") }
+    it { should have_link("Record a new consent response") }
   end
 
   context "when vaccinated" do
@@ -25,7 +25,7 @@ describe AppPatientSessionConsentComponent do
     end
 
     it { should_not have_css("p", text: "No requests have been sent.") }
-    it { should_not have_css("button", text: "Record a new consent response") }
+    it { should_not have_link("Record a new consent response") }
   end
 
   context "with refused consent" do
@@ -34,7 +34,7 @@ describe AppPatientSessionConsentComponent do
       create(:consent, :refused, patient: patient.reload, parent:, programme:)
     end
 
-    it { should have_css(".app-card__heading--red", text: "Consent refused") }
+    it { should have_content("refused to give consent") }
     it { should have_content(consent.parent.full_name) }
     it { should have_content(consent.parent_relationship.label) }
     it { should have_content("Consent refused") }
@@ -48,12 +48,7 @@ describe AppPatientSessionConsentComponent do
 
     let(:consent) { patient.consents.first }
 
-    it do
-      expect(rendered).to have_css(
-        ".app-card__heading--green",
-        text: "Consent given"
-      )
-    end
+    it { should have_text("is ready for the vaccinator") }
 
     it { should_not have_css("a", text: "Contact #{consent.parent.full_name}") }
 
@@ -64,7 +59,7 @@ describe AppPatientSessionConsentComponent do
         create(:patient, :consent_given_nasal_only_triage_not_needed, session:)
       end
 
-      it { should have_text("Consent given for nasal spray") }
+      it { should have_text("Nasal spray only") }
 
       context "and the vaccine method is overridden by triage" do
         let(:patient) do
@@ -75,7 +70,7 @@ describe AppPatientSessionConsentComponent do
           )
         end
 
-        it { should have_text("Consent given for injection") }
+        it { should have_text("is ready for the vaccinator") }
       end
     end
   end

@@ -144,7 +144,7 @@ describe "Flu vaccination" do
   def then_i_am_able_to_vaccinate_them_nasal_only
     expect(page).not_to have_content("injected flu instead")
 
-    within all("form")[3] do
+    within all("form")[2] do
       within all("fieldset")[1] do
         check "I have checked that the above statements are true"
       end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PatientSessions::ConsentsController < PatientSessions::BaseController
-  before_action :set_consent, except: %i[create send_request]
+  before_action :set_consent, except: %i[new send_request]
   before_action :set_consent_follow_up_form,
                 only: %i[edit_follow_up update_follow_up]
   before_action :set_consent_confirm_refusal_form,
@@ -17,21 +17,16 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
   before_action :ensure_can_invalidate,
                 only: %i[edit_invalidate update_invalidate]
 
-  def create
+  def new
     authorize Consent
 
     @draft_consent = DraftConsent.new(request_session: session, current_user:)
 
     @draft_consent.clear_attributes
     @draft_consent.assign_attributes(create_params)
+    @draft_consent.save!
 
-    if @draft_consent.save
-      redirect_to draft_consent_path(Wicked::FIRST_STEP)
-    else
-      render "patient_sessions/programmes/show",
-             layout: "full",
-             status: :unprocessable_content
-    end
+    redirect_to draft_consent_path(Wicked::FIRST_STEP)
   end
 
   def send_request

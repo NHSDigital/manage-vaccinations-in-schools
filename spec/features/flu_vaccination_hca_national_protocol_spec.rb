@@ -170,7 +170,7 @@ describe "Flu vaccination" do
   end
 
   def then_i_am_able_to_vaccinate_them(nasal:)
-    within all("form")[3] do
+    within all("form")[2] do
       within all("fieldset")[1] do
         check "I have checked that the above statements are true"
       end
@@ -203,9 +203,9 @@ describe "Flu vaccination" do
   end
 
   def then_i_am_able_to_vaccinate_them_using_injection_instead_of_nasal
-    within all("form")[3] do
+    within find("form[action*='vaccinations']") do
       check "I have checked that the above statements are true"
-      within all("fieldset")[2] do
+      within find("fieldset", text: "ready for their") do
         choose "No — but they can have the injected flu instead"
         choose "Left arm (upper position)"
         select @nurse.full_name

@@ -181,7 +181,7 @@ describe "MMRV vaccination" do
   def when_i_begin_recording_the_vaccination_for_mmrv
     expect(page).to have_content("Record MMRV vaccination")
 
-    within all("form")[3] do
+    within all("form")[2] do
       within all("fieldset")[1] do
         check "I have checked that the above statements are true"
       end
@@ -198,7 +198,7 @@ describe "MMRV vaccination" do
   def and_i_begin_recording_the_vaccination_for_mmr
     expect(page).to have_content("Record MMR vaccination")
 
-    within all("form")[3] do
+    within all("form")[2] do
       within all("fieldset")[1] do
         check "I have checked that the above statements are true"
       end
@@ -291,7 +291,7 @@ describe "MMRV vaccination" do
   end
 
   def and_i_should_see_a_triage_for_the_next_vaccination_dose
-    expect(page).to have_content("MMRV: Delay vaccination")
+    expect(page).to have_content("MMRV: Unable to vaccinate")
     expect(page).to have_content("Next dose 29 October 2024")
   end
 
@@ -300,7 +300,7 @@ describe "MMRV vaccination" do
   end
 
   def and_i_start_a_new_consent_response
-    click_button "Record a new consent response"
+    click_on "Record a new consent response"
   end
 
   def and_i_get_consent_for_mmr

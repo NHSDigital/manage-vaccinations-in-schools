@@ -18,13 +18,8 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
 
   def programme_type = programme.type
 
-  def colour
-    I18n.t(consent_status_value, scope: %i[status consent colour])
-  end
-
   def heading
-    status_text = I18n.t(consent_status_value, scope: %i[status consent label])
-    "#{consent_status_generator.programme.name}: #{status_text}"
+    "Consent for #{consent_status_generator.programme.name} vaccination"
   end
 
   def consent_status_value

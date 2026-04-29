@@ -44,10 +44,12 @@ class AppTriageFormComponent < ViewComponent::Base
         end
       end
 
+    legend = { text:, size: "m", classes: "nhsuk-u-font-size-22" }
+
     if heading
-      { legend: { text:, tag: :h2 }, hint: { text: hint } }
+      { legend: legend.merge(tag: :h2), hint: { text: hint } }
     else
-      { legend: { text: }, hint: { text: hint } }
+      { legend:, hint: { text: hint } }
     end
   end
 
