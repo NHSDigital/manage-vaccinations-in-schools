@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ProcessConsentFormJob < ApplicationJob
-  include PDSAPIThrottlingConcern
+  include PDSThrottlingConcern
 
   queue_as :consents
 

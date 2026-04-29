@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-module PDSAPIThrottlingConcern
+module GovukNotifyThrottlingConcern
   extend ActiveSupport::Concern
 
   include Sidekiq::Job
   include Sidekiq::Throttled::Job
 
   included do
-    sidekiq_throttle_as :pds
+    sidekiq_throttle_as :govuk_notify
 
-    retry_on Faraday::ServerError, wait: :polynomially_longer
+    queue_as :notifications
   end
 end
