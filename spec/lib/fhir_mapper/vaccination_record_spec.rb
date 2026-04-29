@@ -1200,6 +1200,19 @@ describe FHIRMapper::VaccinationRecord do
         its(:notes) { should be_nil }
       end
 
+      context "with a school with sites" do
+        let(:fixture_file_name) { "fhir/flu/fhir_record_full.json" }
+
+        let(:school) { create(:school, urn: "100007") } # So it doesn't conflict on URN
+
+        before do
+          create(:school, urn: "100006", site: nil)
+          create(:school, urn: "100006", site: "A")
+        end
+
+        its(:location) { should have_attributes(urn: "100006", site: nil) }
+      end
+
       context "with a record that has an unknown location" do
         let(:fixture_file_name) { "fhir/flu/fhir_record_unknown_location.json" }
 

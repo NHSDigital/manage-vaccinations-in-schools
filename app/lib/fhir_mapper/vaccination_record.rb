@@ -109,7 +109,7 @@ module FHIRMapper
       unless location_value == FHIRMapper::Location::UNKNOWN_IDENTIFIER
         case location_system
         when "https://fhir.hl7.org.uk/Id/urn-school-number"
-          attrs[:location] = ::Location.find_by(urn: location_value)
+          attrs[:location] = ::Location.find_by(urn: location_value, site: nil)
         when "https://fhir.nhs.uk/Id/ods-organization-code"
           attrs[:location] = ::Location.find_by(ods_code: location_value)
         end
