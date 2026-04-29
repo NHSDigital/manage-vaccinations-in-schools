@@ -666,12 +666,13 @@
             </details>
           </div>
           <div class="method-source-code" id="confirm_destroy-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 36</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 38</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">confirm_destroy</span> = <span class="ruby-identifier">render</span> <span class="ruby-value">:destroy</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">destroy</span>
     <span class="ruby-ivar">@parent_relationship</span>.<span class="ruby-identifier">destroy!</span>
 
+    <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-ivar">@patient</span>)
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">edit_patient_path</span>(<span class="ruby-ivar">@patient</span>),
                 <span class="ruby-value">flash:</span> {
                   <span class="ruby-value">success:</span> <span class="ruby-string">&quot;Parent relationship removed&quot;</span>
@@ -760,6 +761,7 @@
               <span class="ruby-ivar">@patient</span>.<span class="ruby-identifier">parent_relationships</span>.<span class="ruby-identifier">build</span>(<span class="ruby-identifier">parent_relationship_params</span>)
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@parent_relationship</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-ivar">@patient</span>)
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">edit_patient_path</span>(<span class="ruby-ivar">@patient</span>)
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">render</span> <span class="ruby-value">:new</span>, <span class="ruby-value">status:</span> <span class="ruby-value">:unprocessable_entity</span>
@@ -803,10 +805,11 @@
             </details>
           </div>
           <div class="method-source-code" id="destroy-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 38</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">destroy</span>
   <span class="ruby-ivar">@parent_relationship</span>.<span class="ruby-identifier">destroy!</span>
 
+  <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-ivar">@patient</span>)
   <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">edit_patient_path</span>(<span class="ruby-ivar">@patient</span>),
               <span class="ruby-value">flash:</span> {
                 <span class="ruby-value">success:</span> <span class="ruby-string">&quot;Parent relationship removed&quot;</span>
@@ -850,7 +853,7 @@
             </details>
           </div>
           <div class="method-source-code" id="edit-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 24</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 25</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">edit</span>
   <span class="ruby-ivar">@parent</span>.<span class="ruby-identifier">contact_method_type</span> = <span class="ruby-string">&quot;any&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@parent</span>.<span class="ruby-identifier">contact_method_type</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -935,7 +938,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parent_relationship_params-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 65</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship_params</span>
   <span class="ruby-identifier">params</span>.<span class="ruby-identifier">expect</span>(
     <span class="ruby-value">parent_relationship:</span> [
@@ -993,7 +996,7 @@
             </details>
           </div>
           <div class="method-source-code" id="set_parent-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 61</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_parent</span>
   <span class="ruby-ivar">@parent</span> = <span class="ruby-ivar">@parent_relationship</span>.<span class="ruby-identifier">parent</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1035,7 +1038,7 @@
             </details>
           </div>
           <div class="method-source-code" id="set_parent_relationship-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 53</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_parent_relationship</span>
   <span class="ruby-ivar">@parent_relationship</span> =
     <span class="ruby-identifier">authorize</span> <span class="ruby-ivar">@patient</span>
@@ -1081,7 +1084,7 @@
             </details>
           </div>
           <div class="method-source-code" id="set_patient-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 49</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 52</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_patient</span>
   <span class="ruby-ivar">@patient</span> = <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">Patient</span>).<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:patient_id</span>])
 <span class="ruby-keyword">end</span></pre>
@@ -1123,9 +1126,10 @@
             </details>
           </div>
           <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 28</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_relationships_controller.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@parent_relationship</span>.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">parent_relationship_params</span>)
+    <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-ivar">@patient</span>)
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">edit_patient_path</span>(<span class="ruby-ivar">@patient</span>)
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">render</span> <span class="ruby-value">:edit</span>, <span class="ruby-value">status:</span> <span class="ruby-value">:unprocessable_content</span>
