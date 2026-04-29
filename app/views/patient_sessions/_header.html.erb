@@ -37,22 +37,6 @@
       <% end %>
     <% end %>
   <% end %>
-
-  <% if @session.requires_registration? && (date = @session.dates.find(&:today?)) %>
-    <% attendance_record = @patient.attendance_records.find_or_initialize_by(location: @session.location, date:) %>
-
-    <% action_list.with_item do %>
-      <%= render AppStatusTagComponent.new(@patient.registration_status(session: @session)&.status || "unknown", context: :registration) %>
-    <% end %>
-
-    <% attendance_record.session = @session %>
-    <% if policy(attendance_record).edit? %>
-      <% action_list.with_item(
-           text: "Update attendance",
-           href: edit_session_patient_attendance_path(@session, @patient),
-         ) %>
-    <% end %>
-  <% end %>
 <% end %>
 
 <%= render AppStickyNavigationComponent.new do %>
