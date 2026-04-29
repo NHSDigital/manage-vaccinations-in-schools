@@ -69,7 +69,7 @@ class DraftVaccinationRecord
         end
       ),
       :date_and_time,
-      (:outcome if can_change_outcome?),
+      (:outcome if can_change_outcome? && !reported_as_already_vaccinated?),
       (:supplier if requires_supplied_by?),
       (:delivery if administered? && !reported_as_already_vaccinated?),
       (

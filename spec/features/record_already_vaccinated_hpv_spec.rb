@@ -13,7 +13,6 @@ describe "Record already vaccinated" do
 
     when_i_click_record_already_vaccinated
     and_i_choose_a_date
-    and_i_choose_an_outcome
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
@@ -62,11 +61,6 @@ describe "Record already vaccinated" do
     fill_in "Day", with: "1"
     fill_in "Month", with: "1"
     fill_in "Year", with: "2020"
-    click_on "Continue"
-  end
-
-  def and_i_choose_an_outcome
-    # Vaccinated should already be selected
     click_on "Continue"
   end
 

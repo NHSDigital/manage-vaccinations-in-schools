@@ -10,7 +10,6 @@ describe "Record already vaccinated" do
 
     when_i_click_record_first_dose_vaccinated
     and_i_choose_a_date_for_the_first_dose
-    and_i_choose_an_outcome
     then_i_see_the_confirmation_page_for_the_first_dose
 
     when_i_confirm_the_details
@@ -22,7 +21,6 @@ describe "Record already vaccinated" do
 
     when_i_click_record_second_dose_vaccinated
     and_i_choose_a_date_for_the_second_dose
-    and_i_choose_an_outcome
     then_i_see_the_confirmation_page_for_the_second_dose
 
     when_i_confirm_the_details
@@ -88,11 +86,6 @@ describe "Record already vaccinated" do
     fill_in "Day", with: "1"
     fill_in "Month", with: "1"
     fill_in "Year", with: "2022"
-    click_on "Continue"
-  end
-
-  def and_i_choose_an_outcome
-    # Vaccinated should already be selected
     click_on "Continue"
   end
 
