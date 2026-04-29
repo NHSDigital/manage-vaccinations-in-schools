@@ -96,7 +96,15 @@ class SchoolMove < ApplicationRecord
   def update_archive_reasons!(user:)
     new_team_ids = teams.map(&:id)
 
-    patient.archive_reasons.where(team_id: new_team_ids).destroy_all
+    patient
+      .archive_reasons
+      .not_unarchived
+      .where(team_id: new_team_ids)
+      .update_all(
+        unarchived_at: Time.current,
+        unarchived_by_user_id: user&.id,
+        unarchive_reason: :upload
+      )
 
     archive_reasons =
       patient.teams.find_each.filter_map do |team|
@@ -110,7 +118,7 @@ class SchoolMove < ApplicationRecord
         )
       end
 
-    ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true).ids
+    ArchiveReason.import!(archive_reasons).ids
   end
 
   def update_locations!

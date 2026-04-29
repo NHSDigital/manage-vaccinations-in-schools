@@ -517,6 +517,8 @@ en:
               blank: Enter details
             type:
               inclusion: Choose a type
+            unarchive_reason:
+              inclusion: Choose an unarchive reason
         batch:
           attributes:
             expiry:

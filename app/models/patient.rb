@@ -511,14 +511,14 @@ class Patient < ApplicationRecord
 
   def archived?(team_id:)
     if archive_reasons.loaded?
-      archive_reasons.any? { it.team_id == team_id }
+      archive_reasons.any? { it.team_id == team_id && it.not_unarchived? }
     else
-      archive_reasons.exists?(team_id:)
+      archive_reasons.exists?(team_id:, unarchived_at: nil)
     end
   end
 
   def not_archived?(team:)
-    !archive_reasons.exists?(team:)
+    !archive_reasons.exists?(team:, unarchived_at: nil)
   end
 
   def year_group(academic_year:)
@@ -828,13 +828,7 @@ class Patient < ApplicationRecord
         ArchiveReason.new(team:, patient: self, type: :deceased)
       end
 
-    ArchiveReason.import!(
-      archive_reasons,
-      on_duplicate_key_update: {
-        conflict_target: %i[team_id patient_id],
-        columns: %i[type]
-      }
-    )
+    ArchiveReason.import!(archive_reasons)
 
     PatientTeamUpdater.call(
       patient_scope: Patient.where(id:),

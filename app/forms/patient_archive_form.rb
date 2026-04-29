@@ -30,7 +30,13 @@ class PatientArchiveForm
     if duplicate?
       super
     else
-      PatientArchiver.call(patient:, team:, type:, other_details:)
+      PatientArchiver.call(
+        patient:,
+        team:,
+        type:,
+        other_details:,
+        user: current_user
+      )
     end
   end
 

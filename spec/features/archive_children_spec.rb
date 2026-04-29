@@ -107,10 +107,40 @@ describe "Archive children" do
     then_i_see_the_unarchived_patient_page
     and_i_see_a_success_message
     and_i_see_an_activity_log_entry
+    and_i_see_the_details_in_the_activity_log
 
     when_i_visit_the_children_page
     and_i_filter_to_see_only_archived_patients
     then_i_see_only_the_unarchived_patient
+  end
+
+  scenario "Unarchive via upload" do
+    given_an_unarchived_patient_exists_matching_cohort_csv
+
+    when_i_visit_the_unarchived_patient
+    and_i_click_on_archive_record
+    when_i_choose_the_imported_in_error_reason
+    and_i_click_on_archive_record
+
+    given_i_wait_some_time
+    when_the_patient_is_unarchived_via_upload
+    and_i_do_not_see_the_archived_tag
+    and_i_see_the_archive_link
+
+    when_i_visit_the_children_page
+    and_i_filter_to_see_only_archived_patients
+    then_i_do_not_see_the_unarchived_patient
+
+    when_i_visit_the_unarchived_patient
+    and_i_see_an_unarchive_activity_log_entry
+
+    given_i_wait_some_time
+    when_i_visit_the_unarchived_patient
+    and_i_click_on_archive_record
+    when_i_choose_the_moved_out_of_area_reason
+    and_i_click_on_archive_record
+
+    then_i_see_the_full_archive_unarchive_history
   end
 
   def given_an_team_exists
@@ -120,6 +150,7 @@ describe "Archive children" do
     @team = create(:team, programmes:)
 
     @session = create(:session, team: @team, programmes: [flu])
+    create(:gias_school, urn: "123456", team: @team)
   end
 
   def and_i_am_signed_in
@@ -251,5 +282,62 @@ describe "Archive children" do
 
   def and_i_fill_in_more_details
     fill_in "Give details", with: "A different reason."
+  end
+
+  def given_an_unarchived_patient_exists_matching_cohort_csv
+    @unarchived_patient =
+      create(
+        :patient,
+        given_name: "Jennifer",
+        family_name: "Clarke",
+        date_of_birth: Date.new(2010, 1, 1),
+        nhs_number: "9990000018",
+        session: @session
+      )
+  end
+
+  def given_i_wait_some_time
+    travel 1.hour
+    sign_in @user
+  end
+
+  def when_the_patient_is_unarchived_via_upload
+    visit "/dashboard"
+    click_on "Import", match: :first
+    click_on "Upload records"
+    choose "Child records"
+    click_on "Continue"
+    attach_file_fixture "cohort_import[csv]", "cohort_import/valid.csv"
+    click_on "Continue"
+    wait_for_import_to_complete(CohortImport)
+    visit patient_path(@unarchived_patient)
+  end
+
+  def and_i_do_not_see_the_archived_tag
+    expect(page).not_to have_content("Archived")
+  end
+
+  def and_i_see_the_archive_link
+    expect(page).to have_link("Archive")
+  end
+
+  def then_i_do_not_see_the_unarchived_patient
+    expect(page).not_to have_content(@unarchived_patient.full_name)
+  end
+
+  def and_i_see_an_unarchive_activity_log_entry
+    within(".app-secondary-navigation") { click_on "HPV" }
+    expect(page).to have_content("Record unarchived:")
+  end
+
+  def and_i_see_the_details_in_the_activity_log
+    expect(page).to have_content("A different reason.")
+  end
+
+  def then_i_see_the_full_archive_unarchive_history
+    within(".app-secondary-navigation") { click_on "HPV" }
+    expect(page).to have_content("Record archived: Imported in error")
+    expect(page).to have_content("Record unarchived: ")
+    expect(page).to have_content("Record archived: Moved out of area")
   end
 end

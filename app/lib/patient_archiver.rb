@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 class PatientArchiver
-  def initialize(patient:, team:, type:, other_details: nil)
+  def initialize(patient:, team:, type:, other_details: nil, user: nil)
     @patient = patient
     @team = team
     @type = type
     @other_details = other_details
+    @user = user
   end
 
   def call
     ActiveRecord::Base.transaction do
-      if type == "other"
-        archive_reason.update!(type:, other_details:)
-      else
-        archive_reason.update!(type:, other_details: "")
-      end
+      archive_reason.type = type
+      archive_reason.other_details = type == "other" ? other_details : ""
+      archive_reason.save!
 
       patient.clear_pending_sessions!(team:)
 
@@ -30,10 +29,10 @@ class PatientArchiver
 
   private
 
-  attr_reader :patient, :team, :type, :other_details
+  attr_reader :patient, :team, :type, :other_details, :user
 
   def archive_reason
-    @archive_reason ||= ArchiveReason.find_or_create_by(team:, patient:)
+    @archive_reason ||= ArchiveReason.new(team:, patient:, created_by: user)
   end
 
   def destroy_school_moves!

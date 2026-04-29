@@ -90,7 +90,7 @@ class PatientTeamUpdater < PatientScopedUpdater
   def archive_reason_relation
     source = PatientTeam.sources.fetch("archive_reason")
 
-    scope = merge_team_scope(merge_patient_scope(ArchiveReason))
+    scope = merge_team_scope(merge_patient_scope(ArchiveReason.not_unarchived))
 
     scope.select(:patient_id, :team_id, Arel.sql("#{source} AS source"))
   end

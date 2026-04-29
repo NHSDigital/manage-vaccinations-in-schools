@@ -15,15 +15,7 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
 
-      patient_to_keep.archive_reasons.find_each do |archive_reason|
-        unless patient_to_destroy.archive_reasons.exists?(
-                 team_id: archive_reason.team_id
-               )
-          archive_reason.destroy!
-        end
-      end
-
-      patient_to_destroy.archive_reasons.destroy_all
+      handle_archive_reasons(patient_to_keep, patient_to_destroy)
 
       patient_to_destroy.important_notices.destroy_all
 
@@ -200,6 +192,45 @@ class PatientMerger
   private_class_method :new
 
   private
+
+  def handle_archive_reasons(patient_to_keep, patient_to_destroy)
+    unless patient_to_keep.archive_reasons.exists? ||
+             patient_to_destroy.archive_reasons.exists?
+      return
+    end
+
+    teams = (patient_to_keep.teams + patient_to_destroy.teams).uniq
+
+    teams.each do |team|
+      if patient_to_keep.archived?(team_id: team.id) &&
+           patient_to_destroy.archived?(team_id: team.id)
+        next
+      end
+      # If one is archived and the other is not, unarchive both
+      patient_to_keep
+        .archive_reasons
+        .not_unarchived
+        .where(team:)
+        .update_all(
+          unarchived_at: Time.current,
+          unarchive_reason: :patient_merge,
+          unarchived_by_user_id: @user&.id
+        )
+      patient_to_destroy
+        .archive_reasons
+        .not_unarchived
+        .where(team:)
+        .update_all(
+          unarchived_at: Time.current,
+          unarchive_reason: :patient_merge,
+          unarchived_by_user_id: @user&.id
+        )
+    end
+
+    patient_to_destroy.archive_reasons.update_all(
+      patient_id: patient_to_keep.id
+    )
+  end
 
   attr_reader :patient_to_keep, :patient_to_destroy
 end

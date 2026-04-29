@@ -42,10 +42,11 @@ class AppChildSummaryComponent < ViewComponent::Base
               end
             end
 
-            if archive_reason && !@current_team.has_national_reporting_access?
+            if archive_reasons&.any? &&
+                 !@current_team.has_national_reporting_access?
               summary_list.with_row do |row|
                 row.with_key { "Archive reason" }
-                row.with_value { format_archive_reason }
+                row.with_value { format_archive_reasons }
               end
             end
 
@@ -189,10 +190,10 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   def academic_year = AcademicYear.pending
 
-  def archive_reason
-    @archive_reason ||=
+  def archive_reasons
+    @archive_reasons ||=
       if @current_team
-        ArchiveReason.find_by(team: @current_team, patient: @child)
+        ArchiveReason.not_unarchived.where(team: @current_team, patient: @child)
       end
   end
 
@@ -200,13 +201,24 @@ class AppChildSummaryComponent < ViewComponent::Base
     highlight_if(patient_nhs_number(@child), @child.nhs_number_changed?)
   end
 
-  def format_archive_reason
-    type_string = archive_reason.human_enum_name(:type)
+  def format_archive_reasons
+    items =
+      archive_reasons.map do |archive_reason|
+        type_string = archive_reason.human_enum_name(:type)
 
-    if archive_reason.other?
-      "#{type_string}: #{archive_reason.other_details}"
+        if archive_reason.other?
+          "#{type_string}: #{archive_reason.other_details}"
+        else
+          type_string
+        end
+      end
+
+    if items.one?
+      items.first
     else
-      type_string
+      tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
+        safe_join(items.map { |item| tag.li(item) })
+      end
     end
   end
 

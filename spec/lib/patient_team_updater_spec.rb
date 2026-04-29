@@ -15,6 +15,38 @@ describe PatientTeamUpdater do
       end
     end
 
+    context "with an unarchived archive reason" do
+      before do
+        create(
+          :archive_reason,
+          :imported_in_error,
+          patient:,
+          team:,
+          unarchived_at: Time.current,
+          unarchive_reason: :upload
+        )
+        PatientTeam.delete_all
+      end
+
+      it "does not add the patient to the team" do
+        expect { call }.not_to change(PatientTeam, :count)
+      end
+    end
+
+    context "when the archive reason is unarchived" do
+      before do
+        create(:archive_reason, :imported_in_error, patient:, team:)
+        ArchiveReason.update_all(
+          unarchived_at: Time.current,
+          unarchive_reason: :upload
+        )
+      end
+
+      it "removes the patient from the team" do
+        expect { call }.to change(PatientTeam, :count).by(-1)
+      end
+    end
+
     context "with a patient location" do
       before do
         create(:patient_location, patient:, session: create(:session, team:))

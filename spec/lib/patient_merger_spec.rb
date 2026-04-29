@@ -352,9 +352,10 @@ describe PatientMerger do
         )
       end
 
-      it "removes the archive reasons from the patient" do
-        expect { call }.to change(ArchiveReason, :count).by(-1)
+      it "sets unarchive reason on the patient" do
+        expect { call }.not_to change(ArchiveReason, :count)
         expect(patient_to_keep.archived?(team_id: team.id)).to be(false)
+        expect(patient_to_keep.archive_reasons.sole.unarchived_at).to be_present
       end
     end
 
@@ -368,9 +369,10 @@ describe PatientMerger do
         )
       end
 
-      it "removes the archive reason from the patient" do
-        expect { call }.to change(ArchiveReason, :count).by(-1)
+      it "sets unarchive reason on the patient" do
+        expect { call }.not_to change(ArchiveReason, :count)
         expect(patient_to_keep.archived?(team_id: team.id)).to be(false)
+        expect(patient_to_keep.archive_reasons.sole.unarchived_at).to be_present
       end
     end
 
@@ -411,9 +413,10 @@ describe PatientMerger do
         )
       end
 
-      it "keeps the archive reason on the merged patient" do
-        expect { call }.to change(ArchiveReason, :count).by(-1)
+      it "keeps both archive reasons on the merged patient" do
+        expect { call }.not_to change(ArchiveReason, :count)
         expect(patient_to_keep.archived?(team_id: team.id)).to be(true)
+        expect(patient_to_keep.archive_reasons.count).to be(2)
       end
     end
 

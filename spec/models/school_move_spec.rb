@@ -135,6 +135,9 @@ describe SchoolMove do
         expect(patient.archived?(team_id: team.id)).to be(true)
         confirm!
         expect(patient.archived?(team_id: team.id)).to be(false)
+        archive_reason = patient.archive_reasons.find_by(team:)
+        expect(archive_reason.unarchived_at).not_to be_nil
+        expect(archive_reason.unarchive_reason).to eq("upload")
       end
     end
 

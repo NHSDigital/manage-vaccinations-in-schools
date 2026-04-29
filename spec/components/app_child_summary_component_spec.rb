@@ -145,6 +145,27 @@ describe AppChildSummaryComponent do
     it { should have_text("Archive reason") }
   end
 
+  context "with multiple archive reasons" do
+    let(:component) { described_class.new(patient, current_team: team) }
+
+    let(:team) { create(:team) }
+
+    before do
+      create(:archive_reason, :moved_out_of_area, patient:, team:)
+      create(
+        :archive_reason,
+        :other,
+        patient:,
+        team:,
+        other_details: "Additional reason."
+      )
+    end
+
+    it { should have_text("Archive reason") }
+    it { should have_css("ul li", text: "Moved out of area") }
+    it { should have_css("ul li", text: "Other: Additional reason.") }
+  end
+
   context "when created by a national reporting upload" do
     let(:component) { described_class.new(patient, current_team: team) }
 

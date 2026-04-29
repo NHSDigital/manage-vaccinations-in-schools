@@ -62,6 +62,7 @@ class AppActivityLogComponent < ViewComponent::Base
       pre_screening_events,
       session_events,
       triage_events,
+      unarchive_events,
       vaccination_events
     ].flatten.sort_by { it[:at] }.reverse
   end
@@ -75,6 +76,20 @@ class AppActivityLogComponent < ViewComponent::Base
         by: archive_reason.created_by
       }
     end
+  end
+
+  def unarchive_events
+    archive_reasons
+      .unarchived
+      .where(unarchive_reason: :upload)
+      .flat_map do |archive_reason|
+        {
+          title:
+            "Record unarchived: Child included in a cohort or class list upload",
+          at: archive_reason.unarchived_at,
+          by: archive_reason.unarchived_by
+        }
+      end
   end
 
   def consent_events
