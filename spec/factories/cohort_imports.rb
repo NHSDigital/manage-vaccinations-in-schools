@@ -67,9 +67,7 @@ FactoryBot.define do
     end
 
     trait :csv_removed do
-      csv_data { nil }
-      csv_filename { Faker::File.file_name(ext: "csv") }
-      csv_removed_at { Time.zone.now }
+      after(:create, &:remove!)
     end
 
     trait :pending do

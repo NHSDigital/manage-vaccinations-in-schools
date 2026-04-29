@@ -28,14 +28,12 @@ class ClassImportsController < ApplicationController
                   **class_import_params
                 )
 
-    if @class_import.invalid?
+    if @class_import.save
+      ProcessImportJob.perform_later(@class_import)
+      redirect_to imports_path, flash: { success: "Import processing started" }
+    else
       render :new, status: :unprocessable_content and return
     end
-
-    @class_import.save!
-
-    ProcessImportJob.perform_later(@class_import)
-    redirect_to imports_path, flash: { success: "Import processing started" }
   end
 
   def show

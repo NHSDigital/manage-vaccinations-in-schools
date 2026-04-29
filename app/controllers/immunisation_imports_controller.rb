@@ -22,14 +22,12 @@ class ImmunisationImportsController < ApplicationController
                   **immunisation_import_params
                 )
 
-    if @immunisation_import.invalid?
+    if @immunisation_import.save
+      ProcessImportJob.perform_later(@immunisation_import)
+      redirect_to imports_path, flash: { success: "Import processing started" }
+    else
       render :new, status: :unprocessable_content and return
     end
-
-    @immunisation_import.save!
-
-    ProcessImportJob.perform_later(@immunisation_import)
-    redirect_to imports_path, flash: { success: "Import processing started" }
   end
 
   def show

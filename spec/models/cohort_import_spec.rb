@@ -62,12 +62,12 @@ describe CohortImport do
       let(:file) { "invalid_fields.csv" }
 
       it "populates rows" do
-        expect(cohort_import).to be_invalid
+        expect(cohort_import).to be_invalid(:parse_rows)
         expect(cohort_import.rows).not_to be_empty
       end
 
       it "is invalid" do
-        expect(cohort_import).not_to be_valid
+        expect(cohort_import).not_to be_valid(:parse_rows)
       end
     end
 
@@ -75,7 +75,7 @@ describe CohortImport do
       let(:file) { "valid_extra_fields.csv" }
 
       it "populates rows" do
-        expect(cohort_import).to be_valid
+        expect(cohort_import).to be_valid(:parse_rows)
       end
     end
 
@@ -83,7 +83,7 @@ describe CohortImport do
       let(:file) { "valid_instruction_row.csv" }
 
       it "populates rows" do
-        expect(cohort_import).to be_valid
+        expect(cohort_import).to be_valid(:parse_rows)
         expect(cohort_import.rows.count).to eq(1)
       end
     end
@@ -92,7 +92,7 @@ describe CohortImport do
       let(:file) { "invalid_instruction_row.csv" }
 
       it "populates rows" do
-        expect(cohort_import).not_to be_valid
+        expect(cohort_import).not_to be_valid(:parse_rows)
         expect(cohort_import.rows.count).to eq(1)
       end
 
@@ -106,7 +106,7 @@ describe CohortImport do
       let(:file) { "valid.csv" }
 
       it "is valid" do
-        expect(cohort_import).to be_valid
+        expect(cohort_import).to be_valid(:parse_rows)
       end
     end
 
@@ -114,7 +114,7 @@ describe CohortImport do
       let(:file) { "valid_minimal.csv" }
 
       it "is valid" do
-        expect(cohort_import).to be_valid
+        expect(cohort_import).to be_valid(:parse_rows)
         expect(cohort_import.rows.count).to eq(1)
       end
     end
@@ -123,13 +123,49 @@ describe CohortImport do
       let(:file) { "invalid_minimal.csv" }
 
       it "populates rows" do
-        expect(cohort_import).not_to be_valid
+        expect(cohort_import).not_to be_valid(:parse_rows)
         expect(cohort_import.rows.count).to eq(1)
       end
 
       it "shows the right error information" do
         expect(cohort_import.errors.count).to eq(1)
         expect(cohort_import.errors.to_a[0]).to start_with("Row 2")
+      end
+    end
+
+    describe "with duplicate nhs numbers" do
+      let(:file) { "duplicate_nhs_numbers.csv" }
+
+      it "has 2 rows" do
+        expect(cohort_import.rows.count).to eq(2)
+      end
+
+      it "is not valid" do
+        expect(cohort_import).not_to be_valid(:parse_rows)
+      end
+
+      it "includes the duplicate nhs error number on both rows" do
+        expect(cohort_import.rows.first.errors.first.type).to match(
+          /The same NHS number appears multiple times in this file/
+        )
+        expect(cohort_import.rows.last.errors.first.type).to match(
+          /The same NHS number appears multiple times in this file/
+        )
+      end
+    end
+
+    describe "with a row containing multiple errors" do
+      let(:file) { "invalid_with_multiple_errors_per_row.csv" }
+
+      it "aggregates the errors against the row" do
+        expect(cohort_import).not_to be_valid(:parse_rows)
+        expect(cohort_import.errors[:row_2][0].length).to eq(2)
+        expect(cohort_import.errors[:row_2][0]).to include(
+          "<code>CHILD_DATE_OF_BIRTH</code>: Enter a date of birth."
+        )
+        expect(cohort_import.errors[:row_2][0]).to include(
+          "<code>CHILD_LAST_NAME</code>: Enter a last name."
+        )
       end
     end
   end

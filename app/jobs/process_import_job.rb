@@ -13,7 +13,7 @@ class ProcessImportJob < ApplicationJob
 
       import.parse_rows!
 
-      return if import.invalid?
+      return if import.errors.any?
       return if import.rows_are_invalid?
 
       import.process!

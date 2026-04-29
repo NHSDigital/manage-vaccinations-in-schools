@@ -75,10 +75,20 @@ module CSVImportable
               }
     validates :csv_filename, presence: true
 
-    validate :csv_is_valid
-    validate :csv_has_records
-    validate :csv_is_not_too_large
-    validate :rows_are_valid
+    with_options on: :create do
+      validate :csv_is_valid
+      validate :csv_has_records, if: -> { csv_data_object.well_formed? }
+      validate :csv_is_not_too_large, unless: -> { csv_data_object.empty? }
+    end
+
+    with_options on: :parse_rows do
+      validate { rows.each(&:validate) }
+      validates_with Import::RowsUniqueAcrossAllImmunisationAttributesValidator,
+                     if: -> { is_a?(ImmunisationImport) }
+      validates_with Import::RowsUniqueByNHSNumber,
+                     if: -> { is_a?(PatientImport) }
+      after_validation :aggregate_row_level_errors
+    end
 
     before_save :ensure_processed_with_count_statistics
   end
@@ -117,9 +127,7 @@ module CSVImportable
   end
 
   # Needed so that validations match the form field name.
-  def csv
-    csv_data
-  end
+  def csv = csv_data
 
   def csv_data_object
     @csv_data_object ||= Import::CSVData.new(csv_data)
@@ -134,7 +142,7 @@ module CSVImportable
 
     self.rows = csv_data_object.records.map { |row_data| parse_row(row_data) }
 
-    if invalid?
+    if invalid?(:parse_rows)
       self.serialized_errors = errors.to_hash
       self.status = :rows_are_invalid
       save!(validate: false)
@@ -156,34 +164,40 @@ module CSVImportable
       end
   end
 
+  def count_columns
+    %i[
+      new_record_count
+      changed_record_count
+      exact_duplicate_record_count
+    ].freeze
+  end
+
+  def ensure_processed_with_count_statistics
+    if processed_at? && count_columns.any? { |column| send(column).nil? }
+      raise "Count statistics must be set for a processed import."
+    end
+  end
+
+  private
+
   def csv_is_valid
     errors.add(:csv, :invalid) unless csv_data_object.well_formed?
   end
 
   def csv_is_not_too_large
-    return unless csv_data
-
     if rows_count > MAX_CSV_ROWS
       errors.add(:csv, :too_many_rows, count: MAX_CSV_ROWS)
     end
   end
 
   def csv_has_records
-    return unless csv_data
-
     csv_has_no_records =
       csv_data_object.empty? ||
         (csv_data_object.count == 1 && csv_data_object.has_instruction_row?)
     errors.add(:csv, :empty) if csv_has_no_records
   end
 
-  def rows_are_valid
-    return unless rows
-
-    rows.each(&:validate)
-
-    check_rows_are_unique
-
+  def aggregate_row_level_errors
     row_offset = csv_data_object.has_instruction_row? ? 3 : 2
 
     rows.each.with_index do |row, index|
@@ -202,20 +216,6 @@ module CSVImportable
         end
 
       errors.add("row_#{index + row_offset}".to_sym, formatted_errors)
-    end
-  end
-
-  def count_columns
-    %i[
-      new_record_count
-      changed_record_count
-      exact_duplicate_record_count
-    ].freeze
-  end
-
-  def ensure_processed_with_count_statistics
-    if processed_at? && count_columns.any? { |column| send(column).nil? }
-      raise "Count statistics must be set for a processed import."
     end
   end
 end
