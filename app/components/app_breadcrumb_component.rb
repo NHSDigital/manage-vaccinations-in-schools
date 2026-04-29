@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class AppBreadcrumbComponent < ViewComponent::Base
-  def initialize(items:, attributes: {})
+  def initialize(items:, reverse: false, attributes: {})
     @items = items
+    @reverse = reverse
     @attributes = attributes
   end
 

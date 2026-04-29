@@ -21,7 +21,7 @@
 
   &[data-app-sticky-init] {
     @include nhsuk-media-query($from: large-desktop) {
-      top: #{nhsuk-spacing(9) + nhsuk-spacing(3)};
+      top: #{nhsuk-spacing(9) + nhsuk-spacing(5)};
     }
   }
 }

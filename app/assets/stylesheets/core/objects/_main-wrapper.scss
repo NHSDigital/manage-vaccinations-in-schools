@@ -1,0 +1,6 @@
+@use "../../vendor/nhsuk-frontend" as *;
+
+.app-main-wrapper--xs {
+  padding-top: nhsuk-spacing(3);
+  padding-bottom: nhsuk-spacing(3);
+}
