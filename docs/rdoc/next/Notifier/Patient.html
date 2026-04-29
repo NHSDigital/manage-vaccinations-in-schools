@@ -780,7 +780,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_send_clinic_invitation-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/patient.rb, line 69</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/patient.rb, line 70</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitation?</span>(
   <span class="ruby-identifier">programmes</span>,
   <span class="ruby-value">team:</span>,
@@ -889,7 +889,7 @@
             </details>
           </div>
           <div class="method-source-code" id="send_clinic_invitation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/patient.rb, line 103</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/patient.rb, line 104</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">send_clinic_invitation</span>(
   <span class="ruby-identifier">programmes</span>,
   <span class="ruby-value">team:</span>,
@@ -996,6 +996,7 @@
     <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">all?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">patient</span>
         .<span class="ruby-identifier">consent_notifications</span>
+        .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">academic_year</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span> }
         .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">programme</span>) }
         .<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:initial_reminder?</span>)
     <span class="ruby-keyword">end</span>
