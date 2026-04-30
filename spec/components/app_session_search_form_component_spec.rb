@@ -16,9 +16,17 @@ describe AppSessionSearchFormComponent do
 
   it { should have_content("Find session") }
   it { should have_button("Update results") }
+  it { should_not have_content("Cancelled") }
 
   it do
     expect(rendered).to have_link("Clear filters", href: "/form?_clear=true")
+  end
+
+  context "when the cancellation feature is enabled" do
+    before { Flipper.enable(:clinic_sessions) }
+    after { Flipper.disable(:clinic_sessions) }
+
+    it { should have_content("Cancelled") }
   end
 
   context "during preparation for next year" do

@@ -119,6 +119,22 @@ describe SessionSearchForm do
     let!(:unscheduled_session) { create(:session, :unscheduled, programmes:) }
     let!(:scheduled_session) { create(:session, :scheduled, programmes:) }
     let!(:completed_session) { create(:session, :completed, programmes:) }
+    let!(:cancelled_session) do
+      create(:session, :scheduled, :cancelled, programmes:)
+    end
+
+    context "when status is blank" do
+      let(:params) { { "status" => "" } }
+
+      it "excludes cancelled sessions" do
+        expect(form.apply(scope)).to contain_exactly(
+          completed_session,
+          scheduled_session,
+          today_session,
+          unscheduled_session
+        )
+      end
+    end
 
     context "when status is in progress" do
       let(:params) { { "status" => "in_progress" } }
@@ -152,6 +168,14 @@ describe SessionSearchForm do
 
       it "filters on the sessions" do
         expect(form.apply(scope)).to contain_exactly(completed_session)
+      end
+    end
+
+    context "when status is cancelled" do
+      let(:params) { { "status" => "cancelled" } }
+
+      it "filters on the sessions" do
+        expect(form.apply(scope)).to contain_exactly(cancelled_session)
       end
     end
   end

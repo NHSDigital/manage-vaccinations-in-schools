@@ -81,6 +81,78 @@ describe SessionPolicy do
     include_examples "edit/update session"
   end
 
+  describe "#cancel?" do
+    subject(:cancel?) { policy.cancel? }
+
+    let(:user) { create(:nurse) }
+
+    context "when feature flag is disabled" do
+      before { Flipper.disable(:clinic_sessions) }
+
+      let(:session) do
+        create(:session, :scheduled, location: create(:community_clinic))
+      end
+
+      it { should be(false) }
+    end
+
+    context "when feature flag is enabled" do
+      before { Flipper.enable(:clinic_sessions) }
+      after { Flipper.disable(:clinic_sessions) }
+
+      context "with a future community clinic session" do
+        let(:session) do
+          create(:session, :scheduled, location: create(:community_clinic))
+        end
+
+        it { should be(true) }
+      end
+
+      context "with a future generic clinic session" do
+        let(:session) do
+          create(:session, :scheduled, location: create(:generic_clinic))
+        end
+
+        it { should be(true) }
+      end
+
+      context "with a school session" do
+        let(:session) { create(:session, :scheduled) }
+
+        it { should be(false) }
+      end
+
+      context "with a started community clinic session" do
+        let(:session) do
+          create(:session, :today, location: create(:community_clinic))
+        end
+
+        it { should be(false) }
+      end
+
+      context "with a completed community clinic session" do
+        let(:session) do
+          create(:session, :completed, location: create(:community_clinic))
+        end
+
+        it { should be(false) }
+      end
+
+      context "with a cancelled community clinic session" do
+        let(:session) do
+          create(
+            :session,
+            :scheduled,
+            :cancelled,
+            location: create(:community_clinic)
+          )
+        end
+
+        it { should be(false) }
+      end
+    end
+  end
+
   describe SessionPolicy::Scope do
     describe "#resolve" do
       subject { described_class.new(user, Session).resolve }

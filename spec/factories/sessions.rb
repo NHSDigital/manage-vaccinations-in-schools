@@ -5,6 +5,7 @@
 # Table name: sessions
 #
 #  id                            :bigint           not null, primary key
+#  cancelled_at                  :datetime
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
@@ -87,6 +88,10 @@ FactoryBot.define do
 
     trait :completed do
       date { Date.current - 1.week }
+    end
+
+    trait :cancelled do
+      cancelled_at { Time.current }
     end
 
     trait :requires_no_registration do

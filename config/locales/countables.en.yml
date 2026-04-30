@@ -54,3 +54,7 @@ en:
     zero: No vaccinations given
     one: 1 vaccination given
     other: "%{count} vaccinations given"
+  session_booking_count:
+    zero: No children are booked for this session.
+    one: 1 child is booked for this session.
+    other: "%{count} children are booked for this session."

@@ -1,5 +1,7 @@
 basic_auth: Require users to sign in with basic authentication before they can use the service.
 
+clinic_sessions: Allow clinic sessions to be cancelled.
+
 dev_tools: Developer tools useful for testing and debugging.
 
 ethnicity_capture: Enable optional ethnicity capture after parent consent

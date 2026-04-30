@@ -1,0 +1,39 @@
+<% content_for :navigation do %>
+  <%= govuk_back_link(href: session_path(@session)) %>
+<% end %>
+
+<%= h1 "Are you sure you want to cancel this session?" %>
+
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading(level: 2, size: "m") { @session.location.name } %>
+
+  <%= govuk_summary_list do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Location" }
+          row.with_value { [@session.location.name, format_address_single_line(@session.location)].compact_blank.join(", ") }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Session date".pluralize(@session.dates.length) }
+          row.with_value { session_dates(@session) }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Programmes" }
+          row.with_value { render(AppProgrammeTagsComponent.new(@session.programmes)) }
+        end
+      end %>
+<% end %>
+
+<div class="nhsuk-inset-text">
+  <p class="nhsuk-u-margin-bottom-0">
+    <%= I18n.t("session_booking_count", count: @booked_children_count) %>
+  </p>
+</div>
+
+<%= form_with url: session_cancellations_path(@session), method: :post do |f| %>
+  <div class="nhsuk-button-group">
+    <%= f.govuk_submit "Yes, cancel this session", warning: true %>
+    <%= link_to "No, return to the session page", session_path(@session) %>
+  </div>
+<% end %>

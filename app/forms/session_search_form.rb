@@ -42,8 +42,20 @@ class SessionSearchForm < SearchForm
   end
 
   def filter_status(scope)
-    status.in?(VALID_STATUS_SCOPES) ? scope.public_send(status) : scope
+    return scope.not_cancelled if status.blank?
+
+    if status.in?(VALID_STATUS_SCOPES)
+      scope.public_send(status)
+    else
+      scope.not_cancelled
+    end
   end
 
-  VALID_STATUS_SCOPES = %w[in_progress unscheduled scheduled completed].freeze
+  VALID_STATUS_SCOPES = %w[
+    in_progress
+    unscheduled
+    scheduled
+    completed
+    cancelled
+  ].freeze
 end

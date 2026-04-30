@@ -1,0 +1,11 @@
+---
+template_id: "f9c384bd-e4aa-4ca7-bb79-8d33f2f0564a"
+purpose: session_cancelled
+template_name: session_clinic_cancelled
+subject: "<%= short_patient_name %>’s session has been cancelled"
+---
+The vaccination session for <%= full_and_preferred_patient_name %> at <%= location_name %> on <%= session_dates(session) %> has been cancelled.
+
+<%= subteam_name %>
+<%= subteam_email %>
+<%= subteam_phone %>

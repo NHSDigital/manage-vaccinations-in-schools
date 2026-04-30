@@ -5,6 +5,7 @@
 # Table name: sessions
 #
 #  id                            :bigint           not null, primary key
+#  cancelled_at                  :datetime
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
@@ -107,18 +108,20 @@ class Session < ApplicationRecord
   scope :has_any_programmes_of,
         ->(programmes) { has_any_programme_types_of(programmes.map(&:type)) }
 
-  scope :in_progress, -> { has_date(Date.current) }
-  scope :unscheduled, -> { where(dates: []) }
+  scope :not_cancelled, -> { where(cancelled_at: nil) }
+  scope :cancelled, -> { where.not(cancelled_at: nil) }
+  scope :in_progress, -> { not_cancelled.has_date(Date.current) }
+  scope :unscheduled, -> { not_cancelled.where(dates: []) }
   scope :scheduled,
         -> do
-          where(
+          not_cancelled.where(
             "? <= (SELECT max(date_value) FROM unnest(dates) date_value)",
             Date.current
           )
         end
   scope :completed,
         -> do
-          where(
+          not_cancelled.where(
             "? > (SELECT max(date_value) FROM unnest(dates) date_value)",
             Date.current
           )
@@ -224,6 +227,19 @@ class Session < ApplicationRecord
   end
 
   def scheduled? = !unscheduled? && !completed?
+
+  def cancelled? = cancelled_at.present?
+
+  def cancellable? = clinic? && !started? && !completed? && !cancelled?
+
+  def cancel(user)
+    return false unless cancellable?
+
+    update!(cancelled_at: Time.current)
+    Notifier::Session.new(self).send_cancellation(sent_by: user)
+
+    true
+  end
 
   def started?
     return false if dates.empty?

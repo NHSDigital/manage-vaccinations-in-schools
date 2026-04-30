@@ -13,7 +13,7 @@ describe AppSessionOverviewComponent do
     stub_authorization(
       allowed: true,
       klass: SessionPolicy,
-      methods: %i[edit? invite_to_clinic? manage_consent_reminders?]
+      methods: %i[edit? invite_to_clinic? manage_consent_reminders? cancel?]
     )
   end
 

@@ -17,6 +17,7 @@ class FeatureFlagFactory
   end
 
   FEATURES_FOR_DEVELOPMENT = %i[
+    clinic_sessions
     dev_tools
     testing_api
     vaccinating_16_plus_year_olds

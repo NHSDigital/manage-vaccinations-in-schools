@@ -94,6 +94,12 @@ describe SessionsHelper do
       it { should eq("Unscheduled") }
     end
 
+    context "when cancelled" do
+      let(:session) { create(:session, :scheduled, :cancelled) }
+
+      it { should eq("Cancelled") }
+    end
+
     context "when scheduled" do
       let(:session) { create(:session, :scheduled) }
 

@@ -2,13 +2,16 @@
 
 module AuthorisationHelper
   def stub_authorization(
-    allowed:,
+    allowed: nil,
     klass: ApplicationPolicy,
-    methods: %i[create? new? edit?]
+    methods: %i[create? new? edit?],
+    permissions: nil
   )
+    policy_methods = permissions.presence || methods.index_with { allowed }
+
     # rubocop:disable RSpec/AnyInstance
     allow_any_instance_of(Pundit::Authorization).to receive(:policy).and_return(
-      instance_double(klass, methods.index_with { allowed })
+      instance_double(klass, policy_methods)
     )
     # rubocop:enable RSpec/AnyInstance
   end

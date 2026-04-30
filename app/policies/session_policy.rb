@@ -19,6 +19,10 @@ class SessionPolicy < ApplicationPolicy
     update? && record.school?
   end
 
+  def cancel?
+    Flipper.enabled?(:clinic_sessions) && record.cancellable? && update?
+  end
+
   def make_in_progress? = update?
 
   class Scope < ApplicationPolicy::Scope

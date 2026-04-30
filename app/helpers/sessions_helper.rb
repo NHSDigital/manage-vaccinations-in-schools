@@ -47,7 +47,9 @@ module SessionsHelper
   end
 
   def session_status(session)
-    if session.unscheduled?
+    if session.cancelled?
+      "Cancelled"
+    elsif session.unscheduled?
       "Unscheduled"
     elsif session.completed?
       "Completed"

@@ -66,10 +66,30 @@ def create_community_clinics(team)
   FactoryBot.create_list(:community_clinic, 5, team:)
 end
 
+def create_generic_clinic_session(user, team)
+  session =
+    create_session(
+      user,
+      team,
+      location: team.generic_clinic,
+      programmes: [Programme.menacwy, Programme.td_ipv],
+      in_the_future: true,
+      year_groups: []
+    )
+
+  FactoryBot.create(
+    :patient,
+    :consent_given_triage_not_needed,
+    :in_attendance,
+    session:
+  )
+end
+
 def create_session(
   user,
   team,
   programmes:,
+  location: nil,
   completed: false,
   in_the_future: false,
   year_groups: nil
@@ -84,7 +104,7 @@ def create_session(
       .map { |vaccine| FactoryBot.build(:batch, :not_expired, team:, vaccine:) }
   )
 
-  location =
+  location ||=
     FactoryBot.create(:gias_school, team:, gias_year_groups: year_groups)
   date =
     if completed
@@ -184,6 +204,8 @@ def create_session(
       end
     end
   end
+
+  session
 end
 
 def create_home_educated_or_unknown_school_patients(team)
@@ -299,6 +321,7 @@ def create_nurse_joy_team
     .audit_class
     .as_user(user) do
       create_community_clinics(team)
+      create_generic_clinic_session(user, team)
       create_team_sessions(user, team)
       create_home_educated_or_unknown_school_patients(team)
       create_imports(user, team)

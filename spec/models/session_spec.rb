@@ -5,6 +5,7 @@
 # Table name: sessions
 #
 #  id                            :bigint           not null, primary key
+#  cancelled_at                  :datetime
 #  dates                         :date             not null, is an Array
 #  days_before_consent_reminders :integer
 #  national_protocol_enabled     :boolean          default(FALSE), not null
@@ -33,6 +34,9 @@ describe Session do
 
     let(:closed_session) { create(:session, :closed, programmes:) }
     let(:completed_session) { create(:session, :completed, programmes:) }
+    let(:cancelled_session) do
+      create(:session, :scheduled, :cancelled, programmes:)
+    end
     let(:scheduled_session) { create(:session, :scheduled, programmes:) }
     let(:today_session) { create(:session, :today, programmes:) }
     let(:unscheduled_session) { create(:session, :unscheduled, programmes:) }
@@ -80,6 +84,19 @@ describe Session do
       it { should contain_exactly(today_session) }
     end
 
+    describe "#not_cancelled" do
+      subject(:scope) { described_class.not_cancelled }
+
+      it do
+        expect(scope).to contain_exactly(
+          completed_session,
+          scheduled_session,
+          today_session,
+          unscheduled_session
+        )
+      end
+    end
+
     describe "#unscheduled" do
       subject(:scope) { described_class.unscheduled }
 
@@ -90,6 +107,12 @@ describe Session do
       subject(:scope) { described_class.scheduled }
 
       it { should contain_exactly(today_session, scheduled_session) }
+    end
+
+    describe "#cancelled" do
+      subject(:scope) { described_class.cancelled }
+
+      it { should contain_exactly(cancelled_session) }
     end
 
     describe "#completed" do
@@ -326,6 +349,40 @@ describe Session do
 
         expect(count).to eq(1)
       end
+    end
+  end
+
+  describe "#cancellable?" do
+    subject(:cancellable?) { session.cancellable? }
+
+    context "with a future clinic session" do
+      let(:session) do
+        create(:session, :scheduled, location: create(:generic_clinic))
+      end
+
+      it { should be(true) }
+    end
+
+    context "with a school session" do
+      let(:session) { create(:session, :scheduled) }
+
+      it { should be(false) }
+    end
+
+    context "with a started clinic session" do
+      let(:session) do
+        create(:session, :today, location: create(:generic_clinic))
+      end
+
+      it { should be(false) }
+    end
+
+    context "with a completed clinic session" do
+      let(:session) do
+        create(:session, :completed, location: create(:generic_clinic))
+      end
+
+      it { should be(false) }
     end
   end
 

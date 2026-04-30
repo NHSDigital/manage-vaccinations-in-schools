@@ -37,7 +37,7 @@
                                checked: form.status.blank?,
                                label: { text: "Any" } %>
 
-      <% STATUSES.each do |value| %>
+      <% statuses.each do |value| %>
         <%= f.govuk_radio_button :status,
                                  value,
                                  checked: form.status == value,

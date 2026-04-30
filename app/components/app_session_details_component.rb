@@ -29,11 +29,22 @@ class AppSessionDetailsComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :govuk_button_link_to, to: :helpers
+  delegate :govuk_button_link_to, :policy, to: :helpers
 
   def actions
     return [] unless helpers.policy(session).edit?
 
-    [{ text: "Edit session", href: helpers.edit_session_path(session) }]
+    actions = [
+      { text: "Edit session", href: helpers.edit_session_path(session) }
+    ]
+
+    if policy(session).cancel?
+      actions << {
+        text: "Cancel session",
+        href: helpers.session_cancellations_path(session)
+      }
+    end
+
+    actions
   end
 end
