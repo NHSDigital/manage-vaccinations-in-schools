@@ -14,7 +14,7 @@
     </div>
 
     <div class="app-grid-column-results">
-      <%= render AppSessionNeedsReviewComponent.new(@session) %>
+      <%= render AppSessionNeedsReviewComponent.new(@session, include_missing_nhs_numbers: false) %>
 
       <%= render AppVaccinationsSummaryTableComponent.new(current_user:, session: @session, request_session: session) %>
 
