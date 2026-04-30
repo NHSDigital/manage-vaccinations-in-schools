@@ -37,7 +37,7 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
 
       searchable.save!
 
-      next_step = steps[step_name][result]
+      next_step = STEPS[step_name][result]
 
       if result == :error || next_step.nil? || next_step == :give_up ||
            multiple_nhs_numbers_found?(search_results) ||
@@ -48,7 +48,7 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
         else
           PatientUpdateFromPDSJob.perform_later(searchable, search_results)
         end
-      elsif next_step.in?(steps.keys)
+      elsif next_step.in?(STEPS.keys)
         raise "Recursive step detected: #{next_step}" if next_step == step_name
         enqueue_next_search(searchable, next_step, search_results, queue)
       else
@@ -58,6 +58,55 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
   end
 
   private
+
+  STEPS = {
+    no_fuzzy_with_history: {
+      no_matches: :no_fuzzy_with_wildcard_postcode,
+      one_match: :save_nhs_number_if_unique,
+      too_many_matches: :no_fuzzy_without_history
+    },
+    no_fuzzy_without_history: {
+      no_matches: :give_up,
+      one_match: :save_nhs_number_if_unique,
+      too_many_matches: :give_up,
+      format_query: ->(query) { query.merge(history: false) }
+    },
+    no_fuzzy_with_wildcard_postcode: {
+      no_matches: :no_fuzzy_with_wildcard_given_name,
+      one_match: :no_fuzzy_with_wildcard_given_name,
+      too_many_matches: :no_fuzzy_with_wildcard_given_name,
+      format_query:
+        lambda do |query|
+          query[:address_postcode] = query[:address_postcode].dup
+          query[:address_postcode][2..] = "*"
+          query
+        end
+    },
+    no_fuzzy_with_wildcard_given_name: {
+      no_matches: :no_fuzzy_with_wildcard_family_name,
+      one_match: :no_fuzzy_with_wildcard_family_name,
+      too_many_matches: :no_fuzzy_with_wildcard_family_name,
+      skip_step: :no_fuzzy_with_wildcard_family_name,
+      format_query:
+        lambda do |query|
+          query[:given_name] = query[:given_name].dup
+          query[:given_name][3..] = "*"
+          query
+        end
+    },
+    no_fuzzy_with_wildcard_family_name: {
+      no_matches: :save_nhs_number_if_unique,
+      one_match: :save_nhs_number_if_unique,
+      too_many_matches: :save_nhs_number_if_unique,
+      skip_step: :save_nhs_number_if_unique,
+      format_query:
+        lambda do |query|
+          query[:family_name] = query[:family_name].dup
+          query[:family_name][3..] = "*"
+          query
+        end
+    }
+  }.freeze
 
   def search_for_patient(
     family_name:,
@@ -84,8 +133,8 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
       fuzzy: false
     }
 
-    if steps[step_name][:format_query].respond_to?(:call)
-      result = steps[step_name][:format_query].call(query)
+    if STEPS[step_name][:format_query].respond_to?(:call)
+      result = STEPS[step_name][:format_query].call(query)
       query = result if result.is_a?(Hash)
     end
 
@@ -105,57 +154,6 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
     Rails.logger.error("Error doing PDS search: #{e.message}")
     Sentry.capture_exception(e, level: "warning")
     [:error, nil]
-  end
-
-  def steps
-    {
-      no_fuzzy_with_history: {
-        no_matches: :no_fuzzy_with_wildcard_postcode,
-        one_match: :save_nhs_number_if_unique,
-        too_many_matches: :no_fuzzy_without_history
-      },
-      no_fuzzy_without_history: {
-        no_matches: :give_up,
-        one_match: :save_nhs_number_if_unique,
-        too_many_matches: :give_up,
-        format_query: ->(query) { query.merge(history: false) }
-      },
-      no_fuzzy_with_wildcard_postcode: {
-        no_matches: :no_fuzzy_with_wildcard_given_name,
-        one_match: :no_fuzzy_with_wildcard_given_name,
-        too_many_matches: :no_fuzzy_with_wildcard_given_name,
-        format_query:
-          lambda do |query|
-            query[:address_postcode] = query[:address_postcode].dup
-            query[:address_postcode][2..] = "*"
-            query
-          end
-      },
-      no_fuzzy_with_wildcard_given_name: {
-        no_matches: :no_fuzzy_with_wildcard_family_name,
-        one_match: :no_fuzzy_with_wildcard_family_name,
-        too_many_matches: :no_fuzzy_with_wildcard_family_name,
-        skip_step: :no_fuzzy_with_wildcard_family_name,
-        format_query:
-          lambda do |query|
-            query[:given_name] = query[:given_name].dup
-            query[:given_name][3..] = "*"
-            query
-          end
-      },
-      no_fuzzy_with_wildcard_family_name: {
-        no_matches: :save_nhs_number_if_unique,
-        one_match: :save_nhs_number_if_unique,
-        too_many_matches: :save_nhs_number_if_unique,
-        skip_step: :save_nhs_number_if_unique,
-        format_query:
-          lambda do |query|
-            query[:family_name] = query[:family_name].dup
-            query[:family_name][3..] = "*"
-            query
-          end
-      }
-    }
   end
 
   def enqueue_next_search(searchable, step_name, search_results, queue)
