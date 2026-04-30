@@ -47,6 +47,7 @@ class PatientsController < ApplicationController
   end
 
   def show
+    @note = Note.new(created_by: current_user, patient: @patient)
   end
 
   def edit

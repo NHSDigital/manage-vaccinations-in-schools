@@ -3,14 +3,30 @@
 describe AppCreateNoteComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(note, open:) }
-
-  let(:note) { Note.new(patient:, session:) }
-  let(:open) { false }
-
   let(:patient) { create(:patient) }
-  let(:session) { create(:session) }
 
-  it { should have_css(".nhsuk-details.nhsuk-expander") }
-  it { should have_css(".nhsuk-details__summary", text: "Add a note") }
+  context "for a patient-level note" do
+    let(:component) { described_class.new(Note.new(patient:)) }
+
+    it { expect(rendered).to have_css(".nhsuk-details.nhsuk-expander") }
+
+    it do
+      expect(rendered).to have_css(
+        ".nhsuk-details__summary",
+        text: "Add a note to this record"
+      )
+    end
+  end
+
+  context "for a session note" do
+    let(:session) { create(:session) }
+    let(:component) { described_class.new(Note.new(patient:, session:)) }
+
+    it do
+      expect(rendered).to have_css(
+        ".nhsuk-details__summary",
+        text: "Add a session note"
+      )
+    end
+  end
 end

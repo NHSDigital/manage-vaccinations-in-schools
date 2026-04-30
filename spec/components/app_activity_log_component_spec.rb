@@ -637,6 +637,27 @@ describe AppActivityLogComponent do
                      date: "1 June 2026 at 12:00pm",
                      by: "JOY, Nurse",
                      programme: "HPV"
+
+    context "without a session" do
+      let(:component) { described_class.new(patient:, team:) }
+
+      before do
+        create(
+          :note,
+          created_by: user,
+          patient:,
+          session: nil,
+          body: "A patient-level note.",
+          created_at: Time.zone.local(2026, 6, 1, 12)
+        )
+      end
+
+      include_examples "card",
+                       title: "Note added to child record",
+                       notes: "A patient-level note.",
+                       date: "1 June 2026 at 12:00pm",
+                       by: "JOY, Nurse"
+    end
   end
 
   describe "pre-screenings" do

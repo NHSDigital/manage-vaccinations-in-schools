@@ -206,6 +206,8 @@ Rails.application.routes.draw do
   resources :patients, only: %i[index show edit] do
     post "", action: :index, on: :collection
 
+    resource :note, only: :create, controller: "patients/notes"
+
     resource :archive,
              path: "archive",
              only: %i[new create],
@@ -319,7 +321,7 @@ Rails.application.routes.draw do
               as: :patient,
               only: [],
               module: :patient_sessions do
-      resource :activity, only: %i[show create]
+      resource :activity, only: :show
       resource :attendance, only: %i[edit update]
 
       resources :programmes, path: "", param: :type, only: :show do
