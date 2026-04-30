@@ -43,7 +43,7 @@
       cron: "0 0 * * *"
       description:
         Enqueue jobs to fetch latitude and longitude for locations with addresses but no position
-    RemoveImportCSVJob:
+    RemoveImportCSVDataJob:
       cron: "0 1 * * *"
       description: Remove CSV data from old cohort and immunisation imports
     GIASImportJob:
@@ -64,6 +64,9 @@
     EnqueueProcessUnmatchedConsentFormsJob:
       cron: "0 4 * * *"
       description: Re-process unmatched consent forms to attempt automatic matching
+    RemoveExportFileDataJob:
+      cron: "0 4 * * *"
+      description: Purge old vaccination report exports and mark expired
     EnqueuePatientsAgedOutOfSchoolsJob:
       cron: "0 5 * * *"
       description: Moves patients who have aged out of their school to unknown school

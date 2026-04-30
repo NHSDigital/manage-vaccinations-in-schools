@@ -67,6 +67,10 @@ ordnance_survey:
 location_position_updater_job:
   capture_exception: true
 
+retention_days_for:
+  export_file_data: 7
+  import_csv_data: 30
+
 # Set a value to override the default values set in config/initializers/devise.rb
 devise:
   timeout_in_seconds:

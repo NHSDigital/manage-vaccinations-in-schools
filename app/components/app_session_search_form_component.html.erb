@@ -2,7 +2,7 @@
   <%= render AppCardComponent.new(filters: true) do |card| %>
     <% card.with_heading(level: 2) { "Find session" } %>
 
-    <%= render AppSearchInputComponent.new(name: :q, value: form.q, label: { hidden: true }) %>
+    <%= render AppSearchInputComponent.new(name: :query, value: form.query, label: { hidden: true }) %>
 
     <% if programmes.present? %>
       <%= f.govuk_check_boxes_fieldset :programmes,

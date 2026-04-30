@@ -17,6 +17,13 @@ module SessionSearchFormConcern
   private
 
   def session_search_form_params
-    params.permit(:_clear, :academic_year, :q, :status, :type, programmes: [])
+    params.permit(
+      :_clear,
+      :academic_year,
+      :query,
+      :status,
+      :type,
+      programmes: []
+    )
   end
 end

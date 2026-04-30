@@ -12,7 +12,7 @@
   </h1>
 
   <%= form_with url: wizard_path, method: :get, builder: MavisFormBuilder do |search_form| %>
-    <%= render AppSearchInputComponent.new(name: :q, value: @location_query, label: { text: "Search for a school" }) %>
+    <%= render AppSearchInputComponent.new(name: :query, value: @location_query, label: { text: "Search for a school" }) %>
   <% end %>
 
   <% if @location_query.present? %>

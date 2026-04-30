@@ -8,7 +8,7 @@ module PatientSearchFormConcern
   def set_patient_search_form
     @form =
       PatientSearchForm.new(
-        current_user:,
+        current_team:,
         request_path: request.path,
         request_session: session,
         session: @session,
@@ -30,7 +30,7 @@ module PatientSearchFormConcern
       :missing_nhs_number,
       :patient_specific_direction_status,
       :programme_status_group,
-      :q,
+      :query,
       :registration_status,
       programme_statuses: [],
       programme_types: [],

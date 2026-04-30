@@ -352,6 +352,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
   end
 
+  create_table "exports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "exportable_id", null: false
+    t.string "exportable_type", null: false
+    t.binary "file_data"
+    t.string "file_type", null: false
+    t.string "filename", null: false
+    t.string "status", default: "pending", null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["created_at"], name: "index_exports_on_created_at"
+    t.index ["exportable_type", "exportable_id"], name: "index_exports_on_exportable"
+    t.index ["status"], name: "index_exports_on_status"
+    t.index ["team_id"], name: "index_exports_on_team_id"
+  end
+
   create_table "flipper_features", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "key", null: false
@@ -506,6 +523,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
     t.string "value", null: false
     t.index ["gss_code"], name: "index_local_authority_postcodes_on_gss_code"
     t.index ["value"], name: "index_local_authority_postcodes_on_value", unique: true
+  end
+
+  create_table "location_patients_exports", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
+    t.jsonb "filter_params", default: {}, null: false
+    t.bigint "location_id", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "location_programme_year_groups", force: :cascade do |t|
@@ -848,6 +873,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
     t.index ["school_id"], name: "index_school_moves_on_school_id"
   end
 
+  create_table "school_moves_exports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date_from"
+    t.date "date_to"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "session_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -858,6 +890,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
     t.index ["patient_id", "session_id", "session_date"], name: "idx_on_patient_id_session_id_session_date_f7f30a3aa3"
     t.index ["sent_by_user_id"], name: "index_session_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_session_notifications_on_session_id"
+  end
+
+  create_table "session_patients_exports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "session_id", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "session_programme_year_groups", primary_key: ["session_id", "programme_type", "year_group"], force: :cascade do |t|
@@ -1060,6 +1098,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
   end
 
+  create_table "vaccination_records_exports", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
+    t.date "date_from"
+    t.date "date_to"
+    t.string "file_format", null: false
+    t.string "programme_type", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "vaccines", force: :cascade do |t|
     t.text "brand", null: false
     t.boolean "contains_gelatine", null: false
@@ -1126,6 +1174,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "teams"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
+  add_foreign_key "exports", "teams"
+  add_foreign_key "exports", "users"
   add_foreign_key "gillick_assessments", "locations"
   add_foreign_key "gillick_assessments", "patients"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
@@ -1148,6 +1198,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
   add_foreign_key "important_notices", "teams"
   add_foreign_key "important_notices", "users", column: "dismissed_by_user_id"
   add_foreign_key "important_notices", "vaccination_records"
+  add_foreign_key "location_patients_exports", "locations"
   add_foreign_key "location_programme_year_groups", "location_year_groups", on_delete: :cascade
   add_foreign_key "location_year_groups", "locations", on_delete: :cascade
   add_foreign_key "notes", "patients"
@@ -1192,6 +1243,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_28_080729) do
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
+  add_foreign_key "session_patients_exports", "sessions"
   add_foreign_key "session_programme_year_groups", "sessions", on_delete: :cascade
   add_foreign_key "sessions", "team_locations"
   add_foreign_key "subteams", "teams"

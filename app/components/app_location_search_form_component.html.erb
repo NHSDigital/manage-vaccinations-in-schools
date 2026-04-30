@@ -2,7 +2,7 @@
   <%= render AppCardComponent.new(filters: true) do |card| %>
     <% card.with_heading(level: 2) { "Find school" } %>
 
-    <%= render AppSearchInputComponent.new(name: :q, value: form.q, label: { hidden: true }) %>
+    <%= render AppSearchInputComponent.new(name: :query, value: form.query, label: { hidden: true }) %>
 
     <%= f.govuk_radio_buttons_fieldset :phase,
                                        legend: { text: "Phase", size: "s" },

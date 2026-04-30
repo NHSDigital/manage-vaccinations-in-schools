@@ -3,7 +3,7 @@
 class SessionSearchForm < SearchForm
   attribute :academic_year, :integer
   attribute :programmes, array: true
-  attribute :q, :string
+  attribute :query, :string
   attribute :status, :string
   attribute :type, :string
 
@@ -34,7 +34,7 @@ class SessionSearchForm < SearchForm
   end
 
   def filter_name(scope)
-    q.present? ? scope.search_by_name(q) : scope
+    query.present? ? scope.search_by_name(query) : scope
   end
 
   def filter_type(scope)

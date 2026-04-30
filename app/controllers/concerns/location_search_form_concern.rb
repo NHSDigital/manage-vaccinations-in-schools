@@ -17,6 +17,6 @@ module LocationSearchFormConcern
   private
 
   def location_search_form_params
-    params.permit(:_clear, :phase, :q)
+    params.permit(:_clear, :phase, :query)
   end
 end

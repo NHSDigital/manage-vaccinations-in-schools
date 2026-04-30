@@ -61,7 +61,7 @@ describe SessionSearchForm do
   end
 
   context "when filtering by name" do
-    let(:params) { { "q" => "School" } }
+    let(:params) { { "query" => "School" } }
 
     let(:programmes) { [Programme.sample] }
 

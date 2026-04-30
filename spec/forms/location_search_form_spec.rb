@@ -16,7 +16,7 @@ describe LocationSearchForm do
   end
 
   context "when filtering by name" do
-    let(:params) { { "q" => "Primary" } }
+    let(:params) { { "query" => "Primary" } }
 
     let!(:school_to_include) { create(:gias_school, :primary, name: "Primary") }
 

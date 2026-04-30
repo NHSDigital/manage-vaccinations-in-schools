@@ -3,8 +3,8 @@
     <% card.with_heading(level: heading_level) { "Find children" } %>
 
     <%= render AppSearchInputComponent.new(
-          name: :q,
-          value: form.q,
+          name: :query,
+          value: form.query,
           label: { hidden: true },
         ) %>
 

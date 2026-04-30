@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class LocationSearchForm < SearchForm
-  attribute :q, :string
+  attribute :query, :string
   attribute :phase, :string
 
   def apply(scope)
@@ -18,6 +18,6 @@ class LocationSearchForm < SearchForm
   end
 
   def filter_name(scope)
-    q.present? ? scope.search_by_name(q) : scope
+    query.present? ? scope.search_by_name(query) : scope
   end
 end

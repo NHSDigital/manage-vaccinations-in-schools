@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe RemoveImportCSVJob do
+describe RemoveImportCSVDataJob do
   describe "#perform" do
     subject(:perform) { described_class.new.perform }
 

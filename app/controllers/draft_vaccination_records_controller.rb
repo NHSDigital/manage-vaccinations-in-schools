@@ -306,7 +306,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def set_locations
     if @draft_vaccination_record.national_reporting_user_and_record?
-      @location_query = params[:q]
+      @location_query = params[:query]
       scope = Location.gias_school.where(status: "open")
 
       if @location_query.present?
