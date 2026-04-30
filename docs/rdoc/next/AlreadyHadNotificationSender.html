@@ -892,7 +892,7 @@
 
   <span class="ruby-identifier">parents_with_consent</span> =
     <span class="ruby-constant">NotificationParentSelector</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">vaccination_record:</span> <span class="ruby-ivar">@vaccination_record</span>,
+      <span class="ruby-value">vaccination_record:</span>,
       <span class="ruby-value">consents:</span>
     ).<span class="ruby-identifier">parents_with_consent</span>
 
@@ -901,7 +901,7 @@
       <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
         <span class="ruby-value">:vaccination_already_had</span>,
         <span class="ruby-value">parent:</span>,
-        <span class="ruby-value">vaccination_record:</span> <span class="ruby-ivar">@vaccination_record</span>,
+        <span class="ruby-value">vaccination_record:</span>,
         <span class="ruby-value">consent:</span>
       )
     <span class="ruby-keyword">end</span>
@@ -909,7 +909,7 @@
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-value">:vaccination_already_had</span>,
       <span class="ruby-value">parent:</span>,
-      <span class="ruby-value">vaccination_record:</span> <span class="ruby-ivar">@vaccination_record</span>,
+      <span class="ruby-value">vaccination_record:</span>,
       <span class="ruby-value">consent:</span>
     )
 
