@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec::Matchers.matcher :have_delivered_sms do |template_name = nil|
+RSpec::Matchers.matcher :deliver_email do |template_name = nil|
   supports_block_expectations
 
   define_singleton_method :chain_delegate do |*methods|
@@ -14,12 +14,12 @@ RSpec::Matchers.matcher :have_delivered_sms do |template_name = nil|
   define_method :matcher do
     @matcher ||=
       if @params.nil?
-        have_enqueued_job(SMSDeliveryJob).with(
+        have_enqueued_job(EmailDeliveryJob).with(
           *[template_name].compact,
           any_args
         )
       else
-        have_enqueued_job(SMSDeliveryJob).with(
+        have_enqueued_job(EmailDeliveryJob).with(
           *[template_name].compact,
           **@params
         )
@@ -45,9 +45,9 @@ RSpec::Matchers.matcher :have_delivered_sms do |template_name = nil|
   end
 
   # TODO: copy the error message from the have_enqueued_job but only list jobs
-  #       enqueued for SMSDeliveryJob
+  #       enqueued for EmailDeliveryJob
   failure_message { <<~MESSAGE }
-      expected #{template_name} sms to have been delivered
+      expected #{template_name} email to have been delivered
       #{@error}
     MESSAGE
 end

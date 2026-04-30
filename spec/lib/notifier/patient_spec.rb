@@ -76,7 +76,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues an email per parent" do
-          expect { send_consent_request }.to have_delivered_email(
+          expect { send_consent_request }.to deliver_email(
             :consent_school_request_hpv
           ).with(
             disease_types:,
@@ -85,7 +85,7 @@ describe Notifier::Patient do
             programme_types:,
             session:,
             sent_by:
-          ).and have_delivered_email(:consent_school_request_hpv).with(
+          ).and deliver_email(:consent_school_request_hpv).with(
                   disease_types:,
                   parent: parents.second,
                   patient:,
@@ -96,7 +96,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues a text per parent" do
-          expect { send_consent_request }.to have_delivered_sms(
+          expect { send_consent_request }.to deliver_sms(
             :consent_school_request
           ).with(
             disease_types:,
@@ -105,7 +105,7 @@ describe Notifier::Patient do
             programme_types:,
             session:,
             sent_by:
-          ).and have_delivered_sms(:consent_school_request).with(
+          ).and deliver_sms(:consent_school_request).with(
                   disease_types:,
                   parent: parents.second,
                   patient:,
@@ -121,7 +121,7 @@ describe Notifier::Patient do
           before { parent.update!(phone_receive_updates: false) }
 
           it "still enqueues a text" do
-            expect { send_consent_request }.to have_delivered_sms(
+            expect { send_consent_request }.to deliver_sms(
               :consent_school_request
             ).with(
               disease_types:,
@@ -138,13 +138,13 @@ describe Notifier::Patient do
           let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
           it "enqueues an email per parent" do
-            expect { send_consent_request }.to have_delivered_email(
+            expect { send_consent_request }.to deliver_email(
               :consent_school_request_doubles
             ).twice
           end
 
           it "enqueues an sms per parent" do
-            expect { send_consent_request }.to have_delivered_sms(
+            expect { send_consent_request }.to deliver_sms(
               :consent_school_request
             ).twice
           end
@@ -154,13 +154,13 @@ describe Notifier::Patient do
           let(:programmes) { [Programme.flu] }
 
           it "enqueues an email per parent" do
-            expect { send_consent_request }.to have_delivered_email(
+            expect { send_consent_request }.to deliver_email(
               :consent_school_request_flu
             ).twice
           end
 
           it "enqueues an sms per parent" do
-            expect { send_consent_request }.to have_delivered_sms(
+            expect { send_consent_request }.to deliver_sms(
               :consent_school_request
             ).twice
           end
@@ -180,15 +180,11 @@ describe Notifier::Patient do
             end
 
             it "does not enqueue an email" do
-              expect { send_consent_request }.not_to have_enqueued_job(
-                EmailDeliveryJob
-              )
+              expect { send_consent_request }.not_to deliver_email
             end
 
             it "does not enqueue an SMS" do
-              expect { send_consent_request }.not_to have_enqueued_job(
-                SMSDeliveryJob
-              )
+              expect { send_consent_request }.not_to deliver_sms
             end
           end
 
@@ -198,13 +194,13 @@ describe Notifier::Patient do
             end
 
             it "enqueues an email per parent" do
-              expect { send_consent_request }.to have_delivered_email(
+              expect { send_consent_request }.to deliver_email(
                 :consent_school_request_mmrv
               ).twice
             end
 
             it "enqueues an sms per parent" do
-              expect { send_consent_request }.to have_delivered_sms(
+              expect { send_consent_request }.to deliver_sms(
                 :consent_school_request_mmr
               ).twice
             end
@@ -215,13 +211,13 @@ describe Notifier::Patient do
               end
 
               it "enqueues an outbreak email per parent" do
-                expect { send_consent_request }.to have_delivered_email(
+                expect { send_consent_request }.to deliver_email(
                   :consent_school_request_mmrv_outbreak
                 ).twice
               end
 
               it "enqueues an sms" do
-                expect { send_consent_request }.to have_delivered_sms(
+                expect { send_consent_request }.to deliver_sms(
                   :consent_school_request_mmr
                 ).twice
               end
@@ -234,13 +230,13 @@ describe Notifier::Patient do
             end
 
             it "enqueues an email per parent" do
-              expect { send_consent_request }.to have_delivered_email(
+              expect { send_consent_request }.to deliver_email(
                 :consent_school_request_mmr
               ).twice
             end
 
             it "enqueues an sms" do
-              expect { send_consent_request }.to have_delivered_sms(
+              expect { send_consent_request }.to deliver_sms(
                 :consent_school_request_mmr
               ).twice
             end
@@ -251,13 +247,13 @@ describe Notifier::Patient do
               end
 
               it "enqueues an outbreak email per parent" do
-                expect { send_consent_request }.to have_delivered_email(
+                expect { send_consent_request }.to deliver_email(
                   :consent_school_request_mmr_outbreak
                 ).twice
               end
 
               it "enqueues an sms" do
-                expect { send_consent_request }.to have_delivered_sms(
+                expect { send_consent_request }.to deliver_sms(
                   :consent_school_request_mmr
                 ).twice
               end
@@ -283,7 +279,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues an email per parent" do
-          expect { send_consent_request }.to have_delivered_email(
+          expect { send_consent_request }.to deliver_email(
             :consent_clinic_request
           ).with(
             disease_types:,
@@ -292,7 +288,7 @@ describe Notifier::Patient do
             programme_types:,
             session:,
             sent_by:
-          ).and have_delivered_email(:consent_clinic_request).with(
+          ).and deliver_email(:consent_clinic_request).with(
                   disease_types:,
                   parent: parents.second,
                   patient:,
@@ -303,7 +299,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues a text per parent" do
-          expect { send_consent_request }.to have_delivered_sms(
+          expect { send_consent_request }.to deliver_sms(
             :consent_clinic_request
           ).with(
             disease_types:,
@@ -312,7 +308,7 @@ describe Notifier::Patient do
             programme_types:,
             session:,
             sent_by:
-          ).and have_delivered_sms(:consent_clinic_request).with(
+          ).and deliver_sms(:consent_clinic_request).with(
                   disease_types:,
                   parent: parents.second,
                   patient:,
@@ -328,7 +324,7 @@ describe Notifier::Patient do
           before { parent.update!(phone_receive_updates: false) }
 
           it "still enqueues a text" do
-            expect { send_consent_request }.to have_delivered_sms(
+            expect { send_consent_request }.to deliver_sms(
               :consent_clinic_request
             ).with(
               disease_types:,
@@ -367,7 +363,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues an email per parent" do
-          expect { send_consent_request }.to have_delivered_email(
+          expect { send_consent_request }.to deliver_email(
             :consent_school_request_hpv
           ).with(
             disease_types:,
@@ -376,7 +372,7 @@ describe Notifier::Patient do
             programme_types:,
             team_location:,
             sent_by:
-          ).and have_delivered_email(:consent_school_request_hpv).with(
+          ).and deliver_email(:consent_school_request_hpv).with(
                   disease_types:,
                   parent: parents.second,
                   patient:,
@@ -387,7 +383,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues a text per parent" do
-          expect { send_consent_request }.to have_delivered_sms(
+          expect { send_consent_request }.to deliver_sms(
             :consent_school_request
           ).with(
             disease_types:,
@@ -396,7 +392,7 @@ describe Notifier::Patient do
             programme_types:,
             team_location:,
             sent_by:
-          ).and have_delivered_sms(:consent_school_request).with(
+          ).and deliver_sms(:consent_school_request).with(
                   disease_types:,
                   parent: parents.second,
                   patient:,
@@ -412,7 +408,7 @@ describe Notifier::Patient do
           before { parent.update!(phone_receive_updates: false) }
 
           it "still enqueues a text" do
-            expect { send_consent_request }.to have_delivered_sms(
+            expect { send_consent_request }.to deliver_sms(
               :consent_school_request
             ).with(
               disease_types:,
@@ -429,13 +425,13 @@ describe Notifier::Patient do
           let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
           it "enqueues an email per parent" do
-            expect { send_consent_request }.to have_delivered_email(
+            expect { send_consent_request }.to deliver_email(
               :consent_school_request_doubles
             ).twice
           end
 
           it "enqueues an sms per parent" do
-            expect { send_consent_request }.to have_delivered_sms(
+            expect { send_consent_request }.to deliver_sms(
               :consent_school_request
             ).twice
           end
@@ -445,13 +441,13 @@ describe Notifier::Patient do
           let(:programmes) { [Programme.flu] }
 
           it "enqueues an email per parent" do
-            expect { send_consent_request }.to have_delivered_email(
+            expect { send_consent_request }.to deliver_email(
               :consent_school_request_flu
             ).twice
           end
 
           it "enqueues an sms per parent" do
-            expect { send_consent_request }.to have_delivered_sms(
+            expect { send_consent_request }.to deliver_sms(
               :consent_school_request
             ).twice
           end
@@ -471,15 +467,11 @@ describe Notifier::Patient do
             end
 
             it "does not enqueue an email" do
-              expect { send_consent_request }.not_to have_enqueued_job(
-                EmailDeliveryJob
-              )
+              expect { send_consent_request }.not_to deliver_email
             end
 
             it "does not enqueue an SMS" do
-              expect { send_consent_request }.not_to have_enqueued_job(
-                SMSDeliveryJob
-              )
+              expect { send_consent_request }.not_to deliver_sms
             end
           end
 
@@ -489,13 +481,13 @@ describe Notifier::Patient do
             end
 
             it "enqueues an email per parent" do
-              expect { send_consent_request }.to have_delivered_email(
+              expect { send_consent_request }.to deliver_email(
                 :consent_school_request_mmrv
               ).twice
             end
 
             it "enqueues an sms per parent" do
-              expect { send_consent_request }.to have_delivered_sms(
+              expect { send_consent_request }.to deliver_sms(
                 :consent_school_request_mmr
               ).twice
             end
@@ -507,13 +499,13 @@ describe Notifier::Patient do
             end
 
             it "enqueues an email per parent" do
-              expect { send_consent_request }.to have_delivered_email(
+              expect { send_consent_request }.to deliver_email(
                 :consent_school_request_mmr
               ).twice
             end
 
             it "enqueues an sms" do
-              expect { send_consent_request }.to have_delivered_sms(
+              expect { send_consent_request }.to deliver_sms(
                 :consent_school_request_mmr
               ).twice
             end
@@ -538,7 +530,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues an email per parent" do
-          expect { send_consent_request }.to have_delivered_email(
+          expect { send_consent_request }.to deliver_email(
             :consent_clinic_request
           ).with(
             disease_types:,
@@ -547,7 +539,7 @@ describe Notifier::Patient do
             programme_types:,
             team_location:,
             sent_by:
-          ).and have_delivered_email(:consent_clinic_request).with(
+          ).and deliver_email(:consent_clinic_request).with(
                   disease_types:,
                   parent: parents.second,
                   patient:,
@@ -558,7 +550,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues a text per parent" do
-          expect { send_consent_request }.to have_delivered_sms(
+          expect { send_consent_request }.to deliver_sms(
             :consent_clinic_request
           ).with(
             disease_types:,
@@ -567,7 +559,7 @@ describe Notifier::Patient do
             programme_types:,
             team_location:,
             sent_by:
-          ).and have_delivered_sms(:consent_clinic_request).with(
+          ).and deliver_sms(:consent_clinic_request).with(
                   disease_types:,
                   parent: parents.second,
                   patient:,
@@ -583,7 +575,7 @@ describe Notifier::Patient do
           before { parent.update!(phone_receive_updates: false) }
 
           it "still enqueues a text" do
-            expect { send_consent_request }.to have_delivered_sms(
+            expect { send_consent_request }.to deliver_sms(
               :consent_clinic_request
             ).with(
               disease_types:,
@@ -634,7 +626,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues an email per parent with the correct args" do
-        expect { send_consent_reminder }.to have_delivered_email(
+        expect { send_consent_reminder }.to deliver_email(
           :consent_school_reminder_hpv
         ).with(
           disease_types:,
@@ -643,7 +635,7 @@ describe Notifier::Patient do
           programme_types:,
           session:,
           sent_by:
-        ).and have_delivered_email(:consent_school_reminder_hpv).with(
+        ).and deliver_email(:consent_school_reminder_hpv).with(
                 disease_types:,
                 parent: parents.second,
                 patient:,
@@ -654,7 +646,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues a text per parent" do
-        expect { send_consent_reminder }.to have_delivered_sms(
+        expect { send_consent_reminder }.to deliver_sms(
           :consent_school_reminder
         ).with(
           disease_types:,
@@ -663,7 +655,7 @@ describe Notifier::Patient do
           programme_types:,
           session:,
           sent_by:
-        ).and have_delivered_sms(:consent_school_reminder).with(
+        ).and deliver_sms(:consent_school_reminder).with(
                 disease_types:,
                 parent: parents.second,
                 patient:,
@@ -679,7 +671,7 @@ describe Notifier::Patient do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { send_consent_reminder }.to have_delivered_sms(
+          expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
           ).with(
             disease_types:,
@@ -696,13 +688,13 @@ describe Notifier::Patient do
         let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
         it "enqueues an email per parent" do
-          expect { send_consent_reminder }.to have_delivered_email(
+          expect { send_consent_reminder }.to deliver_email(
             :consent_school_reminder_doubles
           ).twice
         end
 
         it "enqueues an sms per parent" do
-          expect { send_consent_reminder }.to have_delivered_sms(
+          expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
           ).twice
         end
@@ -712,13 +704,13 @@ describe Notifier::Patient do
         let(:programmes) { [Programme.flu] }
 
         it "enqueues an email per parent" do
-          expect { send_consent_reminder }.to have_delivered_email(
+          expect { send_consent_reminder }.to deliver_email(
             :consent_school_reminder_flu
           ).twice
         end
 
         it "enqueues an sms per parent" do
-          expect { send_consent_reminder }.to have_delivered_sms(
+          expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
           ).twice
         end
@@ -732,13 +724,13 @@ describe Notifier::Patient do
         end
 
         it "enqueues an email" do
-          expect { send_consent_reminder }.to have_delivered_email(
+          expect { send_consent_reminder }.to deliver_email(
             :consent_school_reminder_mmr
           ).twice
         end
 
         it "enqueues an sms" do
-          expect { send_consent_reminder }.to have_delivered_sms(
+          expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
           ).twice
         end
@@ -749,13 +741,13 @@ describe Notifier::Patient do
           end
 
           it "enqueues an email" do
-            expect { send_consent_reminder }.to have_delivered_email(
+            expect { send_consent_reminder }.to deliver_email(
               :consent_school_reminder_mmr
             ).twice
           end
 
           it "enqueues an sms" do
-            expect { send_consent_reminder }.to have_delivered_sms(
+            expect { send_consent_reminder }.to deliver_sms(
               :consent_school_reminder
             ).twice
           end
@@ -767,13 +759,13 @@ describe Notifier::Patient do
           end
 
           it "enqueues an email" do
-            expect { send_consent_reminder }.to have_delivered_email(
+            expect { send_consent_reminder }.to deliver_email(
               :consent_school_reminder_mmrv
             ).twice
           end
 
           it "enqueues an sms" do
-            expect { send_consent_reminder }.to have_delivered_sms(
+            expect { send_consent_reminder }.to deliver_sms(
               :consent_school_reminder
             ).twice
           end
@@ -784,13 +776,13 @@ describe Notifier::Patient do
             end
 
             it "enqueues an email" do
-              expect { send_consent_reminder }.to have_delivered_email(
+              expect { send_consent_reminder }.to deliver_email(
                 :consent_school_reminder_mmrv
               ).twice
             end
 
             it "enqueues an sms" do
-              expect { send_consent_reminder }.to have_delivered_sms(
+              expect { send_consent_reminder }.to deliver_sms(
                 :consent_school_reminder
               ).twice
             end
@@ -808,15 +800,11 @@ describe Notifier::Patient do
           end
 
           it "does not enqueue an email" do
-            expect { send_consent_reminder }.not_to have_enqueued_job(
-              EmailDeliveryJob
-            )
+            expect { send_consent_reminder }.not_to deliver_email
           end
 
           it "does not enqueue an SMS" do
-            expect { send_consent_reminder }.not_to have_enqueued_job(
-              SMSDeliveryJob
-            )
+            expect { send_consent_reminder }.not_to deliver_sms
           end
         end
       end
@@ -868,7 +856,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues an email per parent" do
-        expect { send_consent_reminder }.to have_delivered_email(
+        expect { send_consent_reminder }.to deliver_email(
           :consent_school_reminder_hpv
         ).with(
           disease_types:,
@@ -877,7 +865,7 @@ describe Notifier::Patient do
           programme_types:,
           session:,
           sent_by:
-        ).and have_delivered_email(:consent_school_reminder_hpv).with(
+        ).and deliver_email(:consent_school_reminder_hpv).with(
                 disease_types:,
                 parent: parents.second,
                 patient:,
@@ -888,7 +876,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues a text per parent" do
-        expect { send_consent_reminder }.to have_delivered_sms(
+        expect { send_consent_reminder }.to deliver_sms(
           :consent_school_reminder
         ).with(
           disease_types:,
@@ -897,7 +885,7 @@ describe Notifier::Patient do
           programme_types:,
           session:,
           sent_by:
-        ).and have_delivered_sms(:consent_school_reminder).with(
+        ).and deliver_sms(:consent_school_reminder).with(
                 disease_types:,
                 parent: parents.second,
                 patient:,
@@ -913,7 +901,7 @@ describe Notifier::Patient do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { send_consent_reminder }.to have_delivered_sms(
+          expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
           ).with(
             disease_types:,
@@ -930,13 +918,13 @@ describe Notifier::Patient do
         let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
         it "enqueues an email per parent" do
-          expect { send_consent_reminder }.to have_delivered_email(
+          expect { send_consent_reminder }.to deliver_email(
             :consent_school_reminder_doubles
           ).twice
         end
 
         it "enqueues an sms per parent" do
-          expect { send_consent_reminder }.to have_delivered_sms(
+          expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
           ).twice
         end
@@ -946,13 +934,13 @@ describe Notifier::Patient do
         let(:programmes) { [Programme.flu] }
 
         it "enqueues an email per parent" do
-          expect { send_consent_reminder }.to have_delivered_email(
+          expect { send_consent_reminder }.to deliver_email(
             :consent_school_reminder_flu
           ).twice
         end
 
         it "enqueues an sms per parent" do
-          expect { send_consent_reminder }.to have_delivered_sms(
+          expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
           ).twice
         end
@@ -967,13 +955,13 @@ describe Notifier::Patient do
           end
 
           it "enqueues an email" do
-            expect { send_consent_reminder }.to have_delivered_email(
+            expect { send_consent_reminder }.to deliver_email(
               :consent_school_reminder_mmr
             ).twice
           end
 
           it "enqueues an sms" do
-            expect { send_consent_reminder }.to have_delivered_sms(
+            expect { send_consent_reminder }.to deliver_sms(
               :consent_school_reminder
             ).twice
           end
@@ -984,13 +972,13 @@ describe Notifier::Patient do
             end
 
             it "enqueues an email" do
-              expect { send_consent_reminder }.to have_delivered_email(
+              expect { send_consent_reminder }.to deliver_email(
                 :consent_school_reminder_mmr
               ).twice
             end
 
             it "enqueues an sms" do
-              expect { send_consent_reminder }.to have_delivered_sms(
+              expect { send_consent_reminder }.to deliver_sms(
                 :consent_school_reminder
               ).twice
             end
@@ -1003,13 +991,13 @@ describe Notifier::Patient do
           end
 
           it "enqueues an email" do
-            expect { send_consent_reminder }.to have_delivered_email(
+            expect { send_consent_reminder }.to deliver_email(
               :consent_school_reminder_mmrv
             ).twice
           end
 
           it "enqueues an sms" do
-            expect { send_consent_reminder }.to have_delivered_sms(
+            expect { send_consent_reminder }.to deliver_sms(
               :consent_school_reminder
             ).twice
           end
@@ -1020,13 +1008,13 @@ describe Notifier::Patient do
             end
 
             it "enqueues an email" do
-              expect { send_consent_reminder }.to have_delivered_email(
+              expect { send_consent_reminder }.to deliver_email(
                 :consent_school_reminder_mmrv
               ).twice
             end
 
             it "enqueues an sms" do
-              expect { send_consent_reminder }.to have_delivered_sms(
+              expect { send_consent_reminder }.to deliver_sms(
                 :consent_school_reminder
               ).twice
             end
@@ -1189,7 +1177,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues an email per parent" do
-        expect { send_clinic_invitation }.to have_delivered_email(
+        expect { send_clinic_invitation }.to deliver_email(
           :clinic_initial_invitation
         ).with(
           parent: parents.first,
@@ -1198,7 +1186,7 @@ describe Notifier::Patient do
           team:,
           academic_year:,
           sent_by:
-        ).and have_delivered_email(:clinic_initial_invitation).with(
+        ).and deliver_email(:clinic_initial_invitation).with(
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -1209,7 +1197,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues a text per parent" do
-        expect { send_clinic_invitation }.to have_delivered_sms(
+        expect { send_clinic_invitation }.to deliver_sms(
           :clinic_initial_invitation
         ).with(
           parent: parents.first,
@@ -1218,7 +1206,7 @@ describe Notifier::Patient do
           team:,
           academic_year:,
           sent_by:
-        ).and have_delivered_sms(:clinic_initial_invitation).with(
+        ).and deliver_sms(:clinic_initial_invitation).with(
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -1241,15 +1229,11 @@ describe Notifier::Patient do
         end
 
         it "does not enqueue an email" do
-          expect { send_clinic_invitation }.not_to have_enqueued_job(
-            EmailDeliveryJob
-          )
+          expect { send_clinic_invitation }.not_to deliver_email
         end
 
         it "does not enqueue an SMS" do
-          expect { send_clinic_invitation }.not_to have_enqueued_job(
-            SMSDeliveryJob
-          )
+          expect { send_clinic_invitation }.not_to deliver_sms
         end
       end
 
@@ -1262,7 +1246,7 @@ describe Notifier::Patient do
         end
 
         it "only sends emails for the remaining programme" do
-          expect { send_clinic_invitation }.to have_delivered_email(
+          expect { send_clinic_invitation }.to deliver_email(
             :clinic_initial_invitation
           ).with(
             parent: parents.first,
@@ -1275,7 +1259,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues a text per parent" do
-          expect { send_clinic_invitation }.to have_delivered_sms(
+          expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation
           ).with(
             parent: parents.first,
@@ -1292,7 +1276,7 @@ describe Notifier::Patient do
         let(:team) { create(:team, ods_code: "RYG", programmes:) }
 
         it "enqueues an email using the CWPT-specific template" do
-          expect { send_clinic_invitation }.to have_delivered_email(
+          expect { send_clinic_invitation }.to deliver_email(
             :clinic_initial_invitation_ryg
           ).with(
             parent: parents.first,
@@ -1305,7 +1289,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues an SMS using the CWPT-specific template" do
-          expect { send_clinic_invitation }.to have_delivered_sms(
+          expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation_ryg
           ).with(
             parent: parents.first,
@@ -1322,7 +1306,7 @@ describe Notifier::Patient do
         let(:team) { create(:team, ods_code: "RT5", programmes:) }
 
         it "enqueues an email using the LPT-specific template" do
-          expect { send_clinic_invitation }.to have_delivered_email(
+          expect { send_clinic_invitation }.to deliver_email(
             :clinic_initial_invitation_rt5
           ).with(
             parent: parents.first,
@@ -1335,7 +1319,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues an SMS using the LPT-specific template" do
-          expect { send_clinic_invitation }.to have_delivered_sms(
+          expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation_rt5
           ).with(
             parent: parents.first,
@@ -1354,7 +1338,7 @@ describe Notifier::Patient do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { send_clinic_invitation }.to have_delivered_sms(
+          expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation
           ).with(
             parent:,
@@ -1394,7 +1378,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues an email per parent" do
-        expect { send_clinic_invitation }.to have_delivered_email(
+        expect { send_clinic_invitation }.to deliver_email(
           :clinic_subsequent_invitation
         ).with(
           parent: parents.first,
@@ -1403,7 +1387,7 @@ describe Notifier::Patient do
           team:,
           academic_year:,
           sent_by:
-        ).and have_delivered_email(:clinic_subsequent_invitation).with(
+        ).and deliver_email(:clinic_subsequent_invitation).with(
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -1414,7 +1398,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues a text per parent" do
-        expect { send_clinic_invitation }.to have_delivered_sms(
+        expect { send_clinic_invitation }.to deliver_sms(
           :clinic_subsequent_invitation
         ).with(
           parent: parents.first,
@@ -1423,7 +1407,7 @@ describe Notifier::Patient do
           team:,
           academic_year:,
           sent_by:
-        ).and have_delivered_sms(:clinic_subsequent_invitation).with(
+        ).and deliver_sms(:clinic_subsequent_invitation).with(
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -1439,7 +1423,7 @@ describe Notifier::Patient do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { send_clinic_invitation }.to have_delivered_sms(
+          expect { send_clinic_invitation }.to deliver_sms(
             :clinic_subsequent_invitation
           ).with(
             parent:,
@@ -1481,7 +1465,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues an email per parent" do
-        expect { send_clinic_invitation }.to have_delivered_email(
+        expect { send_clinic_invitation }.to deliver_email(
           :clinic_initial_invitation
         ).with(
           parent: parents.first,
@@ -1490,7 +1474,7 @@ describe Notifier::Patient do
           team:,
           academic_year:,
           sent_by:
-        ).and have_delivered_email(:clinic_initial_invitation).with(
+        ).and deliver_email(:clinic_initial_invitation).with(
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -1501,7 +1485,7 @@ describe Notifier::Patient do
       end
 
       it "enqueues a text per parent" do
-        expect { send_clinic_invitation }.to have_delivered_sms(
+        expect { send_clinic_invitation }.to deliver_sms(
           :clinic_initial_invitation
         ).with(
           parent: parents.first,
@@ -1510,7 +1494,7 @@ describe Notifier::Patient do
           team:,
           academic_year:,
           sent_by:
-        ).and have_delivered_sms(:clinic_initial_invitation).with(
+        ).and deliver_sms(:clinic_initial_invitation).with(
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -1526,7 +1510,7 @@ describe Notifier::Patient do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { send_clinic_invitation }.to have_delivered_sms(
+          expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation
           ).with(
             parent:,
@@ -1559,7 +1543,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues an email per parent" do
-          expect { send_clinic_invitation }.to have_delivered_email(
+          expect { send_clinic_invitation }.to deliver_email(
             :clinic_initial_invitation
           ).with(
             parent: parents.first,
@@ -1568,7 +1552,7 @@ describe Notifier::Patient do
             team:,
             academic_year:,
             sent_by:
-          ).and have_delivered_email(:clinic_initial_invitation).with(
+          ).and deliver_email(:clinic_initial_invitation).with(
                   parent: parents.second,
                   patient:,
                   programme_types: %w[hpv],
@@ -1579,7 +1563,7 @@ describe Notifier::Patient do
         end
 
         it "enqueues a text per parent" do
-          expect { send_clinic_invitation }.to have_delivered_sms(
+          expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation
           ).with(
             parent: parents.first,
@@ -1588,7 +1572,7 @@ describe Notifier::Patient do
             team:,
             academic_year:,
             sent_by:
-          ).and have_delivered_sms(:clinic_initial_invitation).with(
+          ).and deliver_sms(:clinic_initial_invitation).with(
                   parent: parents.second,
                   patient:,
                   programme_types: %w[hpv],

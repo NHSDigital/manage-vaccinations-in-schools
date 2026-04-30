@@ -72,7 +72,7 @@ describe SessionNotification do
       end
 
       it "enqueues an email per parent who gave consent" do
-        expect { create_and_send! }.to have_delivered_email(
+        expect { create_and_send! }.to deliver_email(
           :session_school_reminder
         ).with(
           parent:,
@@ -84,7 +84,7 @@ describe SessionNotification do
       end
 
       it "enqueues a text per parent" do
-        expect { create_and_send! }.to have_delivered_sms(
+        expect { create_and_send! }.to deliver_sms(
           :session_school_reminder
         ).with(
           parent:,
@@ -99,7 +99,7 @@ describe SessionNotification do
         before { parents.each { it.update!(phone_receive_updates: false) } }
 
         it "doesn't enqueues a text" do
-          expect { create_and_send! }.not_to have_delivered_sms
+          expect { create_and_send! }.not_to deliver_sms
         end
       end
 
@@ -110,7 +110,7 @@ describe SessionNotification do
         let(:programmes) { consented_programmes + [Programme.menacwy] }
 
         it "enqueues an email per parent who gave consent" do
-          expect { create_and_send! }.to have_delivered_email(
+          expect { create_and_send! }.to deliver_email(
             :session_school_reminder
           ).with(
             parent:,
@@ -122,7 +122,7 @@ describe SessionNotification do
         end
 
         it "enqueues a text per parent" do
-          expect { create_and_send! }.to have_delivered_sms(
+          expect { create_and_send! }.to deliver_sms(
             :session_school_reminder
           ).with(
             parent:,

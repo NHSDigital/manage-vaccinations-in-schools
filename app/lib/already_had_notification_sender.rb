@@ -24,7 +24,7 @@ class AlreadyHadNotificationSender
 
     parents_with_consent =
       NotificationParentSelector.new(
-        vaccination_record: @vaccination_record,
+        vaccination_record:,
         consents:
       ).parents_with_consent
 
@@ -33,7 +33,7 @@ class AlreadyHadNotificationSender
         SMSDeliveryJob.perform_later(
           :vaccination_already_had,
           parent:,
-          vaccination_record: @vaccination_record,
+          vaccination_record:,
           consent:
         )
       end
@@ -41,7 +41,7 @@ class AlreadyHadNotificationSender
       EmailDeliveryJob.perform_later(
         :vaccination_already_had,
         parent:,
-        vaccination_record: @vaccination_record,
+        vaccination_record:,
         consent:
       )
 

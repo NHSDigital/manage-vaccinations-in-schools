@@ -22,50 +22,35 @@ describe AlreadyHadNotificationSender do
   before { ActiveJob::Base.queue_adapter.enqueued_jobs.clear }
 
   shared_examples "sends no notifications" do
-    it { expect { call }.not_to have_delivered_email }
-    it { expect { call }.not_to have_delivered_sms }
+    it { expect { call }.not_to deliver_email }
+    it { expect { call }.not_to deliver_sms }
   end
 
   shared_examples "sends one email to all parents with valid consents" do
     it "sends email notifications to all parents with valid consents" do
-      call
-
-      expect(EmailDeliveryJob).to have_been_enqueued
-        .with(
-          :vaccination_already_had,
-          parent: first_parent,
-          vaccination_record:,
-          consent: first_consent
-        )
-        .exactly(1)
-        .times
-      expect(EmailDeliveryJob).to have_been_enqueued
-        .with(
-          :vaccination_already_had,
-          parent: second_parent,
-          vaccination_record:,
-          consent: second_consent
-        )
-        .exactly(1)
-        .times
+      expect { call }.to deliver_email(:vaccination_already_had).with(
+        parent: first_parent,
+        vaccination_record:,
+        consent: first_consent
+      ).once.and deliver_email(:vaccination_already_had).with(
+                   parent: second_parent,
+                   vaccination_record:,
+                   consent: second_consent
+                 ).once
     end
   end
 
   shared_examples "sends one SMS only to opted-in parents" do
-    it "sends SMS notifications only to parents who opted in for updates" do
-      call
+    it "sends SMS notifications to parents who opted in for updates" do
+      expect { call }.to deliver_sms(:vaccination_already_had).with(
+        parent: first_parent,
+        vaccination_record:,
+        consent: first_consent
+      )
+    end
 
-      expect(SMSDeliveryJob).to have_been_enqueued
-        .with(
-          :vaccination_already_had,
-          parent: first_parent,
-          vaccination_record:,
-          consent: first_consent
-        )
-        .exactly(1)
-        .times
-      expect(SMSDeliveryJob).not_to have_been_enqueued.with(
-        :vaccination_already_had,
+    it "doesn't send SMS notifications to parents who haven't opted in" do
+      expect { call }.not_to deliver_sms(:vaccination_already_had).with(
         parent: second_parent,
         vaccination_record:,
         consent: second_consent
@@ -74,7 +59,7 @@ describe AlreadyHadNotificationSender do
   end
 
   shared_context "with valid consents" do
-    let!(:first_consent) do
+    let(:first_consent) do
       create(
         :consent,
         :given,
@@ -84,7 +69,7 @@ describe AlreadyHadNotificationSender do
         academic_year:
       )
     end
-    let!(:second_consent) do
+    let(:second_consent) do
       create(
         :consent,
         :given,
@@ -93,18 +78,6 @@ describe AlreadyHadNotificationSender do
         parent: second_parent,
         academic_year:
       )
-    end
-    let(:first_parent_job_args) do
-      [
-        :vaccination_already_had,
-        { parent: first_parent, vaccination_record:, consent: first_consent }
-      ]
-    end
-    let(:second_parent_job_args) do
-      [
-        :vaccination_already_had,
-        { parent: second_parent, vaccination_record:, consent: second_consent }
-      ]
     end
   end
 
@@ -198,14 +171,7 @@ describe AlreadyHadNotificationSender do
             end
 
             it "ignores invalidated consents" do
-              call
-
-              expect(EmailDeliveryJob).not_to have_been_enqueued.with(
-                *first_parent_job_args
-              )
-              expect(EmailDeliveryJob).to have_been_enqueued.with(
-                *second_parent_job_args
-              )
+              expect { call }.not_to deliver_email.with(parent: first_parent)
             end
           end
 
@@ -218,14 +184,7 @@ describe AlreadyHadNotificationSender do
             end
 
             it "ignores refused consents" do
-              call
-
-              expect(EmailDeliveryJob).not_to have_been_enqueued.with(
-                *first_parent_job_args
-              )
-              expect(EmailDeliveryJob).to have_been_enqueued.with(
-                *second_parent_job_args
-              )
+              expect { call }.not_to deliver_email.with(parent: first_parent)
             end
           end
 
@@ -238,14 +197,7 @@ describe AlreadyHadNotificationSender do
             end
 
             it "excludes consents notified after this vaccination record" do
-              call
-
-              expect(EmailDeliveryJob).not_to have_been_enqueued.with(
-                *first_parent_job_args
-              )
-              expect(EmailDeliveryJob).to have_been_enqueued.with(
-                *second_parent_job_args
-              )
+              expect { call }.not_to deliver_email.with(parent: first_parent)
             end
           end
 
@@ -257,16 +209,7 @@ describe AlreadyHadNotificationSender do
               )
             end
 
-            it "includes consents notified before this vaccination record" do
-              call
-
-              expect(EmailDeliveryJob).to have_been_enqueued.with(
-                *first_parent_job_args
-              )
-              expect(EmailDeliveryJob).to have_been_enqueued.with(
-                *second_parent_job_args
-              )
-            end
+            include_examples "sends one email to all parents with valid consents"
           end
         end
 

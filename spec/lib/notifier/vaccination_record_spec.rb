@@ -25,13 +25,13 @@ describe Notifier::VaccinationRecord do
       before { create(:consent, :given, patient:, programme:) }
 
       it "sends an email" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :vaccination_administered
         ).with(parent:, vaccination_record:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to deliver_sms(
           :vaccination_administered
         ).with(parent:, vaccination_record:, sent_by:)
       end
@@ -51,13 +51,13 @@ describe Notifier::VaccinationRecord do
       end
 
       it "sends an email" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :vaccination_not_administered
         ).with(parent:, vaccination_record:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to deliver_sms(
           :vaccination_not_administered
         ).with(parent:, vaccination_record:, sent_by:)
       end
@@ -89,13 +89,13 @@ describe Notifier::VaccinationRecord do
         end
 
         it "sends an email" do
-          expect { send_confirmation }.to have_delivered_email(
+          expect { send_confirmation }.to deliver_email(
             :vaccination_administered
           ).with(parent:, vaccination_record:, sent_by:)
         end
 
         it "sends a text message" do
-          expect { send_confirmation }.to have_delivered_sms(
+          expect { send_confirmation }.to deliver_sms(
             :vaccination_administered
           ).with(parent:, vaccination_record:, sent_by:)
         end
@@ -107,11 +107,11 @@ describe Notifier::VaccinationRecord do
         let(:notify_parents) { false }
 
         it "doesn't send an email" do
-          expect { send_confirmation }.not_to have_delivered_email
+          expect { send_confirmation }.not_to deliver_email
         end
 
         it "doesn't send a text message" do
-          expect { send_confirmation }.not_to have_delivered_sms
+          expect { send_confirmation }.not_to deliver_sms
         end
       end
     end
@@ -122,11 +122,11 @@ describe Notifier::VaccinationRecord do
       before { create(:consent, :given, patient:, programme:) }
 
       it "doesn't send an email" do
-        expect { send_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to deliver_email
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -136,11 +136,11 @@ describe Notifier::VaccinationRecord do
       before { create(:consent, :given, patient:, programme:) }
 
       it "doesn't send an email" do
-        expect { send_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to deliver_email
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -150,11 +150,11 @@ describe Notifier::VaccinationRecord do
       before { create(:consent, :given, patient:, programme:) }
 
       it "doesn't send an email" do
-        expect { send_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to deliver_email
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -164,11 +164,11 @@ describe Notifier::VaccinationRecord do
       before { create(:consent, :given, patient:, programme:) }
 
       it "sends an email" do
-        expect { send_confirmation }.to have_delivered_email
+        expect { send_confirmation }.to deliver_email
       end
 
       it "sends a text message" do
-        expect { send_confirmation }.to have_delivered_sms
+        expect { send_confirmation }.to deliver_sms
       end
     end
   end

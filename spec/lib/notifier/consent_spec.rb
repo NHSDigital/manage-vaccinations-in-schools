@@ -22,13 +22,13 @@ describe Notifier::Consent do
 
     context "when the parents agree, triage is required and it is safe to vaccinate" do
       it "sends an email saying triage was needed and vaccination will happen" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :triage_vaccination_will_happen
         ).with(consent:, session:, sent_by:)
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -42,7 +42,7 @@ describe Notifier::Consent do
       end
 
       it "sends a different email tailored to MMR second dose" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :triage_vaccination_will_happen_mmr_second_dose
         ).with(consent:, session:, sent_by:)
       end
@@ -59,13 +59,13 @@ describe Notifier::Consent do
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :triage_vaccination_wont_happen
         ).with(consent:, session:, sent_by:)
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -75,13 +75,13 @@ describe Notifier::Consent do
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :triage_vaccination_at_clinic
         ).with(consent:, session:, sent_by:)
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
 
       context "when the team is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
@@ -89,7 +89,7 @@ describe Notifier::Consent do
         let(:team) { create(:team, ods_code: "RYG") }
 
         it "enqueues an email using the CWPT-specific template" do
-          expect { send_confirmation }.to have_delivered_email(
+          expect { send_confirmation }.to deliver_email(
             :triage_vaccination_at_clinic_ryg
           ).with(consent:, session:, sent_by:)
         end
@@ -100,7 +100,7 @@ describe Notifier::Consent do
         let(:team) { create(:team, ods_code: "RT5") }
 
         it "enqueues an email using the LPT-specific template" do
-          expect { send_confirmation }.to have_delivered_email(
+          expect { send_confirmation }.to deliver_email(
             :triage_vaccination_at_clinic_rt5
           ).with(consent:, session:, sent_by:)
         end
@@ -113,13 +113,13 @@ describe Notifier::Consent do
       end
 
       it "sends an email saying vaccination will happen" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :consent_confirmation_given
         ).with(consent:, session:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to deliver_sms(
           :consent_confirmation_given
         ).with(consent:, session:, sent_by:)
       end
@@ -129,13 +129,13 @@ describe Notifier::Consent do
       let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
 
       it "sends an email saying triage is required" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :consent_confirmation_triage
         ).with(consent:, session:, sent_by:)
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -143,11 +143,11 @@ describe Notifier::Consent do
       let(:patient) { create(:patient, :consent_not_provided, session:) }
 
       it "doesn't send an email" do
-        expect { send_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to deliver_email
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -158,11 +158,11 @@ describe Notifier::Consent do
       end
 
       it "doesn't send an email" do
-        expect { send_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to deliver_email
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -170,13 +170,13 @@ describe Notifier::Consent do
       let(:patient) { create(:patient, :consent_refused, session:) }
 
       it "sends an email confirming they've refused consent" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :consent_confirmation_refused
         ).with(consent:, session:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to deliver_sms(
           :consent_confirmation_refused
         ).with(consent:, session:, sent_by:)
       end
@@ -193,11 +193,11 @@ describe Notifier::Consent do
       end
 
       it "doesn't send an email" do
-        expect { send_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to deliver_email
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -212,11 +212,11 @@ describe Notifier::Consent do
       end
 
       it "doesn't send an email" do
-        expect { send_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to deliver_email
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -231,11 +231,11 @@ describe Notifier::Consent do
       end
 
       it "doesn't send an email" do
-        expect { send_confirmation }.not_to have_delivered_email
+        expect { send_confirmation }.not_to deliver_email
       end
 
       it "doesn't send a text message" do
-        expect { send_confirmation }.not_to have_delivered_sms
+        expect { send_confirmation }.not_to deliver_sms
       end
     end
 
@@ -250,13 +250,13 @@ describe Notifier::Consent do
       end
 
       it "sends an email" do
-        expect { send_confirmation }.to have_delivered_email(
+        expect { send_confirmation }.to deliver_email(
           :consent_confirmation_given
         ).with(consent:, session:, sent_by:)
       end
 
       it "sends a text message" do
-        expect { send_confirmation }.to have_delivered_sms(
+        expect { send_confirmation }.to deliver_sms(
           :consent_confirmation_given
         ).with(consent:, session:, sent_by:)
       end
