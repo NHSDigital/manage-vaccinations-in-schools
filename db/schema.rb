@@ -652,11 +652,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_175616) do
     t.daterange "date_range", default: -::Float::INFINITY...::Float::INFINITY, null: false
     t.bigint "location_id", null: false
     t.bigint "patient_id", null: false
+    t.bigint "school_id"
     t.datetime "updated_at", null: false
     t.index ["location_id", "academic_year", "patient_id"], name: "idx_on_location_id_academic_year_patient_id_3237b32fa0", unique: true
     t.index ["location_id", "academic_year"], name: "index_patient_locations_on_location_id_and_academic_year"
     t.index ["location_id"], name: "index_patient_locations_on_location_id"
     t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
+    t.index ["patient_id", "school_id", "academic_year"], name: "idx_on_patient_id_school_id_academic_year_652216fa07", unique: true
+    t.index ["school_id", "academic_year", "patient_id"], name: "idx_on_school_id_academic_year_patient_id_c647e75f26", unique: true
+    t.index ["school_id", "academic_year"], name: "index_patient_locations_on_school_id_and_academic_year"
+    t.index ["school_id"], name: "index_patient_locations_on_school_id"
   end
 
   create_table "patient_merge_log_entries", force: :cascade do |t|
@@ -1166,6 +1171,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_175616) do
   add_foreign_key "patient_changesets", "locations", column: "school_id"
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_locations", "locations"
+  add_foreign_key "patient_locations", "locations", column: "school_id"
   add_foreign_key "patient_locations", "patients"
   add_foreign_key "patient_merge_log_entries", "patients", on_delete: :cascade
   add_foreign_key "patient_merge_log_entries", "users"

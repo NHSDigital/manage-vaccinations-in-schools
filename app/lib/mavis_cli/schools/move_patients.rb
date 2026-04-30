@@ -70,7 +70,7 @@ module MavisCLI
         PatientLocation.where(
           academic_year:,
           location_id: old_loc.id
-        ).update_all(location_id: new_loc.id)
+        ).update_all(location_id: new_loc.id, school_id: new_loc.id)
         ConsentForm.where(team_location_id: old_team_location.id).update_all(
           team_location_id: new_team_location.id
         )
