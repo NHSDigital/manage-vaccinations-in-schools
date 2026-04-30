@@ -23,6 +23,12 @@ describe SessionsHelper do
       it { should eq("Open from 23 September until 13 October") }
     end
 
+    context "when the consent period closes today" do
+      let(:date) { Date.new(2024, 10, 2) }
+
+      it { should eq("Closes today at midnight") }
+    end
+
     context "when in the far future" do
       let(:date) { Date.new(2025, 1, 1) }
 

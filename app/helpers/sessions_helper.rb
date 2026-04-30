@@ -9,6 +9,8 @@ module SessionsHelper
       "Not provided"
     elsif open_at.future?
       "Opens #{open_at.to_fs(:short)}"
+    elsif close_at.today?
+      "Closes today at midnight"
     elsif close_at.future?
       "Open from #{open_at.to_fs(:short)} until #{close_at.to_fs(:short)}"
     else
