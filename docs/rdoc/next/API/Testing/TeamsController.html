@@ -802,6 +802,7 @@
   <span class="ruby-constant">GillickAssessment</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">location_id:</span> <span class="ruby-identifier">location_ids_to_delete</span>).<span class="ruby-identifier">delete_all</span>
   <span class="ruby-constant">PatientLocation</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">location_id:</span> <span class="ruby-identifier">location_ids_to_delete</span>).<span class="ruby-identifier">delete_all</span>
   <span class="ruby-constant">PreScreening</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">location_id:</span> <span class="ruby-identifier">location_ids_to_delete</span>).<span class="ruby-identifier">delete_all</span>
+  <span class="ruby-constant">SchoolMove</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">school_id:</span> <span class="ruby-identifier">location_ids_to_delete</span>).<span class="ruby-identifier">delete_all</span>
 
   <span class="ruby-identifier">team_location_ids</span> =
     <span class="ruby-constant">TeamLocation</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">location_id:</span> <span class="ruby-identifier">location_ids_to_delete</span>).<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:id</span>)
