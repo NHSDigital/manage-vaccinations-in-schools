@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class MavisCLI::Reports::SendToCareplus - Mavis Documentation</title>
+<title>class API::Testing::RefreshReportingController - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,MavisCLI::Reports::SendToCareplus"
+    content="ruby,class,API::Testing::RefreshReportingController"
   >
 
     <meta
       name="description"
-      content="Documentation for the MavisCLI::Reports::SendToCareplus class"
+      content="Documentation for the API::Testing::RefreshReportingController class"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class MavisCLI::Reports::SendToCareplus - Mavis Documentation">
+<meta property="og:title" content="class API::Testing::RefreshReportingController - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for MavisCLI::Reports::SendToCareplus class - API reference and code examples"
+      content="Documentation for API::Testing::RefreshReportingController class - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class MavisCLI::Reports::SendToCareplus - Mavis Documentation">
+<meta name="twitter:title" content="class API::Testing::RefreshReportingController - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for MavisCLI::Reports::SendToCareplus class - API reference and code examples"
+      content="Documentation for API::Testing::RefreshReportingController class - API reference and code examples"
     >
 
 
@@ -539,7 +539,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li>Dry::CLI::Command</li></ul>
+    <ul><li><a href="BaseController.html">API::Testing::BaseController</a><ul><li>ActionController::API</li></ul></li></ul>
   </details>
 </div>
 
@@ -564,7 +564,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-call">call</a></li>
+        <li ><a href="#method-i-create">create</a></li>
 
       </ul>
     </details>
@@ -589,35 +589,35 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-maviscli-reports-sendtocareplus">
+<main role="main" aria-labelledby="class-api-testing-refreshreportingcontroller">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
       
       <li>
         
-        <a href="../../MavisCLI.html">MavisCLI</a><span>::</span>
+        <a href="../../API.html">API</a><span>::</span>
         
       </li>
       
       <li>
         
-        <a href="../../MavisCLI/Reports.html">Reports</a><span>::</span>
+        <a href="../../API/Testing.html">Testing</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>SendToCareplus</span>
+        <span>RefreshReportingController</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-MavisCLI::Reports::SendToCareplus" class="legacy-anchor"></span>
-  <h1 id="class-maviscli-reports-sendtocareplus" class="anchor-link class">
-    class MavisCLI::Reports::SendToCareplus
+  <span id="class-API::Testing::RefreshReportingController" class="legacy-anchor"></span>
+  <h1 id="class-api-testing-refreshreportingcontroller" class="anchor-link class">
+    class API::Testing::RefreshReportingController
   </h1>
 
   <section class="description">
@@ -631,39 +631,6 @@
 
 
 
-
-    <section class="constants-list">
-      <header>
-        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
-      </header>
-      <dl>
-
-        <dt id="FALLBACK_NAMESPACE">FALLBACK_NAMESPACE</dt>
-
-        <dd>
-
-          
-        </dd>
-
-
-        <dt id="FALLBACK_PASSWORD">FALLBACK_PASSWORD</dt>
-
-        <dd>
-
-          
-        </dd>
-
-
-        <dt id="FALLBACK_USERNAME">FALLBACK_USERNAME</dt>
-
-        <dd>
-
-          
-        </dd>
-
-
-      </dl>
-    </section>
 
 
 
@@ -684,13 +651,13 @@
        </header>
 
 
-      <div id="method-i-call" class="method-detail anchor-link ">
+      <div id="method-i-create" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-call" title="Link to this method">
-                <span class="method-name">call</span>
-                <span class="method-args">(input:, ods_code: nil, workgroup: nil, **)</span>
+              <a href="#method-i-create" title="Link to this method">
+                <span class="method-name">create</span>
+                <span class="method-args">()</span>
               </a>
             </div>
 
@@ -702,36 +669,15 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/reports/send_to_careplus.rb, line 26</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">input:</span>, <span class="ruby-value">ods_code:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">workgroup:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span>)
-  <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">load_rails</span>
-
-  <span class="ruby-keyword">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">input</span>)
-    <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;File not found: &#39;#{input}&#39;&quot;</span>
-    <span class="ruby-keyword">return</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">username</span>, <span class="ruby-identifier">password</span>, <span class="ruby-identifier">namespace</span> =
-    <span class="ruby-identifier">resolve_credentials</span>(<span class="ruby-value">ods_code:</span>, <span class="ruby-value">workgroup:</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">username</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-identifier">csv_payload</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">input</span>)
-
-  <span class="ruby-identifier">response</span> =
-    <span class="ruby-constant">Careplus</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">send_csv</span>(
-      <span class="ruby-value">username:</span>,
-      <span class="ruby-value">password:</span>,
-      <span class="ruby-value">namespace:</span>,
-      <span class="ruby-value">payload:</span> <span class="ruby-identifier">csv_payload</span>
-    )
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTPSuccess</span>)
-    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Success (HTTP #{response.code})&quot;</span>
-    <span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>
+          <div class="method-source-code" id="create-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/api/testing/refresh_reporting_controller.rb, line 4</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:wait</span>].<span class="ruby-identifier">present?</span>
+    <span class="ruby-constant">ReportingAPI</span><span class="ruby-operator">::</span><span class="ruby-constant">RefreshJob</span>.<span class="ruby-identifier">perform_now</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">status:</span> <span class="ruby-value">:ok</span>
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;Request failed with HTTP #{response.code}: #{response.message}&quot;</span>
-    <span class="ruby-identifier">warn</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>
+    <span class="ruby-constant">ReportingAPI</span><span class="ruby-operator">::</span><span class="ruby-constant">RefreshJob</span>.<span class="ruby-identifier">perform_later</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">status:</span> <span class="ruby-value">:accepted</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
