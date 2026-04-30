@@ -53,7 +53,12 @@ class PatientImport < ApplicationRecord
         ReviewPatientChangesetJob.perform_later(cs.id)
       end
       if changesets.with_postcode.any?
-        enqueue_pds_cascading_searches(changesets.with_postcode)
+        changesets.with_postcode.find_each do |cs|
+          PDSCascadingSearchJob.set(queue: :imports).perform_later(
+            cs,
+            queue: :imports
+          )
+        end
         return
       end
     end
@@ -166,15 +171,6 @@ class PatientImport < ApplicationRecord
     review_changesets.each do |cs|
       cs.calculating_review!
       ReviewPatientChangesetJob.perform_later(cs.id)
-    end
-  end
-
-  def enqueue_pds_cascading_searches(changesets)
-    changesets.find_each do |cs|
-      PDSCascadingSearchJob.set(queue: :imports).perform_later(
-        cs,
-        queue: :imports
-      )
     end
   end
 
