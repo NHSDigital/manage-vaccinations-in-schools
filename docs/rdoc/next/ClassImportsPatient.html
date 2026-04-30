@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class ClassImportsPatient: bigint not null Indexes index_class_imports_patients_on_class_import_id_and_patient_id (class_import_id,patient_id) UNIQUE Foreign Keys"
+      content="class ClassImportsPatient: bigint not null Indexes index_class_imports_patients_on_class_import_id_and_patient_id (class_import_id,patient_id) UNIQUE index_class_"
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="bigint not null Indexes index_class_imports_patients_on_class_import_id_and_patient_id (class_import_id,patient_id) UNIQUE Foreign Keys">
+    <meta property="og:description" content="bigint not null Indexes index_class_imports_patients_on_class_import_id_and_patient_id (class_import_id,patient_id) UNIQUE index_class_">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="bigint not null Indexes index_class_imports_patients_on_class_import_id_and_patient_id (class_import_id,patient_id) UNIQUE Foreign Keys">
+    <meta name="twitter:description" content="bigint not null Indexes index_class_imports_patients_on_class_import_id_and_patient_id (class_import_id,patient_id) UNIQUE index_class_">
 
 
 
@@ -585,7 +585,8 @@ patient_id      :bigint           not null</pre>
 
 <p>Indexes</p>
 
-<pre>index_class_imports_patients_on_class_import_id_and_patient_id  (class_import_id,patient_id) UNIQUE</pre>
+<pre>index_class_imports_patients_on_class_import_id_and_patient_id  (class_import_id,patient_id) UNIQUE
+index_class_imports_patients_on_patient_id_and_class_import_id  (patient_id,class_import_id) UNIQUE</pre>
 
 <p>Foreign Keys</p>
 

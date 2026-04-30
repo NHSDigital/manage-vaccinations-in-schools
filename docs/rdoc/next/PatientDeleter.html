@@ -665,7 +665,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_deleter.rb, line 51</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_deleter.rb, line 53</span>
   <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">call</span>
 
   <span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
@@ -673,7 +673,10 @@
   <span class="ruby-identifier">private</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_related</span>(<span class="ruby-identifier">scope</span>)
-    <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-ivar">@patients</span>).<span class="ruby-identifier">delete_all</span>
+    <span class="ruby-identifier">deletion_scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-ivar">@patients</span>)
+
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Deleting #{deletion_scope.count} #{scope.name.pluralize}&quot;</span>
+    <span class="ruby-identifier">deletion_scope</span>.<span class="ruby-identifier">delete_all</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -798,13 +801,15 @@
     <span class="ruby-identifier">parent_ids</span> =
       <span class="ruby-constant">Parent</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">parent_relationships:</span> <span class="ruby-value">:patient</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-ivar">@patients</span>).<span class="ruby-identifier">ids</span>
     <span class="ruby-identifier">delete_related</span>(<span class="ruby-constant">ParentRelationship</span>)
-    <span class="ruby-constant">Parent</span>
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">parent_ids</span>)
-      .<span class="ruby-identifier">where</span>
-      .<span class="ruby-identifier">missing</span>(<span class="ruby-value">:parent_relationships</span>)
-      .<span class="ruby-identifier">destroy_all</span>
+    <span class="ruby-identifier">floating_parents</span> =
+      <span class="ruby-constant">Parent</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">parent_ids</span>).<span class="ruby-identifier">where</span>.<span class="ruby-identifier">missing</span>(<span class="ruby-value">:parent_relationships</span>)
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Deleting #{floating_parents.count} floating parents&quot;</span>
+    <span class="ruby-identifier">floating_parents</span>.<span class="ruby-identifier">destroy_all</span>
 
-    <span class="ruby-ivar">@patients</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:destroy</span>)
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Deleting #{@patients.count} patient records&quot;</span>
+    <span class="ruby-ivar">@patients</span>.<span class="ruby-identifier">find_each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:destroy</span>)
+
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;PatientDeleter complete&quot;</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -845,9 +850,12 @@
             </details>
           </div>
           <div class="method-source-code" id="delete_related-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_deleter.rb, line 57</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_deleter.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_related</span>(<span class="ruby-identifier">scope</span>)
-  <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-ivar">@patients</span>).<span class="ruby-identifier">delete_all</span>
+  <span class="ruby-identifier">deletion_scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:patient</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-ivar">@patients</span>)
+
+  <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Deleting #{deletion_scope.count} #{scope.name.pluralize}&quot;</span>
+  <span class="ruby-identifier">deletion_scope</span>.<span class="ruby-identifier">delete_all</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
