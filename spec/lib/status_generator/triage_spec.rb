@@ -121,6 +121,41 @@ describe StatusGenerator::Triage do
       it { should be(:safe_to_vaccinate) }
     end
 
+    context "with a safe to vaccinate triage that no longer matches the latest consent" do
+      let(:programme) { Programme.flu }
+      let(:parent) { create(:parent) }
+      let(:patient) { create(:patient, parents: [parent]) }
+
+      before do
+        create(
+          :consent,
+          :given_nasal_or_injection,
+          :needing_triage,
+          patient:,
+          parent:,
+          programme:,
+          submitted_at: 2.days.ago
+        )
+        create(
+          :triage,
+          :safe_to_vaccinate,
+          patient:,
+          programme:,
+          created_at: 1.day.ago
+        )
+        create(
+          :consent,
+          :given_nasal,
+          patient:,
+          parent:,
+          programme:,
+          submitted_at: Time.current
+        )
+      end
+
+      it { should be(:required) }
+    end
+
     context "with a do not vaccinate triage" do
       before { create(:triage, :do_not_vaccinate, patient:, programme:) }
 

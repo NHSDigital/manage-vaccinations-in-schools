@@ -102,7 +102,8 @@ class StatusGenerator::Triage
 
   def status_should_be_safe_to_vaccinate?
     return false if vaccinated?
-    latest_triage&.safe_to_vaccinate?
+
+    latest_triage&.safe_to_vaccinate? && !triage_contradicted_by_consent?
   end
 
   def status_should_be_do_not_vaccinate?
@@ -125,10 +126,19 @@ class StatusGenerator::Triage
     return true if latest_triage&.keep_in_triage?
     return true if latest_triage&.expired?
 
+    if latest_triage&.safe_to_vaccinate? && triage_contradicted_by_consent?
+      return true
+    end
+
     return false if latest_consents.empty?
 
-    consent_generator.status == :given &&
+    consent_is_currently_given? &&
       (consent_requires_triage? || vaccination_history_requires_triage?)
+  end
+
+  def triage_contradicted_by_consent?
+    consent_is_currently_given? &&
+      consent_generator.vaccine_methods.exclude?(latest_triage.vaccine_method)
   end
 
   def consent_generator
@@ -153,5 +163,9 @@ class StatusGenerator::Triage
   def latest_triage
     @latest_triage ||=
       TriageFinder.call(triages, programme_type:, academic_year:)
+  end
+
+  def consent_is_currently_given?
+    consent_generator.status == :given
   end
 end
