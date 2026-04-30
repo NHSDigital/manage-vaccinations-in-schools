@@ -39,7 +39,7 @@ class PatientImport < ApplicationRecord
 
     changesets =
       rows.each_with_index.map do |row, row_number|
-        PatientChangeset.from_import_row(row:, import: self, row_number:)
+        PatientChangeset.create_from_import_row(row:, import: self, row_number:)
       end
 
     if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)

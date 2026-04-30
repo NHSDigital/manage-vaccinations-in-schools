@@ -33,7 +33,7 @@
 #
 describe PatientChangeset do
   subject(:changeset) do
-    described_class.from_import_row(
+    described_class.create_from_import_row(
       row: import_row,
       import: create(:class_import, team:),
       row_number: 1
