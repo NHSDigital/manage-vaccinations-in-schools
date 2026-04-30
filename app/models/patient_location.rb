@@ -16,7 +16,6 @@
 #
 #  idx_on_patient_id_school_id_academic_year_652216fa07    (patient_id,school_id,academic_year) UNIQUE
 #  idx_on_school_id_academic_year_patient_id_c647e75f26    (school_id,academic_year,patient_id) UNIQUE
-#  index_patient_locations_on_location_id                  (location_id)
 #  index_patient_locations_on_school_id                    (school_id)
 #  index_patient_locations_on_school_id_and_academic_year  (school_id,academic_year)
 #
@@ -27,8 +26,6 @@
 #
 
 class PatientLocation < ApplicationRecord
-  self.ignored_columns = %i[location_id]
-
   audited associated_with: :patient
   has_associated_audits
 
