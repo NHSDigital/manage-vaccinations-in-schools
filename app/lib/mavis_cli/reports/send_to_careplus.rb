@@ -88,9 +88,8 @@ module MavisCLI
 
         team = teams.sole
 
-        unless team.careplus_username.present? &&
-                 team.careplus_password.present?
-          warn "Team '#{team.name}' does not have CarePlus credentials configured."
+        unless team.has_careplus_credentials?
+          warn "Team '#{team.name}' needs the CarePlus username, password, and namespace configured to send reports."
           return nil, nil, nil
         end
 

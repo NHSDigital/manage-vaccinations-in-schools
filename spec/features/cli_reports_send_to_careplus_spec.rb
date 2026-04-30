@@ -115,7 +115,7 @@ describe "mavis reports send-to-careplus" do
         )
 
         then_the_error_output_includes(
-          "does not have CarePlus credentials configured"
+          "needs the CarePlus username, password, and namespace configured to send reports."
         )
         and_no_request_was_made
       end

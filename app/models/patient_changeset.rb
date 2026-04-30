@@ -383,7 +383,10 @@ class PatientChangeset < ApplicationRecord
     end
 
     if in_pending_changes && !in_existing_patient
-      existing_patient[attribute] = child_attributes[attribute.to_s]
+      existing_patient.public_send(
+        "#{attribute}=",
+        child_attributes[attribute.to_s]
+      )
     end
   end
 

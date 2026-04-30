@@ -4,7 +4,12 @@ describe Careplus::AutomatedReportSender do
   subject(:call) { described_class.call(team_id: team.id) }
 
   let(:team) do
-    create(:team, :with_careplus_enabled, programmes: Programme.all)
+    create(
+      :team,
+      :with_careplus_enabled,
+      programmes: Programme.all,
+      careplus_automated_reports_enabled_at: Time.zone.local(2025, 8, 28, 10)
+    )
   end
   let(:programme) { Programme.hpv }
   let(:session) { create(:session, team:, programmes: [programme]) }
@@ -162,6 +167,89 @@ describe Careplus::AutomatedReportSender do
 
   context "when the team is no longer eligible for automated reports" do
     before { team.update!(careplus_username: nil) }
+
+    it "does nothing" do
+      expect { call }.not_to change(CareplusReport, :count)
+    end
+  end
+
+  context "when a patient gains an NHS number yesterday" do
+    it "includes records created after the integration was enabled" do
+      patient =
+        create(
+          :patient,
+          session:,
+          nhs_number_first_added_at: Time.zone.local(2025, 8, 31, 9)
+        )
+      record =
+        create(
+          :vaccination_record,
+          patient:,
+          session:,
+          programme:,
+          performed_at: Date.new(2025, 8, 29),
+          created_at: Time.zone.local(2025, 8, 29, 12),
+          updated_at: Time.zone.local(2025, 8, 29, 12)
+        )
+
+      expect { call }.to change(CareplusReport, :count).by(1)
+
+      expect(CareplusReport.last.vaccination_records).to contain_exactly(record)
+    end
+
+    it "does not include records created before the integration was enabled" do
+      team.update!(
+        careplus_automated_reports_enabled_at: Time.zone.local(2025, 8, 30, 10)
+      )
+
+      patient =
+        create(
+          :patient,
+          session:,
+          nhs_number_first_added_at: Time.zone.local(2025, 8, 31, 9)
+        )
+      create(
+        :vaccination_record,
+        patient:,
+        session:,
+        programme:,
+        performed_at: Date.new(2025, 8, 29),
+        created_at: Time.zone.local(2025, 8, 29, 12),
+        updated_at: Time.zone.local(2025, 8, 29, 12)
+      )
+
+      expect { call }.not_to change(CareplusReport, :count)
+    end
+
+    it "deduplicates records that also changed yesterday" do
+      patient =
+        create(
+          :patient,
+          session:,
+          nhs_number_first_added_at: Time.zone.local(2025, 8, 31, 9)
+        )
+      record =
+        create(
+          :vaccination_record,
+          patient:,
+          session:,
+          programme:,
+          performed_at: yesterday,
+          created_at: Time.zone.local(2025, 8, 29, 12),
+          updated_at: Time.zone.local(2025, 8, 31, 12)
+        )
+
+      expect { call }.to change(CareplusReport, :count).by(1).and(
+        change(CareplusReportVaccinationRecord, :count).by(1)
+      )
+
+      expect(CareplusReport.last.vaccination_records).to contain_exactly(record)
+      expect(WebMock).to have_requested(:post, endpoint).once
+    end
+  end
+
+  context "when CarePlus is configured but not manually enabled" do
+    before { team.update!(careplus_automated_reports_enabled_at: nil) }
 
     it "does nothing" do
       expect { call }.not_to change(CareplusReport, :count)

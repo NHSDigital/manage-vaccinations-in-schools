@@ -130,6 +130,19 @@ describe CommitPatientChangesetsJob do
       expect(gae.parents).not_to be_empty
     end
 
+    it "sets nhs_number_first_added_at for newly imported patients with NHS numbers" do
+      freeze_time do
+        perform_job
+
+        timestamps =
+          Patient.where(nhs_number: %w[9990000018 9990000026 9990000034]).pluck(
+            :nhs_number_first_added_at
+          )
+
+        expect(timestamps).to all(eq(Time.current))
+      end
+    end
+
     it "stores statistics on the import" do
       # stree-ignore
       expect {
@@ -196,6 +209,38 @@ describe CommitPatientChangesetsJob do
           expect(parent_relationship.parent_id).to eq(parent.id)
           expect(parent_relationship).to be_father
         end
+      end
+    end
+
+    context "with an existing patient matching the import except for the NHS number" do
+      let!(:patient) do
+        create(
+          :patient,
+          given_name: "Jimmy",
+          preferred_given_name: "Jim",
+          family_name: "Smith",
+          date_of_birth: Date.new(2010, 1, 2),
+          nhs_number: nil,
+          nhs_number_first_added_at: nil,
+          address_line_1: "10 Downing Street",
+          address_town: "London",
+          address_postcode: "SW1A 1AA",
+          registration: "ABC",
+          school: location,
+          parents: []
+        )
+      end
+
+      before { PatientChangeset.all.map(&:calculate_review_data!) }
+
+      it "sets nhs_number_first_added_at when an NHS number is auto-accepted onto an existing patient" do
+        freeze_time do
+          expect { perform_job }.to change {
+            patient.reload.nhs_number_first_added_at
+          }.from(nil).to(Time.current)
+        end
+
+        expect(patient.reload.nhs_number).to eq("9990000026")
       end
     end
 

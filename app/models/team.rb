@@ -4,29 +4,30 @@
 #
 # Table name: teams
 #
-#  id                              :bigint           not null, primary key
-#  careplus_namespace              :string
-#  careplus_password               :string
-#  careplus_staff_code             :string
-#  careplus_staff_type             :string
-#  careplus_username               :string
-#  careplus_venue_code             :string
-#  days_before_consent_reminders   :integer          default(7), not null
-#  days_before_consent_requests    :integer          default(21), not null
-#  email                           :string
-#  name                            :text             not null
-#  national_reporting_cut_off_date :date
-#  phone                           :string
-#  phone_instructions              :string
-#  privacy_notice_url              :string
-#  privacy_policy_url              :string
-#  programme_types                 :enum             not null, is an Array
-#  type                            :integer          not null
-#  workgroup                       :string           not null
-#  created_at                      :datetime         not null
-#  updated_at                      :datetime         not null
-#  organisation_id                 :bigint           not null
-#  reply_to_id                     :uuid
+#  id                                    :bigint           not null, primary key
+#  careplus_automated_reports_enabled_at :datetime
+#  careplus_namespace                    :string
+#  careplus_password                     :string
+#  careplus_staff_code                   :string
+#  careplus_staff_type                   :string
+#  careplus_username                     :string
+#  careplus_venue_code                   :string
+#  days_before_consent_reminders         :integer          default(7), not null
+#  days_before_consent_requests          :integer          default(21), not null
+#  email                                 :string
+#  name                                  :text             not null
+#  national_reporting_cut_off_date       :date
+#  phone                                 :string
+#  phone_instructions                    :string
+#  privacy_notice_url                    :string
+#  privacy_policy_url                    :string
+#  programme_types                       :enum             not null, is an Array
+#  type                                  :integer          not null
+#  workgroup                             :string           not null
+#  created_at                            :datetime         not null
+#  updated_at                            :datetime         not null
+#  organisation_id                       :bigint           not null
+#  reply_to_id                           :uuid
 #
 # Indexes
 #
@@ -99,8 +100,12 @@ class Team < ApplicationRecord
             .where.not(careplus_username: nil)
             .where.not(careplus_password: nil)
         end
+  scope :careplus_automated_reports_enabled,
+        -> { where.not(careplus_automated_reports_enabled_at: nil) }
   scope :eligible_for_automated_careplus_reports,
-        -> { careplus_enabled.has_careplus_credentials }
+        -> do
+          careplus_enabled.has_careplus_credentials.careplus_automated_reports_enabled
+        end
 
   enum :type,
        { point_of_care: 0, national_reporting: 1, support: 2 },
@@ -172,8 +177,13 @@ class Team < ApplicationRecord
       careplus_venue_code.present?
   end
 
+  def has_careplus_credentials?
+    careplus_username.present? && careplus_password.present? &&
+      careplus_namespace.present?
+  end
+
   def eligible_for_automated_careplus_reports?
-    careplus_enabled? && careplus_username.present? &&
-      careplus_password.present? && careplus_namespace.present?
+    careplus_enabled? && has_careplus_credentials? &&
+      careplus_automated_reports_enabled_at.present?
   end
 end

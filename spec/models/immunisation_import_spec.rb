@@ -276,6 +276,19 @@ describe ImmunisationImport do
           .and change(immunisation_import, :new_record_count).to(11)
       end
 
+      it "sets nhs_number_first_added_at for imported patients with NHS numbers" do
+        immunisation_import.process!
+
+        timestamps =
+          immunisation_import
+            .patients
+            .where.not(nhs_number: nil)
+            .pluck(:nhs_number_first_added_at)
+
+        expect(timestamps).not_to be_empty
+        expect(timestamps).to all(eq(Time.current))
+      end
+
       it "ignores and counts duplicate records" do
         duplicate_import.parse_rows!
         duplicate_import.process!

@@ -12,6 +12,7 @@ module PatientImportConcern
         .uniq { [_1.parent, _1.patient] }
 
     deduplicate_patients!(patients, relationships)
+    patients.each(&:ensure_nhs_number_first_added_at)
 
     patients_with_nhs_number_changes =
       patients.select(&:nhs_number_previously_changed?)

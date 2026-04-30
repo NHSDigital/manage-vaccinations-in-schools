@@ -196,6 +196,13 @@ class VaccinationRecord < ApplicationRecord
           scope
         end
 
+  scope :created_or_updated_on_or_after,
+        ->(timestamp) do
+          where("vaccination_records.created_at >= ?", timestamp).or(
+            where("vaccination_records.updated_at >= ?", timestamp)
+          )
+        end
+
   enum :protocol, { pgd: 0, psd: 1, national: 2 }, validate: { allow_nil: true }
 
   enum :delivery_method,

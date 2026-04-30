@@ -187,11 +187,13 @@ class Reports::CareplusExporter
   end
 
   def consents
+    patient_ids = vaccination_records.unscope(:order).reselect(:patient_id)
+
     @consents ||=
       Consent
         .select("DISTINCT ON (patient_id) consents.*")
         .for_programmes(programmes)
-        .where(patient: vaccination_records.select(:patient_id), academic_year:)
+        .where(patient: patient_ids, academic_year:)
         .not_invalidated
         .response_given
         .order(:patient_id, created_at: :desc)
