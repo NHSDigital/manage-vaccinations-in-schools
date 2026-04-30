@@ -27,18 +27,31 @@ def fetch_ecs_task_id
   end
 end
 
-if ARGV.include?("local")
-  task_id = "N/A"
-  service_name = "N/A"
-else
-  task_id = fetch_ecs_task_id
-  service_name = ENV["SERVICE_NAME"]
+# An explicitly-set env var (including empty string) overrides the default.
+# An empty value omits the label entirely — useful for the metrics task,
+# whose series identity must stay stable across container replacements.
+def resolve_label(env_key, &default)
+  if ENV.key?(env_key)
+    value = ENV[env_key]
+    return value.empty? ? nil : value
+  end
+
+  default.call
 end
+
+labels = {
+  "TaskId" => resolve_label("PROMETHEUS_TASK_ID_LABEL") do
+    ARGV.include?("skip-server-labels") ? nil : fetch_ecs_task_id
+  end,
+  "ServiceName" => resolve_label("PROMETHEUS_SERVICE_NAME_LABEL") do
+    ARGV.include?("skip-server-labels") ? nil : ENV["SERVICE_NAME"]
+  end
+}.compact
 
 runner = PrometheusExporter::Server::Runner.new(
   port: 9394,
   bind: "0.0.0.0",
-  label: { "TaskId" => task_id, "ServiceName" => service_name },
+  label: labels,
   type_collectors: [PrometheusExporter::CustomActiveRecordCollector],
 )
 

@@ -49,8 +49,9 @@ Sidekiq.configure_server do |config|
       PrometheusExporter::Instrumentation::Process.start type: "sidekiq"
       PrometheusExporter::Instrumentation::ActiveRecord.start
       PrometheusExporter::Instrumentation::SidekiqProcess.start
-      PrometheusExporter::Instrumentation::SidekiqQueue.start
-      PrometheusExporter::Instrumentation::SidekiqStats.start
+      # SidekiqStats and SidekiqQueue are global Redis-backed metrics published
+      # by the metrics task (bin/metrics-publisher) to avoid duplicate
+      # series across Sidekiq containers.
     end
 
     at_exit do

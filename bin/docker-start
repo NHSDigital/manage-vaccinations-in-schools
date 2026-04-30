@@ -12,10 +12,15 @@ elif [ "$SERVER_TYPE" == "sidekiq" ]; then
   "$BIN_DIR"/prometheus_exporter &
   sleep 5
   exec "$BIN_DIR"/sidekiq
+elif [ "$SERVER_TYPE" == "metric-publisher" ]; then
+  echo "Starting metrics publisher..."
+  "$BIN_DIR"/prometheus_exporter skip-server-labels &
+  sleep 5
+  exec "$BIN_DIR"/metrics-publisher
 elif [ "$SERVER_TYPE" == "none" ]; then
   echo "No server started"
   exec tail -f /dev/null  # Keep container running
 else
-  echo "SERVER_TYPE variable: '$SERVER_TYPE' unknown. Allowed values: web, sidekiq, none"
+  echo "SERVER_TYPE variable: '$SERVER_TYPE' unknown. Allowed values: web, sidekiq, metric-publisher, none"
   exit 1
 fi
