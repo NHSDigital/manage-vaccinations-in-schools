@@ -37,10 +37,9 @@ class PatientImport < ApplicationRecord
   def process!
     raise "'rows' are empty. Call parse_rows! before processing." if rows.nil?
 
-    changesets =
-      rows.each_with_index.map do |row, row_number|
-        PatientChangeset.create_from_import_row(row:, import: self, row_number:)
-      end
+    rows.each_with_index.map do |row, row_number|
+      PatientChangeset.create_from_import_row(row:, import: self, row_number:)
+    end
 
     if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
       process_no_postcode_changesets(self.changesets.without_postcode)
