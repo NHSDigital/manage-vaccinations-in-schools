@@ -120,44 +120,47 @@ class AppChildSummaryComponent < ViewComponent::Base
               end
             end
             if @show_parents && !@child.restricted?
-              @child.parent_relationships.each do |parent_relationship|
-                summary_list.with_row do |row|
-                  row.with_key do
-                    parent_relationship.ordinal_label.upcase_first
-                  end
-                  row.with_value do
-                    format_parent_with_relationship(parent_relationship)
-                  end
+              @child
+                .parent_relationships
+                .includes(:parent)
+                .find_each do |parent_relationship|
+                  summary_list.with_row do |row|
+                    row.with_key do
+                      parent_relationship.ordinal_label.upcase_first
+                    end
+                    row.with_value do
+                      format_parent_with_relationship(parent_relationship)
+                    end
 
-                  if (
-                       href =
-                         @change_links.dig(
-                           :parent,
-                           parent_relationship.parent_id
-                         )
-                     )
-                    row.with_action(
-                      text: "Edit",
-                      href:,
-                      visually_hidden_text: parent_relationship.ordinal_label
-                    )
-                  end
+                    if (
+                         href =
+                           @change_links.dig(
+                             :parent,
+                             parent_relationship.parent_id
+                           )
+                       )
+                      row.with_action(
+                        text: "Edit",
+                        href:,
+                        visually_hidden_text: parent_relationship.ordinal_label
+                      )
+                    end
 
-                  if (
-                       href =
-                         @remove_links.dig(
-                           :parent,
-                           parent_relationship.parent_id
-                         )
-                     )
-                    row.with_action(
-                      text: "Remove",
-                      href:,
-                      visually_hidden_text: parent_relationship.ordinal_label
-                    )
+                    if (
+                         href =
+                           @remove_links.dig(
+                             :parent,
+                             parent_relationship.parent_id
+                           )
+                       )
+                      row.with_action(
+                        text: "Remove",
+                        href:,
+                        visually_hidden_text: parent_relationship.ordinal_label
+                      )
+                    end
                   end
                 end
-              end
             end
           end,
           @show_add_parent ? add_parent_button : nil
