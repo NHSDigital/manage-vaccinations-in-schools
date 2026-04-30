@@ -57,6 +57,7 @@ class AppActivityLogComponent < ViewComponent::Base
       gillick_assessment_events,
       note_events,
       notify_events,
+      parent_relationship_events,
       patient_merge_events,
       patient_specific_direction_events,
       pre_screening_events,
@@ -266,6 +267,17 @@ class AppActivityLogComponent < ViewComponent::Base
         at: notify_log_entry.created_at,
         by: notify_log_entry.sent_by,
         programmes: notify_log_entry.programmes
+      }
+    end
+  end
+
+  def parent_relationship_events
+    parent_relationship_audits.map do |audit|
+      {
+        title: "Parent relationship removed",
+        body: audit.comment,
+        at: audit.created_at,
+        by: audit.user
       }
     end
   end
@@ -534,6 +546,14 @@ class AppActivityLogComponent < ViewComponent::Base
             scope
           end
         end
+  end
+
+  def parent_relationship_audits
+    patient
+      .associated_audits
+      .destroys
+      .where(auditable_type: "ParentRelationship")
+      .includes(:user)
   end
 
   def patient_locations

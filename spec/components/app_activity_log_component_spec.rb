@@ -810,6 +810,21 @@ describe AppActivityLogComponent do
                      by: "JOY, Nurse"
   end
 
+  describe "parent relationship removal events" do
+    before do
+      relationship =
+        patient.parent_relationships.includes(:parent).find_by!(parent: mum)
+
+      Audited.audit_class.as_user(user) { relationship.destroy! }
+    end
+
+    include_examples "card",
+                     title: "Parent relationship removed",
+                     date: "1 January 2026 at 12:00am",
+                     notes: "Jane Doe (mum) removed from child record",
+                     by: "JOY, Nurse"
+  end
+
   describe "decision expiration events" do
     let(:hpv_programme) { Programme.hpv }
     let(:flu_programme) { Programme.flu }

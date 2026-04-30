@@ -84,4 +84,35 @@ describe ParentRelationship do
       it { should eq("Unknown") }
     end
   end
+
+  context "removal is audited" do
+    subject(:destroy!) do
+      Audited.audit_class.as_user(user) { relationship.destroy! }
+    end
+
+    let(:user) { create(:user) }
+    let(:patient) { create(:patient) }
+    let(:parent) { create(:parent, full_name: "Jane Doe") }
+    let!(:relationship) do
+      create(:parent_relationship, :mother, patient:, parent:)
+    end
+
+    it "creates a destroy audit with the patient association and comment" do
+      expect { destroy! }.to change { relationship.audits.destroys.count }.by(1)
+
+      audit =
+        Audited
+          .audit_class
+          .auditable_finder(relationship.id, "ParentRelationship")
+          .destroys
+          .last
+
+      expect(audit).to have_attributes(
+        action: "destroy",
+        associated: patient,
+        user:,
+        comment: "Jane Doe (mum) removed from child record"
+      )
+    end
+  end
 end
