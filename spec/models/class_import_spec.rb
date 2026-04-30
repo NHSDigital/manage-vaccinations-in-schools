@@ -174,7 +174,7 @@ describe ClassImport do
     let(:process_job) { double }
 
     before do
-      allow(PDSCascadingSearchSidekiqJob).to receive(:set).with(
+      allow(PDSCascadingSearchJob).to receive(:set).with(
         queue: :imports
       ).and_return(process_job)
       allow(process_job).to receive(:perform_async)
@@ -207,7 +207,7 @@ describe ClassImport do
 
       it "enqueues ReviewPatientChangesetJob for each changeset" do
         expect { class_import.process! }.to enqueue_sidekiq_job(
-          ReviewPatientChangesetSidekiqJob
+          ReviewPatientChangesetJob
         ).exactly(4).times
 
         expect(process_job).not_to have_received(:perform_async)

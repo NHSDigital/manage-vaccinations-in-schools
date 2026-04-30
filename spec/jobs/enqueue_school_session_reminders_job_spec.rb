@@ -8,7 +8,7 @@ describe EnqueueSchoolSessionRemindersJob do
 
     it "doesn't queue a job" do
       expect { perform }.not_to enqueue_sidekiq_job(
-        SendSchoolSessionRemindersSidekiqJob
+        SendSchoolSessionRemindersJob
       )
     end
   end
@@ -18,7 +18,7 @@ describe EnqueueSchoolSessionRemindersJob do
 
     it "doesn't queue a job" do
       expect { perform }.not_to enqueue_sidekiq_job(
-        SendSchoolSessionRemindersSidekiqJob
+        SendSchoolSessionRemindersJob
       )
     end
   end
@@ -28,7 +28,7 @@ describe EnqueueSchoolSessionRemindersJob do
 
     it "queues a job" do
       expect { perform }.to enqueue_sidekiq_job(
-        SendSchoolSessionRemindersSidekiqJob
+        SendSchoolSessionRemindersJob
       ).with(session.id)
     end
   end
@@ -38,7 +38,7 @@ describe EnqueueSchoolSessionRemindersJob do
 
     it "doesn't queue a job" do
       expect { perform }.not_to enqueue_sidekiq_job(
-        SendSchoolSessionRemindersSidekiqJob
+        SendSchoolSessionRemindersJob
       )
     end
   end

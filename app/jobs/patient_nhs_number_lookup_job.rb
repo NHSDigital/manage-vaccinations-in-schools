@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-class PatientNHSNumberLookupJob < ApplicationJobActiveJob
+class PatientNHSNumberLookupJob < ApplicationJob
   include PDSThrottlingConcern
 
-  queue_as :pds
-  retry_on Faraday::ServerError, wait: :polynomially_longer
+  sidekiq_options queue: :pds
 
-  def perform(patient)
+  def perform(patient_id)
+    patient = Patient.find(patient_id)
+
     return if patient.nhs_number.present? && !patient.invalidated?
 
     pds_patient =

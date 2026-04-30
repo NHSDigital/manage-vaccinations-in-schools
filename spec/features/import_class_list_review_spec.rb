@@ -446,7 +446,7 @@ describe "Import class lists" do
   def when_i_cancel_the_import
     click_on "Cancel and delete upload"
     click_on_most_recent_import(ClassImport)
-    perform_enqueued_jobs_while_exists(ReviewClassImportSchoolMoveSidekiqJob)
+    perform_enqueued_jobs_while_exists(ReviewClassImportSchoolMoveJob)
   end
 
   def and_i_approve_the_import
@@ -456,7 +456,7 @@ describe "Import class lists" do
       click_on("Approve and import changed records")
     end
     wait_for_import_to_commit(ClassImport)
-    perform_enqueued_jobs_while_exists(ReviewClassImportSchoolMoveSidekiqJob)
+    perform_enqueued_jobs_while_exists(ReviewClassImportSchoolMoveJob)
   end
 
   alias_method :when_i_approve_the_import, :and_i_approve_the_import
@@ -538,7 +538,7 @@ describe "Import class lists" do
 
   def and_i_ignore_changes
     click_on "Ignore changes"
-    perform_enqueued_jobs_while_exists(ReviewClassImportSchoolMoveSidekiqJob)
+    perform_enqueued_jobs_while_exists(ReviewClassImportSchoolMoveJob)
   end
 
   def then_the_re_review_patients_are_not_imported

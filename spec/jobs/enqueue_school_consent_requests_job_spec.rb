@@ -8,7 +8,7 @@ describe EnqueueSchoolConsentRequestsJob do
 
     it "doesn't queue any jobs" do
       expect { perform }.not_to enqueue_sidekiq_job(
-        SendSchoolConsentRequestsSidekiqJob
+        SendSchoolConsentRequestsJob
       )
     end
   end
@@ -20,7 +20,7 @@ describe EnqueueSchoolConsentRequestsJob do
 
     it "doesn't queue any jobs" do
       expect { perform }.not_to enqueue_sidekiq_job(
-        SendSchoolConsentRequestsSidekiqJob
+        SendSchoolConsentRequestsJob
       )
     end
   end
@@ -36,7 +36,7 @@ describe EnqueueSchoolConsentRequestsJob do
 
     it "queues a job for the session" do
       expect { perform }.to enqueue_sidekiq_job(
-        SendSchoolConsentRequestsSidekiqJob
+        SendSchoolConsentRequestsJob
       ).with(session.id)
     end
 
@@ -48,7 +48,7 @@ describe EnqueueSchoolConsentRequestsJob do
 
       it "doesn't queue any jobs" do
         expect { perform }.not_to enqueue_sidekiq_job(
-          SendSchoolConsentRequestsSidekiqJob
+          SendSchoolConsentRequestsJob
         )
       end
     end

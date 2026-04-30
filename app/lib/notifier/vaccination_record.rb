@@ -22,10 +22,10 @@ class Notifier::VaccinationRecord
         "sent_by_user_id" => sent_by&.id
       }
 
-      EmailDeliverySidekiqJob.perform_async(template_name, params)
+      EmailDeliveryJob.perform_async(template_name, params)
 
       if parent.phone_receive_updates
-        SMSDeliverySidekiqJob.perform_async(template_name, params)
+        SMSDeliveryJob.perform_async(template_name, params)
       end
     end
   end
@@ -40,7 +40,7 @@ class Notifier::VaccinationRecord
         "sent_by_user_id" => sent_by&.id
       }
 
-      EmailDeliverySidekiqJob.perform_async("vaccination_deleted", params)
+      EmailDeliveryJob.perform_async("vaccination_deleted", params)
     end
   end
 

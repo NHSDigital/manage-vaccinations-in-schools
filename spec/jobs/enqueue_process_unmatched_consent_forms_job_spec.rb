@@ -20,26 +20,26 @@ describe EnqueueProcessUnmatchedConsentFormsJob do
   end
 
   it "enqueues a job for each unmatched consent form" do
-    expect { perform }.to enqueue_sidekiq_job(
-      ProcessConsentFormSidekiqJob
-    ).exactly(1).times
+    expect { perform }.to enqueue_sidekiq_job(ProcessConsentFormJob).exactly(
+      1
+    ).times
   end
 
   it "enqueues a job for the unmatched consent form" do
-    expect { perform }.to enqueue_sidekiq_job(
-      ProcessConsentFormSidekiqJob
-    ).with(unmatched_consent_form.id)
+    expect { perform }.to enqueue_sidekiq_job(ProcessConsentFormJob).with(
+      unmatched_consent_form.id
+    )
   end
 
   it "does not enqueue a job for the draft consent form" do
-    expect { perform }.not_to enqueue_sidekiq_job(
-      ProcessConsentFormSidekiqJob
-    ).with(draft_consent_form.id)
+    expect { perform }.not_to enqueue_sidekiq_job(ProcessConsentFormJob).with(
+      draft_consent_form.id
+    )
   end
 
   it "does not enqueue a job for the archived consent form" do
-    expect { perform }.not_to enqueue_sidekiq_job(
-      ProcessConsentFormSidekiqJob
-    ).with(archived_consent_form.id)
+    expect { perform }.not_to enqueue_sidekiq_job(ProcessConsentFormJob).with(
+      archived_consent_form.id
+    )
   end
 end

@@ -28,7 +28,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
     it "doesn't queue any jobs" do
       expect { perform }.not_to enqueue_sidekiq_job(
-        SendAutomaticSchoolConsentRemindersSidekiqJob
+        SendAutomaticSchoolConsentRemindersJob
       )
     end
   end
@@ -38,7 +38,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
     it "queues a job for the session" do
       expect { perform }.to enqueue_sidekiq_job(
-        SendAutomaticSchoolConsentRemindersSidekiqJob
+        SendAutomaticSchoolConsentRemindersJob
       ).with(session.id)
     end
 
@@ -47,7 +47,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
       it "doesn't queue any jobs" do
         expect { perform }.not_to enqueue_sidekiq_job(
-          SendAutomaticSchoolConsentRemindersSidekiqJob
+          SendAutomaticSchoolConsentRemindersJob
         )
       end
     end
@@ -58,7 +58,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
     it "queues a job for the session" do
       expect { perform }.to enqueue_sidekiq_job(
-        SendAutomaticSchoolConsentRemindersSidekiqJob
+        SendAutomaticSchoolConsentRemindersJob
       ).with(session.id)
     end
 
@@ -67,7 +67,7 @@ describe EnqueueSchoolConsentRemindersJob do
 
       it "doesn't queue any jobs" do
         expect { perform }.not_to enqueue_sidekiq_job(
-          SendAutomaticSchoolConsentRemindersSidekiqJob
+          SendAutomaticSchoolConsentRemindersJob
         )
       end
     end

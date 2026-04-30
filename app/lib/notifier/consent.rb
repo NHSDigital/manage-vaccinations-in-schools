@@ -40,7 +40,7 @@ class Notifier::Consent
 
   def send_triage_email(triage, session, params)
     template_name = triage_email_template(triage, session)
-    EmailDeliverySidekiqJob.perform_async(template_name, params)
+    EmailDeliveryJob.perform_async(template_name, params)
   end
 
   def triage_email_template(triage, session)
@@ -63,13 +63,13 @@ class Notifier::Consent
 
   def send_consent_email(type, params)
     template_name = "consent_confirmation_#{type}"
-    EmailDeliverySidekiqJob.perform_async(template_name, params)
+    EmailDeliveryJob.perform_async(template_name, params)
   end
 
   def send_consent_sms(type, consent, params)
     if consent.parent.phone_receive_updates
       template_name = "consent_confirmation_#{type}"
-      SMSDeliverySidekiqJob.perform_async(template_name, params)
+      SMSDeliveryJob.perform_async(template_name, params)
     end
   end
 

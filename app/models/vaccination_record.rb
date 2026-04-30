@@ -385,7 +385,7 @@ class VaccinationRecord < ApplicationRecord
 
   def generate_important_notice_if_needed
     if should_generate_important_notice?
-      ImportantNoticeGeneratorSidekiqJob.perform_async([patient_id])
+      ImportantNoticeGeneratorJob.perform_async([patient_id])
     end
   end
 end

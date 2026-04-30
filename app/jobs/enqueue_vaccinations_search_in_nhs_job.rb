@@ -7,7 +7,7 @@
 # sessions, starting from 2 days before invitations or consent requests are sent
 # out and ending once the last date of the sessions has passed. For all other
 # patients we want to ensure a search is performed every 28 days at most.
-class EnqueueVaccinationsSearchInNHSJob < ApplicationJobSidekiq
+class EnqueueVaccinationsSearchInNHSJob < ApplicationJob
   sidekiq_options queue: :immunisations_api_search
 
   def perform(programme_types = nil)

@@ -79,7 +79,7 @@ class ClassImport < PatientImport
     missed_patients = unknown_patients - valid_patients
     if missed_patients.any? && (processed? || partially_processed?)
       update_columns(status: :calculating_re_review, processed_at: nil)
-      ReviewClassImportSchoolMoveSidekiqJob.perform_async(id)
+      ReviewClassImportSchoolMoveJob.perform_async(id)
     end
 
     unknown_patients = valid_patients

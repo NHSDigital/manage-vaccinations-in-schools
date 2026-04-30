@@ -15,7 +15,7 @@ module SMSExpectations
   end
 
   def sms_deliveries
-    SMSDeliverySidekiqJob.drain
+    SMSDeliveryJob.drain
     SMSDeliveryJob.deliveries
   end
 end

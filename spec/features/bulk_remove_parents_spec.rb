@@ -187,9 +187,7 @@ describe "Bulk remove parents" do
   end
 
   def and_the_bulk_remove_job_should_be_enqueued_with_remove_option(option)
-    expect(
-      BulkRemoveParentRelationshipsSidekiqJob
-    ).to have_enqueued_sidekiq_job.with(
+    expect(BulkRemoveParentRelationshipsJob).to have_enqueued_sidekiq_job.with(
       @class_import.to_global_id.to_s,
       @class_import.parent_relationship_ids,
       @user.id,

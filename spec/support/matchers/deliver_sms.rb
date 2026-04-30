@@ -13,7 +13,7 @@ RSpec::Matchers.matcher :deliver_sms do |template_name = nil|
 
   define_method :matcher do
     @matcher ||=
-      enqueue_sidekiq_job(SMSDeliverySidekiqJob).with(
+      enqueue_sidekiq_job(SMSDeliveryJob).with(
         template_name&.to_s.presence || anything,
         @params || anything
       )

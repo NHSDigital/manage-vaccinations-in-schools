@@ -190,6 +190,6 @@ class SchoolMove < ApplicationRecord
   end
 
   def update_important_notices!
-    ImportantNoticeGeneratorSidekiqJob.perform_async([patient.id])
+    ImportantNoticeGeneratorJob.perform_async([patient.id])
   end
 end

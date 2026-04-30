@@ -13,7 +13,7 @@ RSpec::Matchers.matcher :deliver_email do |template_name = nil|
 
   define_method :matcher do
     @matcher ||=
-      enqueue_sidekiq_job(EmailDeliverySidekiqJob).with(
+      enqueue_sidekiq_job(EmailDeliveryJob).with(
         template_name&.to_s.presence || anything,
         @params || anything
       )

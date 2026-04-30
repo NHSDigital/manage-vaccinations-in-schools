@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class ReportingAPI::RefreshJob < ApplicationJobSidekiq
+class ReportingAPI::RefreshJob < ApplicationJob
   def perform = ReportingAPI::Total.refresh!
 end

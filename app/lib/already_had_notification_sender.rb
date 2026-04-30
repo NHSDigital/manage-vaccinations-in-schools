@@ -36,10 +36,10 @@ class AlreadyHadNotificationSender
       }
 
       if parent.phone_receive_updates
-        SMSDeliverySidekiqJob.perform_async("vaccination_already_had", params)
+        SMSDeliveryJob.perform_async("vaccination_already_had", params)
       end
 
-      EmailDeliverySidekiqJob.perform_async("vaccination_already_had", params)
+      EmailDeliveryJob.perform_async("vaccination_already_had", params)
 
       consent.update!(
         patient_already_vaccinated_notification_sent_at: Time.current

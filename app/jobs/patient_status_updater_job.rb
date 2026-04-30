@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientStatusUpdaterJob < ApplicationJobSidekiq
+class PatientStatusUpdaterJob < ApplicationJob
   sidekiq_options queue: :cache, lock: :until_executed
 
   def perform(patient_id = nil)

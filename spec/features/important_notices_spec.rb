@@ -258,7 +258,7 @@ describe "Important notices", :pds do
   end
 
   def and_the_important_notice_job_is_performed
-    ImportantNoticeGeneratorSidekiqJob.drain
+    ImportantNoticeGeneratorJob.drain
   end
 
   def when_i_visit_the_notices_page_as_superuser

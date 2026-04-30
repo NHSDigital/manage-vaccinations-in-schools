@@ -41,7 +41,7 @@ describe ProcessPatientChangesetJob, :pds do
       it "does not enqueue ReviewPatientChangesetJob" do
         expect {
           described_class.perform_now(patient_changeset.id)
-        }.not_to enqueue_sidekiq_job(ReviewPatientChangesetSidekiqJob)
+        }.not_to enqueue_sidekiq_job(ReviewPatientChangesetJob)
       end
     end
 
@@ -201,7 +201,7 @@ describe ProcessPatientChangesetJob, :pds do
           it "doesn't enqueue ReviewPatientChangesetJob" do
             expect {
               described_class.perform_now(patient_changeset.id)
-            }.not_to enqueue_sidekiq_job(ReviewPatientChangesetSidekiqJob)
+            }.not_to enqueue_sidekiq_job(ReviewPatientChangesetJob)
           end
         end
       end
@@ -241,7 +241,7 @@ describe ProcessPatientChangesetJob, :pds do
           it "enqueues ReviewPatientChangesetJob" do
             expect {
               described_class.new.perform(patient_changeset.id)
-            }.to enqueue_sidekiq_job(ReviewPatientChangesetSidekiqJob).with(
+            }.to enqueue_sidekiq_job(ReviewPatientChangesetJob).with(
               patient_changeset.id
             )
           end
@@ -404,7 +404,7 @@ describe ProcessPatientChangesetJob, :pds do
       it "enqueues ReviewPatientChangesetJob" do
         expect {
           described_class.perform_now(patient_changeset.id)
-        }.to enqueue_sidekiq_job(ReviewPatientChangesetSidekiqJob).with(
+        }.to enqueue_sidekiq_job(ReviewPatientChangesetJob).with(
           patient_changeset.id
         )
       end

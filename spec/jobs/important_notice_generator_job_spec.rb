@@ -57,7 +57,7 @@ describe ImportantNoticeGeneratorJob do
       context "patient is no longer restricted" do
         before do
           patient.update!(restricted_at: Time.current)
-          ImportantNoticeGeneratorSidekiqJob.drain
+          described_class.drain
           patient.update_column(:restricted_at, nil)
         end
 
@@ -118,7 +118,7 @@ describe ImportantNoticeGeneratorJob do
       context "patient is no longer invalidated" do
         before do
           patient.update!(invalidated_at: Time.current)
-          ImportantNoticeGeneratorSidekiqJob.drain
+          described_class.drain
           patient.update_column(:invalidated_at, nil)
         end
 
@@ -144,11 +144,9 @@ describe ImportantNoticeGeneratorJob do
             programme: programmes.first,
             session: session_a
           )
-        }.to enqueue_sidekiq_job(ImportantNoticeGeneratorSidekiqJob).with(
-          [patient.id]
-        )
+        }.to enqueue_sidekiq_job(described_class).with([patient.id])
 
-        ImportantNoticeGeneratorSidekiqJob.drain
+        described_class.drain
 
         expect(team_a.important_notices.count).to eq(1)
         expect(team_b.important_notices.count).to eq(0)

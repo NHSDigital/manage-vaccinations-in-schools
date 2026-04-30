@@ -17,13 +17,13 @@ module ImportsHelper
   end
 
   def wait_for_import_to_complete_until_review(import_class)
-    ProcessImportSidekiqJob.drain
+    ProcessImportJob.drain
 
     if import_class != ImmunisationImport
-      perform_enqueued_jobs_while_exists(PDSCascadingSearchSidekiqJob)
-      perform_enqueued_jobs_while_exists(ProcessPatientChangesetSidekiqJob)
-      perform_enqueued_jobs_while_exists(ReviewPatientChangesetSidekiqJob)
-      ReviewClassImportSchoolMoveSidekiqJob.drain
+      perform_enqueued_jobs_while_exists(PDSCascadingSearchJob)
+      perform_enqueued_jobs_while_exists(ProcessPatientChangesetJob)
+      perform_enqueued_jobs_while_exists(ReviewPatientChangesetJob)
+      ReviewClassImportSchoolMoveJob.drain
     end
 
     click_on_most_recent_import(import_class)
@@ -45,14 +45,12 @@ module ImportsHelper
     import.process!
 
     unless import.is_a?(ImmunisationImport)
-      perform_enqueued_jobs_while_exists(PDSCascadingSearchSidekiqJob)
-      perform_enqueued_jobs_while_exists(ProcessPatientChangesetSidekiqJob)
-      perform_enqueued_jobs_while_exists(ReviewPatientChangesetSidekiqJob)
+      perform_enqueued_jobs_while_exists(PDSCascadingSearchJob)
+      perform_enqueued_jobs_while_exists(ProcessPatientChangesetJob)
+      perform_enqueued_jobs_while_exists(ReviewPatientChangesetJob)
 
       if import.is_a?(ClassImport)
-        perform_enqueued_jobs_while_exists(
-          ReviewClassImportSchoolMoveSidekiqJob
-        )
+        perform_enqueued_jobs_while_exists(ReviewClassImportSchoolMoveJob)
       end
     end
 

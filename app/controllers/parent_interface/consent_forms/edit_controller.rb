@@ -96,7 +96,7 @@ module ParentInterface
       # parent decides to answer "Yes" or "No" (they might not)
       # to the ethnicity questions, the job will make sure the
       # ethnicity information is copied to the matched patient.
-      ProcessConsentFormSidekiqJob.perform_async(model.id)
+      ProcessConsentFormJob.perform_async(model.id)
 
       redirect_to submitted_parent_interface_consent_form_path(model)
     end

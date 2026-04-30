@@ -4,39 +4,12 @@ class SMSDeliveryJob < NotifyDeliveryJob
   include GovukNotifyThrottlingConcern
 
   PASSTHROUGH_TEMPLATE_ID = "c242b359-73d6-4b74-bda2-136093550636"
-
   INVALID_UK_MOBILE_NUMBER_ERROR = "InvalidPhoneError: Not a UK mobile number"
 
-  def perform(
-    template_name,
-    academic_year: nil,
-    consent: nil,
-    consent_form: nil,
-    disease_types: nil,
-    parent: nil,
-    patient: nil,
-    programme_types: [],
-    sent_by: nil,
-    session: nil,
-    team: nil,
-    team_location: nil,
-    vaccination_record: nil
-  )
+  def perform(template_name, params)
     template_name_sym = template_name.to_sym
-    personalisation =
-      GovukNotifyPersonalisation.new(
-        academic_year:,
-        consent:,
-        consent_form:,
-        disease_types:,
-        parent:,
-        patient:,
-        programme_types:,
-        session:,
-        team:,
-        team_location:,
-        vaccination_record:
-      )
+
+    personalisation = GovukNotifyPersonalisation.new(**fetch_params(params))
 
     phone_number =
       if template_name_sym == :consent_unknown_contact_details_warning

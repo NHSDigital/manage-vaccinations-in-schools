@@ -5,7 +5,7 @@
 #
 # It configures the job to run on the `metrics` queue and does not retry if it
 # fails, allowing it to be scheduled regularly.
-class Metrics::BaseJob < ApplicationJobSidekiq
+class Metrics::BaseJob < ApplicationJob
   # We don't retry jobs that export metrics if they fail as they are often
   #  scheduled to run regularly.
   sidekiq_options queue: :metrics, retry: false
