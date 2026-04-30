@@ -571,7 +571,7 @@ describe "Manage children" do
 
   def and_the_important_notice_is_dismissed
     notice = @patient.important_notices.find_by(type: :invalidated)
-    perform_enqueued_jobs_while_exists(ImportantNoticeGeneratorSidekiqJob)
+    perform_enqueued_jobs_while_exists(ImportantNoticeGeneratorJob)
     expect(notice.reload.dismissed_at).to be_present
   end
 

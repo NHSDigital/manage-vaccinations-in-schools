@@ -31,7 +31,7 @@ class BulkRemoveParentsForm
     import
       .parent_relationship_ids
       .each_slice(BATCH_SIZE) do |batch_ids|
-        BulkRemoveParentRelationshipsSidekiqJob.perform_async(
+        BulkRemoveParentRelationshipsJob.perform_async(
           import.to_global_id.to_s,
           batch_ids,
           current_user.id,

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ReviewPatientChangesetJob < ApplicationJobActiveJob
-  queue_as :imports
+class ReviewPatientChangesetJob < ApplicationJob
+  sidekiq_options queue: :imports
 
   def perform(patient_changeset_id)
     patient_changeset =
@@ -19,7 +19,7 @@ class ReviewPatientChangesetJob < ApplicationJobActiveJob
 
     if all_jobs_finished_and_import_valid(import)
       if import.is_a?(ClassImport)
-        ReviewClassImportSchoolMoveSidekiqJob.perform_async(import.id)
+        ReviewClassImportSchoolMoveJob.perform_async(import.id)
       elsif import.calculating_re_review?
         import.in_re_review!
       else

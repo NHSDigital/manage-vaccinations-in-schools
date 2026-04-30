@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueAutomatedCareplusReportsJob < ApplicationJobSidekiq
+class EnqueueAutomatedCareplusReportsJob < ApplicationJob
   sidekiq_options queue: :careplus
 
   def perform

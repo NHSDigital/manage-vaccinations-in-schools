@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ImportantNoticeGeneratorJob < ApplicationJobActiveJob
-  queue_as :cache
+class ImportantNoticeGeneratorJob < ApplicationJob
+  sidekiq_options queue: :cache
 
   BATCH_SIZE = 1000
 

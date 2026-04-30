@@ -63,7 +63,7 @@ describe PatientUpdateFromPDSJob do
 
         it "doesn't queue a job to look up NHS number" do
           expect { perform_now }.not_to enqueue_sidekiq_job(
-            PDSCascadingSearchSidekiqJob
+            PDSCascadingSearchJob
           )
         end
 
@@ -123,7 +123,7 @@ describe PatientUpdateFromPDSJob do
 
         it "queues a job to look up NHS number using PDS cascading search" do
           expect { perform_now }.to enqueue_sidekiq_job(
-            PDSCascadingSearchSidekiqJob
+            PDSCascadingSearchJob
           ).with(patient.to_global_id.to_s, nil, nil, nil)
         end
       end
@@ -155,7 +155,7 @@ describe PatientUpdateFromPDSJob do
 
         it "queues a job to look up NHS number using PDS cascading search" do
           expect { perform_now }.to enqueue_sidekiq_job(
-            PDSCascadingSearchSidekiqJob
+            PDSCascadingSearchJob
           ).with(patient.to_global_id.to_s, nil, nil, nil)
         end
       end
@@ -187,7 +187,7 @@ describe PatientUpdateFromPDSJob do
 
         it "queues a job to look up NHS number using PDS cascading search" do
           expect { perform_now }.to enqueue_sidekiq_job(
-            PDSCascadingSearchSidekiqJob
+            PDSCascadingSearchJob
           ).with(patient.to_global_id.to_s, nil, nil, nil)
         end
       end

@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-class SendAutomaticSchoolConsentRemindersJob < ApplicationJobActiveJob
+class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
   include SendSchoolConsentNotificationConcern
 
-  queue_as :notifications
+  sidekiq_options queue: :notifications
 
-  def perform(session)
+  def perform(session_id)
+    session = Session.find(session_id)
+
     patient_programmes_eligible_for_notification(
       session:
     ) do |patient, programmes|

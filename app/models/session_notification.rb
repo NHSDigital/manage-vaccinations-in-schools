@@ -98,11 +98,11 @@ class SessionNotification < ApplicationRecord
 
       template_name = "session_#{type}"
 
-      EmailDeliverySidekiqJob.perform_async(template_name, params)
+      EmailDeliveryJob.perform_async(template_name, params)
 
       next unless parent.phone_receive_updates
 
-      SMSDeliverySidekiqJob.perform_async(template_name, params)
+      SMSDeliveryJob.perform_async(template_name, params)
     end
   end
 end

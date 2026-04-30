@@ -5,36 +5,10 @@ class EmailDeliveryJob < NotifyDeliveryJob
 
   PASSTHROUGH_TEMPLATE_ID = "305a53f8-86eb-485e-85a5-328c9aabba45"
 
-  def perform(
-    template_name,
-    academic_year: nil,
-    consent: nil,
-    consent_form: nil,
-    disease_types: nil,
-    parent: nil,
-    patient: nil,
-    programme_types: [],
-    sent_by: nil,
-    session: nil,
-    team: nil,
-    team_location: nil,
-    vaccination_record: nil
-  )
+  def perform(template_name, params)
     template_name_sym = template_name.to_sym
-    personalisation =
-      GovukNotifyPersonalisation.new(
-        academic_year:,
-        consent:,
-        consent_form:,
-        disease_types:,
-        parent:,
-        patient:,
-        programme_types:,
-        session:,
-        team:,
-        team_location:,
-        vaccination_record:
-      )
+
+    personalisation = GovukNotifyPersonalisation.new(**fetch_params(params))
 
     email_address =
       if template_name_sym == :consent_unknown_contact_details_warning

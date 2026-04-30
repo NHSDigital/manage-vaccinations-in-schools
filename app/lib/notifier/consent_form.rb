@@ -38,7 +38,7 @@ class Notifier::ConsentForm
       }
 
       if parent.email.present?
-        EmailDeliverySidekiqJob.perform_async(
+        EmailDeliveryJob.perform_async(
           "consent_unknown_contact_details_warning",
           params
         )
@@ -46,7 +46,7 @@ class Notifier::ConsentForm
 
       next unless parent.phone.present? && parent.phone_receive_updates
 
-      SMSDeliverySidekiqJob.perform_async(
+      SMSDeliveryJob.perform_async(
         "consent_unknown_contact_details_warning",
         params
       )
@@ -63,26 +63,14 @@ class Notifier::ConsentForm
     params["disease_types"] = disease_types if disease_types
 
     if consent_form.health_answers_require_triage?
-      EmailDeliverySidekiqJob.perform_async(
-        "consent_confirmation_triage",
-        params
-      )
+      EmailDeliveryJob.perform_async("consent_confirmation_triage", params)
     elsif consent_form.session&.clinic? || consent_form.session&.completed?
-      EmailDeliverySidekiqJob.perform_async(
-        "consent_confirmation_clinic",
-        params
-      )
+      EmailDeliveryJob.perform_async("consent_confirmation_clinic", params)
     else
-      EmailDeliverySidekiqJob.perform_async(
-        "consent_confirmation_given",
-        params
-      )
+      EmailDeliveryJob.perform_async("consent_confirmation_given", params)
 
       if consent_form.parent_phone_receive_updates
-        SMSDeliverySidekiqJob.perform_async(
-          "consent_confirmation_given",
-          params
-        )
+        SMSDeliveryJob.perform_async("consent_confirmation_given", params)
       end
     end
   end
@@ -92,16 +80,10 @@ class Notifier::ConsentForm
     params["programme_types"] = programme_types if programme_types
     params["disease_types"] = disease_types if disease_types
 
-    EmailDeliverySidekiqJob.perform_async(
-      "consent_confirmation_refused",
-      params
-    )
+    EmailDeliveryJob.perform_async("consent_confirmation_refused", params)
 
     if consent_form.parent_phone_receive_updates
-      SMSDeliverySidekiqJob.perform_async(
-        "consent_confirmation_refused",
-        params
-      )
+      SMSDeliveryJob.perform_async("consent_confirmation_refused", params)
     end
   end
 end

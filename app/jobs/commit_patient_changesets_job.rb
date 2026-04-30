@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CommitPatientChangesetsJob < ApplicationJobSidekiq
+class CommitPatientChangesetsJob < ApplicationJob
   include PatientImportConcern
 
   sidekiq_options queue: :imports
@@ -100,7 +100,7 @@ class CommitPatientChangesetsJob < ApplicationJobSidekiq
     import.calculating_re_review!
     import.changesets.needs_re_review.each do |changeset|
       changeset.calculating_review!
-      ReviewPatientChangesetSidekiqJob.perform_async(changeset.id)
+      ReviewPatientChangesetJob.perform_async(changeset.id)
     end
   end
 end

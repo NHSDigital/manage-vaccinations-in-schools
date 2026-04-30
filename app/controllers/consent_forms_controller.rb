@@ -118,9 +118,9 @@ class ConsentFormsController < ApplicationController
     end
 
     if patient.nhs_number.nil?
-      PatientNHSNumberLookupSidekiqJob.perform_async(patient.id)
+      PatientNHSNumberLookupJob.perform_async(patient.id)
     else
-      PatientUpdateFromPDSSidekiqJob.perform_async(patient.id, nil)
+      PatientUpdateFromPDSJob.perform_async(patient.id, nil)
     end
 
     flash[:success] = "#{patient.full_name}’s record created from a consent \

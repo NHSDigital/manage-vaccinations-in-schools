@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJobSidekiq
+class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
   sidekiq_options queue: :patients
 
   def perform

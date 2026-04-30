@@ -23,7 +23,7 @@ class Patients::EditController < Patients::BaseController
 
     if @patient.save
       if @patient.nhs_number.present?
-        PatientUpdateFromPDSSidekiqJob.perform_async(@patient.id, nil)
+        PatientUpdateFromPDSJob.perform_async(@patient.id, nil)
       end
 
       redirect_to edit_patient_path(@patient)

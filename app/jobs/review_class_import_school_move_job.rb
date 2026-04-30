@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ReviewClassImportSchoolMoveJob < ApplicationJobActiveJob
-  queue_as :imports
+class ReviewClassImportSchoolMoveJob < ApplicationJob
+  sidekiq_options queue: :imports
 
   def perform(import_id)
     import = ClassImport.find(import_id)

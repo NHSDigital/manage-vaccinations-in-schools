@@ -38,14 +38,14 @@ describe UpdatePatientsFromPDS do
     end
 
     it "queues PDSCascadingSearchJob for patients without an NHS number" do
-      expect { call }.to enqueue_sidekiq_job(PDSCascadingSearchSidekiqJob)
+      expect { call }.to enqueue_sidekiq_job(PDSCascadingSearchJob)
         .on("pds")
         .exactly(2)
         .times
     end
 
     it "queues a job for each patient with an NHS number" do
-      expect { call }.to enqueue_sidekiq_job(PatientUpdateFromPDSSidekiqJob)
+      expect { call }.to enqueue_sidekiq_job(PatientUpdateFromPDSJob)
         .on("pds")
         .exactly(2)
         .times

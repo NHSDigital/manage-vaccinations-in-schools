@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SyncVaccinationRecordToNHSJob < ApplicationJobSidekiq
+class SyncVaccinationRecordToNHSJob < ApplicationJob
   include ImmunisationsAPIThrottlingConcern
 
   sidekiq_options queue: :immunisations_api_sync,

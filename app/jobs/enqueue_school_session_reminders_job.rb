@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueSchoolSessionRemindersJob < ApplicationJobSidekiq
+class EnqueueSchoolSessionRemindersJob < ApplicationJob
   sidekiq_options queue: :notifications
 
   def perform
@@ -12,6 +12,6 @@ class EnqueueSchoolSessionRemindersJob < ApplicationJobSidekiq
         .merge(Location.gias_school)
         .ids
 
-    SendSchoolSessionRemindersSidekiqJob.perform_bulk(session_ids.zip)
+    SendSchoolSessionRemindersJob.perform_bulk(session_ids.zip)
   end
 end

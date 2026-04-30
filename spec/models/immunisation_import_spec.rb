@@ -286,13 +286,13 @@ describe ImmunisationImport do
 
       it "enqueues jobs to look up missing NHS numbers" do
         expect { immunisation_import.process! }.to enqueue_sidekiq_job(
-          PDSCascadingSearchSidekiqJob
+          PDSCascadingSearchJob
         ).once.on("imports")
       end
 
       it "enqueues jobs to update from PDS" do
         expect { immunisation_import.process! }.to enqueue_sidekiq_job(
-          PatientUpdateFromPDSSidekiqJob
+          PatientUpdateFromPDSJob
         ).exactly(10).times.on("imports")
       end
     end
@@ -337,13 +337,13 @@ describe ImmunisationImport do
 
       it "enqueues jobs to look up missing NHS numbers" do
         expect { immunisation_import.process! }.to enqueue_sidekiq_job(
-          PDSCascadingSearchSidekiqJob
+          PDSCascadingSearchJob
         ).once.on("imports")
       end
 
       it "enqueues jobs to update from PDS" do
         expect { immunisation_import.process! }.to enqueue_sidekiq_job(
-          PatientUpdateFromPDSSidekiqJob
+          PatientUpdateFromPDSJob
         ).exactly(9).times.on("imports")
       end
     end
@@ -388,13 +388,13 @@ describe ImmunisationImport do
 
       it "enqueues jobs to look up missing NHS numbers" do
         expect { immunisation_import.process! }.to enqueue_sidekiq_job(
-          PDSCascadingSearchSidekiqJob
+          PDSCascadingSearchJob
         ).once.on("imports")
       end
 
       it "enqueues jobs to update from PDS" do
         expect { immunisation_import.process! }.to enqueue_sidekiq_job(
-          PatientUpdateFromPDSSidekiqJob
+          PatientUpdateFromPDSJob
         ).exactly(9).times.on("imports")
       end
     end

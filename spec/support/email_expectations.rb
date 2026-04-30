@@ -15,7 +15,7 @@ module EmailExpectations
   end
 
   def email_deliveries
-    EmailDeliverySidekiqJob.drain
+    EmailDeliveryJob.drain
     EmailDeliveryJob.deliveries
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueLocationPositionUpdaterJob < ApplicationJobSidekiq
+class EnqueueLocationPositionUpdaterJob < ApplicationJob
   sidekiq_options queue: :third_party_data_imports
 
   def perform

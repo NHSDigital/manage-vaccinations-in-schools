@@ -158,8 +158,8 @@ class Notifier::Patient
 
     parents.each do |parent|
       params = base_params.merge("parent_id" => parent.id)
-      EmailDeliverySidekiqJob.perform_async(template_name, params)
-      SMSDeliverySidekiqJob.perform_async(template_name, params)
+      EmailDeliveryJob.perform_async(template_name, params)
+      SMSDeliveryJob.perform_async(template_name, params)
     end
 
     clinic_notification
@@ -247,8 +247,8 @@ class Notifier::Patient
         params["team_location_id"] = team_location.id
       end
 
-      EmailDeliverySidekiqJob.perform_async(email_template, params)
-      SMSDeliverySidekiqJob.perform_async(sms_template, params)
+      EmailDeliveryJob.perform_async(email_template, params)
+      SMSDeliveryJob.perform_async(sms_template, params)
     end
 
     PatientStatusUpdaterJob.perform_async(patient.id)

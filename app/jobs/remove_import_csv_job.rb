@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RemoveImportCSVJob < ApplicationJobSidekiq
+class RemoveImportCSVJob < ApplicationJob
   sidekiq_options queue: :imports
 
   def perform

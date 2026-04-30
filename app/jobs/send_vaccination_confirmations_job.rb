@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SendVaccinationConfirmationsJob < ApplicationJobSidekiq
+class SendVaccinationConfirmationsJob < ApplicationJob
   sidekiq_options queue: :notifications
 
   def perform

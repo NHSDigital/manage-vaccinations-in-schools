@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SendManualSchoolConsentRemindersJob < ApplicationJobSidekiq
+class SendManualSchoolConsentRemindersJob < ApplicationJob
   include SendSchoolConsentNotificationConcern
 
   sidekiq_options queue: :notifications

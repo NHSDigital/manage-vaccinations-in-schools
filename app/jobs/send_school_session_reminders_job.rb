@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-class SendSchoolSessionRemindersJob < ApplicationJobActiveJob
+class SendSchoolSessionRemindersJob < ApplicationJob
   queue_as :notifications
 
-  def perform(session)
+  def perform(session_id)
+    session = Session.find(session_id)
+
     date = session.next_date(include_today: false)
 
     patients =

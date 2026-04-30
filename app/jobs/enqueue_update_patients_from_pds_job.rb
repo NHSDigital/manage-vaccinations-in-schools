@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueUpdatePatientsFromPDSJob < ApplicationJobSidekiq
+class EnqueueUpdatePatientsFromPDSJob < ApplicationJob
   include SingleConcurrencyConcern
 
   sidekiq_options queue: :pds

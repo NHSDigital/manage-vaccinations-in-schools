@@ -67,7 +67,7 @@ module ParentInterface
       # answering. Running the job ensures the consent form is still
       # processed and, if ethnicity was provided, it gets copied
       # onto the matched patient.
-      ProcessConsentFormSidekiqJob.perform_async(@consent_form.id)
+      ProcessConsentFormJob.perform_async(@consent_form.id)
 
       if Flipper.enabled?(:ethnicity_capture)
         redirect_to parent_interface_consent_form_edit_path(

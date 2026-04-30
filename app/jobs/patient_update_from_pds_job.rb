@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-class PatientUpdateFromPDSJob < ApplicationJobActiveJob
+class PatientUpdateFromPDSJob < ApplicationJob
   include PDSThrottlingConcern
 
-  queue_as :pds
-  retry_on Faraday::ServerError, wait: :polynomially_longer
+  sidekiq_options queue: :pds
 
-  def perform(patient, search_results = [])
+  def perform(patient_id, search_results)
+    patient = Patient.find(patient_id)
+    search_results ||= []
+
     raise MissingNHSNumber if patient.nhs_number.nil? && search_results.empty?
 
     unique_nhs_number =
@@ -46,7 +48,7 @@ class PatientUpdateFromPDSJob < ApplicationJobActiveJob
     end
   rescue NHS::PDS::PatientNotFound
     patient.update!(nhs_number: nil)
-    PDSCascadingSearchSidekiqJob.perform_async(
+    PDSCascadingSearchJob.perform_async(
       patient.to_global_id.to_s,
       nil,
       nil,
@@ -54,7 +56,7 @@ class PatientUpdateFromPDSJob < ApplicationJobActiveJob
     )
   rescue NHS::PDS::InvalidatedResource, NHS::PDS::InvalidNHSNumber
     patient.invalidate!
-    PDSCascadingSearchSidekiqJob.perform_async(
+    PDSCascadingSearchJob.perform_async(
       patient.to_global_id.to_s,
       nil,
       nil,

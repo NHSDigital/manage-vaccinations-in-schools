@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientsClearRegistrationJob < ApplicationJobSidekiq
+class PatientsClearRegistrationJob < ApplicationJob
   sidekiq_options queue: :patients
 
   def perform

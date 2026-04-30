@@ -1,23 +1,20 @@
 # frozen_string_literal: true
 
-class PDSCascadingSearchJob < ApplicationJobActiveJob
+class PDSCascadingSearchJob < ApplicationJob
   include PDSThrottlingConcern
 
-  queue_as :pds
-  retry_on Faraday::ServerError, wait: :polynomially_longer
+  sidekiq_options queue: :pds
 
-  def perform(searchable, step_name: nil, search_results: nil, queue: nil)
-    step_name ||= "no_fuzzy_with_history"
+  def perform(searchable_global_id, step, search_results, queue)
+    step ||= "no_fuzzy_with_history"
     search_results ||= []
     queue ||= "pds"
 
-    # FIXME: Remove these once we're not queuing jobs using symbols.
-    step_name = step_name.to_s
-    queue = queue.to_s
+    searchable = GlobalID::Locator.locate(searchable_global_id)
 
     SemanticLogger.tagged(
       searchable: "#{searchable.class.name}##{searchable.id}",
-      step: step_name
+      step:
     ) do
       result, pds_patient =
         search_for_patient(
@@ -25,11 +22,11 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
           given_name: searchable.given_name,
           date_of_birth: searchable.date_of_birth,
           address_postcode: searchable.address_postcode,
-          step_name:
+          step:
         )
 
       search_result = {
-        "step" => step_name,
+        "step" => step,
         "result" => result.to_s,
         "nhs_number" => pds_patient&.nhs_number,
         "created_at" => Time.current.iso8601
@@ -43,22 +40,19 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
 
       searchable.save!
 
-      next_step = STEPS[step_name][result]
+      next_step = STEPS[step][result]
 
       if result == :error || next_step.nil? || next_step == "give_up" ||
            multiple_nhs_numbers_found?(search_results) ||
            next_step == "save_nhs_number_if_unique"
         searchable.save!
         if searchable.is_a?(PatientChangeset)
-          ProcessPatientChangesetSidekiqJob.perform_async(searchable.id)
+          ProcessPatientChangesetJob.perform_async(searchable.id)
         else
-          PatientUpdateFromPDSSidekiqJob.perform_async(
-            searchable.id,
-            search_results
-          )
+          PatientUpdateFromPDSJob.perform_async(searchable.id, search_results)
         end
       elsif next_step.in?(STEPS.keys)
-        raise "Recursive step detected: #{next_step}" if next_step == step_name
+        raise "Recursive step detected: #{next_step}" if next_step == step
         enqueue_next_search(searchable, next_step, search_results, queue)
       else
         raise "Unknown step: #{next_step}"
@@ -122,11 +116,11 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
     given_name:,
     date_of_birth:,
     address_postcode:,
-    step_name:
+    step:
   )
     return :no_postcode, nil if address_postcode.blank?
 
-    case step_name
+    case step
     when "no_fuzzy_with_wildcard_given_name"
       return :skip_step, nil if given_name.length <= 3
     when "no_fuzzy_with_wildcard_family_name"
@@ -142,8 +136,8 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
       fuzzy: false
     }
 
-    if STEPS[step_name][:format_query].respond_to?(:call)
-      result = STEPS[step_name][:format_query].call(query)
+    if STEPS[step][:format_query].respond_to?(:call)
+      result = STEPS[step][:format_query].call(query)
       query = result if result.is_a?(Hash)
     end
 
@@ -165,12 +159,12 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
     [:error, nil]
   end
 
-  def enqueue_next_search(searchable, step_name, search_results, queue)
+  def enqueue_next_search(searchable, step, search_results, queue)
     searchable.save!
 
-    PDSCascadingSearchSidekiqJob.set(queue:).perform_async(
+    PDSCascadingSearchJob.set(queue:).perform_async(
       searchable.to_global_id.to_s,
-      step_name,
+      step,
       search_results,
       queue
     )
