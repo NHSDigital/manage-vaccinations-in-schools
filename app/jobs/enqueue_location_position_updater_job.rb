@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueLocationPositionUpdaterJob < ApplicationJob
+class EnqueueLocationPositionUpdaterJob < ApplicationJobActiveJob
   queue_as :third_party_data_imports
 
   def perform

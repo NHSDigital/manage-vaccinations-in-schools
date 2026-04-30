@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ProcessImportJob < ApplicationJob
+class ProcessImportJob < ApplicationJobActiveJob
   include SingleConcurrencyConcern
 
   queue_as :imports

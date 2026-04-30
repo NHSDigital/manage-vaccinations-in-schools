@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SendVaccinationConfirmationsJob < ApplicationJob
+class SendVaccinationConfirmationsJob < ApplicationJobActiveJob
   queue_as :notifications
 
   def perform

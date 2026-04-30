@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class InvalidateSelfConsentsJob < ApplicationJob
+class InvalidateSelfConsentsJob < ApplicationJobActiveJob
   queue_as :consents
 
   def perform

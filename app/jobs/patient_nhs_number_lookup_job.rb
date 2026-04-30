@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientNHSNumberLookupJob < ApplicationJob
+class PatientNHSNumberLookupJob < ApplicationJobActiveJob
   include PDSThrottlingConcern
 
   queue_as :pds

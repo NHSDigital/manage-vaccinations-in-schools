@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ReportingAPI::RefreshJob < ApplicationJob
+class ReportingAPI::RefreshJob < ApplicationJobActiveJob
   def perform
     ReportingAPI::Total.refresh!
   end

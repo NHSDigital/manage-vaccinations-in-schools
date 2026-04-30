@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
+class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJobActiveJob
   queue_as :patients
 
   def perform

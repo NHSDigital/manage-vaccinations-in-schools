@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SendSchoolConsentRequestsJob < ApplicationJob
+class SendSchoolConsentRequestsJob < ApplicationJobActiveJob
   include SendSchoolConsentNotificationConcern
 
   queue_as :notifications

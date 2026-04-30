@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class LocationPositionUpdaterJob
-  include Sidekiq::Job
-
+class LocationPositionUpdaterJob < ApplicationJobSidekiq
   sidekiq_options queue: :third_party_data_imports, lock: :until_executing
 
   def perform(location_id)

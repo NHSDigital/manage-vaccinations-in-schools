@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BulkRemoveParentRelationshipsJob < ApplicationJob
+class BulkRemoveParentRelationshipsJob < ApplicationJobActiveJob
   queue_as :imports
 
   def perform(

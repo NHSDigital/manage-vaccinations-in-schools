@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class PatientsAgedOutOfSchoolJob
-  include Sidekiq::Job
-
+class PatientsAgedOutOfSchoolJob < ApplicationJobSidekiq
   sidekiq_options queue: :patients
 
   def perform(school_id)

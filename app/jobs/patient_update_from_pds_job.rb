@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientUpdateFromPDSJob < ApplicationJob
+class PatientUpdateFromPDSJob < ApplicationJobActiveJob
   include PDSThrottlingConcern
 
   queue_as :pds

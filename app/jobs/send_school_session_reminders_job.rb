@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SendSchoolSessionRemindersJob < ApplicationJob
+class SendSchoolSessionRemindersJob < ApplicationJobActiveJob
   queue_as :notifications
 
   def perform(session)

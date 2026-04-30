@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueAutomatedCareplusReportsJob < ApplicationJob
+class EnqueueAutomatedCareplusReportsJob < ApplicationJobActiveJob
   queue_as :careplus
 
   def perform

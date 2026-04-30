@@ -2,7 +2,7 @@
 
 require "notifications/client"
 
-class NotifyDeliveryJob < ApplicationJob
+class NotifyDeliveryJob < ApplicationJobActiveJob
   TEAM_ONLY_API_KEY_MESSAGE =
     "Can’t send to this recipient using a team-only API key"
 

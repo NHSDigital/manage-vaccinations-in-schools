@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ReviewClassImportSchoolMoveJob < ApplicationJob
+class ReviewClassImportSchoolMoveJob < ApplicationJobActiveJob
   queue_as :imports
 
   def perform(import_id)

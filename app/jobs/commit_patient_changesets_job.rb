@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-class CommitPatientChangesetsJob
-  include Sidekiq::Job
-  include Sidekiq::Throttled::Job
+class CommitPatientChangesetsJob < ApplicationJobSidekiq
   include PatientImportConcern
 
-  queue_as :imports
+  sidekiq_options queue: :imports
 
   def perform(patient_changeset_ids)
     changesets =

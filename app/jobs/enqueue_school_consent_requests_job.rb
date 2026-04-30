@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueSchoolConsentRequestsJob < ApplicationJob
+class EnqueueSchoolConsentRequestsJob < ApplicationJobActiveJob
   queue_as :notifications
 
   def perform

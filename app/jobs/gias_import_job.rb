@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class GIASImportJob < ApplicationJob
+class GIASImportJob < ApplicationJobActiveJob
   include SingleConcurrencyConcern
 
   queue_as :third_party_data_imports

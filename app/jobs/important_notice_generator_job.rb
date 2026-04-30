@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImportantNoticeGeneratorJob < ApplicationJob
+class ImportantNoticeGeneratorJob < ApplicationJobActiveJob
   queue_as :cache
 
   BATCH_SIZE = 1000

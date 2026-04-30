@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientsClearRegistrationJob < ApplicationJob
+class PatientsClearRegistrationJob < ApplicationJobActiveJob
   queue_as :patients
 
   def perform

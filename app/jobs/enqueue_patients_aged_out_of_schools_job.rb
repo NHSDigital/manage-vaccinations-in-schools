@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueuePatientsAgedOutOfSchoolsJob < ApplicationJob
+class EnqueuePatientsAgedOutOfSchoolsJob < ApplicationJobActiveJob
   queue_as :patients
 
   def perform

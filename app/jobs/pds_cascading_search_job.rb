@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PDSCascadingSearchJob < ApplicationJob
+class PDSCascadingSearchJob < ApplicationJobActiveJob
   include PDSThrottlingConcern
 
   queue_as :pds

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ProcessPatientChangesetJob < ApplicationJob
+class ProcessPatientChangesetJob < ApplicationJobActiveJob
   queue_as :imports
 
   def perform(patient_changeset_id)

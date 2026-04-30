@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueProcessUnmatchedConsentFormsJob < ApplicationJob
+class EnqueueProcessUnmatchedConsentFormsJob < ApplicationJobActiveJob
   include SingleConcurrencyConcern
 
   queue_as :consents

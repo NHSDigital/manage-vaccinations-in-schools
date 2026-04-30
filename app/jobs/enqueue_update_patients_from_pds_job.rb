@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnqueueUpdatePatientsFromPDSJob < ApplicationJob
+class EnqueueUpdatePatientsFromPDSJob < ApplicationJobActiveJob
   include SingleConcurrencyConcern
 
   queue_as :pds

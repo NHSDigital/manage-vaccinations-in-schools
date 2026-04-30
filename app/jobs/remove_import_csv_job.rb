@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RemoveImportCSVJob < ApplicationJob
+class RemoveImportCSVJob < ApplicationJobActiveJob
   queue_as :imports
 
   def perform
