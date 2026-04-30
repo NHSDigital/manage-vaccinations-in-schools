@@ -92,6 +92,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     GillickAssessment.where(location_id: location_ids_to_delete).delete_all
     PatientLocation.where(location_id: location_ids_to_delete).delete_all
     PreScreening.where(location_id: location_ids_to_delete).delete_all
+    SchoolMove.where(school_id: location_ids_to_delete).delete_all
 
     team_location_ids =
       TeamLocation.where(location_id: location_ids_to_delete).pluck(:id)
