@@ -1,0 +1,6 @@
+<% if export.location.school? %>
+  <%= sl.with_row do |r|
+        r.with_key { "School" }
+        r.with_value { export.location.name }
+      end %>
+<% end %>

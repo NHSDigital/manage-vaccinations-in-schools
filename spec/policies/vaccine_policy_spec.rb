@@ -9,15 +9,15 @@ describe VaccinePolicy do
   let(:national_reporting_user) do
     create(:nurse, teams: [national_reporting_team])
   end
-  let(:vaccination_report) { VaccinationReport }
+  let(:vaccine) { Vaccine }
 
   permissions :index?, :show? do
-    it { should permit(point_of_care_user, vaccination_report) }
-    it { should_not permit(national_reporting_user, vaccination_report) }
+    it { should permit(point_of_care_user, vaccine) }
+    it { should_not permit(national_reporting_user, vaccine) }
   end
 
   permissions :edit?, :create?, :destroy?, :new?, :update? do
-    it { should_not permit(point_of_care_user, vaccination_report) }
-    it { should_not permit(national_reporting_user, vaccination_report) }
+    it { should_not permit(point_of_care_user, vaccine) }
+    it { should_not permit(national_reporting_user, vaccine) }
   end
 end

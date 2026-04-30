@@ -35,7 +35,7 @@ en:
           safe_to_vaccinate_nasal: Yes, it’s safe to vaccinate with nasal spray
           safe_to_vaccinate_without_gelatine:
             Yes, it’s safe to vaccinate with the gelatine-free injection
-      vaccination_report:
+      vaccination_records_export_form:
         file_format_options:
           mavis: CSV
           careplus: CSV for CarePlus (System C)

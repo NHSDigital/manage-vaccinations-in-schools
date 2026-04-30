@@ -5,7 +5,7 @@
 <% title = "Download vaccination report" %>
 <% content_for :page_title, title %>
 
-<%= form_with model: @vaccination_report, url: vaccination_report_path, method: :post do |f| %>
+<%= form_with model: @form, url: vaccination_records_exports_path, method: :post do |f| %>
   <%= f.mavis_error_summary %>
 
   <%= h1 title %>
@@ -40,7 +40,7 @@
 
   <div class="nhsuk-u-margin-bottom-8">
     <%= f.govuk_collection_radio_buttons :file_format,
-                                         @vaccination_report.file_formats,
+                                         @form.file_formats,
                                          :itself,
                                          legend: { text: "Select file format", size: "m" } %>
   </div>

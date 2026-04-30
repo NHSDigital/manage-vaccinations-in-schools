@@ -17,6 +17,25 @@ en:
               invalid: Enter a batch number with only letters and numbers
               too_short: Enter a batch number that is more than %{count} characters long
               too_long: Enter a batch number that is less than %{count} characters long
+        vaccination_records_export_form:
+          attributes:
+            academic_year:
+              blank: Choose an academic year
+            date_from:
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              blank: Choose a date
+            date_to:
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              blank: Choose a date
+            file_format:
+              blank: Choose a file format
+              inclusion: Choose a file format
+            programme_type:
+              blank: Choose a programme
         bulk_remove_parents_form:
           attributes:
             remove_option:
@@ -282,6 +301,16 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
+        school_moves_export_form:
+          attributes:
+            date_from:
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+            date_to:
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
         select_team_form:
           attributes:
             team_id:
@@ -328,15 +357,6 @@ en:
               inclusion: Select yes or no
             notes:
               too_long: Enter notes that are less than %{count} characters long
-        vaccination_report:
-          attributes:
-            academic_year:
-              blank: Choose an academic year
-            file_format:
-              blank: Choose a file format
-              inclusion: Choose a file format
-            programme_type:
-              blank: Choose a programme
   activerecord:
     attributes:
       careplus_report:
@@ -1073,6 +1093,9 @@ en:
         description:
           one: "%{count} important notice needs attention"
           other: "%{count} important notices need attention"
+  downloads:
+    index:
+      title: Downloads
   draft_consents:
     agree:
       title:
@@ -1133,7 +1156,6 @@ en:
     index:
       title: Imports
       title_short: Imports
-      description: Import child, cohort and vaccination records and see important notices
       description_national_reporting:
         Upload flu and HPV vaccination records and share them with NHS England
     notices:
@@ -1180,6 +1202,10 @@ en:
         contraindicated: they had contraindications
         unwell: the nurse decided %{short_patient_name} was not well
         refused: they refused when the nurse offered the vaccination
+  manage_data:
+    index:
+      title: Manage data
+      description: Upload records to Mavis and keep track of requested downloads
   notification_banner:
     info: Information
     success: Success
@@ -1366,3 +1392,7 @@ en:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."
     present: "%{name} is attending today’s session."
+  exports_flash:
+    heading: >
+      "It will take some time to prepare the records. You’ll be able to download them soon in"
+    heading_link_text: "Downloads"

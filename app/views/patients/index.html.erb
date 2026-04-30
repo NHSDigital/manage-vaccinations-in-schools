@@ -2,9 +2,9 @@
 
 <% if @show_record_offline %>
   <div class="nhsuk-button-group">
-    <%= govuk_button_link_to "Download offline spreadsheet",
-                             url_for(path_params: request.path_parameters, params: request.query_parameters, format: :xlsx),
-                             secondary: true %>
+    <%= govuk_button_to "Download offline spreadsheet",
+                        patients_clinic_location_exports_path(request.query_parameters),
+                        secondary: true %>
   </div>
 <% end %>
 

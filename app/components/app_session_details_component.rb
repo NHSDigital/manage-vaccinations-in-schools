@@ -14,9 +14,10 @@ class AppSessionDetailsComponent < ViewComponent::Base
           show_consent_style: true
         ) %>
       <% if helpers.policy(session).edit? %>
-        <%= govuk_button_link_to "Download offline spreadsheet",
-                                 session_path(session, format: :xlsx),
-                                 secondary: true %>
+        <%= govuk_button_to "Download offline spreadsheet",
+                            session_exports_path(session),
+                            method: :post,
+                            secondary: true %>
       <% end %>
     <% end %>
   ERB
@@ -29,7 +30,7 @@ class AppSessionDetailsComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :govuk_button_link_to, to: :helpers
+  delegate :govuk_button_to, to: :helpers
 
   def actions
     return [] unless helpers.policy(session).edit?

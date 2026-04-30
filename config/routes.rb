@@ -179,6 +179,13 @@ Rails.application.routes.draw do
             path: "immunisation-imports",
             except: %i[index destroy]
 
+  get "/manage-data", to: "imports#index", as: :manage_data
+  get "/downloads", to: "downloads#index", as: :downloads
+
+  resources :exports, only: [] do
+    get :download, on: :member
+  end
+
   resources :imports, only: %i[index create] do
     collection { get :records }
   end
@@ -201,7 +208,16 @@ Rails.application.routes.draw do
          to: "bulk_remove_parents#create"
   end
 
+  resources :location_patients_exports,
+            path: "location-exports",
+            controller: "locations/exports",
+            only: []
+
   resources :notifications, only: :create
+
+  post "patients/exports",
+       to: "locations/exports#create",
+       as: :patients_clinic_location_exports
 
   resources :patients, only: %i[index show edit] do
     post "", action: :index, on: :collection
@@ -263,12 +279,10 @@ Rails.application.routes.draw do
   resources :reports, only: :index
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
-  resources :school_move_exports,
+  resources :school_moves_exports,
             path: "school-moves/exports",
             controller: "school_moves/exports",
-            only: %i[create show update] do
-    get "download", on: :member
-  end
+            only: %i[new create]
 
   resources :schools, only: :index, param: :urn_and_site do
     resource :invite_to_clinic,
@@ -278,10 +292,15 @@ Rails.application.routes.draw do
 
     resources :import, only: :new, controller: "schools/import"
     resources :patients, only: :index, controller: "schools/patients"
+    post "patients/exports",
+         to: "locations/exports#create",
+         as: :patients_exports
     resources :sessions, only: :index, controller: "schools/sessions"
   end
 
   resources :sessions, only: %i[index new show edit], param: :slug do
+    resources :exports, only: %i[create], controller: "sessions/exports"
+
     resource :patients, only: :show, controller: "sessions/patients" do
       post ":patient_id/register/:status", as: :register, action: :register
     end
@@ -371,7 +390,13 @@ Rails.application.routes.draw do
     get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
   end
 
-  resource :vaccination_report, path: "vaccination-report", only: %i[new create]
+  resources :vaccination_records_exports,
+            path: "vaccination-records/exports",
+            controller: "vaccination_records/exports",
+            only: %i[new create]
+
+  get "/vaccination-report/new",
+      to: redirect("/vaccination-records/exports/new")
 
   get "consent-form/:type",
       to: "consent_form_downloads#show",

@@ -90,9 +90,9 @@ class DashboardController < ApplicationController
       }
 
       @secondary_items << {
-        title: I18n.t("imports.index.title"),
-        path: imports_path,
-        description: I18n.t("imports.index.description")
+        title: I18n.t("manage_data.index.title"),
+        path: manage_data_path,
+        description: I18n.t("manage_data.index.description")
       }
 
       @secondary_items << {

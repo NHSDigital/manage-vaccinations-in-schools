@@ -78,7 +78,7 @@ describe "Immunisation imports" do
   def when_i_go_to_the_import_page
     visit "/dashboard"
 
-    click_on "Import", match: :first
+    click_on "Manage data", match: :first
   end
 
   def then_i_should_see_the_upload_link

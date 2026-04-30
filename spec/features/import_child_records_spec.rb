@@ -166,7 +166,7 @@ describe "Import child records", :pds do
   def when_i_visit_the_import_page
     sign_in @user
     visit "/dashboard"
-    click_on "Import", match: :first
+    click_on "Manage data", match: :first
   end
 
   def and_i_choose_to_import_child_records
@@ -284,7 +284,7 @@ describe "Import child records", :pds do
   end
 
   def and_i_go_to_the_import_page
-    click_on "Import", match: :first
+    click_on "Manage data", match: :first
   end
 
   def then_i_should_see_import_issues_with_the_count

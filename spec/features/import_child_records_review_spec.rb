@@ -62,7 +62,7 @@ describe "Import child records review" do
 
   def when_i_visit_the_import_page
     visit "/dashboard"
-    click_on "Import", match: :first
+    click_on "Manage data", match: :first
   end
 
   def and_i_choose_to_import_child_records

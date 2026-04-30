@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppImportsNavigationComponent < ViewComponent::Base
+class AppManageDataNavigationComponent < ViewComponent::Base
   def initialize(active:, team:)
     @active = active
     @team = team
@@ -25,6 +25,14 @@ class AppImportsNavigationComponent < ViewComponent::Base
           href: imports_issues_path,
           text: issues_text,
           selected: active == :issues
+        )
+      end
+
+      if team.has_point_of_care_access?
+        nav.with_item(
+          href: downloads_path,
+          text: "Downloads",
+          selected: active == :exports
         )
       end
 

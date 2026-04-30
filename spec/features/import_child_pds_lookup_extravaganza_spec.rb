@@ -436,7 +436,7 @@ describe "Import child records", :pds do
 
   def when_i_visit_the_import_page
     visit "/"
-    click_link "Import", match: :first
+    click_link "Manage data", match: :first
   end
 
   def when_i_go_back_to_the_import_page
@@ -504,7 +504,7 @@ describe "Import child records", :pds do
 
   def when_i_visit_the_import_page
     visit "/"
-    click_link "Import", match: :first
+    click_link "Manage data", match: :first
   end
 
   def when_i_go_back_to_the_import_page

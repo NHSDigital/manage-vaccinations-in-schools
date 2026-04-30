@@ -1,0 +1,16 @@
+<%= sl.with_row do |r|
+     r.with_key { "Programme" }
+     r.with_value { export.programme.name }
+   end %>
+<%= sl.with_row do |r|
+      r.with_key { "Academic year" }
+      r.with_value { format_academic_year(export.academic_year) }
+    end %>
+<%= render "downloads/date_range_row", export: export, sl: sl %>
+<%= sl.with_row do |r|
+      r.with_key { "Format" }
+      r.with_value {
+        t(export.file_format,
+          scope: "helpers.label.vaccination_records_export_form.file_format_options")
+      }
+    end %>

@@ -1,19 +1,23 @@
 # frozen_string_literal: true
 
-class SchoolMoves::ExportsController < ApplicationController
+class VaccinationRecords::ExportsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def new
     authorize Export.new(team: current_team, user: current_user)
-    @form = SchoolMovesExportForm.new
+    @form = VaccinationRecordsExportForm.new(team: current_team)
   end
 
   def create
-    @form = SchoolMovesExportForm.new(**create_params)
+    @form =
+      VaccinationRecordsExportForm.new(team: current_team, **create_params)
 
     if from_and_to_dates_valid? && @form.valid?
       exportable =
-        SchoolMovesExport.new(
+        VaccinationRecordsExport.new(
+          academic_year: @form.academic_year,
+          programme_type: @form.programme_type,
+          file_format: @form.file_format,
           date_from: @form.date_from,
           date_to: @form.date_to
         )
@@ -47,8 +51,11 @@ class SchoolMoves::ExportsController < ApplicationController
   private
 
   def create_params
-    raw = params.fetch(:school_moves_export_form, {})
+    raw = params.fetch(:vaccination_records_export_form, {})
     {
+      academic_year: raw[:academic_year],
+      programme_type: raw[:programme_type],
+      file_format: raw[:file_format],
       date_from:
         begin
           Date.new(
@@ -82,7 +89,7 @@ class SchoolMoves::ExportsController < ApplicationController
       DateParamsValidator.new(
         field_name: :date_from,
         object: @form,
-        params: params.fetch(:school_moves_export_form, {})
+        params: params.fetch(:vaccination_records_export_form, {})
       )
   end
 
@@ -91,7 +98,7 @@ class SchoolMoves::ExportsController < ApplicationController
       DateParamsValidator.new(
         field_name: :date_to,
         object: @form,
-        params: params.fetch(:school_moves_export_form, {})
+        params: params.fetch(:vaccination_records_export_form, {})
       )
   end
 end

@@ -36,9 +36,9 @@
 
   <div class="app-grid-column-results">
     <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
-      <%= govuk_button_link_to "Download offline spreadsheet",
-                               url_for(path_params: request.path_parameters, params: request.query_parameters, format: :xlsx),
-                               secondary: true %>
+      <%= govuk_button_to "Download offline spreadsheet",
+                          school_patients_exports_path(@location, request.query_parameters),
+                          secondary: true %>
 
       <% @patients.each do |patient| %>
         <%= render AppPatientSearchResultCardComponent.new(

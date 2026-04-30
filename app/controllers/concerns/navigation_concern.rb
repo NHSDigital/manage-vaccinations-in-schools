@@ -53,9 +53,15 @@ module NavigationConcern
         title: t("reports.index.title"),
         path: reports_path
       }
+
+      @navigation_items << {
+        title: t("manage_data.index.title"),
+        path: manage_data_path,
+        count: (@cached_counts.import_issues if policy(%i[import issue]).index?)
+      }
     end
 
-    if current_team&.is_sais_team?
+    if current_team&.has_national_reporting_access?
       @navigation_items << {
         title: t("imports.index.title_short"),
         path: imports_path,

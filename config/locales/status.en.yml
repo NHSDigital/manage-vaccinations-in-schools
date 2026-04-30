@@ -116,6 +116,17 @@ en:
         needs_consent_no_contact_details: No contact details
         vaccinated_already: Already had the vaccine
         vaccinated_fully: Vaccinated
+    export:
+      label:
+        pending: Preparing
+        ready: Ready
+        failed: Failed
+        expired: Expired
+      colour:
+        pending: blue
+        ready: green
+        failed: red
+        expired: grey
     registration:
       label:
         attending: Attending session

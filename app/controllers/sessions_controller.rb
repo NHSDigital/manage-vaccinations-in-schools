@@ -47,25 +47,7 @@ class SessionsController < ApplicationController
   end
 
   def show
-    respond_to do |format|
-      format.html { render layout: "session" }
-
-      format.xlsx do
-        filename =
-          if (urn_and_site = @session.location.urn_and_site).present?
-            "#{@session.location.name} (#{urn_and_site})"
-          else
-            @session.location.name
-          end
-
-        send_data(
-          Reports::OfflineExporter.from_session(@session),
-          filename:
-            "#{filename} - exported on #{Date.current.to_fs(:long)}.xlsx",
-          disposition: "attachment"
-        )
-      end
-    end
+    render layout: "session"
   end
 
   def edit

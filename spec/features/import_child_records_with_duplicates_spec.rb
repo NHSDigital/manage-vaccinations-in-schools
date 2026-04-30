@@ -266,7 +266,7 @@ describe "Child record imports duplicates" do
 
   def when_i_visit_the_import_page
     visit "/"
-    click_link "Import", match: :first
+    click_link "Manage data", match: :first
   end
 
   def when_i_visit_the_import_issues_page
@@ -287,7 +287,7 @@ describe "Child record imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("Imports (3)")
+    expect(page).to have_content("Manage data (3)")
   end
 
   def given_i_archive_the_patient_record
@@ -428,17 +428,17 @@ describe "Child record imports duplicates" do
   end
 
   def when_i_go_to_the_import_page
-    click_link "Import", match: :first
+    click_link "Manage data", match: :first
   end
 
   def then_i_should_see_import_issues_with_the_count
-    expect(page).to have_content("Imports (1)")
+    expect(page).to have_content("Manage data (1)")
     expect(page).to have_link("Issues")
     expect(page).to have_selector(".app-count", text: "(1)")
   end
 
   def then_i_should_see_no_import_issues_with_the_count
-    expect(page).to have_content("Imports (0)")
+    expect(page).to have_content("Manage data (0)")
     expect(page).to have_link("Issues")
     expect(page).to have_selector(".app-count", text: "(0)")
   end

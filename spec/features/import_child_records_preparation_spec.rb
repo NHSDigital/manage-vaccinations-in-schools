@@ -180,7 +180,7 @@ describe "Import child records" do
   def when_i_visit_the_import_page
     sign_in @user
     visit "/dashboard"
-    click_on "Import", match: :first
+    click_on "Manage data", match: :first
   end
 
   def and_i_choose_to_import_child_records(choose_academic_year: false)

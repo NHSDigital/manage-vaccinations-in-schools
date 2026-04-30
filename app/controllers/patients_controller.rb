@@ -27,23 +27,7 @@ class PatientsController < ApplicationController
 
     @show_record_offline = @programmes.present? && @form.invited_to_clinic
 
-    respond_to do |format|
-      format.html { @pagy, @patients = pagy(patients) }
-
-      format.xlsx do
-        data =
-          Reports::OfflineExporter.from_patients(
-            patients,
-            team: current_team,
-            programmes: @programmes,
-            academic_year: AcademicYear.current
-          )
-
-        filename = "Children exported on #{Date.current.to_fs(:long)}.xlsx"
-
-        send_data(data, filename:, disposition: "attachment")
-      end
-    end
+    @pagy, @patients = pagy(patients)
   end
 
   def show

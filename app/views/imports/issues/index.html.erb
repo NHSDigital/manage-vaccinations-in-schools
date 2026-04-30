@@ -1,6 +1,6 @@
 <%= render "imports/header" %>
 
-<%= render AppImportsNavigationComponent.new(active: :issues, team: current_team) %>
+<%= render AppManageDataNavigationComponent.new(active: :issues, team: current_team) %>
 
 <% if @import_issues.any? %>
   <%= render AppCardComponent.new(feature: true) do |card| %>

@@ -145,7 +145,7 @@ describe "Import class lists" do
 
   def when_i_visit_the_import_page
     visit "/"
-    click_link "Import", match: :first
+    click_link "Manage data", match: :first
   end
 
   def when_i_visit_a_school_page_for_the_hpv_programme
