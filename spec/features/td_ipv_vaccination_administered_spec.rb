@@ -42,7 +42,7 @@ describe "Td/IPV vaccination" do
     when_i_confirm_the_details
     then_i_see_a_success_message
     and_i_no_longer_see_the_patient_in_the_record_tab
-    and_the_vaccination_record_is_not_synced_to_nhs
+    and_the_vaccination_record_is_synced_to_nhs
 
     when_i_go_back
     and_i_save_changes
@@ -209,7 +209,7 @@ describe "Td/IPV vaccination" do
   end
 
   def when_vaccination_confirmations_are_sent
-    SendVaccinationConfirmationsJob.perform_now
+    SendVaccinationConfirmationsJob.new.perform
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
@@ -240,8 +240,8 @@ describe "Td/IPV vaccination" do
     )
   end
 
-  def and_the_vaccination_record_is_not_synced_to_nhs
-    perform_enqueued_jobs
-    expect(@stubbed_post_request).not_to have_been_requested
+  def and_the_vaccination_record_is_synced_to_nhs
+    Sidekiq::Job.drain_all
+    expect(@stubbed_post_request).to have_been_requested
   end
 end

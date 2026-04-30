@@ -34,345 +34,352 @@ describe PDSCascadingSearchJob do
 
   around { |example| travel_to(today) { example.run } }
 
-  describe "#perform" do
-    context "when finding a patient on first attempt" do
-      before do
-        allow(PDS::Patient).to receive(:search).and_return(mock_patient)
-      end
+  context "when finding a patient on first attempt" do
+    before { allow(PDS::Patient).to receive(:search).and_return(mock_patient) }
 
-      it "saves the search result and enqueues ProcessPatientChangesetJob" do
-        expect {
-          described_class.perform_now(patient_changeset)
-        }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset.id
-        )
-
-        patient_changeset.reload
-
-        expect(patient_changeset.search_results.count).to eq(1)
-        expect(patient_changeset.search_results.first).to include(
-          "step" => "no_fuzzy_with_history",
-          "result" => "one_match",
-          "nhs_number" => "9449306168"
-        )
-      end
-    end
-
-    context "when no match found, cascading through steps" do
-      before { allow(PDS::Patient).to receive(:search).and_return(nil) }
-
-      it "enqueues next search step on no match" do
-        expect {
-          described_class.perform_now(
-            patient_changeset,
-            step_name: :no_fuzzy_with_history
-          )
-        }.to have_enqueued_job(described_class).with(
-          patient_changeset,
-          step_name: :no_fuzzy_with_wildcard_postcode,
-          search_results: [
-            {
-              "step" => :no_fuzzy_with_history,
-              "result" => :no_matches,
-              "nhs_number" => nil,
-              "created_at" => Time.current
-            }
-          ],
-          queue: :pds
-        )
-      end
-    end
-
-    context "when no postcode provided" do
-      let(:patient_changeset) do
-        create(
-          :patient_changeset,
-          import: import,
-          data: {
-            upload: {
-              child: {
-                given_name: "Charlie",
-                family_name: "Brown",
-                date_of_birth: "2010-01-01",
-                address_postcode: nil
-              }
-            },
-            search_results: []
-          }
-        )
-      end
-
-      it "records no_postcode result and enqueues ProcessPatientChangesetJob" do
-        expect {
-          described_class.perform_now(patient_changeset)
-        }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset.id
-        )
-
-        patient_changeset.reload
-
-        expect(patient_changeset.search_results.first).to include(
-          "step" => "no_fuzzy_with_history",
-          "result" => "no_postcode"
-        )
-      end
-    end
-
-    context "when name too short for wildcard search" do
-      let(:patient_changeset) do
-        create(
-          :patient_changeset,
-          import: import,
-          data: {
-            upload: {
-              child: {
-                given_name: "Ed",
-                family_name: "Li",
-                date_of_birth: "2010-01-01",
-                address_postcode: "SW1A 1AA"
-              }
-            },
-            search_results: []
-          }
-        )
-      end
-
-      before { allow(PDS::Patient).to receive(:search).and_return(nil) }
-
-      it "skips wildcard name steps and completes search" do
+    it "saves the search result and enqueues ProcessPatientChangesetJob" do
+      expect {
         described_class.perform_now(patient_changeset)
+      }.to enqueue_sidekiq_job(ProcessPatientChangesetSidekiqJob).with(
+        patient_changeset.id
+      )
 
-        perform_enqueued_jobs_while_exists(only: described_class)
-        perform_enqueued_jobs(only: ProcessPatientChangesetJob)
+      patient_changeset.reload
 
-        patient_changeset.reload
-
-        skip_results =
-          patient_changeset.search_results.select do |r|
-            r["result"] == "skip_step"
-          end
-        expect(skip_results.count).to eq(2)
-        expect(skip_results.map { |r| r["step"] }).to contain_exactly(
-          "no_fuzzy_with_wildcard_given_name",
-          "no_fuzzy_with_wildcard_family_name"
-        )
-      end
+      expect(patient_changeset.search_results.count).to eq(1)
+      expect(patient_changeset.search_results.first).to include(
+        "step" => "no_fuzzy_with_history",
+        "result" => "one_match",
+        "nhs_number" => "9449306168"
+      )
     end
+  end
 
-    context "when multiple NHS numbers found across steps" do
-      it "stops cascading and enqueues ProcessPatientChangesetJob" do
-        allow(PDS::Patient).to receive(:search).and_return(mock_patient)
+  context "when no match found, cascading through steps" do
+    before { allow(PDS::Patient).to receive(:search).and_return(nil) }
 
+    it "enqueues next search step on no match" do
+      expect {
         described_class.perform_now(
           patient_changeset,
-          step_name: :no_fuzzy_with_history
+          step_name: "no_fuzzy_with_history"
         )
+      }.to enqueue_sidekiq_job(PDSCascadingSearchSidekiqJob).with(
+        patient_changeset.to_global_id.to_s,
+        "no_fuzzy_with_wildcard_postcode",
+        [
+          {
+            "step" => "no_fuzzy_with_history",
+            "result" => "no_matches",
+            "nhs_number" => nil,
+            "created_at" => Time.current.iso8601
+          }
+        ],
+        "pds"
+      )
+    end
+  end
 
-        patient_changeset.reload
-        patient_changeset.search_results << {
-          step: "no_fuzzy_with_wildcard_postcode",
-          result: "one_match",
-          nhs_number: "9876543210",
-          created_at: Time.current
-        }.with_indifferent_access
-        patient_changeset.save!
-
-        expect {
-          described_class.perform_now(
-            patient_changeset,
-            step_name: :no_fuzzy_with_wildcard_given_name,
-            search_results: patient_changeset.search_results
-          )
-        }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset.id
-        )
-      end
+  context "when no postcode provided" do
+    let(:patient_changeset) do
+      create(
+        :patient_changeset,
+        import: import,
+        data: {
+          upload: {
+            child: {
+              given_name: "Charlie",
+              family_name: "Brown",
+              date_of_birth: "2010-01-01",
+              address_postcode: nil
+            }
+          },
+          search_results: []
+        }
+      )
     end
 
-    context "when PDS API returns error" do
-      before do
-        allow(PDS::Patient).to receive(:search).and_raise(
-          Faraday::ServerError.new("error", status: 500)
-        )
-      end
+    it "records no_postcode result and enqueues ProcessPatientChangesetJob" do
+      expect {
+        described_class.perform_now(patient_changeset)
+      }.to enqueue_sidekiq_job(ProcessPatientChangesetSidekiqJob).with(
+        patient_changeset.id
+      )
 
-      it "records error result and enqueues ProcessPatientChangesetJob" do
-        expect(Sentry).to receive(:capture_exception)
+      patient_changeset.reload
 
-        expect {
-          described_class.perform_now(patient_changeset)
-        }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset.id
-        )
+      expect(patient_changeset.search_results.first).to include(
+        "step" => "no_fuzzy_with_history",
+        "result" => "no_postcode"
+      )
+    end
+  end
 
-        patient_changeset.reload
-
-        expect(patient_changeset.search_results.first).to include(
-          "step" => "no_fuzzy_with_history",
-          "result" => "error"
-        )
-      end
+  context "when name too short for wildcard search" do
+    let(:patient_changeset) do
+      create(
+        :patient_changeset,
+        import: import,
+        data: {
+          upload: {
+            child: {
+              given_name: "Ed",
+              family_name: "Li",
+              date_of_birth: "2010-01-01",
+              address_postcode: "SW1A 1AA"
+            }
+          },
+          search_results: []
+        }
+      )
     end
 
-    context "when PDS API returns an invalid search data error" do
-      before do
-        allow(PDS::Patient).to receive(:search).and_raise(
-          NHS::PDS::InvalidSearchData.new
-        )
-      end
+    before { allow(PDS::Patient).to receive(:search).and_return(nil) }
 
-      it "records error result and enqueues ProcessPatientChangesetJob" do
-        expect(Sentry).to receive(:capture_exception)
+    it "skips wildcard name steps and completes search" do
+      described_class.perform_now(patient_changeset)
 
-        expect {
-          described_class.perform_now(patient_changeset)
-        }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset.id
-        )
+      perform_enqueued_jobs_while_exists(PDSCascadingSearchSidekiqJob)
+      ProcessPatientChangesetSidekiqJob.drain
 
-        patient_changeset.reload
+      patient_changeset.reload
 
-        expect(patient_changeset.search_results.first).to include(
-          "step" => "no_fuzzy_with_history",
-          "result" => "error"
-        )
-      end
+      skip_results =
+        patient_changeset.search_results.select { it["result"] == "skip_step" }
+      expect(skip_results.count).to eq(2)
+      expect(skip_results.map { |r| r["step"] }).to contain_exactly(
+        "no_fuzzy_with_wildcard_given_name",
+        "no_fuzzy_with_wildcard_family_name"
+      )
     end
+  end
 
-    context "when too many matches found on first step" do
-      before do
-        allow(PDS::Patient).to receive(:search).and_raise(
-          NHS::PDS::TooManyMatches
-        )
-      end
+  context "when multiple NHS numbers found across steps" do
+    it "stops cascading and enqueues ProcessPatientChangesetJob" do
+      allow(PDS::Patient).to receive(:search).and_return(mock_patient)
 
-      it "enqueues next step (no_fuzzy_without_history)" do
-        expect {
-          described_class.perform_now(patient_changeset)
-        }.to have_enqueued_job(described_class).with(
-          patient_changeset,
-          step_name: :no_fuzzy_without_history,
-          search_results: [
-            {
-              "step" => :no_fuzzy_with_history,
-              "result" => :too_many_matches,
-              "nhs_number" => nil,
-              "created_at" => Time.current
-            }.with_indifferent_access
-          ],
-          queue: :pds
-        )
-      end
-    end
+      described_class.perform_now(
+        patient_changeset,
+        step_name: "no_fuzzy_with_history"
+      )
 
-    context "when reaching give_up step" do
-      before do
-        allow(PDS::Patient).to receive(:search).and_raise(
-          NHS::PDS::TooManyMatches
-        )
-      end
+      patient_changeset.reload
+      patient_changeset.search_results << {
+        "step" => "no_fuzzy_with_wildcard_postcode",
+        "result" => "one_match",
+        "nhs_number" => "9876543210",
+        "created_at" => Time.current.iso8601
+      }
+      patient_changeset.save!
 
-      it "stops cascading and enqueues ProcessPatientChangesetJob" do
+      expect {
         described_class.perform_now(
           patient_changeset,
-          step_name: :no_fuzzy_with_history
+          step_name: "no_fuzzy_with_wildcard_given_name",
+          search_results: patient_changeset.search_results
         )
+      }.to enqueue_sidekiq_job(ProcessPatientChangesetSidekiqJob).with(
+        patient_changeset.id
+      )
+    end
+  end
 
-        expect {
-          described_class.perform_now(
-            patient_changeset,
-            step_name: :no_fuzzy_without_history
-          )
-        }.to have_enqueued_job(ProcessPatientChangesetJob).with(
-          patient_changeset.id
-        )
-      end
+  context "when PDS API returns error" do
+    before do
+      allow(PDS::Patient).to receive(:search).and_raise(
+        Faraday::ServerError.new("error", status: 500)
+      )
     end
 
-    context "when running for a Patient object" do
-      let(:patient) { create(:patient, nhs_number: nil) }
+    it "records error result and enqueues ProcessPatientChangesetJob" do
+      expect(Sentry).to receive(:capture_exception)
 
-      let(:search_results) { [] }
+      expect {
+        described_class.perform_now(patient_changeset)
+      }.to enqueue_sidekiq_job(ProcessPatientChangesetSidekiqJob).with(
+        patient_changeset.id
+      )
 
-      before do
-        allow(PDS::Patient).to receive(:search).and_return(mock_patient)
-      end
+      patient_changeset.reload
 
-      it "saves the search result into the provided array and enqueues PatientUpdateFromPDSJob" do
-        expect {
-          described_class.perform_now(patient, search_results:)
-        }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
-          patient,
-          search_results
+      expect(patient_changeset.search_results.first).to include(
+        "step" => "no_fuzzy_with_history",
+        "result" => "error"
+      )
+    end
+  end
+
+  context "when PDS API returns an invalid search data error" do
+    before do
+      allow(PDS::Patient).to receive(:search).and_raise(
+        NHS::PDS::InvalidSearchData.new
+      )
+    end
+
+    it "records error result and enqueues ProcessPatientChangesetJob" do
+      expect(Sentry).to receive(:capture_exception)
+
+      expect {
+        described_class.perform_now(patient_changeset)
+      }.to enqueue_sidekiq_job(ProcessPatientChangesetSidekiqJob).with(
+        patient_changeset.id
+      )
+
+      patient_changeset.reload
+
+      expect(patient_changeset.search_results.first).to include(
+        "step" => "no_fuzzy_with_history",
+        "result" => "error"
+      )
+    end
+  end
+
+  context "when too many matches found on first step" do
+    before do
+      allow(PDS::Patient).to receive(:search).and_raise(
+        NHS::PDS::TooManyMatches
+      )
+    end
+
+    it "enqueues next step (no_fuzzy_without_history)" do
+      expect {
+        described_class.perform_now(patient_changeset)
+      }.to enqueue_sidekiq_job(PDSCascadingSearchSidekiqJob).with(
+        patient_changeset.to_global_id.to_s,
+        "no_fuzzy_without_history",
+        [
+          {
+            "step" => "no_fuzzy_with_history",
+            "result" => "too_many_matches",
+            "nhs_number" => nil,
+            "created_at" => Time.current.iso8601
+          }.with_indifferent_access
+        ],
+        "pds"
+      )
+    end
+  end
+
+  context "when reaching give_up step" do
+    before do
+      allow(PDS::Patient).to receive(:search).and_raise(
+        NHS::PDS::TooManyMatches
+      )
+    end
+
+    it "stops cascading and enqueues ProcessPatientChangesetJob" do
+      described_class.perform_now(
+        patient_changeset,
+        step_name: "no_fuzzy_with_history"
+      )
+
+      expect {
+        described_class.perform_now(
+          patient_changeset,
+          step_name: "no_fuzzy_without_history"
         )
+      }.to enqueue_sidekiq_job(ProcessPatientChangesetSidekiqJob).with(
+        patient_changeset.id
+      )
+    end
+  end
 
-        expect(search_results.count).to eq(1)
-        expect(search_results.first).to include(
-          step: :no_fuzzy_with_history,
-          result: :one_match,
-          nhs_number: "9449306168"
-        )
-      end
+  context "when running for a Patient object" do
+    let(:patient) { create(:patient, nhs_number: nil) }
 
-      it "enqueues next step when no matches found" do
-        allow(PDS::Patient).to receive(:search).and_return(nil)
+    let(:search_results) { [] }
 
-        expect {
-          described_class.perform_now(
-            patient,
-            step_name: :no_fuzzy_with_history,
-            search_results: search_results
+    before { allow(PDS::Patient).to receive(:search).and_return(mock_patient) }
+
+    it "saves the search result into the provided array and enqueues PatientUpdateFromPDSJob" do
+      expect {
+        described_class.new.perform(patient, search_results:)
+      }.to enqueue_sidekiq_job(PatientUpdateFromPDSSidekiqJob).with(
+        patient.id,
+        [
+          a_hash_including(
+            "step" => "no_fuzzy_with_history",
+            "result" => "one_match",
+            "nhs_number" => "9449306168"
           )
-        }.to have_enqueued_job(described_class).with(
-          patient,
-          step_name: :no_fuzzy_with_wildcard_postcode,
-          search_results: search_results,
-          queue: :pds
-        )
-      end
+        ]
+      )
+    end
 
-      it "stops cascading when multiple NHS numbers found" do
-        search_results.concat(
+    it "enqueues next step when no matches found" do
+      allow(PDS::Patient).to receive(:search).and_return(nil)
+
+      expect {
+        described_class.new.perform(
+          patient,
+          step_name: "no_fuzzy_with_history",
+          search_results:
+        )
+      }.to enqueue_sidekiq_job(PDSCascadingSearchSidekiqJob).with(
+        patient.to_global_id.to_s,
+        "no_fuzzy_with_wildcard_postcode",
+        [
+          a_hash_including(
+            "step" => "no_fuzzy_with_history",
+            "result" => "no_matches"
+          )
+        ],
+        "pds"
+      )
+    end
+
+    it "stops cascading when multiple NHS numbers found" do
+      search_results.concat(
+        [
+          {
+            "step" => "no_fuzzy_with_history",
+            "result" => "one_match",
+            "nhs_number" => "9435780156",
+            "created_at" => Time.current.iso8601
+          },
+          {
+            "step" => "no_fuzzy_with_history",
+            "result" => "one_match",
+            "nhs_number" => "9435792103",
+            "created_at" => Time.current.iso8601
+          }
+        ]
+      )
+
+      expect {
+        described_class.new.perform(patient, search_results:)
+      }.to enqueue_sidekiq_job(PatientUpdateFromPDSSidekiqJob).with(
+        patient.id,
+        search_results +
           [
-            {
-              step: "no_fuzzy_with_history",
-              result: "one_match",
-              nhs_number: "9435780156",
-              created_at: Time.current
-            }.with_indifferent_access,
-            {
-              step: "no_fuzzy_with_history",
-              result: "one_match",
-              nhs_number: "9435792103",
-              created_at: Time.current
-            }.with_indifferent_access
+            a_hash_including(
+              "step" => "no_fuzzy_with_history",
+              "result" => "one_match"
+            )
           ]
-        )
+      )
+    end
 
-        expect {
-          described_class.perform_now(patient, search_results:)
-        }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
-          patient,
-          search_results
-        )
-      end
+    it "records error result and enqueues PatientUpdateFromPDSJob on PDS error" do
+      allow(PDS::Patient).to receive(:search).and_raise(
+        Faraday::ServerError.new("boom", status: 500)
+      )
 
-      it "records error result and enqueues PatientUpdateFromPDSJob on PDS error" do
-        allow(PDS::Patient).to receive(:search).and_raise(
-          Faraday::ServerError.new("boom", status: 500)
-        )
+      expect(Sentry).to receive(:capture_exception)
 
-        expect(Sentry).to receive(:capture_exception)
+      expect {
+        described_class.new.perform(patient, search_results:)
+      }.to enqueue_sidekiq_job(PatientUpdateFromPDSSidekiqJob).with(
+        patient.id,
+        [
+          a_hash_including(
+            "step" => "no_fuzzy_with_history",
+            "result" => "error"
+          )
+        ]
+      )
 
-        expect {
-          described_class.perform_now(patient, search_results:)
-        }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
-          patient,
-          search_results
-        )
-
-        expect(search_results.first).to include(result: :error)
-      end
+      expect(search_results.first).to include("result" => "error")
     end
   end
 end

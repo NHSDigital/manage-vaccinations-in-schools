@@ -156,7 +156,7 @@ class PatientImport < ApplicationRecord
         created_at: Time.current
       }
       cs.calculating_review!
-      ReviewPatientChangesetJob.perform_later(cs.id)
+      ReviewPatientChangesetSidekiqJob.perform_async(cs.id)
     end
   end
 
@@ -170,15 +170,17 @@ class PatientImport < ApplicationRecord
 
     review_changesets.each do |cs|
       cs.calculating_review!
-      ReviewPatientChangesetJob.perform_later(cs.id)
+      ReviewPatientChangesetSidekiqJob.perform_async(cs.id)
     end
   end
 
   def enqueue_pds_cascading_searches(changesets)
-    changesets.find_each do |cs|
-      PDSCascadingSearchJob.set(queue: :imports).perform_later(
-        cs,
-        queue: :imports
+    changesets.find_each do |changeset|
+      PDSCascadingSearchSidekiqJob.set(queue: :imports).perform_async(
+        changeset.to_global_id.to_s,
+        nil,
+        nil,
+        "imports"
       )
     end
   end

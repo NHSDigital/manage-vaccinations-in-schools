@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe PatientsRefusedConsentAlreadyVaccinatedJob do
-  subject(:perform_now) do
+  subject(:perform) do
     PatientStatusUpdater.call
-    described_class.perform_now
+    described_class.new.perform
   end
 
   around { |example| travel_to(today) { example.run } }
@@ -18,7 +18,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
       before { create(:patient, :vaccinated, session:, year_group: 7) }
 
       it "does not create a vaccination record" do
-        expect { perform_now }.not_to change(VaccinationRecord, :count)
+        expect { perform }.not_to change(VaccinationRecord, :count)
       end
     end
 
@@ -26,7 +26,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
       before { create(:patient, session:, year_group: 7) }
 
       it "does not create a vaccination record" do
-        expect { perform_now }.not_to change(VaccinationRecord, :count)
+        expect { perform }.not_to change(VaccinationRecord, :count)
       end
     end
 
@@ -41,7 +41,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
       end
 
       it "does not create a vaccination record" do
-        expect { perform_now }.not_to change(VaccinationRecord, :count)
+        expect { perform }.not_to change(VaccinationRecord, :count)
       end
     end
 
@@ -56,7 +56,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
         before { consent.update!(reason_for_refusal: "personal_choice") }
 
         it "does not create a vaccination record" do
-          expect { perform_now }.not_to change(VaccinationRecord, :count)
+          expect { perform }.not_to change(VaccinationRecord, :count)
         end
       end
 
@@ -64,7 +64,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
         before { consent.update!(reason_for_refusal: "already_vaccinated") }
 
         it "creates a vaccination record" do
-          expect { perform_now }.to change(VaccinationRecord, :count)
+          expect { perform }.to change(VaccinationRecord, :count)
 
           vaccination_record = VaccinationRecord.last
           expect(vaccination_record).to be_already_had
@@ -87,7 +87,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
       before { create(:patient, :vaccinated, session:, year_group: 7) }
 
       it "does not create a vaccination record" do
-        expect { perform_now }.not_to change(VaccinationRecord, :count)
+        expect { perform }.not_to change(VaccinationRecord, :count)
       end
     end
 
@@ -95,7 +95,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
       before { create(:patient, session:, year_group: 7) }
 
       it "does not create a vaccination record" do
-        expect { perform_now }.not_to change(VaccinationRecord, :count)
+        expect { perform }.not_to change(VaccinationRecord, :count)
       end
     end
 
@@ -110,7 +110,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
       end
 
       it "does not create a vaccination record" do
-        expect { perform_now }.not_to change(VaccinationRecord, :count)
+        expect { perform }.not_to change(VaccinationRecord, :count)
       end
     end
 
@@ -125,7 +125,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
         before { consent.update!(reason_for_refusal: "personal_choice") }
 
         it "does not create a vaccination record" do
-          expect { perform_now }.not_to change(VaccinationRecord, :count)
+          expect { perform }.not_to change(VaccinationRecord, :count)
         end
       end
 
@@ -133,7 +133,7 @@ describe PatientsRefusedConsentAlreadyVaccinatedJob do
         before { consent.update!(reason_for_refusal: "already_vaccinated") }
 
         it "does not create a vaccination record" do
-          expect { perform_now }.not_to change(VaccinationRecord, :count)
+          expect { perform }.not_to change(VaccinationRecord, :count)
         end
       end
     end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe EnqueueUpdatePatientsFromPDSJob do
-  subject(:perform_now) { described_class.perform_now }
+  subject(:perform) { described_class.new.perform }
 
   let!(:invalidated_patient) { create(:patient, :invalidated) }
   let!(:deceased_patient) { create(:patient, :deceased) }
@@ -20,44 +20,44 @@ describe EnqueueUpdatePatientsFromPDSJob do
   end
 
   it "only queues jobs for the appropriate patients" do
-    expect { perform_now }.to have_enqueued_job(
-      PatientUpdateFromPDSJob
+    expect { perform }.to enqueue_sidekiq_job(
+      PatientUpdateFromPDSSidekiqJob
     ).exactly(4).times
   end
 
   it "queues a job for the invalidated patient" do
-    expect { perform_now }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
-      invalidated_patient
-    )
+    expect { perform }.to enqueue_sidekiq_job(
+      PatientUpdateFromPDSSidekiqJob
+    ).with(invalidated_patient.id, nil)
   end
 
   it "doesn't queue a job for the deceased patient" do
-    expect { perform_now }.not_to have_enqueued_job(
-      PatientUpdateFromPDSJob
-    ).with(deceased_patient)
+    expect { perform }.not_to enqueue_sidekiq_job(
+      PatientUpdateFromPDSSidekiqJob
+    ).with(deceased_patient.id, nil)
   end
 
   it "doesn't queue a job for the recently updated patient" do
-    expect { perform_now }.not_to have_enqueued_job(
-      PatientUpdateFromPDSJob
-    ).with(recently_updated_patient)
+    expect { perform }.not_to enqueue_sidekiq_job(
+      PatientUpdateFromPDSSidekiqJob
+    ).with(recently_updated_patient.id, nil)
   end
 
   it "queues a job for the restricted patient" do
-    expect { perform_now }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
-      restricted_patient
-    )
+    expect { perform }.to enqueue_sidekiq_job(
+      PatientUpdateFromPDSSidekiqJob
+    ).with(restricted_patient.id, nil)
   end
 
   it "queues a job for the not recently updated patient" do
-    expect { perform_now }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
-      not_recently_updated_patient
-    )
+    expect { perform }.to enqueue_sidekiq_job(
+      PatientUpdateFromPDSSidekiqJob
+    ).with(not_recently_updated_patient.id, nil)
   end
 
   it "queues a job for the never updated patient" do
-    expect { perform_now }.to have_enqueued_job(PatientUpdateFromPDSJob).with(
-      never_updated_patient
-    )
+    expect { perform }.to enqueue_sidekiq_job(
+      PatientUpdateFromPDSSidekiqJob
+    ).with(never_updated_patient.id, nil)
   end
 end

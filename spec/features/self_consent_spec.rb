@@ -282,6 +282,6 @@ describe "Self-consent" do
   end
 
   def and_enqueued_jobs_run_with_no_errors
-    expect { perform_enqueued_jobs }.not_to raise_error
+    expect { Sidekiq::Job.drain_all }.not_to raise_error
   end
 end

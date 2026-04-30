@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class EnqueueAutomatedCareplusReportsJob < ApplicationJobActiveJob
-  queue_as :careplus
+class EnqueueAutomatedCareplusReportsJob < ApplicationJobSidekiq
+  sidekiq_options queue: :careplus
 
   def perform
     ids = Team.eligible_for_automated_careplus_reports.ids

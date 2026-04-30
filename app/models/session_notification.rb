@@ -89,20 +89,20 @@ class SessionNotification < ApplicationRecord
 
     parents.each do |parent|
       params = {
-        parent:,
-        patient:,
-        programme_types: programmes.map(&:type),
-        session:,
-        sent_by: current_user
+        "parent_id" => parent.id,
+        "patient_id" => patient.id,
+        "programme_types" => programmes.map(&:type),
+        "session_id" => session.id,
+        "sent_by_user_id" => current_user&.id
       }
 
-      template_name = :"session_#{type}"
+      template_name = "session_#{type}"
 
-      EmailDeliveryJob.perform_later(template_name, **params)
+      EmailDeliverySidekiqJob.perform_async(template_name, params)
 
       next unless parent.phone_receive_updates
 
-      SMSDeliveryJob.perform_later(template_name, **params)
+      SMSDeliverySidekiqJob.perform_async(template_name, params)
     end
   end
 end

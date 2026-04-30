@@ -13,21 +13,14 @@ RSpec::Matchers.matcher :deliver_email do |template_name = nil|
 
   define_method :matcher do
     @matcher ||=
-      if @params.nil?
-        have_enqueued_job(EmailDeliveryJob).with(
-          *[template_name].compact,
-          any_args
-        )
-      else
-        have_enqueued_job(EmailDeliveryJob).with(
-          *[template_name].compact,
-          **@params
-        )
-      end
+      enqueue_sidekiq_job(EmailDeliverySidekiqJob).with(
+        template_name&.to_s.presence || anything,
+        @params || anything
+      )
   end
 
   chain :with do |params = {}|
-    @params = params
+    @params = params.stringify_keys
   end
 
   match do |actual|
@@ -44,8 +37,8 @@ RSpec::Matchers.matcher :deliver_email do |template_name = nil|
     raise
   end
 
-  # TODO: copy the error message from the have_enqueued_job but only list jobs
-  #       enqueued for EmailDeliveryJob
+  # TODO: copy the error message from the enqueue_sidekiq_job but only list
+  #  jobs enqueued for EmailDeliveryJob
   failure_message { <<~MESSAGE }
       expected #{template_name} email to have been delivered
       #{@error}

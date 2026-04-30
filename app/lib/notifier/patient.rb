@@ -148,11 +148,18 @@ class Notifier::Patient
 
     template_name = find_clinic_template_name(type, team:)
 
-    params = { academic_year:, patient:, programme_types:, sent_by:, team: }
+    base_params = {
+      "academic_year" => academic_year,
+      "patient_id" => patient.id,
+      "programme_types" => programme_types,
+      "sent_by_user_id" => sent_by.id,
+      "team_id" => team.id
+    }
 
     parents.each do |parent|
-      EmailDeliveryJob.perform_later(template_name, parent:, **params)
-      SMSDeliveryJob.perform_later(template_name, parent:, **params)
+      params = base_params.merge("parent_id" => parent.id)
+      EmailDeliverySidekiqJob.perform_async(template_name, params)
+      SMSDeliverySidekiqJob.perform_async(template_name, params)
     end
 
     clinic_notification
@@ -226,16 +233,22 @@ class Notifier::Patient
     disease_types = programmes_to_send_for.flat_map(&:disease_types).presence
 
     parents.each do |parent|
-      params = { disease_types:, parent:, patient:, programme_types:, sent_by: }
+      params = {
+        "disease_types" => disease_types,
+        "parent_id" => parent.id,
+        "patient_id" => patient.id,
+        "programme_types" => programme_types,
+        "sent_by_user_id" => sent_by&.id
+      }
 
       if session
-        params[:session] = session
+        params["session_id"] = session.id
       else
-        params[:team_location] = team_location
+        params["team_location_id"] = team_location.id
       end
 
-      EmailDeliveryJob.perform_later(email_template, **params)
-      SMSDeliveryJob.perform_later(sms_template, **params)
+      EmailDeliverySidekiqJob.perform_async(email_template, params)
+      SMSDeliverySidekiqJob.perform_async(sms_template, params)
     end
 
     PatientStatusUpdaterJob.perform_async(patient.id)
@@ -254,9 +267,9 @@ class Notifier::Patient
 
     base_template =
       if is_school && CONSENT_REMINDER_TYPES.include?(type)
-        :consent_school_reminder
+        "consent_school_reminder"
       else
-        :"consent_#{is_school ? "school" : "clinic"}_#{type}"
+        "consent_#{is_school ? "school" : "clinic"}_#{type}"
       end
 
     # We can only handle a single programme group or variant in the template.
@@ -300,7 +313,7 @@ class Notifier::Patient
           )
         template || base_template
       elsif is_school
-        :consent_school_reminder
+        "consent_school_reminder"
       end
 
     [email_template, sms_template]
@@ -321,7 +334,7 @@ class Notifier::Patient
 
     combinations
       .lazy
-      .map { |parts| :"#{base_template}_#{parts.join("_")}" }
+      .map { |parts| "#{base_template}_#{parts.join("_")}" }
       .detect { NotifyTemplate.exists?(it, channel:) }
   end
 
@@ -351,10 +364,8 @@ class Notifier::Patient
   end
 
   def find_clinic_template_name(type, team:)
-    template_names = [
-      :"clinic_#{type}_#{team.organisation.ods_code.downcase}",
-      :"clinic_#{type}"
-    ]
+    ods_code = team.organisation.ods_code.downcase
+    template_names = ["clinic_#{type}_#{ods_code}", "clinic_#{type}"]
 
     template_names.find { NotifyTemplate.exists?(it, channel: :email) }
   end

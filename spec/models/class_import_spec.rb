@@ -171,13 +171,13 @@ describe ClassImport do
 
   describe "#process!" do
     let(:file) { "valid.csv" }
-    let(:configured_job) { instance_double(ActiveJob::ConfiguredJob) }
+    let(:process_job) { double }
 
     before do
-      allow(PDSCascadingSearchJob).to receive(:set).with(
+      allow(PDSCascadingSearchSidekiqJob).to receive(:set).with(
         queue: :imports
-      ).and_return(configured_job)
-      allow(configured_job).to receive(:perform_later)
+      ).and_return(process_job)
+      allow(process_job).to receive(:perform_async)
 
       class_import.parse_rows!
     end
@@ -191,7 +191,7 @@ describe ClassImport do
       it "enqueues PDSCascadingSearchJob for each changeset with a postcode" do
         class_import.process!
 
-        expect(configured_job).to have_received(:perform_later).exactly(3).times
+        expect(process_job).to have_received(:perform_async).exactly(3).times
         without_postcode =
           PatientChangeset.select { it.given_name == "Gae" }.sole
 
@@ -206,11 +206,11 @@ describe ClassImport do
       before { Flipper.disable(:pds_search_during_import) }
 
       it "enqueues ReviewPatientChangesetJob for each changeset" do
-        expect { class_import.process! }.to have_enqueued_job(
-          ReviewPatientChangesetJob
+        expect { class_import.process! }.to enqueue_sidekiq_job(
+          ReviewPatientChangesetSidekiqJob
         ).exactly(4).times
 
-        expect(configured_job).not_to have_received(:perform_later)
+        expect(process_job).not_to have_received(:perform_async)
       end
     end
   end

@@ -100,7 +100,7 @@ class CommitPatientChangesetsJob < ApplicationJobSidekiq
     import.calculating_re_review!
     import.changesets.needs_re_review.each do |changeset|
       changeset.calculating_review!
-      ReviewPatientChangesetJob.perform_later(changeset.id)
+      ReviewPatientChangesetSidekiqJob.perform_async(changeset.id)
     end
   end
 end

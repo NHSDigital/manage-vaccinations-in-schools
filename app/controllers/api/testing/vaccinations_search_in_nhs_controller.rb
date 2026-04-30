@@ -6,11 +6,11 @@ class API::Testing::VaccinationsSearchInNHSController < API::Testing::BaseContro
 
   def create
     if params[:wait].present?
-      EnqueueVaccinationsSearchInNHSJob.perform_now
+      EnqueueVaccinationsSearchInNHSJob.new.perform
       wait_for_search_jobs_to_complete
       render status: :ok
     else
-      EnqueueVaccinationsSearchInNHSJob.perform_later
+      EnqueueVaccinationsSearchInNHSJob.perform_async
       render status: :accepted
     end
   end

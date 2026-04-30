@@ -17,13 +17,13 @@ module ImportsHelper
   end
 
   def wait_for_import_to_complete_until_review(import_class)
-    perform_enqueued_jobs(only: ProcessImportJob)
+    ProcessImportSidekiqJob.drain
 
     if import_class != ImmunisationImport
-      perform_enqueued_jobs_while_exists(only: PDSCascadingSearchJob)
-      perform_enqueued_jobs_while_exists(only: ProcessPatientChangesetJob)
-      perform_enqueued_jobs_while_exists(only: ReviewPatientChangesetJob)
-      perform_enqueued_jobs(only: ReviewClassImportSchoolMoveJob)
+      perform_enqueued_jobs_while_exists(PDSCascadingSearchSidekiqJob)
+      perform_enqueued_jobs_while_exists(ProcessPatientChangesetSidekiqJob)
+      perform_enqueued_jobs_while_exists(ReviewPatientChangesetSidekiqJob)
+      ReviewClassImportSchoolMoveSidekiqJob.drain
     end
 
     click_on_most_recent_import(import_class)
@@ -34,14 +34,8 @@ module ImportsHelper
     click_on link_text, match: :first if page.has_link?(link_text)
   end
 
-  def perform_enqueued_jobs_while_exists(only:)
-    job_class = only.name
-
-    # rubocop:disable Style/WhileUntilModifier
-    while enqueued_jobs.any? { it["job_class"] == job_class }
-      perform_enqueued_jobs(only:)
-    end
-    # rubocop:enable Style/WhileUntilModifier
+  def perform_enqueued_jobs_while_exists(job_class)
+    job_class.drain while job_class.jobs.present?
   end
 
   # Process and approve an import programmatically (for job/unit specs)
@@ -51,13 +45,14 @@ module ImportsHelper
     import.process!
 
     unless import.is_a?(ImmunisationImport)
-      perform_enqueued_jobs_while_exists(only: PDSCascadingSearchJob)
-
-      perform_enqueued_jobs_while_exists(only: ProcessPatientChangesetJob)
-      perform_enqueued_jobs_while_exists(only: ReviewPatientChangesetJob)
+      perform_enqueued_jobs_while_exists(PDSCascadingSearchSidekiqJob)
+      perform_enqueued_jobs_while_exists(ProcessPatientChangesetSidekiqJob)
+      perform_enqueued_jobs_while_exists(ReviewPatientChangesetSidekiqJob)
 
       if import.is_a?(ClassImport)
-        perform_enqueued_jobs_while_exists(only: ReviewClassImportSchoolMoveJob)
+        perform_enqueued_jobs_while_exists(
+          ReviewClassImportSchoolMoveSidekiqJob
+        )
       end
     end
 

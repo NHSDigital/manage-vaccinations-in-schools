@@ -20,6 +20,42 @@ describe Notifier::Patient do
     end
     let(:team_location) { session.team_location }
 
+    let(:first_parent_params) do
+      {
+        disease_types:,
+        parent_id: parents.first.id,
+        patient_id: patient.id,
+        programme_types:,
+        sent_by_user_id: sent_by.id
+      }
+    end
+
+    let(:first_parent_params_with_session) do
+      first_parent_params.merge(session_id: session.id)
+    end
+
+    let(:first_parent_params_with_team_location) do
+      first_parent_params.merge(team_location_id: team_location.id)
+    end
+
+    let(:second_parent_params) do
+      {
+        disease_types:,
+        parent_id: parents.second.id,
+        patient_id: patient.id,
+        programme_types:,
+        sent_by_user_id: sent_by.id
+      }
+    end
+
+    let(:second_parent_params_with_session) do
+      second_parent_params.merge(session_id: session.id)
+    end
+
+    let(:second_parent_params_with_team_location) do
+      second_parent_params.merge(team_location_id: team_location.id)
+    end
+
     context "with a session" do
       subject(:send_consent_request) do
         travel_to(today) do
@@ -78,41 +114,17 @@ describe Notifier::Patient do
         it "enqueues an email per parent" do
           expect { send_consent_request }.to deliver_email(
             :consent_school_request_hpv
-          ).with(
-            disease_types:,
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            session:,
-            sent_by:
-          ).and deliver_email(:consent_school_request_hpv).with(
-                  disease_types:,
-                  parent: parents.second,
-                  patient:,
-                  programme_types:,
-                  session:,
-                  sent_by:
-                )
+          ).with(first_parent_params_with_session).and deliver_email(
+                  :consent_school_request_hpv
+                ).with(second_parent_params_with_session)
         end
 
         it "enqueues a text per parent" do
           expect { send_consent_request }.to deliver_sms(
             :consent_school_request
-          ).with(
-            disease_types:,
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            session:,
-            sent_by:
-          ).and deliver_sms(:consent_school_request).with(
-                  disease_types:,
-                  parent: parents.second,
-                  patient:,
-                  programme_types:,
-                  session:,
-                  sent_by:
-                )
+          ).with(first_parent_params_with_session).and deliver_sms(
+                  :consent_school_request
+                ).with(second_parent_params_with_session)
         end
 
         context "when parent doesn't want to receive updates by text" do
@@ -123,14 +135,7 @@ describe Notifier::Patient do
           it "still enqueues a text" do
             expect { send_consent_request }.to deliver_sms(
               :consent_school_request
-            ).with(
-              disease_types:,
-              parent:,
-              patient:,
-              programme_types:,
-              session:,
-              sent_by:
-            )
+            ).with(first_parent_params_with_session)
           end
         end
 
@@ -281,41 +286,17 @@ describe Notifier::Patient do
         it "enqueues an email per parent" do
           expect { send_consent_request }.to deliver_email(
             :consent_clinic_request
-          ).with(
-            disease_types:,
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            session:,
-            sent_by:
-          ).and deliver_email(:consent_clinic_request).with(
-                  disease_types:,
-                  parent: parents.second,
-                  patient:,
-                  programme_types:,
-                  session:,
-                  sent_by:
-                )
+          ).with(first_parent_params_with_session).and deliver_email(
+                  :consent_clinic_request
+                ).with(second_parent_params_with_session)
         end
 
         it "enqueues a text per parent" do
           expect { send_consent_request }.to deliver_sms(
             :consent_clinic_request
-          ).with(
-            disease_types:,
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            session:,
-            sent_by:
-          ).and deliver_sms(:consent_clinic_request).with(
-                  disease_types:,
-                  parent: parents.second,
-                  patient:,
-                  programme_types:,
-                  session:,
-                  sent_by:
-                )
+          ).with(first_parent_params_with_session).and deliver_sms(
+                  :consent_clinic_request
+                ).with(second_parent_params_with_session)
         end
 
         context "when parent doesn't want to receive updates by text" do
@@ -326,14 +307,7 @@ describe Notifier::Patient do
           it "still enqueues a text" do
             expect { send_consent_request }.to deliver_sms(
               :consent_clinic_request
-            ).with(
-              disease_types:,
-              parent:,
-              patient:,
-              programme_types:,
-              session:,
-              sent_by:
-            )
+            ).with(first_parent_params_with_session)
           end
         end
       end
@@ -365,41 +339,17 @@ describe Notifier::Patient do
         it "enqueues an email per parent" do
           expect { send_consent_request }.to deliver_email(
             :consent_school_request_hpv
-          ).with(
-            disease_types:,
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            team_location:,
-            sent_by:
-          ).and deliver_email(:consent_school_request_hpv).with(
-                  disease_types:,
-                  parent: parents.second,
-                  patient:,
-                  programme_types:,
-                  team_location:,
-                  sent_by:
-                )
+          ).with(first_parent_params_with_team_location).and deliver_email(
+                  :consent_school_request_hpv
+                ).with(second_parent_params_with_team_location)
         end
 
         it "enqueues a text per parent" do
           expect { send_consent_request }.to deliver_sms(
             :consent_school_request
-          ).with(
-            disease_types:,
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            team_location:,
-            sent_by:
-          ).and deliver_sms(:consent_school_request).with(
-                  disease_types:,
-                  parent: parents.second,
-                  patient:,
-                  programme_types:,
-                  team_location:,
-                  sent_by:
-                )
+          ).with(first_parent_params_with_team_location).and deliver_sms(
+                  :consent_school_request
+                ).with(second_parent_params_with_team_location)
         end
 
         context "when parent doesn't want to receive updates by text" do
@@ -410,14 +360,7 @@ describe Notifier::Patient do
           it "still enqueues a text" do
             expect { send_consent_request }.to deliver_sms(
               :consent_school_request
-            ).with(
-              disease_types:,
-              parent:,
-              patient:,
-              programme_types:,
-              team_location:,
-              sent_by:
-            )
+            ).with(first_parent_params_with_team_location)
           end
         end
 
@@ -532,41 +475,17 @@ describe Notifier::Patient do
         it "enqueues an email per parent" do
           expect { send_consent_request }.to deliver_email(
             :consent_clinic_request
-          ).with(
-            disease_types:,
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            team_location:,
-            sent_by:
-          ).and deliver_email(:consent_clinic_request).with(
-                  disease_types:,
-                  parent: parents.second,
-                  patient:,
-                  programme_types:,
-                  team_location:,
-                  sent_by:
-                )
+          ).with(first_parent_params_with_team_location).and deliver_email(
+                  :consent_clinic_request
+                ).with(second_parent_params_with_team_location)
         end
 
         it "enqueues a text per parent" do
           expect { send_consent_request }.to deliver_sms(
             :consent_clinic_request
-          ).with(
-            disease_types:,
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            team_location:,
-            sent_by:
-          ).and deliver_sms(:consent_clinic_request).with(
-                  disease_types:,
-                  parent: parents.second,
-                  patient:,
-                  programme_types:,
-                  team_location:,
-                  sent_by:
-                )
+          ).with(first_parent_params_with_team_location).and deliver_sms(
+                  :consent_clinic_request
+                ).with(second_parent_params_with_team_location)
         end
 
         context "when parent doesn't want to receive updates by text" do
@@ -577,14 +496,7 @@ describe Notifier::Patient do
           it "still enqueues a text" do
             expect { send_consent_request }.to deliver_sms(
               :consent_clinic_request
-            ).with(
-              disease_types:,
-              parent:,
-              patient:,
-              programme_types:,
-              team_location:,
-              sent_by:
-            )
+            ).with(first_parent_params_with_team_location)
           end
         end
       end
@@ -611,6 +523,28 @@ describe Notifier::Patient do
     let(:location) { create(:gias_school, team:) }
     let(:session) { create(:session, location:, programmes:, team:) }
 
+    let(:first_parent_params) do
+      {
+        disease_types:,
+        parent_id: parents.first.id,
+        patient_id: patient.id,
+        programme_types:,
+        sent_by_user_id: sent_by.id,
+        session_id: session.id
+      }
+    end
+
+    let(:second_parent_params) do
+      {
+        disease_types:,
+        parent_id: parents.second.id,
+        patient_id: patient.id,
+        programme_types:,
+        sent_by_user_id: sent_by.id,
+        session_id: session.id
+      }
+    end
+
     context "without an initial reminder" do
       it "creates a record" do
         expect { send_consent_reminder }.to change(
@@ -628,41 +562,17 @@ describe Notifier::Patient do
       it "enqueues an email per parent with the correct args" do
         expect { send_consent_reminder }.to deliver_email(
           :consent_school_reminder_hpv
-        ).with(
-          disease_types:,
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          session:,
-          sent_by:
-        ).and deliver_email(:consent_school_reminder_hpv).with(
-                disease_types:,
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                session:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_email(
+                :consent_school_reminder_hpv
+              ).with(second_parent_params)
       end
 
       it "enqueues a text per parent" do
         expect { send_consent_reminder }.to deliver_sms(
           :consent_school_reminder
-        ).with(
-          disease_types:,
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          session:,
-          sent_by:
-        ).and deliver_sms(:consent_school_reminder).with(
-                disease_types:,
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                session:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_sms(
+                :consent_school_reminder
+              ).with(second_parent_params)
       end
 
       context "when parent doesn't want to receive updates by text" do
@@ -673,14 +583,7 @@ describe Notifier::Patient do
         it "still enqueues a text" do
           expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
-          ).with(
-            disease_types:,
-            parent:,
-            patient:,
-            programme_types:,
-            session:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
       end
 
@@ -858,41 +761,17 @@ describe Notifier::Patient do
       it "enqueues an email per parent" do
         expect { send_consent_reminder }.to deliver_email(
           :consent_school_reminder_hpv
-        ).with(
-          disease_types:,
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          session:,
-          sent_by:
-        ).and deliver_email(:consent_school_reminder_hpv).with(
-                disease_types:,
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                session:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_email(
+                :consent_school_reminder_hpv
+              ).with(second_parent_params)
       end
 
       it "enqueues a text per parent" do
         expect { send_consent_reminder }.to deliver_sms(
           :consent_school_reminder
-        ).with(
-          disease_types:,
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          session:,
-          sent_by:
-        ).and deliver_sms(:consent_school_reminder).with(
-                disease_types:,
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                session:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_sms(
+                :consent_school_reminder
+              ).with(second_parent_params)
       end
 
       context "when parent doesn't want to receive updates by text" do
@@ -903,14 +782,7 @@ describe Notifier::Patient do
         it "still enqueues a text" do
           expect { send_consent_reminder }.to deliver_sms(
             :consent_school_reminder
-          ).with(
-            disease_types:,
-            parent:,
-            patient:,
-            programme_types:,
-            session:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
       end
 
@@ -1148,6 +1020,26 @@ describe Notifier::Patient do
     around { |example| travel_to(today) { example.run } }
 
     let(:today) { Date.new(2024, 1, 1) }
+    let(:first_parent_params) do
+      {
+        academic_year:,
+        parent_id: parents.first.id,
+        patient_id: patient.id,
+        programme_types:,
+        sent_by_user_id: sent_by.id,
+        team_id: team.id
+      }
+    end
+    let(:second_parent_params) do
+      {
+        academic_year:,
+        parent_id: parents.second.id,
+        patient_id: patient.id,
+        programme_types:,
+        sent_by_user_id: sent_by.id,
+        team_id: team.id
+      }
+    end
 
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, session:, parents:, year_group: 10) }
@@ -1179,41 +1071,17 @@ describe Notifier::Patient do
       it "enqueues an email per parent" do
         expect { send_clinic_invitation }.to deliver_email(
           :clinic_initial_invitation
-        ).with(
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          team:,
-          academic_year:,
-          sent_by:
-        ).and deliver_email(:clinic_initial_invitation).with(
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                team:,
-                academic_year:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_email(
+                :clinic_initial_invitation
+              ).with(second_parent_params)
       end
 
       it "enqueues a text per parent" do
         expect { send_clinic_invitation }.to deliver_sms(
           :clinic_initial_invitation
-        ).with(
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          team:,
-          academic_year:,
-          sent_by:
-        ).and deliver_sms(:clinic_initial_invitation).with(
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                team:,
-                academic_year:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_sms(
+                :clinic_initial_invitation
+              ).with(second_parent_params)
       end
 
       context "if the child received their first dose under self-consent and doesn't want parents notified" do
@@ -1248,27 +1116,13 @@ describe Notifier::Patient do
         it "only sends emails for the remaining programme" do
           expect { send_clinic_invitation }.to deliver_email(
             :clinic_initial_invitation
-          ).with(
-            parent: parents.first,
-            patient:,
-            programme_types: [programmes.second.type],
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params.merge(programme_types: %w[hpv]))
         end
 
         it "enqueues a text per parent" do
           expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation
-          ).with(
-            parent: parents.first,
-            patient:,
-            programme_types: [programmes.second.type],
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params.merge(programme_types: %w[hpv]))
         end
       end
 
@@ -1278,27 +1132,13 @@ describe Notifier::Patient do
         it "enqueues an email using the CWPT-specific template" do
           expect { send_clinic_invitation }.to deliver_email(
             :clinic_initial_invitation_ryg
-          ).with(
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
 
         it "enqueues an SMS using the CWPT-specific template" do
           expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation_ryg
-          ).with(
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
       end
 
@@ -1308,27 +1148,13 @@ describe Notifier::Patient do
         it "enqueues an email using the LPT-specific template" do
           expect { send_clinic_invitation }.to deliver_email(
             :clinic_initial_invitation_rt5
-          ).with(
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
 
         it "enqueues an SMS using the LPT-specific template" do
           expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation_rt5
-          ).with(
-            parent: parents.first,
-            patient:,
-            programme_types:,
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
       end
 
@@ -1340,14 +1166,7 @@ describe Notifier::Patient do
         it "still enqueues a text" do
           expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation
-          ).with(
-            parent:,
-            patient:,
-            programme_types:,
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
       end
     end
@@ -1380,41 +1199,17 @@ describe Notifier::Patient do
       it "enqueues an email per parent" do
         expect { send_clinic_invitation }.to deliver_email(
           :clinic_subsequent_invitation
-        ).with(
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          team:,
-          academic_year:,
-          sent_by:
-        ).and deliver_email(:clinic_subsequent_invitation).with(
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                team:,
-                academic_year:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_email(
+                :clinic_subsequent_invitation
+              ).with(second_parent_params)
       end
 
       it "enqueues a text per parent" do
         expect { send_clinic_invitation }.to deliver_sms(
           :clinic_subsequent_invitation
-        ).with(
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          team:,
-          academic_year:,
-          sent_by:
-        ).and deliver_sms(:clinic_subsequent_invitation).with(
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                team:,
-                academic_year:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_sms(
+                :clinic_subsequent_invitation
+              ).with(second_parent_params)
       end
 
       context "when parent doesn't want to receive updates by text" do
@@ -1425,14 +1220,7 @@ describe Notifier::Patient do
         it "still enqueues a text" do
           expect { send_clinic_invitation }.to deliver_sms(
             :clinic_subsequent_invitation
-          ).with(
-            parent:,
-            patient:,
-            programme_types:,
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
       end
     end
@@ -1467,41 +1255,17 @@ describe Notifier::Patient do
       it "enqueues an email per parent" do
         expect { send_clinic_invitation }.to deliver_email(
           :clinic_initial_invitation
-        ).with(
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          team:,
-          academic_year:,
-          sent_by:
-        ).and deliver_email(:clinic_initial_invitation).with(
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                team:,
-                academic_year:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_email(
+                :clinic_initial_invitation
+              ).with(second_parent_params)
       end
 
       it "enqueues a text per parent" do
         expect { send_clinic_invitation }.to deliver_sms(
           :clinic_initial_invitation
-        ).with(
-          parent: parents.first,
-          patient:,
-          programme_types:,
-          team:,
-          academic_year:,
-          sent_by:
-        ).and deliver_sms(:clinic_initial_invitation).with(
-                parent: parents.second,
-                patient:,
-                programme_types:,
-                team:,
-                academic_year:,
-                sent_by:
-              )
+        ).with(first_parent_params).and deliver_sms(
+                :clinic_initial_invitation
+              ).with(second_parent_params)
       end
 
       context "when parent doesn't want to receive updates by text" do
@@ -1512,14 +1276,7 @@ describe Notifier::Patient do
         it "still enqueues a text" do
           expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation
-          ).with(
-            parent:,
-            patient:,
-            programme_types:,
-            team:,
-            academic_year:,
-            sent_by:
-          )
+          ).with(first_parent_params)
         end
       end
 
@@ -1546,19 +1303,9 @@ describe Notifier::Patient do
           expect { send_clinic_invitation }.to deliver_email(
             :clinic_initial_invitation
           ).with(
-            parent: parents.first,
-            patient:,
-            programme_types: %w[hpv],
-            team:,
-            academic_year:,
-            sent_by:
+            first_parent_params.merge("programme_types" => %w[hpv])
           ).and deliver_email(:clinic_initial_invitation).with(
-                  parent: parents.second,
-                  patient:,
-                  programme_types: %w[hpv],
-                  team:,
-                  academic_year:,
-                  sent_by:
+                  second_parent_params.merge("programme_types" => %w[hpv])
                 )
         end
 
@@ -1566,19 +1313,9 @@ describe Notifier::Patient do
           expect { send_clinic_invitation }.to deliver_sms(
             :clinic_initial_invitation
           ).with(
-            parent: parents.first,
-            patient:,
-            programme_types: %w[hpv],
-            team:,
-            academic_year:,
-            sent_by:
+            first_parent_params.merge("programme_types" => %w[hpv])
           ).and deliver_sms(:clinic_initial_invitation).with(
-                  parent: parents.second,
-                  patient:,
-                  programme_types: %w[hpv],
-                  team:,
-                  academic_year:,
-                  sent_by:
+                  second_parent_params.merge("programme_types" => %w[hpv])
                 )
         end
       end

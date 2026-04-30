@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class SendVaccinationConfirmationsJob < ApplicationJobActiveJob
-  queue_as :notifications
+class SendVaccinationConfirmationsJob < ApplicationJobSidekiq
+  sidekiq_options queue: :notifications
 
   def perform
     # Find the oldest record that has had a confirmation sent, and send confirmations for all subsequent records

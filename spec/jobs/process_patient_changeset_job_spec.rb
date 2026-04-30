@@ -41,7 +41,7 @@ describe ProcessPatientChangesetJob, :pds do
       it "does not enqueue ReviewPatientChangesetJob" do
         expect {
           described_class.perform_now(patient_changeset.id)
-        }.not_to have_enqueued_job(ReviewPatientChangesetJob)
+        }.not_to enqueue_sidekiq_job(ReviewPatientChangesetSidekiqJob)
       end
     end
 
@@ -201,7 +201,7 @@ describe ProcessPatientChangesetJob, :pds do
           it "doesn't enqueue ReviewPatientChangesetJob" do
             expect {
               described_class.perform_now(patient_changeset.id)
-            }.not_to have_enqueued_job(ReviewPatientChangesetJob)
+            }.not_to enqueue_sidekiq_job(ReviewPatientChangesetSidekiqJob)
           end
         end
       end
@@ -240,8 +240,8 @@ describe ProcessPatientChangesetJob, :pds do
         context "when changesets have unique NHS numbers and unique patients" do
           it "enqueues ReviewPatientChangesetJob" do
             expect {
-              described_class.perform_now(patient_changeset.id)
-            }.to have_enqueued_job(ReviewPatientChangesetJob).with(
+              described_class.new.perform(patient_changeset.id)
+            }.to enqueue_sidekiq_job(ReviewPatientChangesetSidekiqJob).with(
               patient_changeset.id
             )
           end
@@ -404,7 +404,7 @@ describe ProcessPatientChangesetJob, :pds do
       it "enqueues ReviewPatientChangesetJob" do
         expect {
           described_class.perform_now(patient_changeset.id)
-        }.to have_enqueued_job(ReviewPatientChangesetJob).with(
+        }.to enqueue_sidekiq_job(ReviewPatientChangesetSidekiqJob).with(
           patient_changeset.id
         )
       end

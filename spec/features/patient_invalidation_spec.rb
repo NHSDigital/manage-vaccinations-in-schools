@@ -57,9 +57,10 @@ describe "Patient invalidation deletes vaccination record from API", :pds do
     # Move time forward to ensure deletion sync happens after the initial sync
     travel_to(1.hour.from_now)
 
+    stub_pds_search_to_return_no_patients
     stub_pds_get_nhs_number_to_return_an_invalidated_patient
 
-    PatientUpdateFromPDSJob.perform_now(@patient)
+    PatientUpdateFromPDSJob.new.perform(@patient, [])
   end
 
   def then_the_patient_has_been_invalidated

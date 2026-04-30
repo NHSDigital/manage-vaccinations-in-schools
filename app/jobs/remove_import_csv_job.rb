@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class RemoveImportCSVJob < ApplicationJobActiveJob
-  queue_as :imports
+class RemoveImportCSVJob < ApplicationJobSidekiq
+  sidekiq_options queue: :imports
 
   def perform
     [ClassImport, CohortImport, ImmunisationImport].each do |import_type|

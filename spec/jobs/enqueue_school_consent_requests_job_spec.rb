@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 describe EnqueueSchoolConsentRequestsJob do
-  subject(:perform_now) { described_class.perform_now }
+  subject(:perform) { described_class.new.perform }
 
   context "when session is unscheduled" do
     let(:session) { create(:session, :unscheduled) }
 
     it "doesn't queue any jobs" do
-      expect { perform_now }.not_to have_enqueued_job(
-        SendSchoolConsentRequestsJob
+      expect { perform }.not_to enqueue_sidekiq_job(
+        SendSchoolConsentRequestsSidekiqJob
       )
     end
   end
@@ -19,8 +19,8 @@ describe EnqueueSchoolConsentRequestsJob do
     end
 
     it "doesn't queue any jobs" do
-      expect { perform_now }.not_to have_enqueued_job(
-        SendSchoolConsentRequestsJob
+      expect { perform }.not_to enqueue_sidekiq_job(
+        SendSchoolConsentRequestsSidekiqJob
       )
     end
   end
@@ -35,9 +35,9 @@ describe EnqueueSchoolConsentRequestsJob do
     end
 
     it "queues a job for the session" do
-      expect { perform_now }.to have_enqueued_job(
-        SendSchoolConsentRequestsJob
-      ).with(session)
+      expect { perform }.to enqueue_sidekiq_job(
+        SendSchoolConsentRequestsSidekiqJob
+      ).with(session.id)
     end
 
     context "when location is a generic clinic" do
@@ -47,8 +47,8 @@ describe EnqueueSchoolConsentRequestsJob do
       end
 
       it "doesn't queue any jobs" do
-        expect { perform_now }.not_to have_enqueued_job(
-          SendSchoolConsentRequestsJob
+        expect { perform }.not_to enqueue_sidekiq_job(
+          SendSchoolConsentRequestsSidekiqJob
         )
       end
     end

@@ -198,7 +198,7 @@ describe "Parental consent" do
   end
 
   def when_i_wait_for_the_background_jobs_to_complete
-    perform_enqueued_jobs(only: ProcessConsentFormJob)
+    ProcessConsentFormSidekiqJob.drain
   end
 
   def and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated

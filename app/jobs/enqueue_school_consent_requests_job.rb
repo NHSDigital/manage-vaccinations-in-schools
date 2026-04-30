@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-class EnqueueSchoolConsentRequestsJob < ApplicationJobActiveJob
-  queue_as :notifications
+class EnqueueSchoolConsentRequestsJob < ApplicationJobSidekiq
+  sidekiq_options queue: :notifications
 
   def perform
-    sessions =
-      Session.send_consent_requests.joins(:location).merge(Location.gias_school)
+    session_ids =
+      Session
+        .send_consent_requests
+        .joins(:location)
+        .merge(Location.gias_school)
+        .ids
 
-    sessions.find_each do |session|
-      SendSchoolConsentRequestsJob.perform_later(session)
-    end
+    SendSchoolConsentRequestsSidekiqJob.perform_bulk(session_ids.zip)
   end
 end

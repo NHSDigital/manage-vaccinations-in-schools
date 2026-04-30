@@ -285,15 +285,15 @@ describe ImmunisationImport do
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { immunisation_import.process! }.to have_enqueued_job(
-          PDSCascadingSearchJob
-        ).once.on_queue(:imports)
+        expect { immunisation_import.process! }.to enqueue_sidekiq_job(
+          PDSCascadingSearchSidekiqJob
+        ).once.on("imports")
       end
 
       it "enqueues jobs to update from PDS" do
-        expect { immunisation_import.process! }.to have_enqueued_job(
-          PatientUpdateFromPDSJob
-        ).exactly(10).times.on_queue(:imports)
+        expect { immunisation_import.process! }.to enqueue_sidekiq_job(
+          PatientUpdateFromPDSSidekiqJob
+        ).exactly(10).times.on("imports")
       end
     end
 
@@ -336,15 +336,15 @@ describe ImmunisationImport do
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { immunisation_import.process! }.to have_enqueued_job(
-          PDSCascadingSearchJob
-        ).once.on_queue(:imports)
+        expect { immunisation_import.process! }.to enqueue_sidekiq_job(
+          PDSCascadingSearchSidekiqJob
+        ).once.on("imports")
       end
 
       it "enqueues jobs to update from PDS" do
-        expect { immunisation_import.process! }.to have_enqueued_job(
-          PatientUpdateFromPDSJob
-        ).exactly(9).times.on_queue(:imports)
+        expect { immunisation_import.process! }.to enqueue_sidekiq_job(
+          PatientUpdateFromPDSSidekiqJob
+        ).exactly(9).times.on("imports")
       end
     end
 
@@ -387,15 +387,15 @@ describe ImmunisationImport do
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { immunisation_import.process! }.to have_enqueued_job(
-          PDSCascadingSearchJob
-        ).once.on_queue(:imports)
+        expect { immunisation_import.process! }.to enqueue_sidekiq_job(
+          PDSCascadingSearchSidekiqJob
+        ).once.on("imports")
       end
 
       it "enqueues jobs to update from PDS" do
-        expect { immunisation_import.process! }.to have_enqueued_job(
-          PatientUpdateFromPDSJob
-        ).exactly(9).times.on_queue(:imports)
+        expect { immunisation_import.process! }.to enqueue_sidekiq_job(
+          PatientUpdateFromPDSSidekiqJob
+        ).exactly(9).times.on("imports")
       end
     end
 

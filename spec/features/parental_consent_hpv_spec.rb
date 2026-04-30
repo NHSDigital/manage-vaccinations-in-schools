@@ -140,7 +140,7 @@ describe "Parental consent" do
   end
 
   def when_i_wait_for_the_background_jobs_to_complete
-    perform_enqueued_jobs(only: ProcessConsentFormJob)
+    ProcessConsentFormSidekiqJob.drain
   end
 
   def then_i_get_a_confirmation_email_and_scheduled_survey_email

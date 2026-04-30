@@ -11,7 +11,7 @@ class ImportantNoticeGeneratorJob < ApplicationJobActiveJob
     restricted: :restricted_at
   }.freeze
 
-  def perform(patient_ids = nil)
+  def perform(patient_ids)
     scope = Patient.includes(:teams, vaccination_records: %i[team])
 
     if patient_ids.present?

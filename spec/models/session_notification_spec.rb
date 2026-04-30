@@ -51,6 +51,15 @@ describe SessionNotification do
     let(:session_date) { session.dates.min }
     let(:current_user) { create(:user) }
 
+    let(:delivery_params) do
+      {
+        parent_id: parent.id,
+        patient_id: patient.id,
+        session_id: session.id,
+        sent_by_user_id: current_user.id
+      }
+    end
+
     context "with a school reminder" do
       let(:type) { :school_reminder }
 
@@ -74,25 +83,13 @@ describe SessionNotification do
       it "enqueues an email per parent who gave consent" do
         expect { create_and_send! }.to deliver_email(
           :session_school_reminder
-        ).with(
-          parent:,
-          patient:,
-          programme_types:,
-          session:,
-          sent_by: current_user
-        )
+        ).with(delivery_params.merge(programme_types:))
       end
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to deliver_sms(
           :session_school_reminder
-        ).with(
-          parent:,
-          patient:,
-          programme_types:,
-          session:,
-          sent_by: current_user
-        )
+        ).with(delivery_params.merge(programme_types:))
       end
 
       context "when parent doesn't want to receive updates by text" do
@@ -113,11 +110,9 @@ describe SessionNotification do
           expect { create_and_send! }.to deliver_email(
             :session_school_reminder
           ).with(
-            parent:,
-            patient:,
-            programme_types: consented_programmes.map(&:type),
-            session:,
-            sent_by: current_user
+            delivery_params.merge(
+              programme_types: consented_programmes.map(&:type)
+            )
           )
         end
 
@@ -125,11 +120,9 @@ describe SessionNotification do
           expect { create_and_send! }.to deliver_sms(
             :session_school_reminder
           ).with(
-            parent:,
-            patient:,
-            programme_types: consented_programmes.map(&:type),
-            session:,
-            sent_by: current_user
+            delivery_params.merge(
+              programme_types: consented_programmes.map(&:type)
+            )
           )
         end
       end

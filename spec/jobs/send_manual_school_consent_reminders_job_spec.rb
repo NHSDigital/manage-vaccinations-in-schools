@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe SendManualSchoolConsentRemindersJob do
-  subject(:perform_now) do
+  subject(:perform) do
     PatientStatusUpdater.call
-    described_class.perform_now(session, current_user: user)
+    described_class.new.perform(session.id, user.id)
   end
 
   let(:programmes) { [Programme.flu] }
@@ -51,7 +51,7 @@ describe SendManualSchoolConsentRemindersJob do
 
   context "when the patient has not consented or been vaccinated" do
     it "creates a notification" do
-      expect { perform_now }.to change(ConsentNotification, :count).by(1)
+      expect { perform }.to change(ConsentNotification, :count).by(1)
 
       last_notification = ConsentNotification.last
       expect(last_notification.patient).to eq(patient)
@@ -72,7 +72,7 @@ describe SendManualSchoolConsentRemindersJob do
     end
 
     it "does not create a notification" do
-      expect { perform_now }.not_to change(ConsentNotification, :count)
+      expect { perform }.not_to change(ConsentNotification, :count)
     end
   end
 
@@ -87,7 +87,7 @@ describe SendManualSchoolConsentRemindersJob do
     end
 
     it "does not create a notification" do
-      expect { perform_now }.not_to change(ConsentNotification, :count)
+      expect { perform }.not_to change(ConsentNotification, :count)
     end
   end
 
@@ -96,7 +96,7 @@ describe SendManualSchoolConsentRemindersJob do
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)
-      perform_now
+      perform
     end
   end
 
@@ -105,7 +105,7 @@ describe SendManualSchoolConsentRemindersJob do
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)
-      perform_now
+      perform
     end
   end
 
@@ -114,7 +114,7 @@ describe SendManualSchoolConsentRemindersJob do
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)
-      perform_now
+      perform
     end
   end
 
@@ -123,7 +123,7 @@ describe SendManualSchoolConsentRemindersJob do
 
     it "doesn't send any notifications" do
       expect(SessionNotification).not_to receive(:create_and_send!)
-      perform_now
+      perform
     end
   end
 end

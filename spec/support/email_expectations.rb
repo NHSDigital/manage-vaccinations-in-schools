@@ -15,7 +15,7 @@ module EmailExpectations
   end
 
   def email_deliveries
-    perform_enqueued_jobs(only: EmailDeliveryJob)
+    EmailDeliverySidekiqJob.drain
     EmailDeliveryJob.deliveries
   end
 end

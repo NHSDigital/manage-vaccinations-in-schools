@@ -7,7 +7,10 @@ class Sessions::ManageConsentRemindersController < Sessions::BaseController
   end
 
   def create
-    SendManualSchoolConsentRemindersJob.perform_now(@session, current_user:)
+    SendManualSchoolConsentRemindersJob.perform_async(
+      @session.id,
+      current_user.id
+    )
 
     redirect_to session_path(@session),
                 flash: {

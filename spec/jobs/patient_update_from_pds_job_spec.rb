@@ -62,7 +62,9 @@ describe PatientUpdateFromPDSJob do
         end
 
         it "doesn't queue a job to look up NHS number" do
-          expect { perform_now }.not_to have_enqueued_job(PDSCascadingSearchJob)
+          expect { perform_now }.not_to enqueue_sidekiq_job(
+            PDSCascadingSearchSidekiqJob
+          )
         end
 
         context "when the patient is invalidated" do
@@ -120,9 +122,9 @@ describe PatientUpdateFromPDSJob do
         end
 
         it "queues a job to look up NHS number using PDS cascading search" do
-          expect { perform_now }.to have_enqueued_job(
-            PDSCascadingSearchJob
-          ).with(patient)
+          expect { perform_now }.to enqueue_sidekiq_job(
+            PDSCascadingSearchSidekiqJob
+          ).with(patient.to_global_id.to_s, nil, nil, nil)
         end
       end
 
@@ -152,9 +154,9 @@ describe PatientUpdateFromPDSJob do
         end
 
         it "queues a job to look up NHS number using PDS cascading search" do
-          expect { perform_now }.to have_enqueued_job(
-            PDSCascadingSearchJob
-          ).with(patient)
+          expect { perform_now }.to enqueue_sidekiq_job(
+            PDSCascadingSearchSidekiqJob
+          ).with(patient.to_global_id.to_s, nil, nil, nil)
         end
       end
 
@@ -184,9 +186,9 @@ describe PatientUpdateFromPDSJob do
         end
 
         it "queues a job to look up NHS number using PDS cascading search" do
-          expect { perform_now }.to have_enqueued_job(
-            PDSCascadingSearchJob
-          ).with(patient)
+          expect { perform_now }.to enqueue_sidekiq_job(
+            PDSCascadingSearchSidekiqJob
+          ).with(patient.to_global_id.to_s, nil, nil, nil)
         end
       end
     end

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-class EnqueueProcessUnmatchedConsentFormsJob < ApplicationJobActiveJob
+class EnqueueProcessUnmatchedConsentFormsJob < ApplicationJobSidekiq
   include SingleConcurrencyConcern
 
-  queue_as :consents
+  sidekiq_options queue: :consents
 
   def perform
     ConsentForm.unmatched.find_each do |consent_form|
-      ProcessConsentFormJob.perform_later(consent_form.id)
+      ProcessConsentFormSidekiqJob.perform_async(consent_form.id)
     end
   end
 end

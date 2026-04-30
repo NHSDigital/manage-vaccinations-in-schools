@@ -31,22 +31,24 @@ class Notifier::ConsentForm
 
   def send_unknown_contact_details_warning(patient:)
     patient.parents.each do |parent|
+      params = {
+        "consent_form_id" => consent_form.id,
+        "parent_id" => parent.id,
+        "patient_id" => patient.id
+      }
+
       if parent.email.present?
-        EmailDeliveryJob.perform_later(
-          :consent_unknown_contact_details_warning,
-          consent_form:,
-          parent:,
-          patient:
+        EmailDeliverySidekiqJob.perform_async(
+          "consent_unknown_contact_details_warning",
+          params
         )
       end
 
       next unless parent.phone.present? && parent.phone_receive_updates
 
-      SMSDeliveryJob.perform_later(
-        :consent_unknown_contact_details_warning,
-        consent_form:,
-        parent:,
-        patient:
+      SMSDeliverySidekiqJob.perform_async(
+        "consent_unknown_contact_details_warning",
+        params
       )
     end
   end
@@ -56,32 +58,50 @@ class Notifier::ConsentForm
   attr_reader :consent_form
 
   def send_confirmation_given(programme_types: nil, disease_types: nil)
-    params = { consent_form: }
-    params[:programme_types] = programme_types if programme_types
-    params[:disease_types] = disease_types if disease_types
+    params = { "consent_form_id" => consent_form.id }
+    params["programme_types"] = programme_types if programme_types
+    params["disease_types"] = disease_types if disease_types
 
     if consent_form.health_answers_require_triage?
-      EmailDeliveryJob.perform_later(:consent_confirmation_triage, **params)
+      EmailDeliverySidekiqJob.perform_async(
+        "consent_confirmation_triage",
+        params
+      )
     elsif consent_form.session&.clinic? || consent_form.session&.completed?
-      EmailDeliveryJob.perform_later(:consent_confirmation_clinic, **params)
+      EmailDeliverySidekiqJob.perform_async(
+        "consent_confirmation_clinic",
+        params
+      )
     else
-      EmailDeliveryJob.perform_later(:consent_confirmation_given, **params)
+      EmailDeliverySidekiqJob.perform_async(
+        "consent_confirmation_given",
+        params
+      )
 
       if consent_form.parent_phone_receive_updates
-        SMSDeliveryJob.perform_later(:consent_confirmation_given, **params)
+        SMSDeliverySidekiqJob.perform_async(
+          "consent_confirmation_given",
+          params
+        )
       end
     end
   end
 
   def send_confirmation_refused(programme_types: nil, disease_types: nil)
-    params = { consent_form: }
-    params[:programme_types] = programme_types if programme_types
-    params[:disease_types] = disease_types if disease_types
+    params = { "consent_form_id" => consent_form.id }
+    params["programme_types"] = programme_types if programme_types
+    params["disease_types"] = disease_types if disease_types
 
-    EmailDeliveryJob.perform_later(:consent_confirmation_refused, **params)
+    EmailDeliverySidekiqJob.perform_async(
+      "consent_confirmation_refused",
+      params
+    )
 
     if consent_form.parent_phone_receive_updates
-      SMSDeliveryJob.perform_later(:consent_confirmation_refused, **params)
+      SMSDeliverySidekiqJob.perform_async(
+        "consent_confirmation_refused",
+        params
+      )
     end
   end
 end

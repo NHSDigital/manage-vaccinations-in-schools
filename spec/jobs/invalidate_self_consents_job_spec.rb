@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe InvalidateSelfConsentsJob do
-  subject(:perform_now) { described_class.perform_now }
+  subject(:perform) { described_class.new.perform }
 
   let(:academic_year) { AcademicYear.current }
   let(:programme) { Programme.hpv }
@@ -16,7 +16,7 @@ describe InvalidateSelfConsentsJob do
     before { create(:patient_programme_status, :due, patient:, programme:) }
 
     it "does not invalidate the consent" do
-      expect { perform_now }.not_to(change { consent.reload.invalidated? })
+      expect { perform }.not_to(change { consent.reload.invalidated? })
     end
 
     context "with triage" do
@@ -33,7 +33,7 @@ describe InvalidateSelfConsentsJob do
       end
 
       it "does not invalidate the triage" do
-        expect { perform_now }.not_to(change { triage.reload.invalidated? })
+        expect { perform }.not_to(change { triage.reload.invalidated? })
       end
     end
   end
@@ -44,7 +44,7 @@ describe InvalidateSelfConsentsJob do
     before { create(:patient_programme_status, :due, patient:, programme:) }
 
     it "does not invalidate the consent" do
-      expect { perform_now }.not_to(change { consent.reload.invalidated? })
+      expect { perform }.not_to(change { consent.reload.invalidated? })
     end
 
     context "with triage" do
@@ -60,7 +60,7 @@ describe InvalidateSelfConsentsJob do
       end
 
       it "does not invalidate the triage" do
-        expect { perform_now }.not_to(change { triage.reload.invalidated? })
+        expect { perform }.not_to(change { triage.reload.invalidated? })
       end
     end
   end
@@ -79,7 +79,7 @@ describe InvalidateSelfConsentsJob do
     before { create(:patient_programme_status, :due, patient:, programme:) }
 
     it "invalidates the consent" do
-      expect { perform_now }.to change { consent.reload.invalidated? }.from(
+      expect { perform }.to change { consent.reload.invalidated? }.from(
         false
       ).to(true)
     end
@@ -98,7 +98,7 @@ describe InvalidateSelfConsentsJob do
       end
 
       it "invalidates the triage" do
-        expect { perform_now }.to change { triage.reload.invalidated? }.from(
+        expect { perform }.to change { triage.reload.invalidated? }.from(
           false
         ).to(true)
       end
@@ -119,7 +119,7 @@ describe InvalidateSelfConsentsJob do
       end
 
       it "doesn't invalidate the triage" do
-        expect { perform_now }.not_to(change { triage.reload.invalidated? })
+        expect { perform }.not_to(change { triage.reload.invalidated? })
       end
     end
 
@@ -138,7 +138,7 @@ describe InvalidateSelfConsentsJob do
       end
 
       it "doesn't invalidate the triage" do
-        expect { perform_now }.not_to(change { triage.reload.invalidated? })
+        expect { perform }.not_to(change { triage.reload.invalidated? })
       end
     end
 
@@ -156,7 +156,7 @@ describe InvalidateSelfConsentsJob do
       end
 
       it "does not invalidate the consent" do
-        expect { perform_now }.not_to(change { consent.reload.invalidated? })
+        expect { perform }.not_to(change { consent.reload.invalidated? })
       end
 
       context "with triage" do
@@ -173,7 +173,7 @@ describe InvalidateSelfConsentsJob do
         end
 
         it "does not invalidate the triage" do
-          expect { perform_now }.not_to(change { triage.reload.invalidated? })
+          expect { perform }.not_to(change { triage.reload.invalidated? })
         end
       end
     end
@@ -185,7 +185,7 @@ describe InvalidateSelfConsentsJob do
     before { create(:patient_programme_status, patient:, programme:) }
 
     it "does not invalidate the consent" do
-      expect { perform_now }.not_to(change { consent.reload.invalidated? })
+      expect { perform }.not_to(change { consent.reload.invalidated? })
     end
 
     context "with triage" do
@@ -201,7 +201,7 @@ describe InvalidateSelfConsentsJob do
       end
 
       it "does not invalidate the triage" do
-        expect { perform_now }.not_to(change { triage.reload.invalidated? })
+        expect { perform }.not_to(change { triage.reload.invalidated? })
       end
     end
   end
@@ -252,15 +252,13 @@ describe InvalidateSelfConsentsJob do
     end
 
     it "does not invalidate the parent consent" do
-      expect { perform_now }.not_to(
-        change { parent_consent.reload.invalidated? }
-      )
+      expect { perform }.not_to(change { parent_consent.reload.invalidated? })
     end
 
     it "invalidates the self-consent" do
-      expect { perform_now }.to change {
-        self_consent.reload.invalidated?
-      }.from(false).to(true)
+      expect { perform }.to change { self_consent.reload.invalidated? }.from(
+        false
+      ).to(true)
     end
   end
 end

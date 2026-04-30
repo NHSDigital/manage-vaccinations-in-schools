@@ -139,7 +139,7 @@ FactoryBot.define do
         patient_scope: Patient.where(id: vaccination_record.patient_id)
       )
 
-      ImportantNoticeGeneratorJob.perform_now([vaccination_record.patient_id])
+      ImportantNoticeGeneratorJob.new.perform([vaccination_record.patient_id])
     end
 
     trait :sourced_from_nhs_immunisations_api do
