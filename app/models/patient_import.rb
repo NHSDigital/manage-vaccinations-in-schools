@@ -35,17 +35,40 @@ class PatientImport < ApplicationRecord
   end
 
   def process!
+    # if pds enabled
+      # changesets with no postcode are given a fake search result
+        # ReviewPatientChangesetJob
+      # changesets with postcode
+        # PDSCascadingSearchJob
+          # ProcessPatientChangesetJob
+            # ReviewPatientChangesetJob
+    # if pds disabled or pds enabled but no changesets with postcodes
+      # ReviewPatientChangesetJob
+
     raise "'rows' are empty. Call parse_rows! before processing." if rows.nil?
 
-    changesets =
-      rows.each_with_index.map do |row, row_number|
-        PatientChangeset.from_import_row(row:, import: self, row_number:)
-      end
+    rows.each_with_index.map do |row, row_number|
+      PatientChangeset.create_from_import_row(row:, import: self, row_number:)
+    end
 
     if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
-      process_no_postcode_changesets(self.changesets.without_postcode)
-      if self.changesets.with_postcode.any?
-        enqueue_pds_cascading_searches(self.changesets.with_postcode)
+      changesets.without_postcode.find_each do |cs|
+        cs.search_results << {
+          step: :no_fuzzy_with_history,
+          result: :no_postcode,
+          nhs_number: nil,
+          created_at: Time.current
+        }
+        cs.calculating_review!
+        ReviewPatientChangesetJob.perform_later(cs.id)
+      end
+      if changesets.with_postcode.any?
+        changesets.with_postcode.find_each do |cs|
+          PDSCascadingSearchJob.set(queue: :imports).perform_later(
+            cs,
+            queue: :imports
+          )
+        end
         return
       end
     end
@@ -55,7 +78,23 @@ class PatientImport < ApplicationRecord
     validate_changeset_uniqueness!
     return if changesets_are_invalid?
 
-    enqueue_review_jobs(self.changesets)
+    review_changesets =
+      if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
+        # TODO: I don't think this makes sense because if we're here and if
+        # there were any `changesets.with_postcode` then we would've
+        # returned early on line 72.
+        # Unless it's a way of avoiding queuing up jobs for
+        # `changesets.without_postcode` because that would've already
+        # happened in the block starting on line 55
+        changesets.with_postcode
+      else
+        changesets
+      end
+
+    review_changesets.each do |cs|
+      cs.calculating_review!
+      ReviewPatientChangesetJob.perform_later(cs.id)
+    end(changesets)
 
     TeamCachedCounts.new(team).reset_import_issues!
   end
@@ -146,42 +185,6 @@ class PatientImport < ApplicationRecord
   end
 
   private
-
-  def process_no_postcode_changesets(changesets)
-    changesets.find_each do |cs|
-      cs.search_results << {
-        step: :no_fuzzy_with_history,
-        result: :no_postcode,
-        nhs_number: nil,
-        created_at: Time.current
-      }
-      cs.calculating_review!
-      ReviewPatientChangesetJob.perform_later(cs.id)
-    end
-  end
-
-  def enqueue_review_jobs(changesets)
-    review_changesets =
-      if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
-        changesets.with_postcode
-      else
-        changesets
-      end
-
-    review_changesets.each do |cs|
-      cs.calculating_review!
-      ReviewPatientChangesetJob.perform_later(cs.id)
-    end
-  end
-
-  def enqueue_pds_cascading_searches(changesets)
-    changesets.find_each do |cs|
-      PDSCascadingSearchJob.set(queue: :imports).perform_later(
-        cs,
-        queue: :imports
-      )
-    end
-  end
 
   def valid_pds_match_rate?
     pds_match_rate / 100 >= PDS_MATCH_THRESHOLD

@@ -15,7 +15,7 @@ describe CommitPatientChangesetsJob do
   let!(:changesets) do
     import.parse_rows!
     import.rows.each_with_index.map do |row, row_number|
-      PatientChangeset.from_import_row(row:, import:, row_number:)
+      PatientChangeset.create_from_import_row(row:, import:, row_number:)
     end
   end
 

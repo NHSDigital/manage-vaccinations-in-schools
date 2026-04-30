@@ -126,7 +126,7 @@ class PatientChangeset < ApplicationRecord
 
   scope :still_processing, -> { where(status: %i[pending calculating_review]) }
 
-  def self.from_import_row(row:, import:, row_number:)
+  def self.create_from_import_row(row:, import:, row_number:)
     create!(
       import:,
       row_number:,

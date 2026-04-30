@@ -13,11 +13,22 @@ class ProcessPatientChangesetJob < ApplicationJobActiveJob
       patient_changeset.pds_nhs_number = unique_nhs_number
     end
 
+    # we might now have an nhs number from pds lookup
+    # validate whether there are multiple existing patients
+    # if there are then fail the import, similar to how it fails if patient_import#validate_changeset_uniqueness! fails
+    # set changeset#state to "duplicate_patients_found" or similar
+
     patient_changeset.assign_patient_id
     patient_changeset.calculating_review!
 
     if patient_changeset.import.changesets.pending.none?
       import = patient_changeset.import
+
+      # if any of the changesets are in the "duplicate_patients_found" state then update the import:
+      #   import.update!(status: :changesets_are_invalid)
+      #   import.update!(serialized_errors: row_errors)
+      #   changesets.update_all(status: :import_invalid)
+      # end
 
       if Flipper.enabled?(:pds) && Flipper.enabled?(:pds_search_during_import)
         import.validate_pds_match_rate!
