@@ -132,7 +132,7 @@ describe "mavis schools show" do
       create(
         :patient_location,
         patient:,
-        location:,
+        school:,
         academic_year: AcademicYear.previous
       )
     end

@@ -119,8 +119,8 @@ class SchoolMove < ApplicationRecord
     patient
       .patient_locations
       .where("academic_year >= ?", academic_year)
-      .where.not(location: school)
-      .where.not(location: teams.map(&:generic_clinic))
+      .where.not(school:)
+      .where.not(school: teams.map(&:generic_clinic))
       .find_each do |patient_location|
         end_date = Date.yesterday
 
@@ -136,7 +136,7 @@ class SchoolMove < ApplicationRecord
       end
 
     PatientLocation
-      .find_or_initialize_by(patient:, location: school, academic_year:)
+      .find_or_initialize_by(patient:, school:, academic_year:)
       .tap do |patient_location|
         patient_location.end_date = nil
 
@@ -155,7 +155,7 @@ class SchoolMove < ApplicationRecord
     PatientLocation.import!(
       patient_locations,
       on_duplicate_key_update: {
-        conflict_target: %i[patient_id location_id academic_year],
+        conflict_target: %i[patient_id school_id academic_year],
         columns: %i[date_range]
       }
     )

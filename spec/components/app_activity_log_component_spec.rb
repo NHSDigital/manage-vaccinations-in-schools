@@ -40,7 +40,7 @@ describe AppActivityLogComponent do
 
     patient
       .patient_locations
-      .find_by(location_id: session.location_id)
+      .find_by(school_id: session.location_id)
       &.update!(created_at: Time.zone.local(2025, 5, 29, 12))
 
     patient.reload

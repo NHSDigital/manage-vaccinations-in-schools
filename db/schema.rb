@@ -650,14 +650,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_175616) do
     t.integer "academic_year", null: false
     t.datetime "created_at", null: false
     t.daterange "date_range", default: -::Float::INFINITY...::Float::INFINITY, null: false
-    t.bigint "location_id", null: false
+    t.bigint "location_id"
     t.bigint "patient_id", null: false
-    t.bigint "school_id"
+    t.bigint "school_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["location_id", "academic_year", "patient_id"], name: "idx_on_location_id_academic_year_patient_id_3237b32fa0", unique: true
-    t.index ["location_id", "academic_year"], name: "index_patient_locations_on_location_id_and_academic_year"
     t.index ["location_id"], name: "index_patient_locations_on_location_id"
-    t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
     t.index ["patient_id", "school_id", "academic_year"], name: "idx_on_patient_id_school_id_academic_year_652216fa07", unique: true
     t.index ["school_id", "academic_year", "patient_id"], name: "idx_on_school_id_academic_year_patient_id_c647e75f26", unique: true
     t.index ["school_id", "academic_year"], name: "index_patient_locations_on_school_id_and_academic_year"
@@ -1170,7 +1167,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_175616) do
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_changesets", "locations", column: "school_id"
   add_foreign_key "patient_changesets", "patients"
-  add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "locations", column: "school_id"
   add_foreign_key "patient_locations", "patients"
   add_foreign_key "patient_merge_log_entries", "patients", on_delete: :cascade
@@ -1221,14 +1217,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_175616) do
   add_foreign_key "vaccination_records", "vaccines"
 
   create_view "reporting_api_totals", materialized: true, sql_definition: <<-SQL
-      SELECT ((((((((pps.patient_id || '-'::text) || pps.programme_type) || '-'::text) || tl.team_id) || '-'::text) || pl.location_id) || '-'::text) || pps.academic_year) AS id,
+      SELECT ((((((((pps.patient_id || '-'::text) || pps.programme_type) || '-'::text) || tl.team_id) || '-'::text) || pl.school_id) || '-'::text) || pps.academic_year) AS id,
       pps.patient_id,
       pps.academic_year,
       pps.programme_type,
       pps.status,
       pps.consent_status,
       tl.team_id,
-      pl.location_id AS session_location_id,
+      pl.school_id AS session_location_id,
           CASE pat.gender_code
               WHEN 0 THEN 'not known'::text
               WHEN 1 THEN 'male'::text
@@ -1249,7 +1245,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_175616) do
      FROM (((((((patient_programme_statuses pps
        JOIN patients pat ON ((pat.id = pps.patient_id)))
        JOIN patient_locations pl ON (((pl.patient_id = pps.patient_id) AND (pl.academic_year = pps.academic_year))))
-       JOIN team_locations tl ON (((tl.location_id = pl.location_id) AND (tl.academic_year = pps.academic_year))))
+       JOIN team_locations tl ON (((tl.location_id = pl.school_id) AND (tl.academic_year = pps.academic_year))))
        LEFT JOIN archive_reasons ar ON (((ar.patient_id = pps.patient_id) AND (ar.team_id = tl.team_id))))
        LEFT JOIN locations school ON ((school.id = pat.school_id)))
        LEFT JOIN local_authorities la ON ((la.gias_code = school.gias_local_authority_code)))

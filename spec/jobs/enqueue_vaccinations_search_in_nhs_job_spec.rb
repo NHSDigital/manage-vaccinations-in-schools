@@ -360,7 +360,7 @@ describe EnqueueVaccinationsSearchInNHSJob do
             Patient.all.map do |patient|
               PatientLocation.new(
                 patient:,
-                location:,
+                school: location,
                 academic_year: AcademicYear.pending
               )
             end

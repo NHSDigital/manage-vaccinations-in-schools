@@ -138,7 +138,9 @@ class DraftSession
 
   def patient_locations
     @patient_locations ||=
-      PatientLocation.where(location_id:, academic_year:).includes(:patient)
+      PatientLocation.where(school_id: location_id, academic_year:).includes(
+        :patient
+      )
   end
 
   def programme_types=(values)

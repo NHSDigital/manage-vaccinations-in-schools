@@ -66,7 +66,7 @@ class Schools::InviteToClinicController < Schools::BaseController
         .joins(:patient_locations)
         .where(
           patient_locations: {
-            location: @location,
+            school: @location,
             academic_year: @academic_year
           }
         )

@@ -187,7 +187,7 @@ class ClassImportsController < ApplicationController
             :school_moves,
             :archive_reasons,
             {
-              patient_locations: :location,
+              patient_locations: :school,
               school: {
                 team_locations: :team
               },

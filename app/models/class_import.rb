@@ -111,12 +111,12 @@ class ClassImport < PatientImport
     existing_patients =
       Patient.where(
         birth_academic_year: birth_academic_years,
-        school_id: location.id
+        school: location
       ).where(
         PatientLocation
-          .joins(:location)
+          .joins(:school)
           .where("patient_id = patients.id")
-          .where(academic_year:, location:)
+          .where(academic_year:, school: location)
           .arel
           .exists
       )

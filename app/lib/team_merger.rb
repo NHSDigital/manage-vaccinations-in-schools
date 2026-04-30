@@ -371,16 +371,15 @@ class TeamMerger
 
         patient_location_ids_to_keep =
           PatientLocation
-            .where(location_id: source_ids)
+            .where(school_id: source_ids)
             .group(:patient_id, :academic_year)
             .minimum(:id)
             .values
         PatientLocation
-          .where(location_id: source_ids)
+          .where(school_id: source_ids)
           .where.not(id: patient_location_ids_to_keep)
           .delete_all
         PatientLocation.where(id: patient_location_ids_to_keep).update_all(
-          location_id: merged_loc.id,
           school_id: merged_loc.id
         )
       end

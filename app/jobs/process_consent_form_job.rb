@@ -39,9 +39,9 @@ class ProcessConsentFormJob < ApplicationJobActiveJob
     begin
       if match_with_exact_nhs_number
         # Match if we find a patient with the PDS NHS number
-      elsif location_patients.count == 1
+      elsif school_patients.count == 1
         # If we found exactly one, match the consent form to this patient
-        match_to_only_patient(location_patients.first)
+        match_to_only_patient(school_patients.first)
       elsif pds_patient && matching_patients.empty?
         # If no patients are found, store the PDS NHS number in the consent form.
         # A nurse may then create a patient record and we can try this job again
@@ -93,15 +93,15 @@ class ProcessConsentFormJob < ApplicationJobActiveJob
     true
   end
 
-  def location_patients
-    @location_patients ||=
+  def school_patients
+    @school_patients ||=
       begin
         scope =
           Patient
             .joins(:patient_locations)
             .where(
               patient_locations: {
-                location: @consent_form.location,
+                school: @consent_form.location,
                 academic_year: @consent_form.academic_year
               }
             )

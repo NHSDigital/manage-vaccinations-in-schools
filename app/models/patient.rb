@@ -96,7 +96,7 @@ class Patient < ApplicationRecord
   has_many :triages
   has_many :vaccination_records, -> { kept }
 
-  has_many :locations, through: :patient_locations
+  has_many :schools, -> { distinct }, through: :patient_locations
   has_many :parents, through: :parent_relationships
   has_many :teams, through: :patient_teams
 
@@ -121,7 +121,7 @@ class Patient < ApplicationRecord
 
   scope :joins_sessions, -> { joins(:patient_locations).joins(<<-SQL) }
     INNER JOIN team_locations
-    ON team_locations.location_id = patient_locations.location_id
+    ON team_locations.location_id = patient_locations.school_id
     AND team_locations.academic_year = patient_locations.academic_year
     INNER JOIN sessions
     ON sessions.team_location_id = team_locations.id
@@ -678,16 +678,17 @@ class Patient < ApplicationRecord
 
   def not_in_team?(team:, academic_year:)
     if patient_locations.loaded?
-      patient_locations.none? do |patloc|
-        patloc.academic_year == academic_year &&
-          patloc.location.team_locations.any? do |loc|
-            loc.academic_year == academic_year && loc.team_id == team.id
+      patient_locations.none? do |patient_location|
+        patient_location.academic_year == academic_year &&
+          patient_location.school.team_locations.any? do |team_location|
+            team_location.academic_year == academic_year &&
+              team_location.team_id == team.id
           end
       end
     else
       patient_locations
         .where(academic_year:)
-        .joins(location: :team_locations)
+        .joins(school: :team_locations)
         .where(team_locations: { academic_year:, team: })
         .empty?
     end
@@ -712,7 +713,7 @@ class Patient < ApplicationRecord
       patient_locations.pending.find_each do |patient_location|
         new_patient.patient_locations.build(
           academic_year: patient_location.academic_year,
-          location_id: patient_location.location_id
+          school_id: patient_location.school_id
         )
       end
 

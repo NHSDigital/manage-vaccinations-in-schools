@@ -8,7 +8,7 @@ describe StatusGenerator::Programme do
       patient:,
       patient_locations:
         patient.patient_locations.includes(
-          location: [
+          school: [
             :location_programme_year_groups,
             { team_locations: { sessions: :session_programme_year_groups } }
           ]

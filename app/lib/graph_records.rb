@@ -110,12 +110,12 @@ class GraphRecords
         triages
         vaccination_records
       ],
-      patient_location: %i[location patient],
+      patient_location: %i[patient school],
       session: %i[location programmes],
       vaccination_record: %i[session]
     },
     patient_location: {
-      patient_location: %i[location patient]
+      patient_location: %i[patient school]
     },
     programme: {
       programme: %i[teams vaccines]

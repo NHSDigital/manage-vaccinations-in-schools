@@ -122,7 +122,7 @@ describe TimelineRecords do
     before do
       patient.triages << triage
       patient.consents << consent
-      create(:patient_location, patient:, location: session.location, session:)
+      create(:patient_location, patient:, session:)
       patient.school_moves << school_move
       patient.school_move_log_entries << school_move_log_entry
       patient.vaccination_records << vaccination_record
@@ -271,7 +271,7 @@ describe TimelineRecords do
 
   describe "#load_add_class_imports_events" do
     before do
-      create(:patient_location, patient:, location: session.location, session:)
+      create(:patient_location, patient:, session:)
       additional_events = {
         class_imports: {
           session.id => [class_import_additional.id]
@@ -333,9 +333,7 @@ describe TimelineRecords do
   end
 
   describe "#audits_events" do
-    before do
-      create(:patient_location, patient:, location: session.location, session:)
-    end
+    before { create(:patient_location, patient:, session:) }
 
     context "with default settings" do
       let(:timeline) { described_class.new(patient) }
@@ -484,7 +482,7 @@ describe TimelineRecords do
 
     before do
       class_import_additional.location_id = session.id
-      create(:patient_location, patient:, location: session.location, session:)
+      create(:patient_location, patient:, session:)
       patient.class_imports = [class_import]
       patient.cohort_imports = cohort_imports_with_patient
       team.cohort_imports =
@@ -525,7 +523,7 @@ describe TimelineRecords do
     before do
       patient.class_imports = class_imports
       patient.cohort_imports = cohort_imports
-      create(:patient_location, patient:, location: session.location, session:)
+      create(:patient_location, patient:, session:)
     end
 
     context "with class imports" do
@@ -560,7 +558,7 @@ describe TimelineRecords do
         third_vaccination_record,
         fourth_vaccination_record
       ].each { |vr| patient.vaccination_records << vr }
-      create(:patient_location, patient:, location: session.location, session:)
+      create(:patient_location, patient:, session:)
       timeline.send(:load_events, %w[consents triages])
       timeline.send(:load_grouped_events, %w[consents triages])
     end

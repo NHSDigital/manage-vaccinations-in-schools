@@ -58,8 +58,9 @@ module MavisCLI
             patients_to_update =
               Patient
                 .joins(:patient_locations)
-                .where(patient_locations: { location: })
+                .where(patient_locations: { school: location })
                 .distinct
+
             PatientTeamUpdater.call(patient_scope: patients_to_update)
           end
         end

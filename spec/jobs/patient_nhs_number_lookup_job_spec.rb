@@ -117,7 +117,7 @@ describe PatientNHSNumberLookupJob do
           create(
             :patient_location,
             patient: existing_patient,
-            location: patient_location.location,
+            school: patient_location.school,
             academic_year: patient_location.academic_year
           )
         end

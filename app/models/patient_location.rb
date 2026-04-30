@@ -9,35 +9,31 @@
 #  date_range    :daterange        default(-Infinity...Infinity), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  location_id   :bigint           not null
 #  patient_id    :bigint           not null
-#  school_id     :bigint
+#  school_id     :bigint           not null
 #
 # Indexes
 #
-#  idx_on_location_id_academic_year_patient_id_3237b32fa0    (location_id,academic_year,patient_id) UNIQUE
-#  idx_on_patient_id_location_id_academic_year_08a1dc4afe    (patient_id,location_id,academic_year) UNIQUE
-#  idx_on_patient_id_school_id_academic_year_652216fa07      (patient_id,school_id,academic_year) UNIQUE
-#  idx_on_school_id_academic_year_patient_id_c647e75f26      (school_id,academic_year,patient_id) UNIQUE
-#  index_patient_locations_on_location_id                    (location_id)
-#  index_patient_locations_on_location_id_and_academic_year  (location_id,academic_year)
-#  index_patient_locations_on_school_id                      (school_id)
-#  index_patient_locations_on_school_id_and_academic_year    (school_id,academic_year)
+#  idx_on_patient_id_school_id_academic_year_652216fa07    (patient_id,school_id,academic_year) UNIQUE
+#  idx_on_school_id_academic_year_patient_id_c647e75f26    (school_id,academic_year,patient_id) UNIQUE
+#  index_patient_locations_on_location_id                  (location_id)
+#  index_patient_locations_on_school_id                    (school_id)
+#  index_patient_locations_on_school_id_and_academic_year  (school_id,academic_year)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 
 class PatientLocation < ApplicationRecord
+  self.ignored_columns = %i[location_id]
+
   audited associated_with: :patient
   has_associated_audits
 
   belongs_to :patient
-  belongs_to :location
-  belongs_to :school, class_name: "Location", optional: true
+  belongs_to :school, class_name: "Location"
 
   has_and_belongs_to_many :immunisation_imports
 
@@ -48,7 +44,7 @@ class PatientLocation < ApplicationRecord
 
   scope :joins_team_locations, -> { references(:teams_locations).joins(<<-SQL) }
     INNER JOIN team_locations
-    ON team_locations.location_id = patient_locations.location_id
+    ON team_locations.location_id = patient_locations.school_id
     AND team_locations.academic_year = patient_locations.academic_year
   SQL
 
@@ -69,7 +65,7 @@ class PatientLocation < ApplicationRecord
             Location::ProgrammeYearGroup
               .joins(:location_year_group)
               .where(
-                "location_year_groups.location_id = patient_locations.location_id"
+                "location_year_groups.location_id = patient_locations.school_id"
               )
               .where(
                 "location_year_groups.academic_year = patient_locations.academic_year"
@@ -84,16 +80,6 @@ class PatientLocation < ApplicationRecord
               .exists
           )
         end
-
-  def location=(location)
-    super
-    self.school = location
-  end
-
-  def location_id=(location_id)
-    super
-    self.school_id = location_id
-  end
 
   def begin_date
     value = date_range.begin
