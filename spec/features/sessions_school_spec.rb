@@ -458,7 +458,7 @@ describe "School sessions" do
   end
 
   def and_the_parent_receives_an_invitation
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
 
     expect(email_deliveries).to include(
       matching_notify_email(
@@ -560,7 +560,7 @@ describe "School sessions" do
   end
 
   def then_the_parent_receives_an_rt5_clinic_invitation
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @parent.email,
@@ -576,7 +576,7 @@ describe "School sessions" do
   end
 
   def then_the_parent_receives_a_ryg_clinic_invitation
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
     expect(email_deliveries).to include(
       matching_notify_email(
         to: @parent.email,

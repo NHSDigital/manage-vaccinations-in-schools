@@ -4,14 +4,13 @@ class EnqueueSchoolConsentRemindersJob < ApplicationJobSidekiq
   sidekiq_options queue: :notifications
 
   def perform
-    sessions =
+    session_ids =
       Session
         .send_consent_reminders
         .joins(:location)
         .merge(Location.gias_school)
+        .ids
 
-    sessions.find_each do |session|
-      SendAutomaticSchoolConsentRemindersJob.perform_later(session)
-    end
+    SendAutomaticSchoolConsentRemindersSidekiqJob.perform_bulk(session_ids.zip)
   end
 end

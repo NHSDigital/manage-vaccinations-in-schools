@@ -188,7 +188,7 @@ describe "Important notices", :pds do
   end
 
   def when_pds_updates_the_patient_record
-    PatientUpdateFromPDSJob.perform_now(@patient)
+    PatientUpdateFromPDSJob.new.perform(@patient, [])
   end
 
   def when_pds_updates_patient_as_not_restricted
@@ -258,7 +258,7 @@ describe "Important notices", :pds do
   end
 
   def and_the_important_notice_job_is_performed
-    perform_enqueued_jobs(only: ImportantNoticeGeneratorJob)
+    ImportantNoticeGeneratorSidekiqJob.drain
   end
 
   def when_i_visit_the_notices_page_as_superuser

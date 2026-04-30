@@ -19,7 +19,7 @@ class ReviewPatientChangesetJob < ApplicationJobActiveJob
 
     if all_jobs_finished_and_import_valid(import)
       if import.is_a?(ClassImport)
-        ReviewClassImportSchoolMoveJob.perform_later(import.id)
+        ReviewClassImportSchoolMoveSidekiqJob.perform_async(import.id)
       elsif import.calculating_re_review?
         import.in_re_review!
       else

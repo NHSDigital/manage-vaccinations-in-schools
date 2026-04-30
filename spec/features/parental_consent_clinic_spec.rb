@@ -257,14 +257,14 @@ describe "Parental consent" do
   def then_i_see_a_confirmation_page_in_school
     expect(page).to have_content("is due to get the HPV vaccination at school")
 
-    perform_enqueued_jobs # match consent form with patient
+    Sidekiq::Job.drain_all # match consent form with patient
   end
 
   def then_i_see_a_confirmation_page_in_clinic
     expect(page).to have_content("is due to get the HPV vaccination")
     expect(page).not_to have_content("at school")
 
-    perform_enqueued_jobs # match consent form with patient
+    Sidekiq::Job.drain_all # match consent form with patient
     expect_email_to "jane@example.com", :consent_confirmation_clinic, :any
   end
 
@@ -347,7 +347,7 @@ describe "Parental consent" do
   end
 
   def then_the_existing_parent_receives_a_contact_details_mismatch_warning
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
     expect_email_to "original@example.com",
                     :consent_unknown_contact_details_warning,
                     :any

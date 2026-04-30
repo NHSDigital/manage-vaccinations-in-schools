@@ -7,7 +7,7 @@ class EnqueueProcessUnmatchedConsentFormsJob < ApplicationJobSidekiq
 
   def perform
     ConsentForm.unmatched.find_each do |consent_form|
-      ProcessConsentFormJob.perform_later(consent_form.id)
+      ProcessConsentFormSidekiqJob.perform_async(consent_form.id)
     end
   end
 end

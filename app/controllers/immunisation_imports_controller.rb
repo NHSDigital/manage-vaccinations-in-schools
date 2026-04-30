@@ -23,7 +23,9 @@ class ImmunisationImportsController < ApplicationController
                 )
 
     if @immunisation_import.save
-      ProcessImportJob.perform_later(@immunisation_import)
+      ProcessImportSidekiqJob.perform_async(
+        @immunisation_import.to_global_id.to_s
+      )
       redirect_to imports_path, flash: { success: "Import processing started" }
     else
       render :new, status: :unprocessable_content and return

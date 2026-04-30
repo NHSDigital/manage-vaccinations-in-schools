@@ -98,10 +98,7 @@ describe "Parental consent given with an inexact automatic match" do
   end
 
   def and_the_nurse_checks_the_consent_responses
-    2.times do
-      perform_enqueued_jobs
-      Sidekiq::Job.drain_all
-    end
+    2.times { Sidekiq::Job.drain_all }
 
     sign_in @team.users.first
     visit sessions_path

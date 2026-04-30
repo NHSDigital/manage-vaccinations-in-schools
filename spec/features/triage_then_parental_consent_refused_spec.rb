@@ -119,7 +119,7 @@ describe "Triage" do
   end
 
   def when_i_wait_for_background_jobs_to_complete
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
   end
 
   def and_i_go_to_the_patient_with_conflicting_consent

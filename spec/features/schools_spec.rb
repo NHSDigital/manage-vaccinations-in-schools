@@ -255,7 +255,7 @@ describe "Schools" do
   end
 
   def and_the_parents_receive_invitations
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
 
     expect(email_deliveries.count).to eq(@patients.count)
 

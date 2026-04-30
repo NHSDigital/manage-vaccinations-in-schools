@@ -12,14 +12,14 @@ describe UpdatePatientsFromPDS do
   end
 
   it "queues no jobs" do
-    expect { call }.not_to have_enqueued_job
+    expect { call }.not_to enqueue_sidekiq_job
   end
 
   context "when feature is enabled but not main switch" do
     before { Flipper.enable(:pds_enqueue_bulk_updates) }
 
     it "queues no jobs" do
-      expect { call }.not_to have_enqueued_job
+      expect { call }.not_to enqueue_sidekiq_job
     end
   end
 
@@ -27,7 +27,7 @@ describe UpdatePatientsFromPDS do
     before { Flipper.enable(:pds) }
 
     it "queues no jobs" do
-      expect { call }.not_to have_enqueued_job
+      expect { call }.not_to enqueue_sidekiq_job
     end
   end
 
@@ -38,15 +38,15 @@ describe UpdatePatientsFromPDS do
     end
 
     it "queues PDSCascadingSearchJob for patients without an NHS number" do
-      expect { call }.to have_enqueued_job(PDSCascadingSearchJob)
-        .on_queue(:pds)
+      expect { call }.to enqueue_sidekiq_job(PDSCascadingSearchSidekiqJob)
+        .on("pds")
         .exactly(2)
         .times
     end
 
     it "queues a job for each patient with an NHS number" do
-      expect { call }.to have_enqueued_job(PatientUpdateFromPDSJob)
-        .on_queue(:pds)
+      expect { call }.to enqueue_sidekiq_job(PatientUpdateFromPDSSidekiqJob)
+        .on("pds")
         .exactly(2)
         .times
     end

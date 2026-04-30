@@ -22,7 +22,9 @@ class Patients::EditController < Patients::BaseController
     @patient.invalidated_at = nil
 
     if @patient.save
-      PatientUpdateFromPDSJob.perform_later(@patient)
+      if @patient.nhs_number.present?
+        PatientUpdateFromPDSSidekiqJob.perform_async(@patient.id, nil)
+      end
 
       redirect_to edit_patient_path(@patient)
     else

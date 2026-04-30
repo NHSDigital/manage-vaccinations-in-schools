@@ -50,9 +50,12 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
            next_step == "save_nhs_number_if_unique"
         searchable.save!
         if searchable.is_a?(PatientChangeset)
-          ProcessPatientChangesetJob.perform_later(searchable.id)
+          ProcessPatientChangesetSidekiqJob.perform_async(searchable.id)
         else
-          PatientUpdateFromPDSJob.perform_later(searchable, search_results)
+          PatientUpdateFromPDSSidekiqJob.perform_async(
+            searchable.id,
+            search_results
+          )
         end
       elsif next_step.in?(STEPS.keys)
         raise "Recursive step detected: #{next_step}" if next_step == step_name
@@ -165,11 +168,11 @@ class PDSCascadingSearchJob < ApplicationJobActiveJob
   def enqueue_next_search(searchable, step_name, search_results, queue)
     searchable.save!
 
-    PDSCascadingSearchJob.set(queue:).perform_later(
-      searchable,
-      step_name:,
-      search_results:,
-      queue:
+    PDSCascadingSearchSidekiqJob.set(queue:).perform_async(
+      searchable.to_global_id.to_s,
+      step_name,
+      search_results,
+      queue
     )
   end
 

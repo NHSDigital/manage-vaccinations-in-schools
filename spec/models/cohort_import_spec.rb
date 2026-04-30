@@ -171,14 +171,14 @@ describe CohortImport do
   end
 
   describe "#process!" do
-    let(:configured_job) { instance_double(ActiveJob::ConfiguredJob) }
     let(:file) { "valid.csv" }
+    let(:process_job) { double }
 
     before do
-      allow(PDSCascadingSearchJob).to receive(:set).with(
+      allow(PDSCascadingSearchSidekiqJob).to receive(:set).with(
         queue: :imports
-      ).and_return(configured_job)
-      allow(configured_job).to receive(:perform_later)
+      ).and_return(process_job)
+      allow(process_job).to receive(:perform_async)
 
       cohort_import.parse_rows!
     end
@@ -192,7 +192,7 @@ describe CohortImport do
       it "enqueues PDSCascadingSearchJob for each changeset" do
         cohort_import.process!
 
-        expect(configured_job).to have_received(:perform_later).exactly(3).times
+        expect(process_job).to have_received(:perform_async).exactly(3).times
       end
     end
 
@@ -200,8 +200,8 @@ describe CohortImport do
       before { Flipper.disable(:pds_search_during_import) }
 
       it "enqueues ReviewPatientChangesetJob for each changeset" do
-        expect { cohort_import.process! }.to have_enqueued_job(
-          ReviewPatientChangesetJob
+        expect { cohort_import.process! }.to enqueue_sidekiq_job(
+          ReviewPatientChangesetSidekiqJob
         ).exactly(3).times
       end
     end

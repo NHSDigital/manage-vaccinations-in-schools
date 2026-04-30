@@ -27,8 +27,8 @@ describe EnqueueSchoolConsentRemindersJob do
     let(:today) { dates.first - 2.weeks }
 
     it "doesn't queue any jobs" do
-      expect { perform }.not_to have_enqueued_job(
-        SendAutomaticSchoolConsentRemindersJob
+      expect { perform }.not_to enqueue_sidekiq_job(
+        SendAutomaticSchoolConsentRemindersSidekiqJob
       )
     end
   end
@@ -37,17 +37,17 @@ describe EnqueueSchoolConsentRemindersJob do
     let(:today) { dates.first - 1.week }
 
     it "queues a job for the session" do
-      expect { perform }.to have_enqueued_job(
-        SendAutomaticSchoolConsentRemindersJob
-      ).with(session)
+      expect { perform }.to enqueue_sidekiq_job(
+        SendAutomaticSchoolConsentRemindersSidekiqJob
+      ).with(session.id)
     end
 
     context "when location is a generic clinic" do
       let(:location) { create(:generic_clinic, team:) }
 
       it "doesn't queue any jobs" do
-        expect { perform }.not_to have_enqueued_job(
-          SendAutomaticSchoolConsentRemindersJob
+        expect { perform }.not_to enqueue_sidekiq_job(
+          SendAutomaticSchoolConsentRemindersSidekiqJob
         )
       end
     end
@@ -57,17 +57,17 @@ describe EnqueueSchoolConsentRemindersJob do
     let(:today) { dates.last - 1.week }
 
     it "queues a job for the session" do
-      expect { perform }.to have_enqueued_job(
-        SendAutomaticSchoolConsentRemindersJob
-      ).with(session)
+      expect { perform }.to enqueue_sidekiq_job(
+        SendAutomaticSchoolConsentRemindersSidekiqJob
+      ).with(session.id)
     end
 
     context "when location is a generic clinic" do
       let(:location) { create(:generic_clinic, team:) }
 
       it "doesn't queue any jobs" do
-        expect { perform }.not_to have_enqueued_job(
-          SendAutomaticSchoolConsentRemindersJob
+        expect { perform }.not_to enqueue_sidekiq_job(
+          SendAutomaticSchoolConsentRemindersSidekiqJob
         )
       end
     end

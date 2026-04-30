@@ -7,7 +7,9 @@ describe EnqueueSchoolConsentRequestsJob do
     let(:session) { create(:session, :unscheduled) }
 
     it "doesn't queue any jobs" do
-      expect { perform }.not_to have_enqueued_job(SendSchoolConsentRequestsJob)
+      expect { perform }.not_to enqueue_sidekiq_job(
+        SendSchoolConsentRequestsSidekiqJob
+      )
     end
   end
 
@@ -17,7 +19,9 @@ describe EnqueueSchoolConsentRequestsJob do
     end
 
     it "doesn't queue any jobs" do
-      expect { perform }.not_to have_enqueued_job(SendSchoolConsentRequestsJob)
+      expect { perform }.not_to enqueue_sidekiq_job(
+        SendSchoolConsentRequestsSidekiqJob
+      )
     end
   end
 
@@ -31,9 +35,9 @@ describe EnqueueSchoolConsentRequestsJob do
     end
 
     it "queues a job for the session" do
-      expect { perform }.to have_enqueued_job(
-        SendSchoolConsentRequestsJob
-      ).with(session)
+      expect { perform }.to enqueue_sidekiq_job(
+        SendSchoolConsentRequestsSidekiqJob
+      ).with(session.id)
     end
 
     context "when location is a generic clinic" do
@@ -43,8 +47,8 @@ describe EnqueueSchoolConsentRequestsJob do
       end
 
       it "doesn't queue any jobs" do
-        expect { perform }.not_to have_enqueued_job(
-          SendSchoolConsentRequestsJob
+        expect { perform }.not_to enqueue_sidekiq_job(
+          SendSchoolConsentRequestsSidekiqJob
         )
       end
     end

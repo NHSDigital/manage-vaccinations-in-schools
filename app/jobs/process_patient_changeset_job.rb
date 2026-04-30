@@ -28,7 +28,7 @@ class ProcessPatientChangesetJob < ApplicationJobActiveJob
       return if import.changesets_are_invalid?
     end
 
-    ReviewPatientChangesetJob.perform_later(patient_changeset.id)
+    ReviewPatientChangesetSidekiqJob.perform_async(patient_changeset.id)
   end
 
   private

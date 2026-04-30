@@ -37,8 +37,8 @@ RSpec::Matchers.matcher :deliver_sms do |template_name = nil|
     raise
   end
 
-  # TODO: copy the error message from the have_enqueued_job but only list jobs
-  #       enqueued for SMSDeliveryJob
+  # TODO: copy the error message from the enqueue_sidekiq_job but only list
+  #  jobs enqueued for SMSDeliveryJob
   failure_message { <<~MESSAGE }
       expected #{template_name} sms to have been delivered
       #{@error}

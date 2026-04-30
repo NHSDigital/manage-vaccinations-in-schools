@@ -239,7 +239,7 @@ describe "Import class lists" do
   end
 
   def when_i_wait_for_the_background_job_to_complete
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
   end
 
   def then_i_should_see_the_holding_page

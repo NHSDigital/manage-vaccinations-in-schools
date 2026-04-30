@@ -243,10 +243,9 @@ describe "Parental consent" do
   end
 
   def and_i_choose_an_ethnic_background
-    perform_enqueued_jobs do
-      choose "White and Black Caribbean"
-      click_button "Continue"
-    end
+    choose "White and Black Caribbean"
+    click_button "Continue"
+    Sidekiq::Job.drain_all
   end
 
   def and_the_ethnicity_information_is_shown
@@ -256,10 +255,9 @@ describe "Parental consent" do
   end
 
   def and_i_refuse_to_answer_questions_on_ethnicity
-    perform_enqueued_jobs do
-      choose "No, skip the ethnicity questions"
-      click_on "Continue"
-    end
+    choose "No, skip the ethnicity questions"
+    click_on "Continue"
+    Sidekiq::Job.drain_all
   end
 
   def then_i_see_the_consent_confirmation_page

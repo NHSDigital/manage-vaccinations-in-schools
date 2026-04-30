@@ -37,8 +37,8 @@ RSpec::Matchers.matcher :deliver_email do |template_name = nil|
     raise
   end
 
-  # TODO: copy the error message from the have_enqueued_job but only list jobs
-  #       enqueued for EmailDeliveryJob
+  # TODO: copy the error message from the enqueue_sidekiq_job but only list
+  #  jobs enqueued for EmailDeliveryJob
   failure_message { <<~MESSAGE }
       expected #{template_name} email to have been delivered
       #{@error}

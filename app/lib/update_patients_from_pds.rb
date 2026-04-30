@@ -11,9 +11,17 @@ class UpdatePatientsFromPDS
 
     patients.find_each do |patient|
       if patient.nhs_number.nil?
-        PDSCascadingSearchJob.set(queue:).perform_later(patient)
+        PDSCascadingSearchSidekiqJob.set(queue:).perform_async(
+          patient.to_global_id.to_s,
+          nil,
+          nil,
+          nil
+        )
       else
-        PatientUpdateFromPDSJob.set(queue:).perform_later(patient)
+        PatientUpdateFromPDSSidekiqJob.set(queue:).perform_async(
+          patient.id,
+          nil
+        )
       end
     end
   end

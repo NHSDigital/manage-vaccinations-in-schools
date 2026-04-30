@@ -163,7 +163,7 @@ describe "Parental consent create patient", :pds do
   end
 
   def and_i_wait_for_background_jobs_to_complete
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
   end
 
   def when_the_nurse_checks_the_unmatched_consent_responses

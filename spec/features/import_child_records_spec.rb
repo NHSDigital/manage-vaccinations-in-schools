@@ -259,9 +259,9 @@ describe "Import child records", :pds do
   end
 
   def when_i_wait_for_the_background_job_to_complete
-    perform_enqueued_jobs(only: ProcessImportJob)
-    perform_enqueued_jobs(only: PDSCascadingSearchJob)
-    perform_enqueued_jobs(only: ProcessPatientChangesetJob)
+    ProcessImportSidekiqJob.drain
+    PDSCascadingSearchSidekiqJob.drain
+    ProcessPatientChangesetSidekiqJob.drain
   end
 
   def then_i_should_see_the_holding_page

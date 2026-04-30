@@ -189,7 +189,6 @@ describe "Scheduled consent requests and reminders" do
 
   def then_no_consent_requests_have_been_sent
     EnqueueSchoolConsentRequestsJob.new.perform
-    perform_enqueued_jobs
     Sidekiq::Job.drain_all
 
     expect(email_deliveries).to be_empty
@@ -216,7 +215,6 @@ describe "Scheduled consent requests and reminders" do
 
   def then_all_four_parents_received_all_programme_consent_requests
     EnqueueSchoolConsentRequestsJob.new.perform
-    perform_enqueued_jobs
     Sidekiq::Job.drain_all
 
     parent_emails.each do |email|
@@ -265,7 +263,6 @@ describe "Scheduled consent requests and reminders" do
 
   def then_all_four_parents_received_all_programme_reminders
     EnqueueSchoolConsentRemindersJob.new.perform
-    perform_enqueued_jobs
     Sidekiq::Job.drain_all
 
     parent_emails.each do |email|

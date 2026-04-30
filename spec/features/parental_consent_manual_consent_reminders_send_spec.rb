@@ -151,6 +151,7 @@ describe "Manual consent reminders" do
 
   def when_i_click_send_reminders
     click_on "Send manual consent reminders"
+    SendManualSchoolConsentRemindersJob.drain
   end
 
   def then_i_see_the_success_message

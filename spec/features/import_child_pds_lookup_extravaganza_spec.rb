@@ -599,7 +599,7 @@ describe "Import child records", :pds do
   end
 
   def and_i_should_see_one_new_patient_created
-    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
     expect(Patient.count).to eq(7)
   end
 
@@ -724,10 +724,8 @@ describe "Import child records", :pds do
   end
 
   def then_school_moves_are_created_appropriately
-    perform_enqueued_jobs
-    perform_enqueued_jobs
-
-    Sidekiq::Job.drain_all # PatientsAgedOutOfSchoolJob is Sidekiq-only
+    Sidekiq::Job.drain_all
+    Sidekiq::Job.drain_all
 
     charlie = Patient.find_by(given_name: "Charlie")
     charlie_move = SchoolMoveLogEntry.find_by(patient: charlie)

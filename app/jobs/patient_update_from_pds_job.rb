@@ -46,10 +46,20 @@ class PatientUpdateFromPDSJob < ApplicationJobActiveJob
     end
   rescue NHS::PDS::PatientNotFound
     patient.update!(nhs_number: nil)
-    PDSCascadingSearchJob.perform_later(patient)
+    PDSCascadingSearchSidekiqJob.perform_async(
+      patient.to_global_id.to_s,
+      nil,
+      nil,
+      nil
+    )
   rescue NHS::PDS::InvalidatedResource, NHS::PDS::InvalidNHSNumber
     patient.invalidate!
-    PDSCascadingSearchJob.perform_later(patient)
+    PDSCascadingSearchSidekiqJob.perform_async(
+      patient.to_global_id.to_s,
+      nil,
+      nil,
+      nil
+    )
   end
 
   class MissingNHSNumber < StandardError
