@@ -178,7 +178,7 @@ class PatientImport < ApplicationRecord
     changesets.find_each do |cs|
       PDSCascadingSearchJob.set(queue: :imports).perform_later(
         cs,
-        queue: :imports
+        queue: "imports"
       )
     end
   end
