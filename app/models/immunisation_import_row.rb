@@ -851,13 +851,13 @@ class ImmunisationImportRow
         two_words_connector: " or "
       )
 
+    dose_sequence_error_message =
+      "Enter a numeric which must be either #{dose_sequence_examples}."
+
     if dose_sequence.present? ||
          parsed_vaccination_description_string&.dig(:dose_sequence).present?
       if dose_sequence_value.nil?
-        errors.add(
-          field.header,
-          "Enter a dose sequence number, for example, #{dose_sequence_examples}."
-        )
+        errors.add(field.header, dose_sequence_error_message)
       elsif maximum_dose_sequence
         if dose_sequence_value < 1
           errors.add(field.header, "must be greater than 0")
@@ -879,10 +879,7 @@ class ImmunisationImportRow
           end
         )
       else
-        errors.add(
-          field.header,
-          "Enter a dose sequence number, for example, #{dose_sequence_examples}."
-        )
+        errors.add(field.header, dose_sequence_error_message)
       end
     end
   end

@@ -582,7 +582,7 @@ describe ImmunisationImportRow do
         it "has the correct error message" do
           immunisation_import_row.valid?
           expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to include(
-            "Enter a dose sequence number, for example, 1 or 2."
+            "Enter a numeric which must be either 1 or 2."
           )
         end
       end
