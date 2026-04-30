@@ -1,0 +1,8 @@
+organisation:
+  ods_code: RY6
+
+team:
+  name: Locala sub-contract to Leeds Community Healthcare NHS Trust
+  workgroup: leedsmavisnr
+  type: national_reporting
+  national_reporting_cut_off_date: 2026-05-11

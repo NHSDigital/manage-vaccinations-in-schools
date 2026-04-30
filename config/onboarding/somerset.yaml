@@ -1,0 +1,8 @@
+organisation:
+  ods_code: RH5
+
+team:
+  name: Somerset NHS Foundation Trust
+  workgroup: somersetmavisnr
+  type: national_reporting
+  national_reporting_cut_off_date: 2026-05-11

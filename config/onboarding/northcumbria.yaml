@@ -1,0 +1,8 @@
+organisation:
+  ods_code: RNN
+
+team:
+  name: North Cumbria Integrated Care
+  workgroup: ncicmavisnr
+  type: national_reporting
+  national_reporting_cut_off_date: 2026-05-11
